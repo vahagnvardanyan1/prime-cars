@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 
 import {
@@ -140,11 +141,13 @@ export const CarsPage = () => {
                     key={car.id}
                     className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 overflow-hidden group hover:border-[#429de6]/50 transition-all cursor-pointer"
                   >
-                    <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-black">
-                      <img
+                    <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-black">
+                      <Image
                         src={car.image}
                         alt={`${car.brand} ${car.model}`}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                       />
                     </div>
                     <div className="p-6">

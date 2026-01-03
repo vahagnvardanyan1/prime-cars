@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { Package, Users, Wrench } from "lucide-react";
@@ -35,10 +36,13 @@ export const HomePage = () => {
             </div>
 
             <div className="relative">
-              <img
+              <Image
                 src="https://cdn-editing-temp.picsart.com/editing-temp-landings/83f467c7-128c-4e99-adc6-817310e2a1ed.png"
                 alt="Luxury Car"
                 className="w-full h-auto relative z-10"
+                width={1000}
+                height={600}
+                priority
               />
             </div>
           </div>
@@ -99,10 +103,12 @@ export const HomePage = () => {
                       ♥
                     </span>
                   </div>
-                  <img
+                  <Image
                     src={car.image}
                     alt={car.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, 33vw"
                   />
                 </div>
                 <div className="p-6">

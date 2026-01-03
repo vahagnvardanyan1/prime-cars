@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { Globe, Mail, MapPin, Phone, Shield, TrendingUp, Users } from "lucide-react";
 
 export const PartnersPage = () => {
@@ -72,11 +74,13 @@ export const PartnersPage = () => {
 
             {/* Right Image */}
             <div className="relative">
-              <div className="relative rounded-2xl overflow-hidden border border-white/10">
-                <img 
+              <div className="relative h-[500px] rounded-2xl overflow-hidden border border-white/10">
+                <Image
                   src="https://images.unsplash.com/photo-1745847768380-2caeadbb3b71?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMHBhcnRuZXJzaGlwJTIwaGFuZHNoYWtlfGVufDF8fHx8MTc2NzM2MTMyNXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                   alt="Business Partnership"
-                  className="w-full h-[500px] object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               </div>

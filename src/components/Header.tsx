@@ -1,10 +1,11 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { Menu, Moon, Sun, X } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 import { useTheme } from "@/components/ThemeContext";
 import { siteNavItems } from "@/lib/site-nav";
@@ -68,15 +69,21 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-20">
             <Link href="/" className="flex items-center gap-3 group">
-              <img
+              <Image
                 src={LOGO_LIGHT}
                 alt="Prime Cars Logo"
                 className="h-20 w-auto block dark:hidden"
+                width={240}
+                height={80}
+                priority
               />
-              <img
+              <Image
                 src={LOGO_DARK}
                 alt="Prime Cars Logo"
                 className="h-20 w-auto hidden dark:block"
+                width={240}
+                height={80}
+                priority
               />
             </Link>
 
@@ -169,15 +176,19 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
       >
         <div className="flex items-center justify-between h-20 px-6 border-b border-white/10">
           <Link href="/" className="block">
-            <img
+            <Image
               src={LOGO_LIGHT}
               alt="Prime Cars Logo"
               className="h-8 w-auto block dark:hidden"
+              width={120}
+              height={32}
             />
-            <img
+            <Image
               src={LOGO_DARK}
               alt="Prime Cars Logo"
               className="h-8 w-auto hidden dark:block"
+              width={120}
+              height={32}
             />
           </Link>
           <button
