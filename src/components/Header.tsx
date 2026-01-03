@@ -1,13 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { Menu, Moon, Sun, X } from "lucide-react";
 
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTheme } from "@/components/ThemeContext";
+import { Link, usePathname } from "@/i18n/routing";
 import { siteNavItems } from "@/lib/site-nav";
 
 const LOGO_LIGHT =
@@ -107,6 +107,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
             </nav>
 
             <div className="hidden md:flex items-center gap-3">
+              <LanguageSwitcher variant="outline" />
               <button
                 onClick={toggleTheme}
                 className="w-10 h-10 flex items-center justify-center text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-all"
@@ -129,7 +130,8 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
               </button>
             </div>
 
-            <div className="md:hidden flex items-center gap-2">
+            <div className="md:hidden flex items-center">
+              <LanguageSwitcher />
               <button
                 onClick={toggleTheme}
                 className="w-10 h-10 flex items-center justify-center text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-all"

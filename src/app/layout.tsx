@@ -2,9 +2,7 @@ import type { ReactNode } from "react";
 
 import "./globals.css";
 
-import { SiteShell } from "@/components/SiteShell";
 import { ThemeInitScript } from "@/components/ThemeInitScript";
-import { ThemeProvider } from "@/components/ThemeContext";
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
@@ -12,11 +10,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
       <head>
         <ThemeInitScript />
       </head>
-      <body>
-        <ThemeProvider>
-          <SiteShell>{children}</SiteShell>
-        </ThemeProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 };
