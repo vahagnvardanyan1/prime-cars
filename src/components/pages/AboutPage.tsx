@@ -1,6 +1,15 @@
-import { Target, Users, Zap, CheckCircle2, Award, TrendingUp, Shield, Globe } from 'lucide-react';
+import {
+  Award,
+  CheckCircle2,
+  Globe,
+  Shield,
+  Target,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
 
-export function AboutPage() {
+export const AboutPage = () => {
   return (
     <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
       {/* Hero */}
@@ -15,7 +24,10 @@ export function AboutPage() {
               Transforming Global Automotive Trade
             </h1>
             <p className="text-gray-600 dark:text-gray-400 text-lg">
-              Prime Cars was founded on a simple belief: importing a car shouldn't be complicated. We've built a platform that combines cutting-edge technology with deep industry expertise to make international car trading accessible to everyone.
+              Prime Cars was founded on a simple belief: importing a car
+              shouldn&apos;t be complicated. We&apos;ve built a platform that
+              combines cutting-edge technology with deep industry expertise to
+              make international car trading accessible to everyone.
             </p>
           </div>
         </div>
@@ -37,7 +49,9 @@ export function AboutPage() {
               <Zap className="w-12 h-12 mb-6 text-[#da565b]" />
               <h2 className="text-gray-900 dark:text-white mb-4">Our Vision</h2>
               <p className="text-gray-600 dark:text-gray-400">
-                To become the world's most trusted platform for international vehicle trading, setting new standards for transparency and customer experience.
+                To become the world&apos;s most trusted platform for
+                international vehicle trading, setting new standards for
+                transparency and customer experience.
               </p>
             </div>
 
@@ -236,4 +250,4 @@ export function AboutPage() {
       </section>
     </div>
   );
-}
+};

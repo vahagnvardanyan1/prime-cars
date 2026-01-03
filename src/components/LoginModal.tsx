@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { X } from 'lucide-react';
+import { useEffect, useState } from "react";
+
+import { X } from "lucide-react";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -169,7 +170,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
           {/* Sign up link */}
           <p className="text-center mt-6 text-gray-600 dark:text-gray-400">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{" "}
             <button className="text-[#429de6] hover:text-[#3a8acc] transition-colors">
               Sign up
             </button>

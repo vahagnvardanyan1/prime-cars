@@ -1,6 +1,6 @@
-import { Phone, Mail, MapPin, Users, TrendingUp, Shield, Globe } from 'lucide-react';
+import { Globe, Mail, MapPin, Phone, Shield, TrendingUp, Users } from "lucide-react";
 
-export function PartnersPage() {
+export const PartnersPage = () => {
   return (
     <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
       {/* Hero Section */}
@@ -17,7 +17,10 @@ export function PartnersPage() {
                 Together we create success
               </h1>
               <p className="text-gray-600 dark:text-gray-400 text-lg mb-8">
-                Join Prime Cars' global network and unlock new opportunities in the automotive import industry. We're looking for strategic partners who share our vision of excellence and innovation.
+                Join Prime Cars&apos; global network and unlock new opportunities
+                in the automotive import industry. We&apos;re looking for
+                strategic partners who share our vision of excellence and
+                innovation.
               </p>
               
               {/* Contact Information */}
@@ -132,7 +135,8 @@ export function PartnersPage() {
           <div className="bg-gradient-to-br from-[#429de6] to-[#3a8acc] rounded-2xl p-12 text-center">
             <h2 className="text-white mb-4">Ready to Start a Partnership?</h2>
             <p className="text-blue-50 max-w-2xl mx-auto mb-8 text-lg">
-              Let's discuss how we can work together to achieve success in the global automotive market.
+              Let&apos;s discuss how we can work together to achieve success in
+              the global automotive market.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a 
@@ -153,4 +157,4 @@ export function PartnersPage() {
       </section>
     </div>
   );
-}
+};

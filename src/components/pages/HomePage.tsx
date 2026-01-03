@@ -16,12 +16,12 @@ export const HomePage = () => {
           <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center">
             <div className="text-center lg:text-left">
               <h1 className="mb-6 text-gray-900 dark:text-white">
-                "Selling Cars, Building Trust"
+                Selling Cars, Building Trust
               </h1>
 
               <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
                 At the heart of our business lies a commitment to more than just
-                selling vehicles—we're dedicated to building lasting
+                selling vehicles—we&apos;re dedicated to building lasting
                 relationships. We understand that buying a car is a significant
                 decision, and our goal is to make...
               </p>
@@ -141,7 +141,7 @@ export const HomePage = () => {
             <p className="max-w-3xl mx-auto">
               Our services are designed with your automotive needs in mind,
               offering a seamless blend of quality, reliability, and expertise.
-              Whether you're purchasing your dream car...
+              Whether you&apos;re purchasing your dream car...
             </p>
           </div>
 
