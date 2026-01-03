@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import { useTranslations } from "next-intl";
+
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +22,7 @@ export const UpdateShippingPriceModal = ({
   onOpenChange,
   onConfirm,
 }: UpdateShippingPriceModalProps) => {
+  const t = useTranslations();
   const [value, setValue] = useState("");
 
   const isConfirmEnabled = useMemo(() => {
@@ -44,22 +47,22 @@ export const UpdateShippingPriceModal = ({
         <div className="px-7 py-6">
           <DialogHeader className="space-y-2">
             <DialogTitle className="text-gray-900 dark:text-white">
-              Update Shipping Price
+              {t("admin.modals.updateShipping.title")}
             </DialogTitle>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {city ? (
                 <>
-                  Set a new shipping price for <span className="font-medium text-gray-900 dark:text-white">{city.city}</span>.
+                  {t("admin.modals.updateShipping.setFor", { city: city.city })}
                 </>
               ) : (
-                "Select a city to update."
+                t("admin.modals.updateShipping.selectCity")
               )}
             </p>
           </DialogHeader>
 
           <div className="mt-6 space-y-2">
             <div className="text-xs font-medium uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
-              Shipping Price (USD)
+              {t("admin.modals.updateShipping.fieldLabel")}
             </div>
             <Input
               value={value}
@@ -79,7 +82,7 @@ export const UpdateShippingPriceModal = ({
               className="h-10 rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0a0a0a] dark:text-white dark:hover:bg-white/5"
               onClick={close}
             >
-              Cancel
+              {t("admin.modals.updateShipping.cancel")}
             </Button>
             <Button
               type="button"
@@ -87,7 +90,7 @@ export const UpdateShippingPriceModal = ({
               disabled={!isConfirmEnabled || !city}
               onClick={confirm}
             >
-              Confirm
+              {t("admin.modals.updateShipping.confirm")}
             </Button>
           </DialogFooter>
         </div>
@@ -95,5 +98,6 @@ export const UpdateShippingPriceModal = ({
     </Dialog>
   );
 };
+
 
 

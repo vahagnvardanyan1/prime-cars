@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 
 import { Globe } from "lucide-react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -48,6 +48,7 @@ export const LanguageSwitcher = ({
   align = "end",
   variant = "ghost",
 }: LanguageSwitcherProps) => {
+  const t = useTranslations();
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
@@ -83,7 +84,7 @@ export const LanguageSwitcher = ({
               : "",
             className,
           )}
-          aria-label="Change language"
+          aria-label={t("header.changeLanguageAria")}
         >
           <span className="text-lg leading-none">{current.flag}</span>
           <Globe className="h-5 w-5 opacity-70" />

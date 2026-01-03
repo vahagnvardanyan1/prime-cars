@@ -11,11 +11,14 @@ import {
   Search,
   SlidersHorizontal,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { carsData } from "@/data/cars";
 import { filterCars } from "@/lib/cars/filterCars";
 
 export const CarsPage = () => {
+  const t = useTranslations();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrand, setSelectedBrand] = useState<string>("all");
   const [priceRange, setPriceRange] = useState<
@@ -35,10 +38,9 @@ export const CarsPage = () => {
     <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
       <section className="bg-gradient-to-b from-gray-100 dark:from-[#111111] to-white dark:to-black py-16 border-b border-gray-300 dark:border-white/10 transition-colors duration-300">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
-          <h1 className="text-gray-900 dark:text-white mb-2">Premium Inventory</h1>
+          <h1 className="text-gray-900 dark:text-white mb-2">{t("cars.title")}</h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Browse our curated collection of luxury and performance vehicles from
-            around the world
+            {t("cars.subtitle")}
           </p>
         </div>
       </section>
@@ -49,18 +51,18 @@ export const CarsPage = () => {
             <div className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 p-6 sticky top-28 transition-colors duration-300">
               <div className="flex items-center gap-2 mb-6">
                 <SlidersHorizontal className="w-5 h-5 text-gray-900 dark:text-white" />
-                <h3 className="text-gray-900 dark:text-white">Filters</h3>
+                <h3 className="text-gray-900 dark:text-white">{t("cars.filters.title")}</h3>
               </div>
 
               <div className="mb-6">
                 <label className="block text-gray-900 dark:text-white mb-2">
-                  Search
+                  {t("cars.filters.searchLabel")}
                 </label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Brand or model..."
+                    placeholder={t("cars.filters.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-black border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#429de6] focus:border-transparent text-gray-900 dark:text-white placeholder:text-gray-500"
@@ -70,7 +72,7 @@ export const CarsPage = () => {
 
               <div className="mb-6">
                 <label className="block text-gray-900 dark:text-white mb-2">
-                  Brand
+                  {t("cars.filters.brandLabel")}
                 </label>
                 <select
                   value={selectedBrand}
@@ -79,7 +81,7 @@ export const CarsPage = () => {
                 >
                   {brands.map((brand) => (
                     <option key={brand} value={brand}>
-                      {brand === "all" ? "All Brands" : brand}
+                      {brand === "all" ? t("cars.filters.allBrands") : brand}
                     </option>
                   ))}
                 </select>
@@ -87,17 +89,17 @@ export const CarsPage = () => {
 
               <div className="mb-6">
                 <label className="block text-gray-900 dark:text-white mb-2">
-                  Price Range
+                  {t("cars.filters.priceRangeLabel")}
                 </label>
                 <select
                   value={priceRange}
                   onChange={(e) => setPriceRange(e.target.value as typeof priceRange)}
                   className="w-full px-4 py-3 bg-gray-50 dark:bg-black border border-gray-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#429de6] focus:border-transparent text-gray-900 dark:text-white"
                 >
-                  <option value="all">All Prices</option>
-                  <option value="under-100k">Under $100k</option>
-                  <option value="100k-150k">$100k - $150k</option>
-                  <option value="over-150k">Over $150k</option>
+                  <option value="all">{t("cars.filters.allPrices")}</option>
+                  <option value="under-100k">{t("cars.filters.under100k")}</option>
+                  <option value="100k-150k">{t("cars.filters.between100And150")}</option>
+                  <option value="over-150k">{t("cars.filters.over150k")}</option>
                 </select>
               </div>
 
@@ -110,7 +112,7 @@ export const CarsPage = () => {
                 className="w-full py-3 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
                 type="button"
               >
-                Reset Filters
+                {t("cars.filters.reset")}
               </button>
             </div>
           </div>
@@ -118,20 +120,20 @@ export const CarsPage = () => {
           <div className="flex-1">
             <div className="flex items-center justify-between mb-6">
               <p className="text-gray-600 dark:text-gray-400">
-                {filteredCars.length} {filteredCars.length === 1 ? "vehicle" : "vehicles"} found
+                {t("cars.results.found", { count: filteredCars.length })}
               </p>
               <select className="px-4 py-2 bg-white dark:bg-[#111111] border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#429de6] focus:border-transparent">
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-                <option>Year: Newest First</option>
-                <option>Year: Oldest First</option>
+                <option>{t("cars.results.sort.priceLowToHigh")}</option>
+                <option>{t("cars.results.sort.priceHighToLow")}</option>
+                <option>{t("cars.results.sort.yearNewest")}</option>
+                <option>{t("cars.results.sort.yearOldest")}</option>
               </select>
             </div>
 
             {filteredCars.length === 0 ? (
               <div className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 p-12 text-center transition-colors duration-300">
                 <p className="text-gray-600 dark:text-gray-400">
-                  No vehicles match your filters. Try adjusting your search criteria.
+                  {t("cars.results.noResults")}
                 </p>
               </div>
             ) : (
@@ -187,7 +189,7 @@ export const CarsPage = () => {
                         className="w-full mt-4 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-all"
                         type="button"
                       >
-                        View Details
+                        {t("cars.results.viewDetails")}
                       </button>
                     </div>
                   </div>

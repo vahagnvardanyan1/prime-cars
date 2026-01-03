@@ -1,11 +1,16 @@
+"use client";
+
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { Package, Users, Wrench } from "lucide-react";
 
 import { ImportCalculator } from "@/components/ImportCalculator";
+import { Link } from "@/i18n/routing";
 
 export const HomePage = () => {
+  const t = useTranslations();
+
   return (
     <div className="pt-20">
       <section className="relative overflow-hidden bg-gray-50 dark:bg-black min-h-[90vh] flex items-center transition-colors duration-300">
@@ -17,28 +22,25 @@ export const HomePage = () => {
           <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center">
             <div className="text-center lg:text-left">
               <h1 className="mb-6 text-gray-900 dark:text-white">
-                Selling Cars, Building Trust
+                {t("home.hero.title")}
               </h1>
 
               <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
-                At the heart of our business lies a commitment to more than just
-                selling vehicles—we&apos;re dedicated to building lasting
-                relationships. We understand that buying a car is a significant
-                decision, and our goal is to make...
+                {t("home.hero.description")}
               </p>
 
               <Link
                 href="/calculator"
                 className="px-8 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-all hover:shadow-lg hover:shadow-blue-500/20 mx-auto lg:mx-0 block lg:inline-block"
               >
-                Calculate
+                {t("home.hero.primaryCta")}
               </Link>
             </div>
 
             <div className="relative">
               <Image
                 src="https://cdn-editing-temp.picsart.com/editing-temp-landings/83f467c7-128c-4e99-adc6-817310e2a1ed.png"
-                alt="Luxury Car"
+                alt={t("home.hero.heroImageAlt")}
                 className="w-full h-auto relative z-10"
                 width={1000}
                 height={600}
@@ -52,11 +54,9 @@ export const HomePage = () => {
       <section className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="text-center mb-12">
-            <h2 className="mb-4">Most Popular Car Rental Deals</h2>
+            <h2 className="mb-4">{t("home.popularDeals.title")}</h2>
             <p className="max-w-3xl mx-auto">
-              Discover unbeatable deals on the most sought-after rental cars.
-              Whether you need a stylish ride for a special occasion or a
-              reliable vehicle for everyday use...
+              {t("home.popularDeals.description")}
             </p>
           </div>
 
@@ -65,27 +65,33 @@ export const HomePage = () => {
               {
                 year: "2022",
                 name: "BMW 3 Series Coupé 2.0i",
-                specs: "Automatic • Coupe • Petrol",
+                transmissionKey: "automatic",
+                bodyKey: "coupe",
+                fuelKey: "petrol",
                 price: "$204.91",
-                period: "/day",
+                period: t("home.popularDeals.periodPerDay"),
                 image:
                   "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80",
               },
               {
                 year: "2024",
                 name: "New Tesla Model S Plaid",
-                specs: "Automatic • Sedan • Electric",
+                transmissionKey: "automatic",
+                bodyKey: "sedan",
+                fuelKey: "electric",
                 price: "$321.41",
-                period: "/day",
+                period: t("home.popularDeals.periodPerDay"),
                 image:
                   "https://images.unsplash.com/photo-1617788138017-80ad40651399?w=800&q=80",
               },
               {
                 year: "2022",
                 name: "Chevy Camaro ZL1",
-                specs: "Automatic • Sports • Petrol",
+                transmissionKey: "automatic",
+                bodyKey: "sports",
+                fuelKey: "petrol",
                 price: "$266.51",
-                period: "/day",
+                period: t("home.popularDeals.periodPerDay"),
                 image:
                   "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&q=80",
               },
@@ -113,11 +119,15 @@ export const HomePage = () => {
                 </div>
                 <div className="p-6">
                   <h3 className="mb-2">{car.name}</h3>
-                  <p className="text-sm mb-4">{car.specs}</p>
+                  <p className="text-sm mb-4">
+                    {t(`home.popularDeals.specs.${car.transmissionKey}`)} •{" "}
+                    {t(`home.popularDeals.specs.${car.bodyKey}`)} •{" "}
+                    {t(`home.popularDeals.specs.${car.fuelKey}`)}
+                  </p>
                   <div className="flex items-end justify-between border-t border-gray-200 dark:border-white/10 pt-4">
                     <div>
                       <div className="text-gray-500 dark:text-gray-400 text-xs mb-1">
-                        Rental Price
+                        {t("home.popularDeals.rentalPriceLabel")}
                       </div>
                       <div className="text-gray-900 dark:text-white">
                         {car.price}
@@ -130,7 +140,7 @@ export const HomePage = () => {
                       className="px-4 py-2 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-all text-sm"
                       type="button"
                     >
-                      See Tour Details
+                      {t("home.popularDeals.seeTourDetails")}
                     </button>
                   </div>
                 </div>
@@ -143,11 +153,9 @@ export const HomePage = () => {
       <section className="py-20 lg:py-28 bg-gray-50 dark:bg-black border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="text-center mb-16">
-            <h2 className="mb-4">Our Service</h2>
+            <h2 className="mb-4">{t("home.service.title")}</h2>
             <p className="max-w-3xl mx-auto">
-              Our services are designed with your automotive needs in mind,
-              offering a seamless blend of quality, reliability, and expertise.
-              Whether you&apos;re purchasing your dream car...
+              {t("home.service.description")}
             </p>
           </div>
 
@@ -156,17 +164,15 @@ export const HomePage = () => {
               <div className="w-16 h-16 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6 mx-auto border border-gray-200 dark:border-white/10">
                 <Wrench className="w-8 h-8 text-gray-900 dark:text-white" />
               </div>
-              <h3 className="mb-3">Expert Maintenance and Repairs</h3>
+              <h3 className="mb-3">{t("home.service.cards.maintenance.title")}</h3>
               <p className="mb-6 text-sm">
-                Our team of certified technicians provides top-tier maintenance
-                and repair services to ensure your vehicle is running at its
-                best. From routine oil changes...
+                {t("home.service.cards.maintenance.description")}
               </p>
               <button
                 className="text-gray-900 dark:text-white text-sm hover:text-[#429de6] transition-colors"
                 type="button"
               >
-                Read more →
+                {t("home.service.readMore")}
               </button>
             </div>
 
@@ -174,17 +180,15 @@ export const HomePage = () => {
               <div className="w-16 h-16 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6 mx-auto border border-gray-200 dark:border-white/10">
                 <Users className="w-8 h-8 text-gray-900 dark:text-white" />
               </div>
-              <h3 className="mb-3">Customer-Centric Approach</h3>
+              <h3 className="mb-3">{t("home.service.cards.customer.title")}</h3>
               <p className="mb-6 text-sm">
-                We prioritize building long-lasting relationships with our
-                clients. Our customer service team is always available to help
-                you with any questions or needs...
+                {t("home.service.cards.customer.description")}
               </p>
               <button
                 className="text-gray-900 dark:text-white text-sm hover:text-[#429de6] transition-colors"
                 type="button"
               >
-                Read more →
+                {t("home.service.readMore")}
               </button>
             </div>
 
@@ -192,17 +196,15 @@ export const HomePage = () => {
               <div className="w-16 h-16 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6 mx-auto border border-gray-200 dark:border-white/10">
                 <Package className="w-8 h-8 text-gray-900 dark:text-white" />
               </div>
-              <h3 className="mb-3">Quality Parts and Top Products</h3>
+              <h3 className="mb-3">{t("home.service.cards.parts.title")}</h3>
               <p className="mb-6 text-sm">
-                We use only high-quality, genuine parts and products to
-                guarantee the best performance and longevity for your vehicle.
-                Whether you need replacement parts...
+                {t("home.service.cards.parts.description")}
               </p>
               <button
                 className="text-gray-900 dark:text-white text-sm hover:text-[#429de6] transition-colors"
                 type="button"
               >
-                Read more →
+                {t("home.service.readMore")}
               </button>
             </div>
           </div>
@@ -212,11 +214,9 @@ export const HomePage = () => {
       <section className="py-20 lg:py-28 bg-white dark:bg-black border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="text-center mb-12">
-            <h2 className="mb-4">Calculate Your Import Costs</h2>
+            <h2 className="mb-4">{t("home.importCosts.title")}</h2>
             <p className="max-w-3xl mx-auto">
-              Get an instant estimate of all costs involved in importing your
-              dream vehicle. Our comprehensive calculator includes shipping,
-              customs, duties, and all associated fees.
+              {t("home.importCosts.description")}
             </p>
           </div>
 

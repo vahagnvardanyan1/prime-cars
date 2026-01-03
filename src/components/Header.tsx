@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 import { Menu, Moon, Sun, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTheme } from "@/components/ThemeContext";
@@ -20,6 +21,7 @@ type HeaderProps = {
 };
 
 export const Header = ({ onLoginClick }: HeaderProps) => {
+  const t = useTranslations();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -71,7 +73,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
             <Link href="/" className="flex items-center gap-3 group">
               <Image
                 src={LOGO_LIGHT}
-                alt="Prime Cars Logo"
+                alt={t("header.logoAlt")}
                 className="h-20 w-auto block dark:hidden"
                 width={240}
                 height={80}
@@ -79,7 +81,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
               />
               <Image
                 src={LOGO_DARK}
-                alt="Prime Cars Logo"
+                alt={t("header.logoAlt")}
                 className="h-20 w-auto hidden dark:block"
                 width={240}
                 height={80}
@@ -98,7 +100,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
                       : "text-gray-400 hover:text-black dark:hover:text-white"
                   }`}
                 >
-                  {item.label}
+                  {t(`nav.${item.key}`)}
                   {isActiveHref(item.href) && (
                     <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#429de6] rounded-full" />
                   )}
@@ -111,7 +113,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
               <button
                 onClick={toggleTheme}
                 className="w-10 h-10 flex items-center justify-center text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-all"
-                aria-label="Toggle theme"
+                aria-label={t("header.toggleThemeAria")}
                 type="button"
               >
                 {theme === "dark" ? (
@@ -126,7 +128,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
                 className="px-6 py-2.5 bg-transparent border border-black/20 dark:border-white/20 text-black dark:text-white rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition-all"
                 type="button"
               >
-                Sign Up Now
+                {t("header.signUpNow")}
               </button>
             </div>
 
@@ -135,7 +137,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
               <button
                 onClick={toggleTheme}
                 className="w-10 h-10 flex items-center justify-center text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-all"
-                aria-label="Toggle theme"
+                aria-label={t("header.toggleThemeAria")}
                 type="button"
               >
                 {theme === "dark" ? (
@@ -148,7 +150,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
               <button
                 onClick={() => setIsMobileMenuOpen((prev) => !prev)}
                 className="w-10 h-10 flex items-center justify-center text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-all"
-                aria-label="Toggle menu"
+                aria-label={t("header.toggleMenuAria")}
                 type="button"
               >
                 {isMobileMenuOpen ? (
@@ -167,7 +169,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
           className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
           type="button"
-          aria-label="Close menu"
+          aria-label={t("header.closeMenuAria")}
         />
       )}
 
@@ -180,14 +182,14 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
           <Link href="/" className="block">
             <Image
               src={LOGO_LIGHT}
-              alt="Prime Cars Logo"
+              alt={t("header.logoAlt")}
               className="h-8 w-auto block dark:hidden"
               width={120}
               height={32}
             />
             <Image
               src={LOGO_DARK}
-              alt="Prime Cars Logo"
+              alt={t("header.logoAlt")}
               className="h-8 w-auto hidden dark:block"
               width={120}
               height={32}
@@ -196,7 +198,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
           <button
             onClick={() => setIsMobileMenuOpen(false)}
             className="w-10 h-10 flex items-center justify-center text-white hover:bg-white/10 rounded-lg transition-all"
-            aria-label="Close menu"
+            aria-label={t("header.closeMenuAria")}
             type="button"
           >
             <X className="w-6 h-6" />
@@ -214,7 +216,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
                   : "text-gray-400 hover:text-white hover:bg-white/5"
               }`}
             >
-              {item.label}
+              {t(`nav.${item.key}`)}
             </Link>
           ))}
 
@@ -226,7 +228,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
             className="mt-4 px-4 py-3 bg-transparent border border-white/20 text-white rounded-lg hover:bg-white/10 transition-all text-left"
             type="button"
           >
-            Sign Up Now
+            {t("header.signUpNow")}
           </button>
         </nav>
       </div>

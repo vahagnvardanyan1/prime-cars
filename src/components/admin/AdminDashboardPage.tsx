@@ -17,36 +17,29 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAdminDashboardState } from "@/hooks/admin/useAdminDashboardState";
 
 import { Menu } from "lucide-react";
+import { useTranslations } from "next-intl";
 
-const getHeaderCopy = ({ activeNav }: { activeNav: "cars" | "users" | "settings" }) => {
-  switch (activeNav) {
-    case "cars":
-      return {
-        title: "Cars",
-        subtitle: "Manage inventory listings with calm, table-first clarity.",
-      };
-    case "users":
-      return {
-        title: "Users",
-        subtitle: "Internal access control and role visibility (frontend-only).",
-      };
-    case "settings":
-      return {
-        title: "Settings",
-        subtitle: "Shipping price management with safe, powerful controls.",
-      };
-    default:
-      return { title: "Admin", subtitle: "" };
-  }
+const getHeaderKey = ({
+  activeNav,
+  field,
+}: {
+  activeNav: "cars" | "users" | "settings";
+  field: "Title" | "Subtitle";
+}) => {
+  return `admin.headers.${activeNav}${field}` as const;
 };
 
 export const AdminDashboardPage = () => {
+  const t = useTranslations();
   const state = useAdminDashboardState();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   const header = useMemo(() => {
-    return getHeaderCopy({ activeNav: state.activeNav });
-  }, [state.activeNav]);
+    return {
+      title: t(getHeaderKey({ activeNav: state.activeNav, field: "Title" })),
+      subtitle: t(getHeaderKey({ activeNav: state.activeNav, field: "Subtitle" })),
+    };
+  }, [state.activeNav, t]);
 
   return (
     <div className="min-h-screen bg-[#f7f9fc] dark:bg-[#070a0f]">
@@ -67,7 +60,7 @@ export const AdminDashboardPage = () => {
                     type="button"
                     variant="outline"
                     className="h-10 rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5 md:hidden"
-                    aria-label="Open navigation"
+                    aria-label={t("admin.topbar.openNavAria")}
                   >
                     <Menu className="h-4 w-4" />
                   </Button>
@@ -89,7 +82,7 @@ export const AdminDashboardPage = () => {
               </Sheet>
 
               <div className="hidden sm:block text-[11px] font-medium uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
-                Prime Cars / Admin
+                {t("admin.breadcrumb")}
               </div>
             </div>
           }
@@ -115,7 +108,7 @@ export const AdminDashboardPage = () => {
                 className="h-10 rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5"
                 onClick={() => state.setActiveNav("settings")}
               >
-                Quick Settings
+                {t("admin.topbar.quickSettings")}
               </Button>
             </div>
           }

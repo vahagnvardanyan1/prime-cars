@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import { useTranslations } from "next-intl";
+
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +17,7 @@ type CreateUserModalProps = {
 };
 
 export const CreateUserModal = ({ open, onOpenChange }: CreateUserModalProps) => {
+  const t = useTranslations();
   const { previews, setFileAt, clearAll } = usePhotoUploads({ maxFiles: 3 });
 
   const [login, setLogin] = useState("");
@@ -42,16 +45,16 @@ export const CreateUserModal = ({ open, onOpenChange }: CreateUserModalProps) =>
         <div className="px-7 py-6">
           <DialogHeader className="space-y-2">
             <DialogTitle className="text-gray-900 dark:text-white">
-              Create User
+              {t("admin.modals.createUser.title")}
             </DialogTitle>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Minimal, high-clarity form layout with a strict input hierarchy.
+              {t("admin.modals.createUser.subtitle")}
             </p>
           </DialogHeader>
 
           <div className="mt-6 space-y-6">
             <PhotoUploadGrid
-              label="User Photos"
+              label={t("admin.modals.createUser.photosLabel")}
               maxFiles={3}
               previews={previews}
               onPickFile={setFileAt}
@@ -59,16 +62,16 @@ export const CreateUserModal = ({ open, onOpenChange }: CreateUserModalProps) =>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label className="text-gray-900 dark:text-white">Login</Label>
+                <Label className="text-gray-900 dark:text-white">{t("admin.modals.createUser.login")}</Label>
                 <Input
                   value={login}
                   onChange={(e) => setLogin(e.target.value)}
-                  placeholder="e.g. ava.johnson"
+                  placeholder={t("admin.modals.createUser.loginPlaceholder")}
                   className="h-11 rounded-xl border-gray-200 bg-white text-gray-900 focus-visible:ring-[#429de6]/30 dark:border-white/10 dark:bg-[#0a0a0a] dark:text-white"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-gray-900 dark:text-white">Password</Label>
+                <Label className="text-gray-900 dark:text-white">{t("admin.modals.createUser.password")}</Label>
                 <Input
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -89,7 +92,7 @@ export const CreateUserModal = ({ open, onOpenChange }: CreateUserModalProps) =>
               className="h-10 rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0a0a0a] dark:text-white dark:hover:bg-white/5"
               onClick={close}
             >
-              Cancel
+              {t("admin.modals.createUser.cancel")}
             </Button>
             <Button
               type="button"
@@ -97,7 +100,7 @@ export const CreateUserModal = ({ open, onOpenChange }: CreateUserModalProps) =>
               disabled={!isSubmitEnabled}
               onClick={onSubmit}
             >
-              Submit
+              {t("admin.modals.createUser.submit")}
             </Button>
           </DialogFooter>
         </div>
@@ -105,5 +108,6 @@ export const CreateUserModal = ({ open, onOpenChange }: CreateUserModalProps) =>
     </Dialog>
   );
 };
+
 
 

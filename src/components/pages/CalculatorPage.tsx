@@ -1,7 +1,11 @@
-import { Calculator } from 'lucide-react';
-import { ImportCalculator } from '../ImportCalculator';
+import { Calculator } from "lucide-react";
+import { useTranslations } from "next-intl";
 
-export function CalculatorPage() {
+import { ImportCalculator } from "@/components/ImportCalculator";
+
+export const CalculatorPage = () => {
+  const t = useTranslations();
+
   return (
     <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
       {/* Header */}
@@ -11,10 +15,12 @@ export function CalculatorPage() {
             <div className="w-12 h-12 bg-[#429de6] rounded-xl flex items-center justify-center">
               <Calculator className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-gray-900 dark:text-white">Import Cost Calculator</h1>
+            <h1 className="text-gray-900 dark:text-white">
+              {t("calculator.page.title")}
+            </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-400 max-w-3xl">
-            Get an accurate estimate of all costs involved in importing your vehicle. Our calculator includes shipping, customs duties, inspection fees, and more.
+            {t("calculator.page.description")}
           </p>
         </div>
       </div>
@@ -24,4 +30,4 @@ export function CalculatorPage() {
       </div>
     </div>
   );
-}
+};

@@ -5,6 +5,7 @@ import type { ChangeEvent } from "react";
 import Image from "next/image";
 
 import { ImagePlus } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/components/ui/utils";
 
@@ -21,6 +22,8 @@ export const PhotoUploadGrid = ({
   previews,
   onPickFile,
 }: PhotoUploadGridProps) => {
+  const t = useTranslations();
+
   const onChangeAt =
     ({ index }: { index: number }) =>
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -60,14 +63,14 @@ export const PhotoUploadGrid = ({
                 <>
                   <Image
                     src={preview}
-                    alt="Uploaded preview"
+                    alt={t("admin.modals.photoUpload.previewAlt")}
                     fill
                     className="object-cover"
                     sizes="(max-width: 640px) 50vw, 240px"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/0 to-black/0 opacity-0 transition-opacity group-hover:opacity-100" />
                   <div className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2 py-1 text-[11px] font-medium text-gray-900 opacity-0 transition-opacity group-hover:opacity-100">
-                    Replace
+                    {t("admin.modals.photoUpload.replace")}
                   </div>
                 </>
               ) : (
@@ -75,9 +78,9 @@ export const PhotoUploadGrid = ({
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-50 ring-1 ring-gray-200 dark:bg-white/5 dark:ring-white/10">
                     <ImagePlus className="h-4 w-4 text-[#429de6]" />
                   </div>
-                  <div className="text-sm font-medium">Upload photo</div>
+                  <div className="text-sm font-medium">{t("admin.modals.photoUpload.uploadPhoto")}</div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    Click to select
+                    {t("admin.modals.photoUpload.clickToSelect")}
                   </div>
                 </div>
               )}
@@ -88,5 +91,6 @@ export const PhotoUploadGrid = ({
     </div>
   );
 };
+
 
 

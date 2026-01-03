@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 
 import { Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Input } from "@/components/ui/input";
 
@@ -12,6 +13,8 @@ type AdminTopbarProps = {
 };
 
 export const AdminTopbar = ({ left, right }: AdminTopbarProps) => {
+  const t = useTranslations();
+
   return (
     <div className="sticky top-0 z-30 border-b border-gray-200 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-[#0a0a0a]/70">
       <div className="mx-auto max-w-[1240px] px-4 py-4 sm:px-6 lg:px-8">
@@ -23,7 +26,7 @@ export const AdminTopbar = ({ left, right }: AdminTopbarProps) => {
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <Input
-                  placeholder="Search (visual only)"
+                  placeholder={t("admin.topbar.searchPlaceholder")}
                   className="h-10 w-[320px] rounded-xl border-gray-200 bg-white pl-10 text-gray-900 shadow-none focus-visible:ring-[#429de6]/30 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white"
                 />
               </div>

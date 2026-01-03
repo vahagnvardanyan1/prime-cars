@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import {
   Facebook,
@@ -10,18 +10,21 @@ import {
   Twitter,
 } from "lucide-react";
 
+import { Link } from "@/i18n/routing";
+
 export const Footer = () => {
+  const t = useTranslations();
+
   return (
     <footer className="bg-gray-100 dark:bg-black border-t border-gray-300 dark:border-white/10 text-gray-900 dark:text-white pt-16 pb-8 transition-colors duration-300">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div>
             <div className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              Logo
+              {t("footer.brandLabel")}
             </div>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Your trusted partner in international car imports and auctions since
-              2013.
+              {t("footer.description")}
             </p>
             <div className="flex gap-3">
               <a
@@ -52,14 +55,16 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-gray-900 dark:text-white mb-4">Quick Links</h3>
+            <h3 className="text-gray-900 dark:text-white mb-4">
+              {t("footer.quickLinks")}
+            </h3>
             <ul className="space-y-3">
               <li>
                 <Link
                   href="/"
                   className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
-                  Home
+                  {t("footer.links.home")}
                 </Link>
               </li>
               <li>
@@ -67,7 +72,7 @@ export const Footer = () => {
                   href="/cars"
                   className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
-                  Browse Cars
+                  {t("footer.links.browseCars")}
                 </Link>
               </li>
               <li>
@@ -75,7 +80,7 @@ export const Footer = () => {
                   href="/calculator"
                   className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
-                  Cost Calculator
+                  {t("footer.links.costCalculator")}
                 </Link>
               </li>
               <li>
@@ -83,7 +88,7 @@ export const Footer = () => {
                   href="/partners"
                   className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
-                  For Partners
+                  {t("footer.links.partners")}
                 </Link>
               </li>
               <li>
@@ -91,34 +96,42 @@ export const Footer = () => {
                   href="/about"
                   className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
-                  About Us
+                  {t("footer.links.about")}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-gray-900 dark:text-white mb-4">Services</h3>
+            <h3 className="text-gray-900 dark:text-white mb-4">
+              {t("footer.services")}
+            </h3>
             <ul className="space-y-3">
               <li className="text-gray-600 dark:text-gray-400">
-                Vehicle Sourcing
-              </li>
-              <li className="text-gray-600 dark:text-gray-400">Auction Bidding</li>
-              <li className="text-gray-600 dark:text-gray-400">
-                Import Management
-              </li>
-              <li className="text-gray-600 dark:text-gray-400">Customs Clearance</li>
-              <li className="text-gray-600 dark:text-gray-400">
-                Shipping & Logistics
+                {t("footer.serviceItems.vehicleSourcing")}
               </li>
               <li className="text-gray-600 dark:text-gray-400">
-                Inspection Services
+                {t("footer.serviceItems.auctionBidding")}
+              </li>
+              <li className="text-gray-600 dark:text-gray-400">
+                {t("footer.serviceItems.importManagement")}
+              </li>
+              <li className="text-gray-600 dark:text-gray-400">
+                {t("footer.serviceItems.customsClearance")}
+              </li>
+              <li className="text-gray-600 dark:text-gray-400">
+                {t("footer.serviceItems.shippingLogistics")}
+              </li>
+              <li className="text-gray-600 dark:text-gray-400">
+                {t("footer.serviceItems.inspectionServices")}
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="text-gray-900 dark:text-white mb-4">Contact Us</h3>
+            <h3 className="text-gray-900 dark:text-white mb-4">
+              {t("footer.contact")}
+            </h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
@@ -153,26 +166,26 @@ export const Footer = () => {
         <div className="pt-8 border-t border-gray-300 dark:border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-600 dark:text-gray-400 text-center md:text-left">
-              © 2024 Prime Cars. All rights reserved.
+              {t("footer.copyright")}
             </p>
             <div className="flex gap-6">
               <a
                 href="#"
                 className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
-                Privacy Policy
+                {t("footer.legal.privacy")}
               </a>
               <a
                 href="#"
                 className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
-                Terms of Service
+                {t("footer.legal.terms")}
               </a>
               <a
                 href="#"
                 className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
-                Cookie Policy
+                {t("footer.legal.cookie")}
               </a>
             </div>
           </div>

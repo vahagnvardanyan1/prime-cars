@@ -8,8 +8,11 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export const AboutPage = () => {
+  const t = useTranslations();
+
   return (
     <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
       {/* Hero */}
@@ -18,16 +21,13 @@ export const AboutPage = () => {
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-full text-[#429de6] mb-6 transition-colors duration-300">
               <Award className="w-4 h-4" />
-              <span>Since 2013</span>
+              <span>{t("about.badge")}</span>
             </div>
             <h1 className="text-gray-900 dark:text-white mb-6">
-              Transforming Global Automotive Trade
+              {t("about.heroTitle")}
             </h1>
             <p className="text-gray-600 dark:text-gray-400 text-lg">
-              Prime Cars was founded on a simple belief: importing a car
-              shouldn&apos;t be complicated. We&apos;ve built a platform that
-              combines cutting-edge technology with deep industry expertise to
-              make international car trading accessible to everyone.
+              {t("about.heroBody")}
             </p>
           </div>
         </div>
@@ -39,27 +39,25 @@ export const AboutPage = () => {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-gradient-to-br from-[#429de6] to-[#3a8acc] rounded-2xl p-8 text-white">
               <Target className="w-12 h-12 mb-6 opacity-90" />
-              <h2 className="text-white mb-4">Our Mission</h2>
+              <h2 className="text-white mb-4">{t("about.missionTitle")}</h2>
               <p className="text-blue-50">
-                To democratize access to the global automotive market by providing transparent, efficient, and trustworthy import services that empower buyers worldwide.
+                {t("about.missionBody")}
               </p>
             </div>
 
             <div className="bg-white dark:bg-[#111111] rounded-2xl p-8 text-white border border-gray-300 dark:border-white/10 transition-colors duration-300">
               <Zap className="w-12 h-12 mb-6 text-[#da565b]" />
-              <h2 className="text-gray-900 dark:text-white mb-4">Our Vision</h2>
+              <h2 className="text-gray-900 dark:text-white mb-4">{t("about.visionTitle")}</h2>
               <p className="text-gray-600 dark:text-gray-400">
-                To become the world&apos;s most trusted platform for
-                international vehicle trading, setting new standards for
-                transparency and customer experience.
+                {t("about.visionBody")}
               </p>
             </div>
 
             <div className="bg-white dark:bg-[#111111] rounded-2xl p-8 border border-gray-300 dark:border-white/10 transition-colors duration-300">
               <Users className="w-12 h-12 mb-6 text-[#429de6]" />
-              <h2 className="text-gray-900 dark:text-white mb-4">Our Values</h2>
+              <h2 className="text-gray-900 dark:text-white mb-4">{t("about.valuesTitle")}</h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Integrity, transparency, and customer-first thinking guide every decision we make and every service we provide.
+                {t("about.valuesBody")}
               </p>
             </div>
           </div>
@@ -70,51 +68,21 @@ export const AboutPage = () => {
       <section className="py-20 bg-gray-100 dark:bg-[#111111] border-y border-gray-300 dark:border-white/10 transition-colors duration-300">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-gray-900 dark:text-white mb-4">Our Journey</h2>
+            <h2 className="text-gray-900 dark:text-white mb-4">{t("about.journeyTitle")}</h2>
             <p className="text-gray-600 dark:text-gray-400">
-              From a small team with a big vision to a global leader in automotive imports
+              {t("about.journeyBody")}
             </p>
           </div>
 
           <div className="max-w-4xl mx-auto">
             <div className="space-y-12">
               {[
-                {
-                  year: '2013',
-                  title: 'Company Founded',
-                  description:
-                    'Started operations with a focus on Japanese car imports. Processed our first 50 vehicles.',
-                },
-                {
-                  year: '2015',
-                  title: 'European Expansion',
-                  description:
-                    'Expanded operations to include premium European vehicles. Established partnerships with German and UK auction houses.',
-                },
-                {
-                  year: '2018',
-                  title: 'Platform Launch',
-                  description:
-                    'Launched our digital platform, introducing the first online cost calculator and real-time tracking for customers.',
-                },
-                {
-                  year: '2020',
-                  title: 'Global Network',
-                  description:
-                    'Reached 15 countries in our network. Surpassed 10,000 vehicles imported with a 98% satisfaction rate.',
-                },
-                {
-                  year: '2023',
-                  title: 'Industry Leader',
-                  description:
-                    'Recognized as one of the top import services globally. Introduced AI-powered vehicle matching and expanded to electric vehicle imports.',
-                },
-                {
-                  year: '2024',
-                  title: 'Innovation & Growth',
-                  description:
-                    'Launched blockchain-based documentation system. Achieved carbon-neutral shipping on all routes.',
-                },
+                { year: "2013", key: "companyFounded" },
+                { year: "2015", key: "europeanExpansion" },
+                { year: "2018", key: "platformLaunch" },
+                { year: "2020", key: "globalNetwork" },
+                { year: "2023", key: "industryLeader" },
+                { year: "2024", key: "innovationGrowth" },
               ].map((milestone, index) => (
                 <div key={index} className="flex gap-8">
                   <div className="flex flex-col items-center">
@@ -126,8 +94,12 @@ export const AboutPage = () => {
                     )}
                   </div>
                   <div className="flex-1 pb-8">
-                    <h3 className="text-gray-900 dark:text-white mb-2">{milestone.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-400">{milestone.description}</p>
+                    <h3 className="text-gray-900 dark:text-white mb-2">
+                      {t(`about.timeline.${milestone.key}.title`)}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      {t(`about.timeline.${milestone.key}.description`)}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -140,28 +112,28 @@ export const AboutPage = () => {
       <section className="py-20 bg-white dark:bg-black transition-colors duration-300">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-gray-900 dark:text-white mb-4">By The Numbers</h2>
+            <h2 className="text-gray-900 dark:text-white mb-4">{t("about.statsTitle")}</h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Our track record speaks to our commitment to excellence
+              {t("about.statsBody")}
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 p-8 text-center transition-colors duration-300">
               <div className="text-[#429de6] mb-2">15,000+</div>
-              <div className="text-gray-600 dark:text-gray-400">Happy Customers</div>
+              <div className="text-gray-600 dark:text-gray-400">{t("about.stats.happyCustomers")}</div>
             </div>
             <div className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 p-8 text-center transition-colors duration-300">
               <div className="text-[#429de6] mb-2">$450M+</div>
-              <div className="text-gray-600 dark:text-gray-400">Transaction Value</div>
+              <div className="text-gray-600 dark:text-gray-400">{t("about.stats.transactionValue")}</div>
             </div>
             <div className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 p-8 text-center transition-colors duration-300">
               <div className="text-[#429de6] mb-2">98%</div>
-              <div className="text-gray-600 dark:text-gray-400">Satisfaction Rate</div>
+              <div className="text-gray-600 dark:text-gray-400">{t("about.stats.satisfactionRate")}</div>
             </div>
             <div className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 p-8 text-center transition-colors duration-300">
               <div className="text-[#429de6] mb-2">50+</div>
-              <div className="text-gray-600 dark:text-gray-400">Global Partners</div>
+              <div className="text-gray-600 dark:text-gray-400">{t("about.stats.globalPartners")}</div>
             </div>
           </div>
         </div>
@@ -171,50 +143,20 @@ export const AboutPage = () => {
       <section className="py-20 bg-gray-100 dark:bg-[#111111] border-y border-gray-300 dark:border-white/10 transition-colors duration-300">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-gray-900 dark:text-white mb-4">Why Prime Cars</h2>
+            <h2 className="text-gray-900 dark:text-white mb-4">{t("about.whyTitle")}</h2>
             <p className="text-gray-600 dark:text-gray-400">
-              What sets us apart in the global automotive import industry
+              {t("about.whyBody")}
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {[
-              {
-                icon: CheckCircle2,
-                title: 'End-to-End Service',
-                description:
-                  'From vehicle sourcing to delivery at your door, we manage every step of the import process with precision and care.',
-              },
-              {
-                icon: Shield,
-                title: 'Full Transparency',
-                description:
-                  'No hidden fees, no surprises. Our cost calculator and tracking system keep you informed at every stage.',
-              },
-              {
-                icon: TrendingUp,
-                title: 'Market Expertise',
-                description:
-                  'Over a decade of experience gives us unmatched insights into global automotive markets and import regulations.',
-              },
-              {
-                icon: Award,
-                title: 'Quality Assurance',
-                description:
-                  'Every vehicle undergoes rigorous inspection and comes with comprehensive documentation and history reports.',
-              },
-              {
-                icon: Users,
-                title: 'Dedicated Support',
-                description:
-                  '24/7 customer support from import specialists who understand your needs and guide you through the process.',
-              },
-              {
-                icon: Globe,
-                title: 'Global Network',
-                description:
-                  'Strategic partnerships with leading auction houses, logistics providers, and inspection agencies worldwide.',
-              },
+              { icon: CheckCircle2, key: "endToEnd" },
+              { icon: Shield, key: "transparency" },
+              { icon: TrendingUp, key: "expertise" },
+              { icon: Award, key: "quality" },
+              { icon: Users, key: "support" },
+              { icon: Globe, key: "network" },
             ].map((item, index) => (
               <div
                 key={index}
@@ -223,8 +165,12 @@ export const AboutPage = () => {
                 <div className="w-14 h-14 bg-gray-100 dark:bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-gray-300 dark:border-white/10">
                   <item.icon className="w-7 h-7 text-[#429de6]" />
                 </div>
-                <h3 className="text-gray-900 dark:text-white mb-3">{item.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400">{item.description}</p>
+                <h3 className="text-gray-900 dark:text-white mb-3">
+                  {t(`about.whyCards.${item.key}.title`)}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {t(`about.whyCards.${item.key}.description`)}
+                </p>
               </div>
             ))}
           </div>
@@ -234,16 +180,16 @@ export const AboutPage = () => {
       {/* CTA */}
       <section className="py-20 bg-gradient-to-br from-[#429de6] to-[#3a8acc]">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12 text-center">
-          <h2 className="text-white mb-4">Ready to Start Your Import Journey?</h2>
+          <h2 className="text-white mb-4">{t("about.cta.title")}</h2>
           <p className="text-blue-50 max-w-2xl mx-auto mb-8 text-lg">
-            Join thousands of satisfied customers who trust Prime Cars for their international automotive needs.
+            {t("about.cta.description")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="px-8 py-4 bg-white text-[#429de6] rounded-lg hover:shadow-xl transition-all">
-              Browse Inventory
+              {t("about.cta.browse")}
             </button>
             <button className="px-8 py-4 border-2 border-white text-white rounded-lg hover:bg-white/10 transition-all">
-              Contact Us
+              {t("about.cta.contact")}
             </button>
           </div>
         </div>

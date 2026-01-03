@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 
+import { useTranslations } from "next-intl";
+
 import type { AdminCar } from "@/lib/admin/types";
 import { formatUsd, getCarStatusTone } from "@/lib/admin/format";
 import { Surface } from "@/components/admin/primitives/Surface";
@@ -20,24 +22,41 @@ type CarsViewProps = {
 };
 
 export const CarsView = ({ cars }: CarsViewProps) => {
+  const t = useTranslations();
+
+  const getStatusLabel = ({ status }: { status: AdminCar["status"] }) => {
+    switch (status) {
+      case "Active":
+        return t("admin.modals.addCar.statusActive");
+      case "Draft":
+        return t("admin.modals.addCar.statusDraft");
+      case "Pending Review":
+        return t("admin.modals.addCar.statusPending");
+      default:
+        return status;
+    }
+  };
+
   return (
     <Surface className="overflow-hidden">
       <div className="px-6 py-5">
         <div className="text-sm font-medium text-gray-900 dark:text-white">
-          Inventory
+          {t("admin.carsView.title")}
         </div>
         <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-          Table-style rows with strong alignment and calm density.
+          {t("admin.carsView.subtitle")}
         </div>
       </div>
 
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-            <TableHead className="px-4 py-3 sm:px-6">Car</TableHead>
-            <TableHead className="py-3">Price</TableHead>
-            <TableHead className="py-3">Status</TableHead>
-            <TableHead className="py-3 text-right pr-4 sm:pr-6">Updated</TableHead>
+            <TableHead className="px-4 py-3 sm:px-6">{t("admin.carsView.columns.car")}</TableHead>
+            <TableHead className="py-3">{t("admin.carsView.columns.price")}</TableHead>
+            <TableHead className="py-3">{t("admin.carsView.columns.status")}</TableHead>
+            <TableHead className="py-3 text-right pr-4 sm:pr-6">
+              {t("admin.carsView.columns.updated")}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -71,12 +90,12 @@ export const CarsView = ({ cars }: CarsViewProps) => {
               </TableCell>
               <TableCell className="py-4">
                 <TonePill tone={getCarStatusTone({ status: car.status })}>
-                  {car.status}
+                  {getStatusLabel({ status: car.status })}
                 </TonePill>
               </TableCell>
               <TableCell className="py-4 text-right pr-4 sm:pr-6">
                 <div className="text-xs text-gray-600 dark:text-gray-400">
-                  Today
+                  {t("admin.carsView.updatedToday")}
                 </div>
               </TableCell>
             </TableRow>

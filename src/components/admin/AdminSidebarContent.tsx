@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import { CarFront, PlusCircle, Settings, Users, UserPlus } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import type { AdminNavKey } from "@/hooks/admin/useAdminDashboardState";
 import { Button } from "@/components/ui/button";
@@ -21,14 +22,13 @@ const LOGO_URL =
 
 type NavItem = {
   key: AdminNavKey;
-  label: string;
   icon: typeof CarFront;
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { key: "cars", label: "Cars", icon: CarFront },
-  { key: "users", label: "Users", icon: Users },
-  { key: "settings", label: "Settings", icon: Settings },
+  { key: "cars", icon: CarFront },
+  { key: "users", icon: Users },
+  { key: "settings", icon: Settings },
 ];
 
 export const AdminSidebarContent = ({
@@ -38,6 +38,8 @@ export const AdminSidebarContent = ({
   onCreateUser,
   onRequestClose,
 }: AdminSidebarContentProps) => {
+  const t = useTranslations();
+
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-3 px-6 py-5">
@@ -53,10 +55,10 @@ export const AdminSidebarContent = ({
         </div>
         <div className="min-w-0">
           <div className="text-sm font-semibold tracking-[-0.01em] text-gray-900 dark:text-white">
-            Prime Cars
+            {t("admin.sidebar.brandLabel")}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            Admin Console
+            {t("admin.sidebar.consoleLabel")}
           </div>
         </div>
       </div>
@@ -73,7 +75,7 @@ export const AdminSidebarContent = ({
               }}
             >
               <PlusCircle className="mr-2 h-4 w-4" />
-              Add Car
+              {t("admin.sidebar.addCar")}
             </Button>
             <Button
               type="button"
@@ -85,7 +87,7 @@ export const AdminSidebarContent = ({
               }}
             >
               <UserPlus className="mr-2 h-4 w-4" />
-              Create User
+              {t("admin.sidebar.createUser")}
             </Button>
           </div>
         </div>
@@ -93,7 +95,7 @@ export const AdminSidebarContent = ({
 
       <nav className="mt-6 px-3">
         <div className="px-3 text-[11px] font-medium uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
-          Navigation
+          {t("admin.sidebar.navigation")}
         </div>
         <div className="mt-2 grid gap-1">
           {NAV_ITEMS.map((item) => {
@@ -125,7 +127,7 @@ export const AdminSidebarContent = ({
                 >
                   <Icon className="h-4 w-4" />
                 </span>
-                <span className="min-w-0 truncate">{item.label}</span>
+                <span className="min-w-0 truncate">{t(`admin.sidebar.nav.${item.key}`)}</span>
 
                 <span
                   className={cn(
@@ -142,15 +144,16 @@ export const AdminSidebarContent = ({
       <div className="mt-auto px-6 py-5">
         <div className="rounded-2xl border border-gray-200 bg-white p-4 text-xs text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-300">
           <div className="font-medium text-gray-900 dark:text-white">
-            Internal Admin
+            {t("admin.sidebar.internalAdmin")}
           </div>
           <div className="mt-1 leading-relaxed">
-            Frontend-only prototype. All actions are local to the browser.
+            {t("admin.sidebar.internalNote")}
           </div>
         </div>
       </div>
     </div>
   );
 };
+
 
 

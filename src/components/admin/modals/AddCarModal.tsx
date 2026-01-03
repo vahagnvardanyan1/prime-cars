@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import { useTranslations } from "next-intl";
+
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +17,7 @@ type AddCarModalProps = {
 };
 
 export const AddCarModal = ({ open, onOpenChange }: AddCarModalProps) => {
+  const t = useTranslations();
   const { previews, setFileAt, clearAll } = usePhotoUploads({ maxFiles: 2 });
 
   const [model, setModel] = useState("");
@@ -48,16 +51,16 @@ export const AddCarModal = ({ open, onOpenChange }: AddCarModalProps) => {
         <div className="px-7 py-6">
           <DialogHeader className="space-y-2">
             <DialogTitle className="text-gray-900 dark:text-white">
-              Add Car
+              {t("admin.modals.addCar.title")}
             </DialogTitle>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Focused modal: upload two photos and enter the essentials.
+              {t("admin.modals.addCar.subtitle")}
             </p>
           </DialogHeader>
 
           <div className="mt-6 space-y-6">
             <PhotoUploadGrid
-              label="Car Photos"
+              label={t("admin.modals.addCar.photosLabel")}
               maxFiles={2}
               previews={previews}
               onPickFile={setFileAt}
@@ -65,36 +68,36 @@ export const AddCarModal = ({ open, onOpenChange }: AddCarModalProps) => {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label className="text-gray-900 dark:text-white">Model</Label>
+                <Label className="text-gray-900 dark:text-white">{t("admin.modals.addCar.model")}</Label>
                 <Input
                   value={model}
                   onChange={(e) => setModel(e.target.value)}
-                  placeholder="e.g. Mercedes-Benz S-Class"
+                  placeholder={t("admin.modals.addCar.modelPlaceholder")}
                   className="h-11 rounded-xl border-gray-200 bg-white text-gray-900 focus-visible:ring-[#429de6]/30 dark:border-white/10 dark:bg-[#0a0a0a] dark:text-white"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-gray-900 dark:text-white">Year</Label>
+                <Label className="text-gray-900 dark:text-white">{t("admin.modals.addCar.year")}</Label>
                 <Input
                   value={year}
                   onChange={(e) => setYear(e.target.value)}
                   inputMode="numeric"
-                  placeholder="2024"
+                  placeholder={t("admin.modals.addCar.yearPlaceholder")}
                   className="h-11 rounded-xl border-gray-200 bg-white text-gray-900 focus-visible:ring-[#429de6]/30 dark:border-white/10 dark:bg-[#0a0a0a] dark:text-white"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-gray-900 dark:text-white">Price (USD)</Label>
+                <Label className="text-gray-900 dark:text-white">{t("admin.modals.addCar.price")}</Label>
                 <Input
                   value={priceUsd}
                   onChange={(e) => setPriceUsd(e.target.value)}
                   inputMode="numeric"
-                  placeholder="189500"
+                  placeholder={t("admin.modals.addCar.pricePlaceholder")}
                   className="h-11 rounded-xl border-gray-200 bg-white text-gray-900 focus-visible:ring-[#429de6]/30 dark:border-white/10 dark:bg-[#0a0a0a] dark:text-white"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-gray-900 dark:text-white">Status</Label>
+                <Label className="text-gray-900 dark:text-white">{t("admin.modals.addCar.status")}</Label>
                 <select
                   value={status}
                   onChange={(e) =>
@@ -102,9 +105,9 @@ export const AddCarModal = ({ open, onOpenChange }: AddCarModalProps) => {
                   }
                   className="h-11 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6]/30 dark:border-white/10 dark:bg-[#0a0a0a] dark:text-white"
                 >
-                  <option value="Pending Review">Pending Review</option>
-                  <option value="Active">Active</option>
-                  <option value="Draft">Draft</option>
+                  <option value="Pending Review">{t("admin.modals.addCar.statusPending")}</option>
+                  <option value="Active">{t("admin.modals.addCar.statusActive")}</option>
+                  <option value="Draft">{t("admin.modals.addCar.statusDraft")}</option>
                 </select>
               </div>
             </div>
@@ -119,7 +122,7 @@ export const AddCarModal = ({ open, onOpenChange }: AddCarModalProps) => {
               className="h-10 rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0a0a0a] dark:text-white dark:hover:bg-white/5"
               onClick={close}
             >
-              Cancel
+              {t("admin.modals.addCar.cancel")}
             </Button>
             <Button
               type="button"
@@ -127,7 +130,7 @@ export const AddCarModal = ({ open, onOpenChange }: AddCarModalProps) => {
               disabled={!isSubmitEnabled}
               onClick={onSubmit}
             >
-              Submit
+              {t("admin.modals.addCar.submit")}
             </Button>
           </DialogFooter>
         </div>
@@ -135,5 +138,6 @@ export const AddCarModal = ({ open, onOpenChange }: AddCarModalProps) => {
     </Dialog>
   );
 };
+
 
 

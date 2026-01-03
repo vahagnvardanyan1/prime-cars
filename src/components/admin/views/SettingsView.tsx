@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import { useTranslations } from "next-intl";
+
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +32,7 @@ export const SettingsView = ({
   onUpdateCityClick,
   onDeleteCity,
 }: SettingsViewProps) => {
+  const t = useTranslations();
   const [delta, setDelta] = useState("");
 
   const canApply = useMemo(() => {
@@ -47,10 +50,10 @@ export const SettingsView = ({
       <Surface>
         <div className="px-6 py-5">
           <div className="text-sm font-medium text-gray-900 dark:text-white">
-            Shipping Prices
+            {t("admin.settingsView.shippingPricesTitle")}
           </div>
           <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-            Manage city-specific shipping, with a safe global adjustment control.
+            {t("admin.settingsView.shippingPricesSubtitle")}
           </div>
         </div>
 
@@ -59,11 +62,14 @@ export const SettingsView = ({
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="min-w-0">
                 <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                  Global Price Adjustment
+                  {t("admin.settingsView.globalAdjustmentTitle")}
                 </div>
                 <div className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                  Enter a value to <span className="font-medium">add to all city shipping prices</span>.
-                  Example: if all are 100 and you enter 100 → all become 200.
+                  {t("admin.settingsView.globalAdjustmentBodyPrefix")}{" "}
+                  <span className="font-medium">
+                    {t("admin.settingsView.globalAdjustmentBodyEmphasis")}
+                  </span>
+                  . {t("admin.settingsView.globalAdjustmentExample")}
                 </div>
               </div>
 
@@ -81,7 +87,7 @@ export const SettingsView = ({
                   disabled={!canApply}
                   onClick={apply}
                 >
-                  Apply to All Cities
+                  {t("admin.settingsView.applyToAll")}
                 </Button>
               </div>
             </div>
@@ -92,19 +98,21 @@ export const SettingsView = ({
       <Surface className="overflow-hidden">
         <div className="px-6 py-5">
           <div className="text-sm font-medium text-gray-900 dark:text-white">
-            Cities
+            {t("admin.settingsView.citiesTitle")}
           </div>
           <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-            Update or delete shipping prices per city.
+            {t("admin.settingsView.citiesSubtitle")}
           </div>
         </div>
 
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-              <TableHead className="px-4 py-3 sm:px-6">City</TableHead>
-              <TableHead className="py-3">Shipping</TableHead>
-              <TableHead className="py-3 text-right pr-4 sm:pr-6">Actions</TableHead>
+              <TableHead className="px-4 py-3 sm:px-6">{t("admin.settingsView.columns.city")}</TableHead>
+              <TableHead className="py-3">{t("admin.settingsView.columns.shipping")}</TableHead>
+              <TableHead className="py-3 text-right pr-4 sm:pr-6">
+                {t("admin.settingsView.columns.actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -128,7 +136,7 @@ export const SettingsView = ({
                       className="h-9 rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5"
                       onClick={() => onUpdateCityClick({ cityId: c.id })}
                     >
-                      Update
+                      {t("admin.settingsView.update")}
                     </Button>
 
                     <AlertDialog>
@@ -138,27 +146,27 @@ export const SettingsView = ({
                           variant="outline"
                           className="h-9 rounded-xl border-gray-200 bg-white text-[#da565b] hover:bg-red-50 hover:text-[#da565b] dark:border-white/10 dark:bg-[#0b0f14] dark:hover:bg-white/5"
                         >
-                          Delete
+                          {t("admin.settingsView.delete")}
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent className="rounded-2xl border-gray-200 dark:border-white/10 dark:bg-[#0b0f14]">
                         <AlertDialogHeader>
                           <AlertDialogTitle className="text-gray-900 dark:text-white">
-                            Delete {c.city}?
+                            {t("admin.settingsView.deleteTitle", { city: c.city })}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            This will remove the city from shipping price management. This action can&apos;t be undone.
+                            {t("admin.settingsView.deleteBody")}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel className="rounded-xl">
-                            Cancel
+                            {t("admin.settingsView.cancel")}
                           </AlertDialogCancel>
                           <AlertDialogAction
                             className="rounded-xl bg-[#da565b] text-white hover:bg-[#c84b50]"
                             onClick={() => onDeleteCity({ cityId: c.id })}
                           >
-                            Confirm Delete
+                            {t("admin.settingsView.confirmDelete")}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

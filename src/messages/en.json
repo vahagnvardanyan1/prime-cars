@@ -1,7 +1,443 @@
 {
   "meta": {
     "localeName": "English"
+  },
+  "nav": {
+    "home": "Home",
+    "cars": "Cars",
+    "calculator": "Calculator",
+    "partners": "For Partners",
+    "about": "About Us"
+  },
+  "header": {
+    "logoAlt": "Prime Cars Logo",
+    "signUpNow": "Sign Up Now",
+    "toggleThemeAria": "Toggle theme",
+    "toggleMenuAria": "Toggle menu",
+    "closeMenuAria": "Close menu",
+    "changeLanguageAria": "Change language"
+  },
+  "footer": {
+    "brandLabel": "Prime Cars",
+    "description": "Your trusted partner in international car imports and auctions since 2013.",
+    "quickLinks": "Quick Links",
+    "services": "Services",
+    "contact": "Contact Us",
+    "links": {
+      "home": "Home",
+      "browseCars": "Browse Cars",
+      "costCalculator": "Cost Calculator",
+      "partners": "For Partners",
+      "about": "About Us"
+    },
+    "serviceItems": {
+      "vehicleSourcing": "Vehicle Sourcing",
+      "auctionBidding": "Auction Bidding",
+      "importManagement": "Import Management",
+      "customsClearance": "Customs Clearance",
+      "shippingLogistics": "Shipping & Logistics",
+      "inspectionServices": "Inspection Services"
+    },
+    "copyright": "© 2024 Prime Cars. All rights reserved.",
+    "legal": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookie": "Cookie Policy"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Selling Cars, Building Trust",
+      "description": "At the heart of our business lies a commitment to more than just selling vehicles—we’re dedicated to building lasting relationships. We understand that buying a car is a significant decision, and our goal is to make…",
+      "primaryCta": "Calculate",
+      "heroImageAlt": "Luxury Car"
+    },
+    "popularDeals": {
+      "title": "Most Popular Car Rental Deals",
+      "description": "Discover unbeatable deals on the most sought-after rental cars. Whether you need a stylish ride for a special occasion or a reliable vehicle for everyday use…",
+      "rentalPriceLabel": "Rental Price",
+      "seeTourDetails": "See Tour Details",
+      "periodPerDay": "/day",
+      "specs": {
+        "automatic": "Automatic",
+        "coupe": "Coupe",
+        "sedan": "Sedan",
+        "sports": "Sports",
+        "petrol": "Petrol",
+        "electric": "Electric"
+      }
+    },
+    "service": {
+      "title": "Our Service",
+      "description": "Our services are designed with your automotive needs in mind, offering a seamless blend of quality, reliability, and expertise. Whether you’re purchasing your dream car…",
+      "cards": {
+        "maintenance": {
+          "title": "Expert Maintenance and Repairs",
+          "description": "Our team of certified technicians provides top-tier maintenance and repair services to ensure your vehicle is running at its best. From routine oil changes…"
+        },
+        "customer": {
+          "title": "Customer-Centric Approach",
+          "description": "We prioritize building long-lasting relationships with our clients. Our customer service team is always available to help you with any questions or needs…"
+        },
+        "parts": {
+          "title": "Quality Parts and Top Products",
+          "description": "We use only high-quality, genuine parts and products to guarantee the best performance and longevity for your vehicle. Whether you need replacement parts…"
+        }
+      },
+      "readMore": "Read more →"
+    },
+    "importCosts": {
+      "title": "Calculate Your Import Costs",
+      "description": "Get an instant estimate of all costs involved in importing your dream vehicle. Our comprehensive calculator includes shipping, customs, duties, and all associated fees."
+    }
+  },
+  "cars": {
+    "title": "Premium Inventory",
+    "subtitle": "Browse our curated collection of luxury and performance vehicles from around the world",
+    "filters": {
+      "title": "Filters",
+      "searchLabel": "Search",
+      "searchPlaceholder": "Brand or model…",
+      "brandLabel": "Brand",
+      "allBrands": "All Brands",
+      "priceRangeLabel": "Price Range",
+      "allPrices": "All Prices",
+      "under100k": "Under $100k",
+      "between100And150": "$100k - $150k",
+      "over150k": "Over $150k",
+      "reset": "Reset Filters"
+    },
+    "results": {
+      "found": "{count, plural, one {# vehicle found} other {# vehicles found}}",
+      "noResults": "No vehicles match your filters. Try adjusting your search criteria.",
+      "viewDetails": "View Details",
+      "sort": {
+        "priceLowToHigh": "Price: Low to High",
+        "priceHighToLow": "Price: High to Low",
+        "yearNewest": "Year: Newest First",
+        "yearOldest": "Year: Oldest First"
+      }
+    }
+  },
+  "calculator": {
+    "page": {
+      "title": "Import Cost Calculator",
+      "description": "Get an accurate estimate of all costs involved in importing your vehicle. Our calculator includes shipping, customs duties, inspection fees, and more."
+    },
+    "form": {
+      "vehicleInfo": "Vehicle Information",
+      "purchasePriceLabel": "Vehicle Purchase Price (USD)",
+      "purchasePriceHint": "Enter the auction or purchase price of the vehicle",
+      "purchasePricePlaceholder": "50,000",
+      "originCountry": "Origin Country",
+      "vehicleType": "Vehicle Type",
+      "engineSize": "Engine Size (Liters)",
+      "vehicleYear": "Vehicle Year",
+      "calculate": "Calculate Total Cost",
+      "noticeTitle": "Estimation Notice",
+      "noticeBody": "This calculator provides an estimate based on typical import scenarios. Actual costs may vary depending on specific vehicle details, current exchange rates, and customs regulations. For a precise quote, please contact our team.",
+      "countries": {
+        "japan": "Japan",
+        "usa": "United States",
+        "germany": "Germany",
+        "uk": "United Kingdom",
+        "italy": "Italy"
+      },
+      "types": {
+        "sedan": "Sedan",
+        "suv": "SUV",
+        "sports": "Sports Car",
+        "luxury": "Luxury Car",
+        "electric": "Electric Vehicle"
+      }
+    },
+    "breakdown": {
+      "title": "Cost Breakdown",
+      "empty": "Enter vehicle details and calculate to see your cost breakdown",
+      "rows": {
+        "base": {
+          "title": "Vehicle Purchase Price",
+          "subtitle": "Auction or dealer price"
+        },
+        "shipping": {
+          "title": "International Shipping",
+          "subtitle": "Ocean freight & handling"
+        },
+        "customs": {
+          "title": "Customs & Duties",
+          "subtitle": "Import taxes & VAT"
+        },
+        "inspection": {
+          "title": "Inspection & Certification",
+          "subtitle": "Safety & emissions testing"
+        },
+        "docs": {
+          "title": "Documentation Fees",
+          "subtitle": "Title, registration & paperwork"
+        },
+        "serviceFee": {
+          "title": "Prime Cars Service Fee",
+          "subtitle": "Concierge & support"
+        },
+        "estimatedTotal": "Estimated Total Cost",
+        "requestQuote": "Request Detailed Quote",
+        "total": "Total"
+      }
+    }
+  },
+  "partners": {
+    "badge": "Partnership Opportunities",
+    "title": "Together we create success",
+    "description": "Join Prime Cars’ global network and unlock new opportunities in the automotive import industry. We’re looking for strategic partners who share our vision of excellence and innovation.",
+    "heroImageAlt": "Business Partnership",
+    "getInTouch": "Get in Touch",
+    "becomePartner": "Become a Partner",
+    "benefits": {
+      "title": "Why Partner With Prime Cars",
+      "description": "Join a network of successful partners and benefit from our expertise, resources, and global reach",
+      "growth": {
+        "title": "Growth Opportunities",
+        "description": "Access to expanding markets and continuous business growth through our established network and proven track record."
+      },
+      "trusted": {
+        "title": "Trusted Partnership",
+        "description": "Build a long-term relationship based on transparency, reliability, and mutual success in the automotive industry."
+      },
+      "global": {
+        "title": "Global Reach",
+        "description": "Leverage our international network spanning 15+ countries and connections with major auction houses worldwide."
+      }
+    },
+    "cta": {
+      "title": "Ready to Start a Partnership?",
+      "description": "Let’s discuss how we can work together to achieve success in the global automotive market.",
+      "call": "Call Us Now",
+      "email": "Send Email"
+    }
+  },
+  "about": {
+    "badge": "Since 2013",
+    "heroTitle": "Transforming Global Automotive Trade",
+    "heroBody": "Prime Cars was founded on a simple belief: importing a car shouldn’t be complicated. We’ve built a platform that combines cutting-edge technology with deep industry expertise to make international car trading accessible to everyone.",
+    "missionTitle": "Our Mission",
+    "missionBody": "To democratize access to the global automotive market by providing transparent, efficient, and trustworthy import services that empower buyers worldwide.",
+    "visionTitle": "Our Vision",
+    "visionBody": "To become the world’s most trusted platform for international vehicle trading, setting new standards for transparency and customer experience.",
+    "valuesTitle": "Our Values",
+    "valuesBody": "Integrity, transparency, and customer-first thinking guide every decision we make and every service we provide.",
+    "journeyTitle": "Our Journey",
+    "journeyBody": "From a small team with a big vision to a global leader in automotive imports",
+    "timeline": {
+      "companyFounded": {
+        "title": "Company Founded",
+        "description": "Started operations with a focus on Japanese car imports. Processed our first 50 vehicles."
+      },
+      "europeanExpansion": {
+        "title": "European Expansion",
+        "description": "Expanded operations to include premium European vehicles. Established partnerships with German and UK auction houses."
+      },
+      "platformLaunch": {
+        "title": "Platform Launch",
+        "description": "Launched our digital platform, introducing the first online cost calculator and real-time tracking for customers."
+      },
+      "globalNetwork": {
+        "title": "Global Network",
+        "description": "Reached 15 countries in our network. Surpassed 10,000 vehicles imported with a 98% satisfaction rate."
+      },
+      "industryLeader": {
+        "title": "Industry Leader",
+        "description": "Recognized as one of the top import services globally. Introduced AI-powered vehicle matching and expanded to electric vehicle imports."
+      },
+      "innovationGrowth": {
+        "title": "Innovation & Growth",
+        "description": "Launched blockchain-based documentation system. Achieved carbon-neutral shipping on all routes."
+      }
+    },
+    "statsTitle": "By The Numbers",
+    "statsBody": "Our track record speaks to our commitment to excellence",
+    "stats": {
+      "happyCustomers": "Happy Customers",
+      "transactionValue": "Transaction Value",
+      "satisfactionRate": "Satisfaction Rate",
+      "globalPartners": "Global Partners"
+    },
+    "whyTitle": "Why Prime Cars",
+    "whyBody": "What sets us apart in the global automotive import industry",
+    "whyCards": {
+      "endToEnd": {
+        "title": "End-to-End Service",
+        "description": "From vehicle sourcing to delivery at your door, we manage every step of the import process with precision and care."
+      },
+      "transparency": {
+        "title": "Full Transparency",
+        "description": "No hidden fees, no surprises. Our cost calculator and tracking system keep you informed at every stage."
+      },
+      "expertise": {
+        "title": "Market Expertise",
+        "description": "Over a decade of experience gives us unmatched insights into global automotive markets and import regulations."
+      },
+      "quality": {
+        "title": "Quality Assurance",
+        "description": "Every vehicle undergoes rigorous inspection and comes with comprehensive documentation and history reports."
+      },
+      "support": {
+        "title": "Dedicated Support",
+        "description": "24/7 customer support from import specialists who understand your needs and guide you through the process."
+      },
+      "network": {
+        "title": "Global Network",
+        "description": "Strategic partnerships with leading auction houses, logistics providers, and inspection agencies worldwide."
+      }
+    },
+    "cta": {
+      "title": "Ready to Start Your Import Journey?",
+      "description": "Join thousands of satisfied customers who trust Prime Cars for their international automotive needs.",
+      "browse": "Browse Inventory",
+      "contact": "Contact Us"
+    }
+  },
+  "auth": {
+    "closeAria": "Close",
+    "welcomeBack": "Welcome back",
+    "subtitle": "Sign in to access your account",
+    "email": "Email",
+    "phone": "Phone",
+    "emailAddress": "Email address",
+    "phoneNumber": "Phone number",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "signIn": "Sign in",
+    "orContinueWith": "or continue with",
+    "google": "Google",
+    "github": "GitHub",
+    "noAccount": "Don’t have an account?",
+    "signUp": "Sign up"
+  },
+  "admin": {
+    "roles": {
+      "admin": "Admin",
+      "manager": "Manager",
+      "support": "Support",
+      "viewer": "Viewer"
+    },
+    "breadcrumb": "Prime Cars / Admin",
+    "topbar": {
+      "searchPlaceholder": "Search (visual only)",
+      "quickSettings": "Quick Settings",
+      "openNavAria": "Open navigation"
+    },
+    "sidebar": {
+      "brandLabel": "Prime Cars",
+      "consoleLabel": "Admin Console",
+      "addCar": "Add Car",
+      "createUser": "Create User",
+      "navigation": "Navigation",
+      "internalAdmin": "Internal Admin",
+      "internalNote": "Frontend-only prototype. All actions are local to the browser.",
+      "nav": {
+        "cars": "Cars",
+        "users": "Users",
+        "settings": "Settings"
+      }
+    },
+    "headers": {
+      "carsTitle": "Cars",
+      "carsSubtitle": "Manage inventory listings with calm, table-first clarity.",
+      "usersTitle": "Users",
+      "usersSubtitle": "Internal access control and role visibility (frontend-only).",
+      "settingsTitle": "Settings",
+      "settingsSubtitle": "Shipping price management with safe, powerful controls."
+    },
+    "carsView": {
+      "title": "Inventory",
+      "subtitle": "Table-style rows with strong alignment and calm density.",
+      "columns": {
+        "car": "Car",
+        "price": "Price",
+        "status": "Status",
+        "updated": "Updated"
+      },
+      "updatedToday": "Today"
+    },
+    "usersView": {
+      "title": "Users",
+      "subtitle": "Clean table layout with avatar, email and role.",
+      "columns": {
+        "user": "User",
+        "email": "Email",
+        "role": "Role",
+        "status": "Status"
+      },
+      "statusActive": "Active"
+    },
+    "settingsView": {
+      "shippingPricesTitle": "Shipping Prices",
+      "shippingPricesSubtitle": "Manage city-specific shipping, with a safe global adjustment control.",
+      "globalAdjustmentTitle": "Global Price Adjustment",
+      "globalAdjustmentBodyPrefix": "Enter a value to",
+      "globalAdjustmentBodyEmphasis": "add to all city shipping prices",
+      "globalAdjustmentExample": "Example: if all are 100 and you enter 100 → all become 200.",
+      "applyToAll": "Apply to All Cities",
+      "citiesTitle": "Cities",
+      "citiesSubtitle": "Update or delete shipping prices per city.",
+      "columns": {
+        "city": "City",
+        "shipping": "Shipping",
+        "actions": "Actions"
+      },
+      "update": "Update",
+      "delete": "Delete",
+      "deleteTitle": "Delete {city}?",
+      "deleteBody": "This will remove the city from shipping price management. This action can’t be undone.",
+      "cancel": "Cancel",
+      "confirmDelete": "Confirm Delete"
+    },
+    "modals": {
+      "photoUpload": {
+        "previewAlt": "Uploaded preview",
+        "replace": "Replace",
+        "uploadPhoto": "Upload photo",
+        "clickToSelect": "Click to select"
+      },
+      "addCar": {
+        "title": "Add Car",
+        "subtitle": "Focused modal: upload two photos and enter the essentials.",
+        "photosLabel": "Car Photos",
+        "model": "Model",
+        "modelPlaceholder": "e.g. Mercedes-Benz S-Class",
+        "year": "Year",
+        "yearPlaceholder": "2024",
+        "price": "Price (USD)",
+        "pricePlaceholder": "189500",
+        "status": "Status",
+        "statusPending": "Pending Review",
+        "statusActive": "Active",
+        "statusDraft": "Draft",
+        "cancel": "Cancel",
+        "submit": "Submit"
+      },
+      "createUser": {
+        "title": "Create User",
+        "subtitle": "Minimal, high-clarity form layout with a strict input hierarchy.",
+        "photosLabel": "User Photos",
+        "login": "Login",
+        "loginPlaceholder": "e.g. ava.johnson",
+        "password": "Password",
+        "cancel": "Cancel",
+        "submit": "Submit"
+      },
+      "updateShipping": {
+        "title": "Update Shipping Price",
+        "setFor": "Set a new shipping price for {city}.",
+        "selectCity": "Select a city to update.",
+        "fieldLabel": "Shipping Price (USD)",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      }
+    }
   }
 }
+
 
 
