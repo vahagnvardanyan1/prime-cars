@@ -54,7 +54,7 @@ export const SettingsView = ({
           </div>
         </div>
 
-        <div className="px-6 pb-6">
+        <div className="px-4 pb-6 sm:px-6">
           <div className="rounded-2xl border border-[#429de6]/20 bg-[#429de6]/[0.05] p-5 dark:border-[#429de6]/25 dark:bg-[#429de6]/10">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="min-w-0">
@@ -102,15 +102,15 @@ export const SettingsView = ({
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-              <TableHead className="px-6 py-3">City</TableHead>
+              <TableHead className="px-4 py-3 sm:px-6">City</TableHead>
               <TableHead className="py-3">Shipping</TableHead>
-              <TableHead className="py-3 text-right pr-6">Actions</TableHead>
+              <TableHead className="py-3 text-right pr-4 sm:pr-6">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {cities.map((c) => (
               <TableRow key={c.id} className="hover:bg-gray-50/70 dark:hover:bg-white/5">
-                <TableCell className="px-6 py-4">
+                <TableCell className="px-4 py-4 sm:px-6">
                   <div className="text-sm font-semibold text-gray-900 dark:text-white">
                     {c.city}
                   </div>
@@ -120,7 +120,7 @@ export const SettingsView = ({
                     {formatUsd({ value: c.shippingUsd })}
                   </div>
                 </TableCell>
-                <TableCell className="py-4 text-right pr-6">
+                <TableCell className="py-4 text-right pr-4 sm:pr-6">
                   <div className="inline-flex items-center gap-2">
                     <Button
                       type="button"

@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminSidebarContent } from "@/components/admin/AdminSidebarContent";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { SectionHeader } from "@/components/admin/primitives/SectionHeader";
 import { CarsView } from "@/components/admin/views/CarsView";
@@ -12,7 +13,10 @@ import { AddCarModal } from "@/components/admin/modals/AddCarModal";
 import { CreateUserModal } from "@/components/admin/modals/CreateUserModal";
 import { UpdateShippingPriceModal } from "@/components/admin/modals/UpdateShippingPriceModal";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAdminDashboardState } from "@/hooks/admin/useAdminDashboardState";
+
+import { Menu } from "lucide-react";
 
 const getHeaderCopy = ({ activeNav }: { activeNav: "cars" | "users" | "settings" }) => {
   switch (activeNav) {
@@ -38,6 +42,7 @@ const getHeaderCopy = ({ activeNav }: { activeNav: "cars" | "users" | "settings"
 
 export const AdminDashboardPage = () => {
   const state = useAdminDashboardState();
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   const header = useMemo(() => {
     return getHeaderCopy({ activeNav: state.activeNav });
@@ -52,10 +57,37 @@ export const AdminDashboardPage = () => {
         onCreateUser={state.openCreateUser}
       />
 
-      <div className="pl-[280px]">
+      <div className="pl-0 md:pl-[280px]">
         <AdminTopbar
           left={
             <div className="flex items-center gap-3">
+              <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+                <SheetTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-10 rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5 md:hidden"
+                    aria-label="Open navigation"
+                  >
+                    <Menu className="h-4 w-4" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent
+                  side="left"
+                  className="w-[320px] border-gray-200 bg-white p-0 dark:border-white/10 dark:bg-[#0b0f14]"
+                >
+                  <div className="h-full">
+                    <AdminSidebarContent
+                      activeNav={state.activeNav}
+                      onNavChange={({ next }) => state.setActiveNav(next)}
+                      onAddCar={state.openAddCar}
+                      onCreateUser={state.openCreateUser}
+                      onRequestClose={() => setIsMobileNavOpen(false)}
+                    />
+                  </div>
+                </SheetContent>
+              </Sheet>
+
               <div className="hidden sm:block text-[11px] font-medium uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
                 Prime Cars / Admin
               </div>
@@ -89,7 +121,7 @@ export const AdminDashboardPage = () => {
           }
         />
 
-        <div className="mx-auto max-w-[1240px] px-8 py-8">
+        <div className="mx-auto max-w-[1240px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
           <SectionHeader title={header.title} subtitle={header.subtitle} />
 
           <div className="mt-6">

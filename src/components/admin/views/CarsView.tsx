@@ -34,16 +34,16 @@ export const CarsView = ({ cars }: CarsViewProps) => {
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-            <TableHead className="px-6 py-3">Car</TableHead>
+            <TableHead className="px-4 py-3 sm:px-6">Car</TableHead>
             <TableHead className="py-3">Price</TableHead>
             <TableHead className="py-3">Status</TableHead>
-            <TableHead className="py-3 text-right pr-6">Updated</TableHead>
+            <TableHead className="py-3 text-right pr-4 sm:pr-6">Updated</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {cars.map((car) => (
             <TableRow key={car.id} className="hover:bg-gray-50/70 dark:hover:bg-white/5">
-              <TableCell className="px-6 py-4">
+              <TableCell className="px-4 py-4 sm:px-6">
                 <div className="flex items-center gap-4">
                   <div className="relative h-12 w-16 overflow-hidden rounded-xl ring-1 ring-gray-200 dark:ring-white/10">
                     <Image
@@ -74,7 +74,7 @@ export const CarsView = ({ cars }: CarsViewProps) => {
                   {car.status}
                 </TonePill>
               </TableCell>
-              <TableCell className="py-4 text-right pr-6">
+              <TableCell className="py-4 text-right pr-4 sm:pr-6">
                 <div className="text-xs text-gray-600 dark:text-gray-400">
                   Today
                 </div>

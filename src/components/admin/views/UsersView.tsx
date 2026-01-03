@@ -37,16 +37,16 @@ export const UsersView = ({ users }: UsersViewProps) => {
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-            <TableHead className="px-6 py-3">User</TableHead>
+            <TableHead className="px-4 py-3 sm:px-6">User</TableHead>
             <TableHead className="py-3">Email</TableHead>
             <TableHead className="py-3">Role</TableHead>
-            <TableHead className="py-3 text-right pr-6">Status</TableHead>
+            <TableHead className="py-3 text-right pr-4 sm:pr-6">Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.map((u) => (
             <TableRow key={u.id} className="hover:bg-gray-50/70 dark:hover:bg-white/5">
-              <TableCell className="px-6 py-4">
+              <TableCell className="px-4 py-4 sm:px-6">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-sm font-semibold text-gray-900 ring-1 ring-gray-200 dark:bg-white/5 dark:text-white dark:ring-white/10">
                     {getInitials({ name: u.name })}
@@ -69,7 +69,7 @@ export const UsersView = ({ users }: UsersViewProps) => {
               <TableCell className="py-4">
                 <TonePill tone={getRoleTone({ role: u.role })}>{u.role}</TonePill>
               </TableCell>
-              <TableCell className="py-4 text-right pr-6">
+              <TableCell className="py-4 text-right pr-4 sm:pr-6">
                 <span className="text-xs text-gray-600 dark:text-gray-400">
                   Active
                 </span>
