@@ -19,7 +19,7 @@ export const useAdminDashboardState = () => {
   const [updateCityPriceModal, setUpdateCityPriceModal] =
     useState<UpdateCityPriceModalState>({ isOpen: false });
 
-  const [cars] = useState<AdminCar[]>(ADMIN_CARS);
+  const [cars, setCars] = useState<AdminCar[]>(ADMIN_CARS);
   const [users] = useState<AdminUser[]>(ADMIN_USERS);
   const [cities, setCities] = useState<ShippingCity[]>(SHIPPING_CITIES);
 
@@ -61,6 +61,10 @@ export const useAdminDashboardState = () => {
     );
   };
 
+  const addCar = ({ car }: { car: AdminCar }) => {
+    setCars((prev) => [car, ...prev]);
+  };
+
   const selectedCity = useMemo(() => {
     if (!updateCityPriceModal.isOpen) return null;
     return cities.find((c) => c.id === updateCityPriceModal.cityId) ?? null;
@@ -90,6 +94,8 @@ export const useAdminDashboardState = () => {
     updateCityPrice,
     deleteCity,
     applyGlobalAdjustment,
+
+    addCar,
   };
 };
 

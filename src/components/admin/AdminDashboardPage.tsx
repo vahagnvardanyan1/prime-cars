@@ -1,23 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Menu } from "lucide-react";
+import { useTranslations } from "next-intl";
 
+import { AdminPreferencesMenu } from "@/components/admin/AdminPreferencesMenu";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminSidebarContent } from "@/components/admin/AdminSidebarContent";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
+import { AddCarModal } from "@/components/admin/modals/AddCarModal";
+import { CreateUserModal } from "@/components/admin/modals/CreateUserModal";
+import { UpdateShippingPriceModal } from "@/components/admin/modals/UpdateShippingPriceModal";
 import { SectionHeader } from "@/components/admin/primitives/SectionHeader";
 import { CarsView } from "@/components/admin/views/CarsView";
 import { SettingsView } from "@/components/admin/views/SettingsView";
 import { UsersView } from "@/components/admin/views/UsersView";
-import { AddCarModal } from "@/components/admin/modals/AddCarModal";
-import { CreateUserModal } from "@/components/admin/modals/CreateUserModal";
-import { UpdateShippingPriceModal } from "@/components/admin/modals/UpdateShippingPriceModal";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAdminDashboardState } from "@/hooks/admin/useAdminDashboardState";
-
-import { Menu } from "lucide-react";
-import { useTranslations } from "next-intl";
 
 const getHeaderKey = ({
   activeNav,
@@ -102,14 +102,7 @@ export const AdminDashboardPage = () => {
                 </div>
               </div>
 
-              <Button
-                type="button"
-                variant="outline"
-                className="h-10 rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5"
-                onClick={() => state.setActiveNav("settings")}
-              >
-                {t("admin.topbar.quickSettings")}
-              </Button>
+              <AdminPreferencesMenu />
             </div>
           }
         />
@@ -135,6 +128,7 @@ export const AdminDashboardPage = () => {
       <AddCarModal
         open={state.isAddCarOpen}
         onOpenChange={({ open }) => (open ? state.openAddCar() : state.closeAddCar())}
+        onCreateCar={state.addCar}
       />
 
       <CreateUserModal

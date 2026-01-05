@@ -14,6 +14,7 @@ type PhotoUploadGridProps = {
   maxFiles: number;
   previews: (string | null)[];
   onPickFile: ({ index, file }: { index: number; file: File | null }) => void;
+  tileClassName?: string;
 };
 
 export const PhotoUploadGrid = ({
@@ -21,6 +22,7 @@ export const PhotoUploadGrid = ({
   maxFiles,
   previews,
   onPickFile,
+  tileClassName,
 }: PhotoUploadGridProps) => {
   const t = useTranslations();
 
@@ -46,9 +48,11 @@ export const PhotoUploadGrid = ({
               key={inputId}
               htmlFor={inputId}
               className={cn(
-                "group relative flex h-[120px] cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-white transition-colors",
+                "group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-white transition-colors",
+                "h-[120px]",
                 "border-gray-200 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:hover:bg-white/5",
                 preview ? "border-solid" : "",
+                tileClassName,
               )}
             >
               <input
@@ -74,12 +78,12 @@ export const PhotoUploadGrid = ({
                   </div>
                 </>
               ) : (
-                <div className="flex flex-col items-center gap-2 text-gray-600 dark:text-gray-300">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-50 ring-1 ring-gray-200 dark:bg-white/5 dark:ring-white/10">
+                <div className="flex flex-col items-center gap-1.5 px-3 text-gray-600 dark:text-gray-300">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-50 ring-1 ring-gray-200 dark:bg-white/5 dark:ring-white/10">
                     <ImagePlus className="h-4 w-4 text-[#429de6]" />
                   </div>
                   <div className="text-sm font-medium">{t("admin.modals.photoUpload.uploadPhoto")}</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                  <div className="hidden text-xs text-gray-500 dark:text-gray-400 sm:block">
                     {t("admin.modals.photoUpload.clickToSelect")}
                   </div>
                 </div>

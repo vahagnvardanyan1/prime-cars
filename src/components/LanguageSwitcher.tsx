@@ -15,27 +15,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/components/ui/utils";
 import type { Locale } from "@/i18n/config";
-import { localeNames, locales } from "@/i18n/config";
 import { usePathname, useRouter } from "@/i18n/routing";
-
-type LanguageOption = {
-  locale: Locale;
-  label: string;
-  flag: string;
-};
-
-const getFlag = ({ locale }: { locale: Locale }) => {
-  switch (locale) {
-    case "en":
-      return "🇺🇸";
-    case "ru":
-      return "🇷🇺";
-    case "hy":
-      return "🇦🇲";
-    default:
-      return "🌐";
-  }
-};
+import type { LocaleOption } from "@/i18n/localeOptions";
+import { getLocaleOptions } from "@/i18n/localeOptions";
 
 type LanguageSwitcherProps = {
   className?: string;
@@ -55,12 +37,11 @@ export const LanguageSwitcher = ({
   const locale = useLocale() as Locale;
 
   const current = useMemo(() => {
-    const option: LanguageOption = {
+    return getLocaleOptions().find((o) => o.locale === locale) ?? {
       locale,
-      label: localeNames[locale],
-      flag: getFlag({ locale }),
+      label: String(locale),
+      flag: "🌐",
     };
-    return option;
   }, [locale]);
 
   const onSelect = ({ nextLocale }: { nextLocale: Locale }) => {
@@ -95,18 +76,13 @@ export const LanguageSwitcher = ({
         align={align}
         className="min-w-[220px] rounded-xl border-gray-200 bg-white p-1 shadow-lg dark:border-white/10 dark:bg-[#0b0f14]"
       >
-        {locales.map((l) => {
-          const option: LanguageOption = {
-            locale: l,
-            label: localeNames[l],
-            flag: getFlag({ locale: l }),
-          };
-          const isActive = l === locale;
+        {getLocaleOptions().map((option: LocaleOption) => {
+          const isActive = option.locale === locale;
 
           return (
             <DropdownMenuItem
-              key={l}
-              onSelect={() => onSelect({ nextLocale: l })}
+              key={option.locale}
+              onSelect={() => onSelect({ nextLocale: option.locale })}
               className={cn(
                 "cursor-pointer rounded-lg px-2.5 py-2 focus:bg-gray-50 dark:focus:bg-white/5",
                 isActive ? "bg-[#429de6]/10" : "",
