@@ -21,6 +21,7 @@
     "description": "Your trusted partner in international car imports and auctions since 2013.",
     "quickLinks": "Quick Links",
     "contact": "Contact Us",
+    "address": "Arshakunyats 26",
     "links": {
       "home": "Home",
       "browseCars": "Browse Cars",
@@ -47,6 +48,7 @@
         "coupe": "Coupe",
         "sedan": "Sedan",
         "sports": "Sports",
+        "suv": "SUV",
         "petrol": "Petrol",
         "electric": "Electric"
       }
@@ -198,12 +200,6 @@
         "title": "Global Reach",
         "description": "Leverage our international network spanning 15+ countries and connections with major auction houses worldwide."
       }
-    },
-    "cta": {
-      "title": "Ready to Start a Partnership?",
-      "description": "Let’s discuss how we can work together to achieve success in the global automotive market.",
-      "call": "Call Us Now",
-      "email": "Send Email"
     }
   },
   "auth": {
