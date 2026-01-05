@@ -92,27 +92,25 @@ export const Footer = () => {
               <li className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
                 <a
-                  href="mailto:info@primecars.com"
+                  href="mailto:primecarsarm@gmail.com"
                   className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
-                  info@primecars.com
+                  primecarsarm@gmail.com
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
                 <a
-                  href="tel:+18005551234"
+                  href="tel:+37444771130"
                   className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
-                  +1 (800) 555-1234
+                  +374 44 771130
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
                 <span className="text-gray-600 dark:text-gray-400">
-                  123 Import Avenue
-                  <br />
-                  New York, NY 10001
+                  {t("footer.address")}
                 </span>
               </li>
             </ul>
