@@ -68,10 +68,6 @@ export const PartnersPage = () => {
                   <span>Armenia, Yerevan, Kilikia District 3/24</span>
                 </div>
               </div>
-
-              <button className="mt-8 px-8 py-4 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-all hover:shadow-xl hover:shadow-blue-500/30">
-                {t("partners.becomePartner")}
-              </button>
             </div>
 
             {/* Right Image */}

@@ -6,8 +6,7 @@
     "home": "Home",
     "cars": "Cars",
     "calculator": "Calculator",
-    "partners": "For Partners",
-    "about": "About Us"
+    "partners": "For Partners"
   },
   "header": {
     "logoAlt": "Prime Cars Logo",
@@ -21,29 +20,14 @@
     "brandLabel": "Prime Cars",
     "description": "Your trusted partner in international car imports and auctions since 2013.",
     "quickLinks": "Quick Links",
-    "services": "Services",
     "contact": "Contact Us",
     "links": {
       "home": "Home",
       "browseCars": "Browse Cars",
       "costCalculator": "Cost Calculator",
-      "partners": "For Partners",
-      "about": "About Us"
+      "partners": "For Partners"
     },
-    "serviceItems": {
-      "vehicleSourcing": "Vehicle Sourcing",
-      "auctionBidding": "Auction Bidding",
-      "importManagement": "Import Management",
-      "customsClearance": "Customs Clearance",
-      "shippingLogistics": "Shipping & Logistics",
-      "inspectionServices": "Inspection Services"
-    },
-    "copyright": "© 2024 Prime Cars. All rights reserved.",
-    "legal": {
-      "privacy": "Privacy Policy",
-      "terms": "Terms of Service",
-      "cookie": "Cookie Policy"
-    }
+    "copyright": "Prime Cars. All rights reserved."
   },
   "home": {
     "hero": {
@@ -175,7 +159,6 @@
     "description": "Join Prime Cars’ global network and unlock new opportunities in the automotive import industry. We’re looking for strategic partners who share our vision of excellence and innovation.",
     "heroImageAlt": "Business Partnership",
     "getInTouch": "Get in Touch",
-    "becomePartner": "Become a Partner",
     "benefits": {
       "title": "Why Partner With Prime Cars",
       "description": "Join a network of successful partners and benefit from our expertise, resources, and global reach",
@@ -197,87 +180,6 @@
       "description": "Let’s discuss how we can work together to achieve success in the global automotive market.",
       "call": "Call Us Now",
       "email": "Send Email"
-    }
-  },
-  "about": {
-    "badge": "Since 2013",
-    "heroTitle": "Transforming Global Automotive Trade",
-    "heroBody": "Prime Cars was founded on a simple belief: importing a car shouldn’t be complicated. We’ve built a platform that combines cutting-edge technology with deep industry expertise to make international car trading accessible to everyone.",
-    "missionTitle": "Our Mission",
-    "missionBody": "To democratize access to the global automotive market by providing transparent, efficient, and trustworthy import services that empower buyers worldwide.",
-    "visionTitle": "Our Vision",
-    "visionBody": "To become the world’s most trusted platform for international vehicle trading, setting new standards for transparency and customer experience.",
-    "valuesTitle": "Our Values",
-    "valuesBody": "Integrity, transparency, and customer-first thinking guide every decision we make and every service we provide.",
-    "journeyTitle": "Our Journey",
-    "journeyBody": "From a small team with a big vision to a global leader in automotive imports",
-    "timeline": {
-      "companyFounded": {
-        "title": "Company Founded",
-        "description": "Started operations with a focus on Japanese car imports. Processed our first 50 vehicles."
-      },
-      "europeanExpansion": {
-        "title": "European Expansion",
-        "description": "Expanded operations to include premium European vehicles. Established partnerships with German and UK auction houses."
-      },
-      "platformLaunch": {
-        "title": "Platform Launch",
-        "description": "Launched our digital platform, introducing the first online cost calculator and real-time tracking for customers."
-      },
-      "globalNetwork": {
-        "title": "Global Network",
-        "description": "Reached 15 countries in our network. Surpassed 10,000 vehicles imported with a 98% satisfaction rate."
-      },
-      "industryLeader": {
-        "title": "Industry Leader",
-        "description": "Recognized as one of the top import services globally. Introduced AI-powered vehicle matching and expanded to electric vehicle imports."
-      },
-      "innovationGrowth": {
-        "title": "Innovation & Growth",
-        "description": "Launched blockchain-based documentation system. Achieved carbon-neutral shipping on all routes."
-      }
-    },
-    "statsTitle": "By The Numbers",
-    "statsBody": "Our track record speaks to our commitment to excellence",
-    "stats": {
-      "happyCustomers": "Happy Customers",
-      "transactionValue": "Transaction Value",
-      "satisfactionRate": "Satisfaction Rate",
-      "globalPartners": "Global Partners"
-    },
-    "whyTitle": "Why Prime Cars",
-    "whyBody": "What sets us apart in the global automotive import industry",
-    "whyCards": {
-      "endToEnd": {
-        "title": "End-to-End Service",
-        "description": "From vehicle sourcing to delivery at your door, we manage every step of the import process with precision and care."
-      },
-      "transparency": {
-        "title": "Full Transparency",
-        "description": "No hidden fees, no surprises. Our cost calculator and tracking system keep you informed at every stage."
-      },
-      "expertise": {
-        "title": "Market Expertise",
-        "description": "Over a decade of experience gives us unmatched insights into global automotive markets and import regulations."
-      },
-      "quality": {
-        "title": "Quality Assurance",
-        "description": "Every vehicle undergoes rigorous inspection and comes with comprehensive documentation and history reports."
-      },
-      "support": {
-        "title": "Dedicated Support",
-        "description": "24/7 customer support from import specialists who understand your needs and guide you through the process."
-      },
-      "network": {
-        "title": "Global Network",
-        "description": "Strategic partnerships with leading auction houses, logistics providers, and inspection agencies worldwide."
-      }
-    },
-    "cta": {
-      "title": "Ready to Start Your Import Journey?",
-      "description": "Join thousands of satisfied customers who trust Prime Cars for their international automotive needs.",
-      "browse": "Browse Inventory",
-      "contact": "Contact Us"
     }
   },
   "auth": {
