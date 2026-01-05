@@ -20,7 +20,6 @@ export const ImportCalculator = () => {
   const [engineVolume, setEngineVolume] = useState("");
   const [insurance, setInsurance] = useState(false);
   const [highGroundClearance, setHighGroundClearance] = useState(false);
-  const [coefficient, setCoefficient] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
