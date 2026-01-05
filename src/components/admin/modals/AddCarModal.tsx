@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useTranslations } from "next-intl";
 
@@ -21,6 +21,12 @@ type AddCarModalProps = {
   onCreateCar: ({ car }: { car: AdminCar }) => void;
 };
 
+type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
 export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProps) => {
   const t = useTranslations();
   const { previews, setFileAt, removeFileAt, clearAll } = usePhotoUploads({ initialSlots: 1 });
@@ -29,6 +35,27 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProp
   const [invoicePreview, setInvoicePreview] = useState<string | null>(null);
   const [invoiceDragOver, setInvoiceDragOver] = useState(false);
   const [invoiceError, setInvoiceError] = useState<string | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [loadingUsers, setLoadingUsers] = useState(false);
+
+  // Fetch users from backend (mock for now)
+  useEffect(() => {
+    if (open) {
+      setLoadingUsers(true);
+      // TODO: Replace with actual API call
+      // Example: fetch('/api/users').then(res => res.json()).then(setUsers)
+      setTimeout(() => {
+        setUsers([
+          { id: "1", name: "John Doe", email: "john@example.com" },
+          { id: "2", name: "Jane Smith", email: "jane@example.com" },
+          { id: "3", name: "Bob Johnson", email: "bob@example.com" },
+          { id: "4", name: "Alice Williams", email: "alice@example.com" },
+        ]);
+        setLoadingUsers(false);
+      }, 500);
+    }
+  }, [open]);
 
   const close = () => {
     onOpenChange({ open: false });
@@ -100,12 +127,16 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProp
     });
 
     // TODO: Handle invoice file upload (invoiceFile)
+    // TODO: Handle selected user (selectedUserId)
     // You can add this to your backend upload logic
+    console.log('Selected User ID:', selectedUserId);
+    console.log('Invoice File:', invoiceFile);
 
     onCreateCar({ car });
     close();
     clearAll();
     removeInvoice();
+    setSelectedUserId("");
     form.actions.reset();
   };
 
@@ -139,6 +170,27 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProp
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {t("admin.modals.addCar.user")}
+                </Label>
+                <select
+                  value={selectedUserId}
+                  onChange={(e) => setSelectedUserId(e.target.value)}
+                  disabled={loadingUsers}
+                  className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white pl-4 pr-10 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6] dark:bg-black dark:text-white disabled:opacity-50 disabled:cursor-not-allowed appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iI0Q1RDdEQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[length:16px_16px] bg-[center_right_0.75rem] bg-no-repeat [&>option]:py-1 [&>option]:px-2"
+                >
+                  <option value="">
+                    {loadingUsers ? t("admin.modals.addCar.loadingUsers") : t("admin.modals.addCar.selectUser")}
+                  </option>
+                  {users.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.name} ({user.email})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {t("admin.modals.addCar.purchaseDate")}
@@ -255,7 +307,7 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProp
                       value: e.target.value as "Active" | "Draft" | "Pending Review",
                     })
                   }
-                  className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white px-4 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6] dark:bg-black dark:text-white"
+                  className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white pl-4 pr-10 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6] dark:bg-black dark:text-white appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iI0Q1RDdEQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[length:16px_16px] bg-[center_right_0.75rem] bg-no-repeat [&>option]:py-1 [&>option]:px-2"
                 >
                   <option value="Pending Review">{t("admin.modals.addCar.statusPending")}</option>
                   <option value="Active">{t("admin.modals.addCar.statusActive")}</option>
