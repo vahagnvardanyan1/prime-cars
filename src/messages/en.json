@@ -67,25 +67,6 @@
         "electric": "Electric"
       }
     },
-    "service": {
-      "title": "Our Service",
-      "description": "Our services are designed with your automotive needs in mind, offering a seamless blend of quality, reliability, and expertise. Whether you’re purchasing your dream car…",
-      "cards": {
-        "maintenance": {
-          "title": "Expert Maintenance and Repairs",
-          "description": "Our team of certified technicians provides top-tier maintenance and repair services to ensure your vehicle is running at its best. From routine oil changes…"
-        },
-        "customer": {
-          "title": "Customer-Centric Approach",
-          "description": "We prioritize building long-lasting relationships with our clients. Our customer service team is always available to help you with any questions or needs…"
-        },
-        "parts": {
-          "title": "Quality Parts and Top Products",
-          "description": "We use only high-quality, genuine parts and products to guarantee the best performance and longevity for your vehicle. Whether you need replacement parts…"
-        }
-      },
-      "readMore": "Read more →"
-    },
     "importCosts": {
       "title": "Calculate Your Import Costs",
       "description": "Get an instant estimate of all costs involved in importing your dream vehicle. Our comprehensive calculator includes shipping, customs, duties, and all associated fees."
@@ -460,6 +441,7 @@
     }
   }
 }
+
 
 
 

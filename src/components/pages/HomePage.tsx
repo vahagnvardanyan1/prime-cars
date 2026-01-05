@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
-import { Package, Users, Wrench } from "lucide-react";
 
 import { ImportCalculator } from "@/components/ImportCalculator";
 import { Link } from "@/i18n/routing";
@@ -146,67 +145,6 @@ export const HomePage = () => {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 lg:py-28 bg-gray-50 dark:bg-black border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <h2 className="mb-4">{t("home.service.title")}</h2>
-            <p className="max-w-3xl mx-auto">
-              {t("home.service.description")}
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="group p-8 rounded-2xl bg-white dark:bg-[#111111] border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-all text-center">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6 mx-auto border border-gray-200 dark:border-white/10">
-                <Wrench className="w-8 h-8 text-gray-900 dark:text-white" />
-              </div>
-              <h3 className="mb-3">{t("home.service.cards.maintenance.title")}</h3>
-              <p className="mb-6 text-sm">
-                {t("home.service.cards.maintenance.description")}
-              </p>
-              <button
-                className="text-gray-900 dark:text-white text-sm hover:text-[#429de6] transition-colors"
-                type="button"
-              >
-                {t("home.service.readMore")}
-              </button>
-            </div>
-
-            <div className="group p-8 rounded-2xl bg-white dark:bg-[#111111] border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-all text-center">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6 mx-auto border border-gray-200 dark:border-white/10">
-                <Users className="w-8 h-8 text-gray-900 dark:text-white" />
-              </div>
-              <h3 className="mb-3">{t("home.service.cards.customer.title")}</h3>
-              <p className="mb-6 text-sm">
-                {t("home.service.cards.customer.description")}
-              </p>
-              <button
-                className="text-gray-900 dark:text-white text-sm hover:text-[#429de6] transition-colors"
-                type="button"
-              >
-                {t("home.service.readMore")}
-              </button>
-            </div>
-
-            <div className="group p-8 rounded-2xl bg-white dark:bg-[#111111] border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-all text-center">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6 mx-auto border border-gray-200 dark:border-white/10">
-                <Package className="w-8 h-8 text-gray-900 dark:text-white" />
-              </div>
-              <h3 className="mb-3">{t("home.service.cards.parts.title")}</h3>
-              <p className="mb-6 text-sm">
-                {t("home.service.cards.parts.description")}
-              </p>
-              <button
-                className="text-gray-900 dark:text-white text-sm hover:text-[#429de6] transition-colors"
-                type="button"
-              >
-                {t("home.service.readMore")}
-              </button>
-            </div>
           </div>
         </div>
       </section>

@@ -40,3 +40,4 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
 export default LocaleLayout;
 
 
+
