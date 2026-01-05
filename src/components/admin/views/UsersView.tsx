@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 
 import { Surface } from "@/components/admin/primitives/Surface";
-import { TonePill } from "@/components/admin/primitives/TonePill";
+import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
 import {
   Table,
   TableBody,
@@ -12,97 +12,129 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getRoleTone } from "@/lib/admin/format";
 import type { AdminUser } from "@/lib/admin/types";
 
 type UsersViewProps = {
   users: AdminUser[];
+  isLoading?: boolean;
+  onRefresh?: () => void;
 };
 
-const getInitials = ({ name }: { name: string }) => {
-  const parts = name.trim().split(/\s+/).slice(0, 2);
-  return parts.map((p) => p[0]?.toUpperCase()).join("");
+const getInitials = ({ firstName, lastName }: { firstName: string; lastName: string }) => {
+  const first = firstName?.charAt(0)?.toUpperCase() || "";
+  const last = lastName?.charAt(0)?.toUpperCase() || "";
+  return `${first}${last}`;
 };
 
-export const UsersView = ({ users }: UsersViewProps) => {
+export const UsersView = ({ users, isLoading = false, onRefresh }: UsersViewProps) => {
   const t = useTranslations();
-
-  const getRoleLabel = ({ role }: { role: AdminUser["role"] }) => {
-    switch (role) {
-      case "Admin":
-        return t("admin.roles.admin");
-      case "Manager":
-        return t("admin.roles.manager");
-      case "Support":
-        return t("admin.roles.support");
-      case "Viewer":
-        return t("admin.roles.viewer");
-      default:
-        return role;
-    }
-  };
 
   return (
     <Surface className="overflow-hidden">
-      <div className="px-6 py-5">
-        <div className="text-sm font-medium text-gray-900 dark:text-white">
-          {t("admin.usersView.title")}
+      <div className="px-6 py-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {t("admin.usersView.title")}
+          </h1>
         </div>
-        <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-          {t("admin.usersView.subtitle")}
-        </div>
+        {onRefresh && (
+          <RefreshButton onClick={onRefresh} isLoading={isLoading} />
+        )}
       </div>
 
+      <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-            <TableHead className="px-4 py-3 sm:px-6">{t("admin.usersView.columns.user")}</TableHead>
-            <TableHead className="py-3">{t("admin.usersView.columns.email")}</TableHead>
-            <TableHead className="py-3">{t("admin.usersView.columns.role")}</TableHead>
-            <TableHead className="py-3 text-right pr-4 sm:pr-6">
-              {t("admin.usersView.columns.status")}
-            </TableHead>
+            <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[250px]">Name</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">Username</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">Email</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">Phone</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">Passport</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[180px]">Company</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">Country</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.map((u) => (
-            <TableRow key={u.id} className="hover:bg-gray-50/70 dark:hover:bg-white/5">
-              <TableCell className="px-4 py-4 sm:px-6">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-sm font-semibold text-gray-900 ring-1 ring-gray-200 dark:bg-white/5 dark:text-white dark:ring-white/10">
-                    {getInitials({ name: u.name })}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-semibold text-gray-900 dark:text-white">
-                      {u.name}
-                    </div>
-                    <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
-                      {getRoleLabel({ role: u.role })}
-                    </div>
-                  </div>
+          {isLoading ? (
+            <TableRow>
+              <TableCell colSpan={7} className="py-12">
+                <div className="flex flex-col items-center justify-center gap-3">
+                  <svg className="animate-spin h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {t("admin.usersView.loadingUsers")}
+                  </span>
                 </div>
-              </TableCell>
-              <TableCell className="py-4">
-                <div className="text-sm text-gray-700 dark:text-gray-300">
-                  {u.email}
-                </div>
-              </TableCell>
-              <TableCell className="py-4">
-                <TonePill tone={getRoleTone({ role: u.role })}>
-                  {getRoleLabel({ role: u.role })}
-                </TonePill>
-              </TableCell>
-              <TableCell className="py-4 text-right pr-4 sm:pr-6">
-                <span className="text-xs text-gray-600 dark:text-gray-400">
-                  {t("admin.usersView.statusActive")}
-                </span>
               </TableCell>
             </TableRow>
-          ))}
+          ) : users.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={7} className="py-12">
+                <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
+                  {t("admin.usersView.noUsersFound")}
+                </div>
+              </TableCell>
+            </TableRow>
+          ) : (
+            users.map((u) => (
+            <TableRow key={u.id} className="hover:bg-gray-50/70 dark:hover:bg-white/5">
+              <TableCell className="px-6 py-6 sm:px-8 min-w-[250px]">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gray-100 text-base font-semibold text-gray-900 ring-1 ring-gray-200 dark:bg-white/5 dark:text-white dark:ring-white/10 flex-shrink-0">
+                    {getInitials({ firstName: u.firstName, lastName: u.lastName })}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="truncate text-base font-semibold text-gray-900 dark:text-white">
+                      {u.firstName} {u.lastName}
+                    </div>
+                    <div className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                      {u.location || u.country || "-"}
+                    </div>
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell className="px-4 py-6 min-w-[150px]">
+                <div className="text-sm text-gray-900 dark:text-white">
+                  {u.userName || "-"}
+                </div>
+              </TableCell>
+              <TableCell className="px-4 py-6 min-w-[200px]">
+                <div className="text-sm text-gray-900 dark:text-white">
+                  {u.email || "-"}
+                </div>
+              </TableCell>
+              <TableCell className="px-4 py-6 min-w-[150px]">
+                <div className="text-sm text-gray-900 dark:text-white">
+                  {u.phone || "-"}
+                </div>
+              </TableCell>
+              <TableCell className="px-4 py-6 min-w-[150px]">
+                <div className="text-sm text-gray-900 dark:text-white font-mono">
+                  {u.passport || "-"}
+                </div>
+              </TableCell>
+              <TableCell className="px-4 py-6 min-w-[180px]">
+                <div className="text-sm text-gray-900 dark:text-white">
+                  {u.companyName || "-"}
+                </div>
+              </TableCell>
+              <TableCell className="px-4 py-6 min-w-[120px]">
+                <div className="text-sm text-gray-900 dark:text-white">
+                  {u.country || "-"}
+                </div>
+              </TableCell>
+            </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
+      </div>
     </Surface>
   );
 };
+
 
 

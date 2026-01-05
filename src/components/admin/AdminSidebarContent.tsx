@@ -15,6 +15,7 @@ type AdminSidebarContentProps = {
   onAddCar: () => void;
   onCreateUser: () => void;
   onRequestClose?: () => void;
+  isAdmin: boolean;
 };
 
 const LOGO_URL =
@@ -37,8 +38,17 @@ export const AdminSidebarContent = ({
   onAddCar,
   onCreateUser,
   onRequestClose,
+  isAdmin,
 }: AdminSidebarContentProps) => {
   const t = useTranslations();
+
+  const visibleNavItems = NAV_ITEMS.filter(item => {
+    // Only show "users" if user is admin
+    if (item.key === 'users') {
+      return isAdmin;
+    }
+    return true;
+  });
 
   return (
     <div className="flex h-full flex-col">
@@ -63,42 +73,44 @@ export const AdminSidebarContent = ({
         </div>
       </div>
 
-      <div className="px-4">
-        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-2 dark:border-white/10 dark:bg-white/5">
-          <div className="grid gap-2">
-            <Button
-              type="button"
-              className="h-10 justify-start rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc]"
-              onClick={() => {
-                onAddCar();
-                onRequestClose?.();
-              }}
-            >
-              <PlusCircle className="mr-2 h-4 w-4" />
-              {t("admin.sidebar.addCar")}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="h-10 justify-start rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5"
-              onClick={() => {
-                onCreateUser();
-                onRequestClose?.();
-              }}
-            >
-              <UserPlus className="mr-2 h-4 w-4" />
-              {t("admin.sidebar.createUser")}
-            </Button>
+      {isAdmin && (
+        <div className="px-4">
+          <div className="rounded-2xl border border-gray-200 bg-gray-50 p-2 dark:border-white/10 dark:bg-white/5">
+            <div className="grid gap-2">
+              <Button
+                type="button"
+                className="h-10 justify-start rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc]"
+                onClick={() => {
+                  onAddCar();
+                  onRequestClose?.();
+                }}
+              >
+                <PlusCircle className="mr-2 h-4 w-4" />
+                {t("admin.sidebar.addCar")}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="h-10 justify-start rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5"
+                onClick={() => {
+                  onCreateUser();
+                  onRequestClose?.();
+                }}
+              >
+                <UserPlus className="mr-2 h-4 w-4" />
+                {t("admin.sidebar.createUser")}
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <nav className="mt-6 px-3">
         <div className="px-3 text-[11px] font-medium uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
           {t("admin.sidebar.navigation")}
         </div>
         <div className="mt-2 grid gap-1">
-          {NAV_ITEMS.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = item.key === activeNav;
 
@@ -140,17 +152,6 @@ export const AdminSidebarContent = ({
           })}
         </div>
       </nav>
-
-      <div className="mt-auto px-6 py-5">
-        <div className="rounded-2xl border border-gray-200 bg-white p-4 text-xs text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-300">
-          <div className="font-medium text-gray-900 dark:text-white">
-            {t("admin.sidebar.internalAdmin")}
-          </div>
-          <div className="mt-1 leading-relaxed">
-            {t("admin.sidebar.internalNote")}
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

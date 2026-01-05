@@ -1,17 +1,28 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+
+import { API_BASE_URL } from "@/i18n/config";
+import { setAccessToken } from "@/lib/auth/token";
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onLoginSuccess?: () => void;
 }
 
-export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
+export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps) => {
   const t = useTranslations();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -23,6 +34,73 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!username.trim() || !password.trim()) {
+      toast.error("Validation error", {
+        description: "Please enter both username and password.",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: username,
+          password,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Login failed" }));
+        toast.error("Login failed", {
+          description: errorData.error || "Invalid username or password.",
+        });
+        return;
+      }
+
+      const result = await response.json();
+
+      // Store access_token from backend
+      if (result.access_token) {
+        setAccessToken({ token: result.access_token });
+      }
+
+      toast.success("Login successful", {
+        description: `Welcome back, ${username}!`,
+      });
+
+      setUsername("");
+      setPassword("");
+      
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
+      
+      onClose();
+
+      // Redirect to admin page if not already there
+      if (!pathname.includes("/admin")) {
+        // Extract locale from pathname (e.g., /en/... or /hy/...)
+        const locale = pathname.split("/")[1] || "en";
+        router.push(`/${locale}/admin`);
+      }
+    } catch (error) {
+      toast.error("Login failed", {
+        description: error instanceof Error ? error.message : "Network error occurred.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -54,15 +132,18 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         {/* Body */}
         <div className="px-12 pb-12">
           {/* Form */}
-          <form className="space-y-8">
+          <form className="space-y-8" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wider">
                 {t("auth.username")}
               </label>
               <input
-                type="email"
+                type="text"
                 placeholder=""
-                className="w-full px-6 py-4 bg-transparent border-2 border-gray-300 dark:border-white/20 rounded-xl focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-all text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-lg"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                disabled={isSubmitting}
+                className="w-full px-6 py-4 bg-transparent border-2 border-gray-300 dark:border-white/20 rounded-xl focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-all text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -73,15 +154,29 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
               <input
                 type="password"
                 placeholder=""
-                className="w-full px-6 py-4 bg-transparent border-2 border-gray-300 dark:border-white/20 rounded-xl focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-all text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-lg"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isSubmitting}
+                className="w-full px-6 py-4 bg-transparent border-2 border-gray-300 dark:border-white/20 rounded-xl focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-all text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-4 bg-[#429de6] text-white rounded-xl hover:bg-[#3a8acc] transition-all hover:shadow-xl hover:shadow-blue-500/30 font-semibold text-lg uppercase tracking-wider mt-6"
+              disabled={isSubmitting}
+              className="w-full py-4 bg-[#429de6] text-white rounded-xl hover:bg-[#3a8acc] transition-all hover:shadow-xl hover:shadow-blue-500/30 font-semibold text-lg uppercase tracking-wider mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {t("auth.signIn")}
+              {isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>{t("auth.signingIn")}</span>
+                </div>
+              ) : (
+                t("auth.signIn")
+              )}
             </button>
           </form>
         </div>

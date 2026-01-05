@@ -1,0 +1,62 @@
+import { API_BASE_URL } from "@/i18n/config";
+import { getAccessToken } from "@/lib/auth/token";
+
+export type CreateShippingData = {
+  city: string;
+  shipping: number;
+};
+
+export type CreateShippingResponse = {
+  success: boolean;
+  data?: any;
+  error?: string;
+};
+
+export const createShipping = async (
+  data: CreateShippingData
+): Promise<CreateShippingResponse> => {
+  try {
+    const token = getAccessToken();
+
+    if (!token) {
+      return {
+        success: false,
+        error: "No authentication token found",
+      };
+    }
+
+    const response = await fetch(`${API_BASE_URL}/shippings`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        city: data.city,
+        shipping: data.shipping,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return {
+        success: false,
+        error: errorData.message || `HTTP error ${response.status}`,
+      };
+    }
+
+    const result = await response.json();
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    console.error("Error creating shipping:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+};
+

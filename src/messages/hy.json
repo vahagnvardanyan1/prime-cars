@@ -102,6 +102,30 @@
       "month": "Ամիս",
       "year": "Տարի",
       "calculate": "Հաշվել ընդհանուր արժեքը",
+      "importer": "Ներմուծող",
+      "legalPerson": "Իրավաբանական անձ (ԱՀՓ)",
+      "individual": "Ֆիզիկական անձ (ՍՏՈՐԳ)",
+      "vehiclePrice": "Մեքենայի արժեքը",
+      "auctionFee": "Աճուրդի վճար",
+      "auctionLocation": "Աճուրդի դիրք",
+      "selectLocation": "Ընտրել դիրք",
+      "location1": "Դիրք 1",
+      "location2": "Դիրք 2",
+      "selectType": "Ընտրել տեսակը",
+      "passengerCar": "Ուղևորական մեքենա",
+      "sedan": "Սեդան",
+      "suv": "Ամենագնաց",
+      "sports": "Սպորտային",
+      "engine": "Շարժիչ",
+      "selectEngine": "Ընտրել շարժիչը",
+      "gasoline": "Բենզին",
+      "diesel": "Դիզել",
+      "electric": "Էլեկտրական",
+      "hybrid": "Հիբրիդ",
+      "engineVolume": "Շարժիչի ծավալը",
+      "insurance": "Ապահովագրություն",
+      "highGroundClearance": "Բարձր նիստում",
+      "calculateCost": "Հաշվել արժեքը",
       "noticeTitle": "Նշում",
       "noticeBody": "Հաշվիչը տալիս է գնահատական՝ հիմնված միջին սցենարների վրա։ Իրական ծախսերը կարող են տարբերվել մեքենայի տվյալներից, փոխարժեքներից և մաքսային կանոնակարգերից։ Ճշգրիտ հաշվարկի համար կապվեք մեր թիմի հետ։",
       "countries": {
@@ -195,6 +219,7 @@
     "rememberMe": "Հիշել ինձ",
     "forgotPassword": "Մոռացե՞լ եք գաղտնաբառը",
     "signIn": "Մուտք",
+    "signingIn": "Մուտք է գործվում...",
     "orContinueWith": "կամ շարունակել՝",
     "google": "Google",
     "github": "GitHub",
@@ -209,6 +234,8 @@
       "viewer": "Դիտող"
     },
     "breadcrumb": "Prime Cars / Ադմին",
+    "loadingUser": "Օգտատիրոջ տվյալների բեռնում...",
+    "refresh": "Թարմացնել",
     "topbar": {
       "searchPlaceholder": "Որոնում (տեսողական)",
       "quickSettings": "Արագ կարգավորումներ",
@@ -251,7 +278,9 @@
         "status": "Կարգավիճակ",
         "updated": "Թարմացում"
       },
-      "updatedToday": "Այսօր"
+      "updatedToday": "Այսօր",
+      "noCarsFound": "Ավտոմեքենաներ չեն գտնվել",
+      "loadingCars": "Բեռնվում է..."
     },
     "usersView": {
       "title": "Օգտատերեր",
@@ -262,7 +291,9 @@
         "role": "Դեր",
         "status": "Կարգավիճակ"
       },
-      "statusActive": "Ակտիվ"
+      "statusActive": "Ակտիվ",
+      "noUsersFound": "Օգտատերեր չեն գտնվել",
+      "loadingUsers": "Բեռնվում է..."
     },
     "settingsView": {
       "shippingPricesTitle": "Առաքման գներ",
@@ -274,6 +305,7 @@
       "applyToAll": "Կիրառել բոլորի համար",
       "citiesTitle": "Քաղաքներ",
       "citiesSubtitle": "Թարմացրեք կամ ջնջեք առաքման գները ըստ քաղաքի։",
+      "addCity": "Ավելացնել քաղաք",
       "columns": {
         "city": "Քաղաք",
         "shipping": "Առաքում",
@@ -296,19 +328,66 @@
       "addCar": {
         "title": "Ավելացնել ավտո",
         "subtitle": "Կենտրոնացված պատուհան՝ լուսանկարներ և հիմնական դաշտերը։",
+        "fillMockData": "Լրացնել թեստային տվյալներով",
         "photosLabel": "Ավտոյի լուսանկարներ",
         "user": "Օգտատեր",
         "selectUser": "Ընտրեք օգտատիրոջ",
         "loadingUsers": "Օգտատերերը բեռնվում են...",
         "purchaseDate": "Գնման ամսաթիվ",
         "type": "Տեսակ",
-        "typePlaceholder": "Auto",
+        "vehicleTypes": {
+          "auto": "Ավտո",
+          "motorcycle": "Մոտոցիկլ",
+          "limousine": "Լիմուզին",
+          "boat": "Նավակ",
+          "trailer": "Կցանցիկ",
+          "truck": "Բեռնատար",
+          "oversizedTruck": "Մեծ բեռնատար",
+          "jetski": "Ջետսքի",
+          "atv": "ATV",
+          "moped": "Մոպեդ",
+          "scooter": "Սկուտեր",
+          "other": "Այլ"
+        },
         "model": "Մոդել",
-        "modelPlaceholder": "օրինակ՝ Mercedes-Benz S-Class",
+        "vehicleModels": {
+          "bmw": "BMW",
+          "mercedes": "Mercedes-Benz",
+          "audi": "Audi",
+          "toyota": "Toyota",
+          "honda": "Honda",
+          "ford": "Ford",
+          "chevrolet": "Chevrolet",
+          "nissan": "Nissan",
+          "lexus": "Lexus",
+          "porsche": "Porsche",
+          "tesla": "Tesla",
+          "volkswagen": "Volkswagen",
+          "hyundai": "Hyundai",
+          "kia": "Kia",
+          "mazda": "Mazda",
+          "subaru": "Subaru",
+          "jeep": "Jeep",
+          "ram": "Ram",
+          "gmc": "GMC",
+          "cadillac": "Cadillac",
+          "infiniti": "Infiniti",
+          "acura": "Acura",
+          "volvo": "Volvo",
+          "landRover": "Land Rover",
+          "jaguar": "Jaguar",
+          "other": "Այլ"
+        },
         "year": "Տարի",
         "yearPlaceholder": "2024",
         "auction": "Աուկցիոն",
-        "auctionPlaceholder": "օրինակ՝ Copart",
+        "auctions": {
+          "copart": "Copart",
+          "iaai": "IAAI",
+          "manheim": "Manheim",
+          "adesa": "Adesa",
+          "other": "Այլ"
+        },
         "city": "Քաղաք",
         "cityPlaceholder": "օրինակ՝ Նյու Յորք",
         "lot": "LOT",
@@ -331,7 +410,8 @@
         "dropToUpload": "Թողեք վերբեռնելու համար",
         "invalidFormat": "Սխալ ֆայլի ձևաչափ։ Խնդրում ենք վերբեռնել միայն PDF ֆայլ։",
         "cancel": "Չեղարկել",
-        "submit": "Ուղարկել"
+        "submit": "Ուղարկել",
+        "submitting": "Ուղարկվում է..."
       },
       "createUser": {
         "title": "Ստեղծել օգտատեր",
@@ -349,6 +429,8 @@
         "firstNamePlaceholder": "Արամ",
         "lastName": "Ազգանուն",
         "lastNamePlaceholder": "Հարությունյան",
+        "companyName": "Ընկերության անուն",
+        "companyNamePlaceholder": "օրինակ՝ Acme Inc.",
         "passportNumber": "Անձնագրի № / Անձնական № / Կորպ. №",
         "passportPlaceholder": "AA1234567",
         "phone": "Հեռախոս",
@@ -359,7 +441,9 @@
         "loginPlaceholder": "օրինակ՝ ava.johnson",
         "password": "Գաղտնաբառ",
         "cancel": "Չեղարկել",
-        "submit": "Պահպանել"
+        "submit": "Պահպանել",
+        "submitting": "Պահպանվում է...",
+        "invalidEmail": "Խնդրում ենք մուտքագրել վավեր էլ. հասցե"
       },
       "updateShipping": {
         "title": "Թարմացնել առաքման գինը",
@@ -368,6 +452,18 @@
         "fieldLabel": "Առաքման գին (USD)",
         "cancel": "Չեղարկել",
         "confirm": "Հաստատել"
+      },
+      "addShipping": {
+        "title": "Ավելացնել առաքման քաղաք",
+        "cityName": "Քաղաքի անուն",
+        "cityPlaceholder": "օրինակ՝ Երևան",
+        "shippingPrice": "Առաքման գին (USD)",
+        "shippingPlaceholder": "100",
+        "cancel": "Չեղարկել",
+        "submit": "Ավելացնել քաղաք",
+        "submitting": "Ավելացվում է...",
+        "successMessage": "Առաքման քաղաքը հաջողությամբ ավելացվեց",
+        "errorMessage": "Չհաջողվեց ավելացնել առաքման քաղաքը"
       }
     }
   }

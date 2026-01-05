@@ -20,7 +20,6 @@ export const ImportCalculator = () => {
   const [engineVolume, setEngineVolume] = useState("");
   const [insurance, setInsurance] = useState(false);
   const [highGroundClearance, setHighGroundClearance] = useState(false);
-  const [coefficient, setCoefficient] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
@@ -93,7 +92,7 @@ export const ImportCalculator = () => {
                 {/* Importer */}
                 <div>
                   <label className="block text-gray-600 dark:text-gray-400 text-sm mb-3">
-                    Importer <span className="text-red-500">*</span>
+                    {t("calculator.form.importer")} <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-2 gap-4">
                     <button
@@ -105,7 +104,7 @@ export const ImportCalculator = () => {
                           : "border-gray-300 dark:border-gray-700 bg-transparent text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-600"
                       }`}
                     >
-                      Legal person (ACP)
+                      {t("calculator.form.legalPerson")}
                     </button>
                     <button
                       type="button"
@@ -116,7 +115,7 @@ export const ImportCalculator = () => {
                           : "border-gray-300 dark:border-gray-700 bg-transparent text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-600"
                       }`}
                     >
-                      Individual (SCDR)
+                      {t("calculator.form.individual")}
                     </button>
                   </div>
                 </div>
@@ -124,7 +123,7 @@ export const ImportCalculator = () => {
                 {/* Vehicle Price */}
                 <div>
                   <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                    Vehicle price <span className="text-red-500">*</span>
+                    {t("calculator.form.vehiclePrice")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
@@ -137,7 +136,7 @@ export const ImportCalculator = () => {
                 {/* Auction Fee */}
                 <div>
                   <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                    Auction fee
+                    {t("calculator.form.auctionFee")}
                   </label>
                   <input
                     type="number"
@@ -150,16 +149,16 @@ export const ImportCalculator = () => {
                 {/* Auction Location */}
                 <div>
                   <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                    Auction location <span className="text-red-500">*</span>
+                    {t("calculator.form.auctionLocation")} <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={auctionLocation}
                     onChange={(e) => setAuctionLocation(e.target.value)}
                     className="w-full px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] focus:border-[#429de6] text-gray-900 dark:text-white appearance-none bg-[length:12px] dark:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23ffffff%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23000000%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center]"
                   >
-                    <option value="">Select location</option>
-                    <option value="location1">Location 1</option>
-                    <option value="location2">Location 2</option>
+                    <option value="">{t("calculator.form.selectLocation")}</option>
+                    <option value="location1">{t("calculator.form.location1")}</option>
+                    <option value="location2">{t("calculator.form.location2")}</option>
                   </select>
                 </div>
               </div>
@@ -206,18 +205,18 @@ export const ImportCalculator = () => {
                 {/* Vehicle Type */}
                 <div>
                   <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                    Vehicle Type <span className="text-red-500">*</span>
+                    {t("calculator.form.vehicleType")} <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={vehicleType}
                     onChange={(e) => setVehicleType(e.target.value)}
                     className="w-full px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] focus:border-[#429de6] text-gray-900 dark:text-white appearance-none bg-[length:12px] dark:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23ffffff%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23000000%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center]"
                   >
-                    <option value="">Select type</option>
-                    <option value="passenger">Passenger Car</option>
-                    <option value="sedan">Sedan</option>
-                    <option value="suv">SUV</option>
-                    <option value="sports">Sports</option>
+                    <option value="">{t("calculator.form.selectType")}</option>
+                    <option value="passenger">{t("calculator.form.passengerCar")}</option>
+                    <option value="sedan">{t("calculator.form.sedan")}</option>
+                    <option value="suv">{t("calculator.form.suv")}</option>
+                    <option value="sports">{t("calculator.form.sports")}</option>
                   </select>
                 </div>
 
@@ -226,25 +225,25 @@ export const ImportCalculator = () => {
                   {/* Engine */}
                   <div>
                     <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                      Engine <span className="text-red-500">*</span>
+                      {t("calculator.form.engine")} <span className="text-red-500">*</span>
                     </label>
                     <select
                       value={engine}
                       onChange={(e) => setEngine(e.target.value)}
                       className="w-full px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] focus:border-[#429de6] text-gray-900 dark:text-white appearance-none bg-[length:12px] dark:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23ffffff%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23000000%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center]"
                     >
-                      <option value="">Select engine</option>
-                      <option value="gasoline">Gasoline</option>
-                      <option value="diesel">Diesel</option>
-                      <option value="electric">Electric</option>
-                      <option value="hybrid">Hybrid</option>
+                      <option value="">{t("calculator.form.selectEngine")}</option>
+                      <option value="gasoline">{t("calculator.form.gasoline")}</option>
+                      <option value="diesel">{t("calculator.form.diesel")}</option>
+                      <option value="electric">{t("calculator.form.electric")}</option>
+                      <option value="hybrid">{t("calculator.form.hybrid")}</option>
                     </select>
                   </div>
 
                   {/* Engine Volume */}
                   <div>
                     <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                      Engine volume <span className="text-red-500">*</span>
+                      {t("calculator.form.engineVolume")} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="number"
@@ -265,7 +264,7 @@ export const ImportCalculator = () => {
                       onChange={(e) => setInsurance(e.target.checked)}
                       className="w-4 h-4 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6]"
                     />
-                    <span className="text-gray-600 dark:text-gray-400">Insurance</span>
+                    <span className="text-gray-600 dark:text-gray-400">{t("calculator.form.insurance")}</span>
                   </label>
 
                   <label className="flex items-center gap-3 cursor-pointer">
@@ -275,7 +274,7 @@ export const ImportCalculator = () => {
                       onChange={(e) => setHighGroundClearance(e.target.checked)}
                       className="w-4 h-4 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6]"
                     />
-                    <span className="text-gray-600 dark:text-gray-400">High ground clearance</span>
+                    <span className="text-gray-600 dark:text-gray-400">{t("calculator.form.highGroundClearance")}</span>
                   </label>
                 </div>
               </div>
@@ -287,7 +286,7 @@ export const ImportCalculator = () => {
                 type="submit"
                 className="px-8 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-all hover:shadow-lg hover:shadow-blue-500/20 flex items-center gap-2"
               >
-                Calculate cost
+                {t("calculator.form.calculateCost")}
                 <span>›</span>
               </button>
             </div>

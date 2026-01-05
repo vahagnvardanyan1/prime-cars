@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import type { AdminCarDetails, AdminCarStatus } from "@/lib/admin/types";
+import { VehicleType, VehicleModel, Auction } from "@/lib/admin/types";
 
 type UseAddCarFormReturn = {
   fields: {
@@ -15,7 +16,6 @@ type UseAddCarFormReturn = {
     auction: string;
     city: string;
     lot: string;
-    paymentToAuctionUsd: string;
     vin: string;
     customerNotes: string;
   };
@@ -29,7 +29,6 @@ type UseAddCarFormReturn = {
     setAuction: ({ value }: { value: string }) => void;
     setCity: ({ value }: { value: string }) => void;
     setLot: ({ value }: { value: string }) => void;
-    setPaymentToAuctionUsd: ({ value }: { value: string }) => void;
     setVin: ({ value }: { value: string }) => void;
     setCustomerNotes: ({ value }: { value: string }) => void;
     reset: () => void;
@@ -45,7 +44,7 @@ type UseAddCarFormReturn = {
 };
 
 export const useAddCarForm = (): UseAddCarFormReturn => {
-  const [model, setModel] = useState("");
+  const [model, setModel] = useState<string>(VehicleModel.BMW);
   const [year, setYear] = useState("");
   const [priceUsd, setPriceUsd] = useState("");
   const [status, setStatus] = useState<Exclude<AdminCarStatus, "Sold">>(
@@ -53,18 +52,16 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
   );
 
   const [purchaseDate, setPurchaseDate] = useState("");
-  const [type, setType] = useState("Auto");
-  const [auction, setAuction] = useState("");
+  const [type, setType] = useState<string>(VehicleType.AUTO);
+  const [auction, setAuction] = useState<string>(Auction.COPART);
   const [city, setCity] = useState("");
   const [lot, setLot] = useState("");
-  const [paymentToAuctionUsd, setPaymentToAuctionUsd] = useState("");
   const [vin, setVin] = useState("");
   const [customerNotes, setCustomerNotes] = useState("");
 
   const isSubmitEnabled = useMemo(() => {
     const yearNumber = Number(year);
     const priceNumber = Number(priceUsd);
-    const paymentNumber = Number(paymentToAuctionUsd);
 
     return (
       purchaseDate.trim().length > 0 &&
@@ -73,18 +70,15 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       Number.isFinite(yearNumber) &&
       yearNumber > 1900 &&
       Number.isFinite(priceNumber) &&
-      priceNumber > 0 &&
-      Number.isFinite(paymentNumber) &&
-      paymentNumber > 0
+      priceNumber > 0
     );
-  }, [model, paymentToAuctionUsd, priceUsd, purchaseDate, vin, year]);
+  }, [model, priceUsd, purchaseDate, vin, year]);
 
   const parsed = useMemo(() => {
     if (!isSubmitEnabled) return null;
 
     const yearNumber = Number(year);
     const priceNumber = Number(priceUsd);
-    const paymentNumber = Number(paymentToAuctionUsd);
 
     const details: AdminCarDetails = {
       purchaseDate: purchaseDate.trim().length ? purchaseDate : undefined,
@@ -92,7 +86,6 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       auction: auction.trim().length ? auction : undefined,
       city: city.trim().length ? city : undefined,
       lot: lot.trim().length ? lot : undefined,
-      paymentToAuctionUsd: paymentNumber,
       vin: vin.trim().length ? vin : undefined,
       customerNotes: customerNotes.trim().length ? customerNotes : undefined,
     };
@@ -108,7 +101,6 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
     customerNotes,
     isSubmitEnabled,
     lot,
-    paymentToAuctionUsd,
     purchaseDate,
     type,
     vin,
@@ -117,16 +109,15 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
   ]);
 
   const reset = () => {
-    setModel("");
+    setModel(VehicleModel.BMW);
     setYear("");
     setPriceUsd("");
     setStatus("Pending Review");
     setPurchaseDate("");
-    setType("Auto");
-    setAuction("");
+    setType(VehicleType.AUTO);
+    setAuction(Auction.COPART);
     setCity("");
     setLot("");
-    setPaymentToAuctionUsd("");
     setVin("");
     setCustomerNotes("");
   };
@@ -142,7 +133,6 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       auction,
       city,
       lot,
-      paymentToAuctionUsd,
       vin,
       customerNotes,
     },
@@ -156,7 +146,6 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       setAuction: ({ value }) => setAuction(value),
       setCity: ({ value }) => setCity(value),
       setLot: ({ value }) => setLot(value),
-      setPaymentToAuctionUsd: ({ value }) => setPaymentToAuctionUsd(value),
       setVin: ({ value }) => setVin(value),
       setCustomerNotes: ({ value }) => setCustomerNotes(value),
       reset,

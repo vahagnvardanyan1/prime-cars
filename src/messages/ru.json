@@ -102,6 +102,30 @@
       "month": "Месяц",
       "year": "Год",
       "calculate": "Рассчитать итог",
+      "importer": "Импортёр",
+      "legalPerson": "Юридическое лицо (ДГУ)",
+      "individual": "Физическое лицо (ДНДЛ)",
+      "vehiclePrice": "Цена автомобиля",
+      "auctionFee": "Плата аукциона",
+      "auctionLocation": "Расположение аукциона",
+      "selectLocation": "Выберите расположение",
+      "location1": "Расположение 1",
+      "location2": "Расположение 2",
+      "selectType": "Выберите тип",
+      "passengerCar": "Легковой автомобиль",
+      "sedan": "Седан",
+      "suv": "Внедорожник",
+      "sports": "Спорткар",
+      "engine": "Двигатель",
+      "selectEngine": "Выберите двигатель",
+      "gasoline": "Бензин",
+      "diesel": "Дизель",
+      "electric": "Электро",
+      "hybrid": "Гибрид",
+      "engineVolume": "Объём двигателя",
+      "insurance": "Страхование",
+      "highGroundClearance": "Высокий клиренс",
+      "calculateCost": "Рассчитать стоимость",
       "noticeTitle": "Важно",
       "noticeBody": "Калькулятор даёт оценку на основе типичных сценариев. Фактические расходы могут отличаться из‑за параметров авто, курсов валют и правил таможни. Для точного расчёта свяжитесь с нашей командой.",
       "countries": {
@@ -195,6 +219,7 @@
     "rememberMe": "Запомнить меня",
     "forgotPassword": "Забыли пароль?",
     "signIn": "Войти",
+    "signingIn": "Вход...",
     "orContinueWith": "или продолжить через",
     "google": "Google",
     "github": "GitHub",
@@ -209,6 +234,8 @@
       "viewer": "Просмотр"
     },
     "breadcrumb": "Prime Cars / Админ",
+    "loadingUser": "Загрузка данных пользователя...",
+    "refresh": "Обновить",
     "topbar": {
       "searchPlaceholder": "Поиск (только визуально)",
       "quickSettings": "Быстрые настройки",
@@ -251,7 +278,9 @@
         "status": "Статус",
         "updated": "Обновлено"
       },
-      "updatedToday": "Сегодня"
+      "updatedToday": "Сегодня",
+      "noCarsFound": "Автомобили не найдены",
+      "loadingCars": "Загрузка автомобилей..."
     },
     "usersView": {
       "title": "Пользователи",
@@ -262,7 +291,9 @@
         "role": "Роль",
         "status": "Статус"
       },
-      "statusActive": "Активен"
+      "statusActive": "Активен",
+      "noUsersFound": "Пользователи не найдены",
+      "loadingUsers": "Загрузка пользователей..."
     },
     "settingsView": {
       "shippingPricesTitle": "Цены доставки",
@@ -274,6 +305,7 @@
       "applyToAll": "Применить ко всем",
       "citiesTitle": "Города",
       "citiesSubtitle": "Обновляйте или удаляйте цену доставки для каждого города.",
+      "addCity": "Добавить город",
       "columns": {
         "city": "Город",
         "shipping": "Доставка",
@@ -296,19 +328,66 @@
       "addCar": {
         "title": "Добавить авто",
         "subtitle": "Фокусное окно: загрузите фотографии и заполните ключевые поля.",
+        "fillMockData": "Заполнить тестовыми данными",
         "photosLabel": "Фото авто",
         "user": "Пользователь",
         "selectUser": "Выберите пользователя",
         "loadingUsers": "Загрузка пользователей...",
         "purchaseDate": "Дата покупки",
         "type": "Тип",
-        "typePlaceholder": "Auto",
+        "vehicleTypes": {
+          "auto": "Авто",
+          "motorcycle": "Мотоцикл",
+          "limousine": "Лимузин",
+          "boat": "Лодка",
+          "trailer": "Прицеп",
+          "truck": "Грузовик",
+          "oversizedTruck": "Крупногабаритный грузовик",
+          "jetski": "Гидроцикл",
+          "atv": "Квадроцикл",
+          "moped": "Мопед",
+          "scooter": "Скутер",
+          "other": "Другое"
+        },
         "model": "Модель",
-        "modelPlaceholder": "например, Mercedes-Benz S-Class",
+        "vehicleModels": {
+          "bmw": "BMW",
+          "mercedes": "Mercedes-Benz",
+          "audi": "Audi",
+          "toyota": "Toyota",
+          "honda": "Honda",
+          "ford": "Ford",
+          "chevrolet": "Chevrolet",
+          "nissan": "Nissan",
+          "lexus": "Lexus",
+          "porsche": "Porsche",
+          "tesla": "Tesla",
+          "volkswagen": "Volkswagen",
+          "hyundai": "Hyundai",
+          "kia": "Kia",
+          "mazda": "Mazda",
+          "subaru": "Subaru",
+          "jeep": "Jeep",
+          "ram": "Ram",
+          "gmc": "GMC",
+          "cadillac": "Cadillac",
+          "infiniti": "Infiniti",
+          "acura": "Acura",
+          "volvo": "Volvo",
+          "landRover": "Land Rover",
+          "jaguar": "Jaguar",
+          "other": "Другое"
+        },
         "year": "Год",
         "yearPlaceholder": "2024",
         "auction": "Аукцион",
-        "auctionPlaceholder": "например, Copart",
+        "auctions": {
+          "copart": "Copart",
+          "iaai": "IAAI",
+          "manheim": "Manheim",
+          "adesa": "Adesa",
+          "other": "Другой"
+        },
         "city": "Город",
         "cityPlaceholder": "например, Нью‑Йорк",
         "lot": "LOT",
@@ -331,7 +410,8 @@
         "dropToUpload": "Отпустите для загрузки",
         "invalidFormat": "Неверный формат файла. Пожалуйста, загрузите только PDF файл.",
         "cancel": "Отмена",
-        "submit": "Сохранить"
+        "submit": "Сохранить",
+        "submitting": "Отправка..."
       },
       "createUser": {
         "title": "Создать пользователя",
@@ -349,6 +429,8 @@
         "firstNamePlaceholder": "Иван",
         "lastName": "Фамилия",
         "lastNamePlaceholder": "Иванов",
+        "companyName": "Название компании",
+        "companyNamePlaceholder": "напр. Acme Inc.",
         "passportNumber": "Номер паспорта / Личный № / Корп. №",
         "passportPlaceholder": "AA1234567",
         "phone": "Телефон",
@@ -359,7 +441,9 @@
         "loginPlaceholder": "например, ava.johnson",
         "password": "Пароль",
         "cancel": "Отмена",
-        "submit": "Сохранить"
+        "submit": "Сохранить",
+        "submitting": "Сохранение...",
+        "invalidEmail": "Пожалуйста, введите действительный адрес электронной почты"
       },
       "updateShipping": {
         "title": "Изменить цену доставки",
@@ -368,6 +452,18 @@
         "fieldLabel": "Цена доставки (USD)",
         "cancel": "Отмена",
         "confirm": "Подтвердить"
+      },
+      "addShipping": {
+        "title": "Добавить город доставки",
+        "cityName": "Название города",
+        "cityPlaceholder": "например, Москва",
+        "shippingPrice": "Цена доставки (USD)",
+        "shippingPlaceholder": "100",
+        "cancel": "Отмена",
+        "submit": "Добавить город",
+        "submitting": "Добавление...",
+        "successMessage": "Город доставки успешно добавлен",
+        "errorMessage": "Не удалось добавить город доставки"
       }
     }
   }

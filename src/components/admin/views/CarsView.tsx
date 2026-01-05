@@ -8,6 +8,7 @@ import type { AdminCar } from "@/lib/admin/types";
 import { formatUsd, getCarStatusTone } from "@/lib/admin/format";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { TonePill } from "@/components/admin/primitives/TonePill";
+import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
 import {
   Table,
   TableBody,
@@ -19,9 +20,11 @@ import {
 
 type CarsViewProps = {
   cars: AdminCar[];
+  isLoading?: boolean;
+  onRefresh?: () => void;
 };
 
-export const CarsView = ({ cars }: CarsViewProps) => {
+export const CarsView = ({ cars, isLoading = false, onRefresh }: CarsViewProps) => {
   const t = useTranslations();
 
   const getStatusLabel = ({ status }: { status: AdminCar["status"] }) => {
@@ -37,71 +40,184 @@ export const CarsView = ({ cars }: CarsViewProps) => {
     }
   };
 
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "-";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    } catch {
+      return "-";
+    }
+  };
+
   return (
     <Surface className="overflow-hidden">
-      <div className="px-6 py-5">
-        <div className="text-sm font-medium text-gray-900 dark:text-white">
-          {t("admin.carsView.title")}
+      <div className="px-6 py-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Cars
+          </h1>
         </div>
-        <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-          {t("admin.carsView.subtitle")}
-        </div>
+        {onRefresh && (
+          <RefreshButton onClick={onRefresh} isLoading={isLoading} />
+        )}
       </div>
 
+      <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-            <TableHead className="px-4 py-3 sm:px-6">{t("admin.carsView.columns.car")}</TableHead>
-            <TableHead className="py-3">{t("admin.carsView.columns.price")}</TableHead>
-            <TableHead className="py-3">{t("admin.carsView.columns.status")}</TableHead>
-            <TableHead className="py-3 text-right pr-4 sm:pr-6">
-              {t("admin.carsView.columns.updated")}
-            </TableHead>
+            <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[200px]">Car</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">Client</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">Price</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">Type</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">Auction</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">City</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">Lot</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[160px]">VIN</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">Purchase Date</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">Notes</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">Status</TableHead>
+            <TableHead className="px-4 py-4 text-right pr-6 sm:pr-8 text-sm font-semibold min-w-[140px]">Created</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {cars.map((car) => (
+          {isLoading ? (
+            <TableRow>
+              <TableCell colSpan={12} className="py-12">
+                <div className="flex flex-col items-center justify-center gap-3">
+                  <svg className="animate-spin h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {t("admin.carsView.loadingCars")}
+                  </span>
+                </div>
+              </TableCell>
+            </TableRow>
+          ) : cars.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={12} className="py-12">
+                <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
+                  {t("admin.carsView.noCarsFound")}
+                </div>
+              </TableCell>
+            </TableRow>
+          ) : (
+            cars.map((car) => (
             <TableRow key={car.id} className="hover:bg-gray-50/70 dark:hover:bg-white/5">
-              <TableCell className="px-4 py-4 sm:px-6">
+              {/* Car (Model + Year + Image) */}
+              <TableCell className="px-6 py-6 sm:px-8 min-w-[200px]">
                 <div className="flex items-center gap-4">
-                  <div className="relative h-12 w-16 overflow-hidden rounded-xl ring-1 ring-gray-200 dark:ring-white/10">
-                    <Image
-                      src={car.imageUrl}
-                      alt={car.model}
-                      fill
-                      className="object-cover"
-                      sizes="64px"
-                    />
-                  </div>
+                  {car.imageUrl && (
+                    <div className="relative h-16 w-20 overflow-hidden rounded-xl ring-1 ring-gray-200 dark:ring-white/10 flex-shrink-0">
+                      <Image
+                        src={car.imageUrl}
+                        alt={car.model}
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                      />
+                    </div>
+                  )}
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                    <div className="truncate text-base font-semibold text-gray-900 dark:text-white">
                       {car.model}
                     </div>
-                    <div className="mt-0.5 text-xs text-gray-600 dark:text-gray-400">
+                    <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                       {car.year}
                     </div>
                   </div>
                 </div>
               </TableCell>
-              <TableCell className="py-4">
-                <div className="text-sm font-medium text-gray-900 dark:text-white">
+              
+              {/* Client */}
+              <TableCell className="px-4 py-6 min-w-[140px]">
+                <div className="text-sm text-gray-900 dark:text-white font-medium">
+                  {car.client || "-"}
+                </div>
+              </TableCell>
+              
+              {/* Price */}
+              <TableCell className="px-4 py-6 min-w-[140px]">
+                <div className="text-base font-semibold text-gray-900 dark:text-white whitespace-nowrap">
                   {formatUsd({ value: car.priceUsd })}
                 </div>
               </TableCell>
-              <TableCell className="py-4">
+              
+              {/* Type */}
+              <TableCell className="px-4 py-6 min-w-[120px]">
+                <div className="text-sm text-gray-900 dark:text-white capitalize">
+                  {car.details?.type || "-"}
+                </div>
+              </TableCell>
+              
+              {/* Auction */}
+              <TableCell className="px-4 py-6 min-w-[120px]">
+                <div className="text-sm text-gray-900 dark:text-white capitalize">
+                  {car.details?.auction || "-"}
+                </div>
+              </TableCell>
+              
+              {/* City */}
+              <TableCell className="px-4 py-6 min-w-[140px]">
+                <div className="text-sm text-gray-900 dark:text-white">
+                  {car.details?.city || "-"}
+                </div>
+              </TableCell>
+              
+              {/* Lot */}
+              <TableCell className="px-4 py-6 min-w-[140px]">
+                <div className="text-sm text-gray-900 dark:text-white">
+                  {car.details?.lot || "-"}
+                </div>
+              </TableCell>
+              
+              {/* VIN */}
+              <TableCell className="px-4 py-6 min-w-[160px]">
+                <div className="text-sm text-gray-900 dark:text-white font-mono">
+                  {car.details?.vin || "-"}
+                </div>
+              </TableCell>
+              
+              {/* Purchase Date */}
+              <TableCell className="px-4 py-6 min-w-[140px]">
+                <div className="text-sm text-gray-900 dark:text-white whitespace-nowrap">
+                  {formatDate(car.details?.purchaseDate)}
+                </div>
+              </TableCell>
+              
+              {/* Notes */}
+              <TableCell className="px-4 py-6 min-w-[200px]">
+                <div className="text-sm text-gray-900 dark:text-white truncate">
+                  {car.details?.customerNotes || "-"}
+                </div>
+              </TableCell>
+              
+              {/* Status */}
+              <TableCell className="px-4 py-6 min-w-[120px]">
                 <TonePill tone={getCarStatusTone({ status: car.status })}>
                   {getStatusLabel({ status: car.status })}
                 </TonePill>
               </TableCell>
-              <TableCell className="py-4 text-right pr-4 sm:pr-6">
-                <div className="text-xs text-gray-600 dark:text-gray-400">
-                  {t("admin.carsView.updatedToday")}
+              
+              {/* Created Date */}
+              <TableCell className="px-4 py-6 text-right pr-6 sm:pr-8 min-w-[140px]">
+                <div className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                  {formatDate(car.createdAt)}
                 </div>
               </TableCell>
             </TableRow>
-          ))}
+            ))
+          )}
         </TableBody>
       </Table>
+      </div>
     </Surface>
   );
 };

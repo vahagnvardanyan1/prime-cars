@@ -102,6 +102,30 @@
       "month": "Month",
       "year": "Year",
       "calculate": "Calculate Total Cost",
+      "importer": "Importer",
+      "legalPerson": "Legal person (ACP)",
+      "individual": "Individual (SCDR)",
+      "vehiclePrice": "Vehicle price",
+      "auctionFee": "Auction fee",
+      "auctionLocation": "Auction location",
+      "selectLocation": "Select location",
+      "location1": "Location 1",
+      "location2": "Location 2",
+      "selectType": "Select type",
+      "passengerCar": "Passenger Car",
+      "sedan": "Sedan",
+      "suv": "SUV",
+      "sports": "Sports",
+      "engine": "Engine",
+      "selectEngine": "Select engine",
+      "gasoline": "Gasoline",
+      "diesel": "Diesel",
+      "electric": "Electric",
+      "hybrid": "Hybrid",
+      "engineVolume": "Engine volume",
+      "insurance": "Insurance",
+      "highGroundClearance": "High ground clearance",
+      "calculateCost": "Calculate cost",
       "noticeTitle": "Estimation Notice",
       "noticeBody": "This calculator provides an estimate based on typical import scenarios. Actual costs may vary depending on specific vehicle details, current exchange rates, and customs regulations. For a precise quote, please contact our team.",
       "countries": {
@@ -195,6 +219,7 @@
     "rememberMe": "Remember me",
     "forgotPassword": "Forgot password?",
     "signIn": "Sign in",
+    "signingIn": "Signing in...",
     "orContinueWith": "or continue with",
     "google": "Google",
     "github": "GitHub",
@@ -209,6 +234,8 @@
       "viewer": "Viewer"
     },
     "breadcrumb": "Prime Cars / Admin",
+    "loadingUser": "Loading user data...",
+    "refresh": "Refresh",
     "topbar": {
       "searchPlaceholder": "Search (visual only)",
       "quickSettings": "Quick Settings",
@@ -251,7 +278,9 @@
         "status": "Status",
         "updated": "Updated"
       },
-      "updatedToday": "Today"
+      "updatedToday": "Today",
+      "noCarsFound": "No cars found",
+      "loadingCars": "Loading cars..."
     },
     "usersView": {
       "title": "Users",
@@ -262,7 +291,9 @@
         "role": "Role",
         "status": "Status"
       },
-      "statusActive": "Active"
+      "statusActive": "Active",
+      "noUsersFound": "No users found",
+      "loadingUsers": "Loading users..."
     },
     "settingsView": {
       "shippingPricesTitle": "Shipping Prices",
@@ -273,7 +304,8 @@
       "globalAdjustmentExample": "Example: if all are 100 and you enter 100 → all become 200.",
       "applyToAll": "Apply to All Cities",
       "citiesTitle": "Cities",
-      "citiesSubtitle": "Update or delete shipping prices per city.",
+      "citiesSubtitle": "Add, update or delete shipping prices per city.",
+      "addCity": "Add City",
       "columns": {
         "city": "City",
         "shipping": "Shipping",
@@ -282,7 +314,7 @@
       "update": "Update",
       "delete": "Delete",
       "deleteTitle": "Delete {city}?",
-      "deleteBody": "This will remove the city from shipping price management. This action can’t be undone.",
+      "deleteBody": "This will remove the city from shipping price management. This action can't be undone.",
       "cancel": "Cancel",
       "confirmDelete": "Confirm Delete"
     },
@@ -296,19 +328,66 @@
       "addCar": {
         "title": "Add Car",
         "subtitle": "Focused modal: upload photos and enter the essentials.",
+        "fillMockData": "Fill Mock Data",
         "photosLabel": "Car Photos",
         "user": "User",
         "selectUser": "Select a user",
         "loadingUsers": "Loading users...",
         "purchaseDate": "Purchase date",
         "type": "Type",
-        "typePlaceholder": "Auto",
+        "vehicleTypes": {
+          "auto": "Auto",
+          "motorcycle": "Motorcycle",
+          "limousine": "Limousine",
+          "boat": "Boat",
+          "trailer": "Trailer",
+          "truck": "Truck",
+          "oversizedTruck": "Oversized Truck",
+          "jetski": "Jetski",
+          "atv": "ATV",
+          "moped": "Moped",
+          "scooter": "Scooter",
+          "other": "Other"
+        },
         "model": "Model",
-        "modelPlaceholder": "e.g. Mercedes-Benz S-Class",
+        "vehicleModels": {
+          "bmw": "BMW",
+          "mercedes": "Mercedes-Benz",
+          "audi": "Audi",
+          "toyota": "Toyota",
+          "honda": "Honda",
+          "ford": "Ford",
+          "chevrolet": "Chevrolet",
+          "nissan": "Nissan",
+          "lexus": "Lexus",
+          "porsche": "Porsche",
+          "tesla": "Tesla",
+          "volkswagen": "Volkswagen",
+          "hyundai": "Hyundai",
+          "kia": "Kia",
+          "mazda": "Mazda",
+          "subaru": "Subaru",
+          "jeep": "Jeep",
+          "ram": "Ram",
+          "gmc": "GMC",
+          "cadillac": "Cadillac",
+          "infiniti": "Infiniti",
+          "acura": "Acura",
+          "volvo": "Volvo",
+          "landRover": "Land Rover",
+          "jaguar": "Jaguar",
+          "other": "Other"
+        },
         "year": "Year",
         "yearPlaceholder": "2024",
         "auction": "Auction",
-        "auctionPlaceholder": "e.g. Copart",
+        "auctions": {
+          "copart": "Copart",
+          "iaai": "IAAI",
+          "manheim": "Manheim",
+          "adesa": "Adesa",
+          "other": "Other"
+        },
         "city": "City",
         "cityPlaceholder": "e.g. New York",
         "lot": "LOT",
@@ -331,7 +410,8 @@
         "dropToUpload": "Drop to upload",
         "invalidFormat": "Invalid file format. Please upload a PDF file only.",
         "cancel": "Cancel",
-        "submit": "Submit"
+        "submit": "Submit",
+        "submitting": "Submitting..."
       },
       "createUser": {
         "title": "Create User",
@@ -349,6 +429,8 @@
         "firstNamePlaceholder": "John",
         "lastName": "Last name",
         "lastNamePlaceholder": "Doe",
+        "companyName": "Company name",
+        "companyNamePlaceholder": "e.g. Acme Inc.",
         "passportNumber": "Passport #, Personal # or Corp #",
         "passportPlaceholder": "AA1234567",
         "phone": "Phone",
@@ -359,7 +441,9 @@
         "loginPlaceholder": "e.g. ava.johnson",
         "password": "Password",
         "cancel": "Cancel",
-        "submit": "Save"
+        "submit": "Save",
+        "submitting": "Saving...",
+        "invalidEmail": "Please enter a valid email address"
       },
       "updateShipping": {
         "title": "Update Shipping Price",
@@ -368,6 +452,18 @@
         "fieldLabel": "Shipping Price (USD)",
         "cancel": "Cancel",
         "confirm": "Confirm"
+      },
+      "addShipping": {
+        "title": "Add Shipping City",
+        "cityName": "City Name",
+        "cityPlaceholder": "e.g. New York",
+        "shippingPrice": "Shipping Price (USD)",
+        "shippingPlaceholder": "100",
+        "cancel": "Cancel",
+        "submit": "Add City",
+        "submitting": "Adding...",
+        "successMessage": "Shipping city added successfully",
+        "errorMessage": "Failed to add shipping city"
       }
     }
   }

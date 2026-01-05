@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 
 import type { AdminCar } from "@/lib/admin/types";
+import { VehicleType, VehicleModel, Auction } from "@/lib/admin/types";
 import { createAdminCar } from "@/lib/admin/createAdminCar";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -14,22 +15,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
 import { useAddCarForm } from "@/hooks/admin/useAddCarForm";
 import { usePhotoUploads } from "@/hooks/admin/usePhotoUploads";
+import { fetchUsers } from "@/lib/admin/fetchUsers";
+import { createCar } from "@/lib/admin/createCar";
+import { generateRandomCarData } from "@/lib/admin/mockData";
+import { toast } from "sonner";
 
 type AddCarModalProps = {
   open: boolean;
   onOpenChange: ({ open }: { open: boolean }) => void;
   onCreateCar: ({ car }: { car: AdminCar }) => void;
+  onCarCreated?: () => void;
 };
 
 type User = {
   id: string;
-  name: string;
+  customerId?: string;
+  firstName: string;
+  lastName: string;
   email: string;
 };
 
-export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProps) => {
+export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: AddCarModalProps) => {
   const t = useTranslations();
-  const { previews, setFileAt, removeFileAt, clearAll } = usePhotoUploads({ initialSlots: 1 });
+  const { files, previews, setFileAt, removeFileAt, clearAll } = usePhotoUploads({ initialSlots: 1 });
   const form = useAddCarForm();
   const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
   const [invoicePreview, setInvoicePreview] = useState<string | null>(null);
@@ -38,22 +46,53 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProp
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch users from backend (mock for now)
+  // Fetch users from backend
   useEffect(() => {
     if (open) {
-      setLoadingUsers(true);
-      // TODO: Replace with actual API call
-      // Example: fetch('/api/users').then(res => res.json()).then(setUsers)
-      setTimeout(() => {
-        setUsers([
-          { id: "1", name: "John Doe", email: "john@example.com" },
-          { id: "2", name: "Jane Smith", email: "jane@example.com" },
-          { id: "3", name: "Bob Johnson", email: "bob@example.com" },
-          { id: "4", name: "Alice Williams", email: "alice@example.com" },
-        ]);
-        setLoadingUsers(false);
-      }, 500);
+      const loadUsers = async () => {
+        // Check if user is authenticated
+        const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+        if (!token) {
+          return; // Don't fetch or show error if not authenticated
+        }
+
+        setLoadingUsers(true);
+        try {
+          const result = await fetchUsers();
+          
+          if (result.success && result.users) {
+            const formattedUsers = result.users.map((user) => ({
+              id: user.customerId || user.id,
+              customerId: user.customerId,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email,
+            }));
+            setUsers(formattedUsers);
+          } else {
+            // Only show error if authenticated (not 401/403 errors)
+            if (!result.error?.includes('401') && !result.error?.includes('403') && !result.error?.includes('Unauthorized')) {
+              toast.error("Failed to load users", {
+                description: result.error || "Could not fetch users from server.",
+              });
+            }
+          }
+        } catch (error) {
+          // Only show error if it's not an auth error
+          const errorMessage = error instanceof Error ? error.message : "";
+          if (!errorMessage.includes('401') && !errorMessage.includes('403') && !errorMessage.includes('Unauthorized')) {
+            toast.error("Failed to load users", {
+              description: errorMessage || "An unexpected error occurred.",
+            });
+          }
+        } finally {
+          setLoadingUsers(false);
+        }
+      };
+
+      loadUsers();
     }
   }, [open]);
 
@@ -110,34 +149,92 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProp
     setInvoiceError(null);
   };
 
-  const onSubmit = () => {
+  const fillWithMockData = () => {
+    const mockData = generateRandomCarData();
+    
+    form.actions.setModel({ value: mockData.model });
+    form.actions.setYear({ value: mockData.year });
+    form.actions.setPriceUsd({ value: mockData.priceUsd });
+    form.actions.setPurchaseDate({ value: mockData.purchaseDate });
+    form.actions.setType({ value: mockData.type });
+    form.actions.setAuction({ value: mockData.auction });
+    form.actions.setCity({ value: mockData.city });
+    form.actions.setLot({ value: mockData.lot });
+    form.actions.setVin({ value: mockData.vin });
+    form.actions.setCustomerNotes({ value: mockData.customerNotes });
+
+    toast.success("Mock data loaded", {
+      description: "Form has been filled with random test data.",
+    });
+  };
+
+  const onSubmit = async () => {
     const parsed = form.derived.parsed;
     if (!parsed) return;
 
-    // Use the first non-null preview as the main image
-    const mainImage = previews.find(p => p !== null) ?? null;
+    setIsSubmitting(true);
 
-    const car = createAdminCar({
-      imageUrl: mainImage,
-      model: form.fields.model,
-      year: parsed.year,
-      priceUsd: parsed.priceUsd,
-      status: form.fields.status,
-      details: parsed.details,
-    });
+    try {
+      // Get image files from the upload hook
+      const imageFiles = files.filter((file): file is File => file !== null);
 
-    // TODO: Handle invoice file upload (invoiceFile)
-    // TODO: Handle selected user (selectedUserId)
-    // You can add this to your backend upload logic
-    console.log('Selected User ID:', selectedUserId);
-    console.log('Invoice File:', invoiceFile);
+      const result = await createCar({
+        data: {
+          userId: selectedUserId,
+          model: form.fields.model, // VehicleModel enum value
+          year: parsed.year,
+          priceUsd: parsed.priceUsd,
+          type: form.fields.type, // VehicleType enum value
+          auction: form.fields.auction, // Auction enum value
+          purchaseDate: parsed.details.purchaseDate,
+          city: parsed.details.city,
+          lot: parsed.details.lot,
+          vin: parsed.details.vin,
+          customerNotes: parsed.details.customerNotes,
+        },
+        images: imageFiles,
+        invoiceFile: invoiceFile,
+      });
 
-    onCreateCar({ car });
-    close();
-    clearAll();
-    removeInvoice();
-    setSelectedUserId("");
-    form.actions.reset();
+      if (result.success) {
+        toast.success("Car created successfully", {
+          description: `${form.fields.model} has been added to the inventory.`,
+        });
+
+        // Create local car object for immediate UI update
+        const mainImage = previews.find(p => p !== null) ?? null;
+        const car = createAdminCar({
+          imageUrl: mainImage,
+          model: form.fields.model,
+          year: parsed.year,
+          priceUsd: parsed.priceUsd,
+          status: form.fields.status,
+          details: parsed.details,
+        });
+
+        onCreateCar({ car });
+        
+        if (onCarCreated) {
+          onCarCreated();
+        }
+        
+        close();
+        clearAll();
+        removeInvoice();
+        setSelectedUserId("");
+        form.actions.reset();
+      } else {
+        toast.error("Failed to create car", {
+          description: result.error || "An unexpected error occurred.",
+        });
+      }
+    } catch (error) {
+      toast.error("Failed to create car", {
+        description: error instanceof Error ? error.message : "An unexpected error occurred.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -146,13 +243,28 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProp
         <div className="flex max-h-[85vh] flex-col">
           <div className="px-8 py-6 border-b border-gray-200 dark:border-white/10">
             <DialogHeader className="space-y-2">
-            <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-              {t("admin.modals.addCar.title")}
-            </DialogTitle>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t("admin.modals.addCar.subtitle")}
-            </p>
-          </DialogHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {t("admin.modals.addCar.title")}
+                  </DialogTitle>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    {t("admin.modals.addCar.subtitle")}
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={fillWithMockData}
+                  className="h-9 px-4 rounded-lg border-gray-300 dark:border-white/20 text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/5"
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  {t("admin.modals.addCar.fillMockData")}
+                </Button>
+              </div>
+            </DialogHeader>
           </div>
 
           <div className="px-8 py-6 max-h-[calc(85vh-180px)] space-y-6 overflow-y-auto">
@@ -185,7 +297,7 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProp
                   </option>
                   {users.map((user) => (
                     <option key={user.id} value={user.id}>
-                      {user.name} ({user.email})
+                      {user.firstName} {user.lastName} ({user.email})
                     </option>
                   ))}
                 </select>
@@ -207,22 +319,39 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProp
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {t("admin.modals.addCar.type")}
                 </Label>
-                <Input
+                <select
                   value={form.fields.type}
                   onChange={(e) => form.actions.setType({ value: e.target.value })}
-                  placeholder={t("admin.modals.addCar.typePlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
-                />
+                  className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white pl-4 pr-10 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6] dark:bg-black dark:text-white appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iI0Q1RDdEQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[length:16px_16px] bg-[center_right_0.75rem] bg-no-repeat"
+                >
+                  <option value={VehicleType.AUTO}>{t("admin.modals.addCar.vehicleTypes.auto")}</option>
+                  <option value={VehicleType.MOTORCYCLE}>{t("admin.modals.addCar.vehicleTypes.motorcycle")}</option>
+                  <option value={VehicleType.LIMOUSINE}>{t("admin.modals.addCar.vehicleTypes.limousine")}</option>
+                  <option value={VehicleType.BOAT}>{t("admin.modals.addCar.vehicleTypes.boat")}</option>
+                  <option value={VehicleType.TRAILER}>{t("admin.modals.addCar.vehicleTypes.trailer")}</option>
+                  <option value={VehicleType.TRUCK}>{t("admin.modals.addCar.vehicleTypes.truck")}</option>
+                  <option value={VehicleType.OVERSIZED_TRUCK}>{t("admin.modals.addCar.vehicleTypes.oversizedTruck")}</option>
+                  <option value={VehicleType.JETSKI}>{t("admin.modals.addCar.vehicleTypes.jetski")}</option>
+                  <option value={VehicleType.ATV}>{t("admin.modals.addCar.vehicleTypes.atv")}</option>
+                  <option value={VehicleType.MOPED}>{t("admin.modals.addCar.vehicleTypes.moped")}</option>
+                  <option value={VehicleType.SCOOTER}>{t("admin.modals.addCar.vehicleTypes.scooter")}</option>
+                  <option value={VehicleType.OTHER}>{t("admin.modals.addCar.vehicleTypes.other")}</option>
+                </select>
               </div>
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.model")}</Label>
-                <Input
+                <select
                   value={form.fields.model}
                   onChange={(e) => form.actions.setModel({ value: e.target.value })}
-                  placeholder={t("admin.modals.addCar.modelPlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
-                />
+                  className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white pl-4 pr-10 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6] dark:bg-black dark:text-white appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iI0Q1RDdEQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[length:16px_16px] bg-[center_right_0.75rem] bg-no-repeat"
+                >
+                  {Object.values(VehicleModel).map((model) => (
+                    <option key={model} value={model}>
+                      {model.toUpperCase()}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.year")}</Label>
@@ -237,12 +366,17 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProp
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.auction")}</Label>
-                <Input
+                <select
                   value={form.fields.auction}
                   onChange={(e) => form.actions.setAuction({ value: e.target.value })}
-                  placeholder={t("admin.modals.addCar.auctionPlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
-                />
+                  className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white pl-4 pr-10 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6] dark:bg-black dark:text-white appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iI0Q1RDdEQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[length:16px_16px] bg-[center_right_0.75rem] bg-no-repeat"
+                >
+                  {Object.values(Auction).map((auction) => (
+                    <option key={auction} value={auction}>
+                      {auction.toUpperCase()}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="space-y-2">
@@ -265,18 +399,6 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProp
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t("admin.modals.addCar.paymentToAuction")}
-                </Label>
-                <Input
-                  value={form.fields.paymentToAuctionUsd}
-                  onChange={(e) => form.actions.setPaymentToAuctionUsd({ value: e.target.value })}
-                  inputMode="numeric"
-                  placeholder={t("admin.modals.addCar.paymentToAuctionPlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
-                />
-              </div>
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.vin")}</Label>
@@ -423,10 +545,20 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar }: AddCarModalProp
             <Button
               type="button"
               className="h-11 px-6 rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc] disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-lg shadow-blue-500/20"
-              disabled={!form.derived.isSubmitEnabled}
+              disabled={!form.derived.isSubmitEnabled || isSubmitting}
               onClick={onSubmit}
             >
-              {t("admin.modals.addCar.submit")}
+              {isSubmitting ? (
+                <div className="flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>{t("admin.modals.addCar.submitting")}</span>
+                </div>
+              ) : (
+                t("admin.modals.addCar.submit")
+              )}
             </Button>
           </DialogFooter>
           </div>

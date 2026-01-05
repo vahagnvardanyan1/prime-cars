@@ -1,4 +1,5 @@
 import type { AdminCar, AdminUser, ShippingCity } from "@/lib/admin/types";
+import { VehicleType, VehicleModel, Auction } from "@/lib/admin/types";
 
 export const ADMIN_CARS: AdminCar[] = [
   {
@@ -39,32 +40,6 @@ export const ADMIN_CARS: AdminCar[] = [
   },
 ];
 
-export const ADMIN_USERS: AdminUser[] = [
-  {
-    id: "user_01",
-    name: "Ava Johnson",
-    email: "ava.johnson@primecars.internal",
-    role: "Admin",
-  },
-  {
-    id: "user_02",
-    name: "Noah Kim",
-    email: "noah.kim@primecars.internal",
-    role: "Manager",
-  },
-  {
-    id: "user_03",
-    name: "Sophia Patel",
-    email: "sophia.patel@primecars.internal",
-    role: "Support",
-  },
-  {
-    id: "user_04",
-    name: "Liam Martinez",
-    email: "liam.martinez@primecars.internal",
-    role: "Viewer",
-  },
-];
 
 export const SHIPPING_CITIES: ShippingCity[] = [
   { id: "city_ny", city: "New York", shippingUsd: 100 },
@@ -73,6 +48,79 @@ export const SHIPPING_CITIES: ShippingCity[] = [
   { id: "city_hou", city: "Houston", shippingUsd: 110 },
   { id: "city_chi", city: "Chicago", shippingUsd: 130 },
 ];
+
+// Mock car data for testing
+export const MOCK_CAR_DATA = {
+  model: VehicleModel.BMW,
+  year: "2023",
+  priceUsd: "28500",
+  purchaseDate: "2024-01-15",
+  type: VehicleType.AUTO,
+  auction: Auction.COPART,
+  city: "Los Angeles",
+  lot: "54123987",
+  vin: "4T1BF1FK5EU123456",
+  customerNotes: "Clean title, minor front bumper damage, excellent mechanical condition.",
+};
+
+export const MOCK_VEHICLE_MODELS = [
+  VehicleModel.BMW
+];
+
+export const MOCK_AUCTIONS = [
+  Auction.COPART,
+  Auction.IAAI,
+];
+
+export const MOCK_CITIES = [
+  "Los Angeles",
+  "Dallas",
+  "Phoenix",
+  "Houston",
+  "Chicago",
+  "Atlanta",
+  "Miami",
+  "New York",
+];
+
+export const generateRandomCarData = () => {
+  const currentYear = new Date().getFullYear();
+  const randomYear = currentYear - Math.floor(Math.random() * 5); // 0-5 years old
+  const randomModel = MOCK_VEHICLE_MODELS[Math.floor(Math.random() * MOCK_VEHICLE_MODELS.length)];
+  const randomAuction = MOCK_AUCTIONS[Math.floor(Math.random() * MOCK_AUCTIONS.length)];
+  const randomCity = MOCK_CITIES[Math.floor(Math.random() * MOCK_CITIES.length)];
+  const randomPrice = 15000 + Math.floor(Math.random() * 40000);
+  const randomLot = Math.floor(10000000 + Math.random() * 90000000).toString();
+  const randomVin = `1HGBH41JXMN${Math.floor(100000 + Math.random() * 900000)}`;
+  
+  const vehicleTypes = [
+    VehicleType.AUTO,
+    VehicleType.MOTORCYCLE,
+    VehicleType.TRUCK,
+    VehicleType.LIMOUSINE,
+    VehicleType.BOAT,
+  ];
+  const randomType = vehicleTypes[Math.floor(Math.random() * vehicleTypes.length)];
+
+  return {
+    model: randomModel,
+    year: randomYear.toString(),
+    priceUsd: randomPrice.toString(),
+    purchaseDate: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    type: randomType,
+    auction: randomAuction,
+    city: randomCity,
+    lot: randomLot,
+    vin: randomVin,
+    customerNotes: [
+      "Clean title, minor cosmetic damage.",
+      "Salvage title, front-end damage, needs repairs.",
+      "Clean title, excellent condition, low mileage.",
+      "Runs and drives, minor scratches.",
+      "Clean title, one owner, full service history.",
+    ][Math.floor(Math.random() * 5)],
+  };
+};
 
 
 

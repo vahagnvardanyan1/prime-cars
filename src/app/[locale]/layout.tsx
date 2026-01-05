@@ -7,6 +7,8 @@ import type { Locale } from "@/i18n/config";
 import { locales } from "@/i18n/config";
 import { SiteShell } from "@/components/SiteShell";
 import { ThemeProvider } from "@/components/ThemeContext";
+import { Toaster } from "@/components/ui/sonner";
+import { UserProvider } from "@/contexts/UserContext";
 
 type LocaleLayoutProps = {
   children: ReactNode;
@@ -31,7 +33,10 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <ThemeProvider>
-        <SiteShell>{children}</SiteShell>
+        <UserProvider>
+          <SiteShell>{children}</SiteShell>
+          <Toaster />
+        </UserProvider>
       </ThemeProvider>
     </NextIntlClientProvider>
   );
