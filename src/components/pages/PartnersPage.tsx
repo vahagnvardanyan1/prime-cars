@@ -32,40 +32,30 @@ export const PartnersPage = () => {
                 </h3>
                 
                 <a 
-                  href="tel:+37460670000"
+                  href="tel:+37444771130"
                   className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-[#429de6] dark:hover:text-[#429de6] transition-colors group"
                 >
                   <div className="w-10 h-10 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center border border-gray-300 dark:border-white/10 group-hover:border-[#429de6]/50 transition-colors">
                     <Phone className="w-5 h-5" />
                   </div>
-                  <span>+374 60 670000</span>
+                  <span>+374 44 771130</span>
                 </a>
                 
                 <a 
-                  href="tel:+37498787171"
-                  className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-[#429de6] dark:hover:text-[#429de6] transition-colors group"
-                >
-                  <div className="w-10 h-10 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center border border-gray-300 dark:border-white/10 group-hover:border-[#429de6]/50 transition-colors">
-                    <Phone className="w-5 h-5" />
-                  </div>
-                  <span>+374 98 787171</span>
-                </a>
-                
-                <a 
-                  href="mailto:sales@autobuy.am"
+                  href="mailto:primecarsarm@gmail.com"
                   className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-[#429de6] dark:hover:text-[#429de6] transition-colors group"
                 >
                   <div className="w-10 h-10 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center border border-gray-300 dark:border-white/10 group-hover:border-[#429de6]/50 transition-colors">
                     <Mail className="w-5 h-5" />
                   </div>
-                  <span>sales@autobuy.am</span>
+                  <span>primecarsarm@gmail.com</span>
                 </a>
                 
                 <div className="flex items-start gap-3 text-gray-600 dark:text-gray-400">
                   <div className="w-10 h-10 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center border border-gray-300 dark:border-white/10 flex-shrink-0">
                     <MapPin className="w-5 h-5" />
                   </div>
-                  <span>Armenia, Yerevan, Kilikia District 3/24</span>
+                  <span>{t("footer.address")}</span>
                 </div>
               </div>
             </div>
@@ -134,32 +124,6 @@ export const PartnersPage = () => {
               <p className="text-gray-600 dark:text-gray-400">
                 {t("partners.benefits.global.description")}
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-white dark:bg-black transition-colors duration-300">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          <div className="bg-gradient-to-br from-[#429de6] to-[#3a8acc] rounded-2xl p-12 text-center">
-            <h2 className="text-white mb-4">{t("partners.cta.title")}</h2>
-            <p className="text-blue-50 max-w-2xl mx-auto mb-8 text-lg">
-              {t("partners.cta.description")}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a 
-                href="tel:+37460670000"
-                className="px-8 py-4 bg-white text-[#429de6] rounded-lg hover:shadow-xl transition-all"
-              >
-                {t("partners.cta.call")}
-              </a>
-              <a 
-                href="mailto:sales@autobuy.am"
-                className="px-8 py-4 border-2 border-white text-white rounded-lg hover:bg-white/10 transition-all"
-              >
-                {t("partners.cta.email")}
-              </a>
             </div>
           </div>
         </div>
