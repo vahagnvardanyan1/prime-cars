@@ -1,45 +1,25 @@
 "use client";
 
-import type { FormEvent } from "react";
+import { useState } from "react";
 
-import { useMemo, useState } from "react";
-
-import { Calculator, DollarSign, Info, FileText, Ship, Wrench } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
-
-import { calculateImportCosts } from "@/lib/import-calculator/calculateImportCosts";
+import { DollarSign, Info } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export const ImportCalculator = () => {
   const t = useTranslations();
-  const locale = useLocale();
 
   const [vehiclePrice, setVehiclePrice] = useState("");
   const [country, setCountry] = useState("japan");
   const [vehicleType, setVehicleType] = useState("sedan");
-  const [showResults, setShowResults] = useState(false);
-
-  const costs = useMemo(() => {
-    return calculateImportCosts({
-      vehiclePriceUsd: Number.parseFloat(vehiclePrice) || 0,
-      originCountry: country,
-      vehicleType,
-    });
-  }, [country, vehiclePrice, vehicleType]);
-
-  const handleCalculate = (e: FormEvent) => {
-    e.preventDefault();
-    setShowResults(true);
-  };
 
   return (
-    <div className="grid lg:grid-cols-5 gap-8">
-      <div className="lg:col-span-3">
-        <div className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 p-8 transition-colors duration-300">
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 p-8 transition-colors duration-300">
           <h2 className="text-gray-900 dark:text-white mb-6">
             {t("calculator.form.vehicleInfo")}
           </h2>
 
-          <form onSubmit={handleCalculate} className="space-y-6">
+          <form className="space-y-6">
             <div>
               <label className="block text-gray-900 dark:text-white mb-2">
                 {t("calculator.form.purchasePriceLabel")}
@@ -146,168 +126,6 @@ export const ImportCalculator = () => {
               </p>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="lg:col-span-2">
-        <div className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 p-8 sticky top-28 transition-colors duration-300">
-          <h2 className="text-gray-900 dark:text-white mb-6">
-            {t("calculator.breakdown.title")}
-          </h2>
-
-          {!showResults || !vehiclePrice ? (
-            <div className="text-center py-12">
-              <div className="w-20 h-20 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-300 dark:border-white/10">
-                <Calculator className="w-10 h-10 text-gray-500 dark:text-gray-400" />
-              </div>
-              <p className="text-gray-600 dark:text-gray-400">
-                {t("calculator.breakdown.empty")}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex items-start justify-between py-4 border-b border-gray-300 dark:border-white/10">
-                <div className="flex items-start gap-3">
-                  <DollarSign className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5" />
-                  <div>
-                    <div className="text-gray-900 dark:text-white">
-                      {t("calculator.breakdown.rows.base.title")}
-                    </div>
-                    <div className="text-gray-600 dark:text-gray-400 text-sm">
-                      {t("calculator.breakdown.rows.base.subtitle")}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-gray-900 dark:text-white">
-                  ${costs.basePrice.toLocaleString(locale, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </div>
-              </div>
-
-              <div className="flex items-start justify-between py-4 border-b border-gray-300 dark:border-white/10">
-                <div className="flex items-start gap-3">
-                  <Ship className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5" />
-                  <div>
-                    <div className="text-gray-900 dark:text-white">
-                      {t("calculator.breakdown.rows.shipping.title")}
-                    </div>
-                    <div className="text-gray-600 dark:text-gray-400 text-sm">
-                      {t("calculator.breakdown.rows.shipping.subtitle")}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-gray-900 dark:text-white">
-                  ${costs.shippingCost.toLocaleString(locale, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </div>
-              </div>
-
-              <div className="flex items-start justify-between py-4 border-b border-gray-300 dark:border-white/10">
-                <div className="flex items-start gap-3">
-                  <FileText className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5" />
-                  <div>
-                    <div className="text-gray-900 dark:text-white">
-                      {t("calculator.breakdown.rows.customs.title")}
-                    </div>
-                    <div className="text-gray-600 dark:text-gray-400 text-sm">
-                      {t("calculator.breakdown.rows.customs.subtitle")}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-gray-900 dark:text-white">
-                  ${costs.customsDuty.toLocaleString(locale, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </div>
-              </div>
-
-              <div className="flex items-start justify-between py-4 border-b border-gray-300 dark:border-white/10">
-                <div className="flex items-start gap-3">
-                  <Wrench className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5" />
-                  <div>
-                    <div className="text-gray-900 dark:text-white">
-                      {t("calculator.breakdown.rows.inspection.title")}
-                    </div>
-                    <div className="text-gray-600 dark:text-gray-400 text-sm">
-                      {t("calculator.breakdown.rows.inspection.subtitle")}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-gray-900 dark:text-white">
-                  ${costs.inspectionFees.toLocaleString(locale, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </div>
-              </div>
-
-              <div className="flex items-start justify-between py-4 border-b border-gray-300 dark:border-white/10">
-                <div className="flex items-start gap-3">
-                  <FileText className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5" />
-                  <div>
-                    <div className="text-gray-900 dark:text-white">
-                      {t("calculator.breakdown.rows.docs.title")}
-                    </div>
-                    <div className="text-gray-600 dark:text-gray-400 text-sm">
-                      {t("calculator.breakdown.rows.docs.subtitle")}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-gray-900 dark:text-white">
-                  ${costs.documentationFees.toLocaleString(locale, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </div>
-              </div>
-
-              <div className="flex items-start justify-between py-4 border-b border-gray-300 dark:border-white/10">
-                <div className="flex items-start gap-3">
-                  <DollarSign className="w-5 h-5 text-gray-500 dark:text-gray-400 mt-0.5" />
-                  <div>
-                    <div className="text-gray-900 dark:text-white">
-                      {t("calculator.breakdown.rows.serviceFee.title")}
-                    </div>
-                    <div className="text-gray-600 dark:text-gray-400 text-sm">
-                      {t("calculator.breakdown.rows.serviceFee.subtitle")}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-gray-900 dark:text-white">
-                  ${costs.serviceFee.toLocaleString(locale, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-[#429de6] to-[#3a8acc] rounded-xl p-6 mt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-blue-100 mb-1">
-                      {t("calculator.breakdown.rows.estimatedTotal")}
-                    </div>
-                    <div className="text-white text-3xl">
-                      ${costs.totalCost.toLocaleString(locale, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <button className="w-full mt-6 py-4 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-all" type="button">
-                {t("calculator.breakdown.rows.requestQuote")}
-              </button>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
