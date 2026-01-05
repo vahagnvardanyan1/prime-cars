@@ -18,7 +18,7 @@ type CreateUserModalProps = {
 
 export const CreateUserModal = ({ open, onOpenChange }: CreateUserModalProps) => {
   const t = useTranslations();
-  const { previews, setFileAt, clearAll } = usePhotoUploads({ maxFiles: 3 });
+  const { previews, setFileAt, removeFileAt, clearAll } = usePhotoUploads({ maxFiles: 3, initialSlots: 3 });
 
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
@@ -55,9 +55,9 @@ export const CreateUserModal = ({ open, onOpenChange }: CreateUserModalProps) =>
           <div className="mt-6 space-y-6">
             <PhotoUploadGrid
               label={t("admin.modals.createUser.photosLabel")}
-              maxFiles={3}
               previews={previews}
               onPickFile={setFileAt}
+              onRemoveFile={removeFileAt}
             />
 
             <div className="grid gap-4 sm:grid-cols-2">

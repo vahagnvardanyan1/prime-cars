@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useState } from "react";
 
 type UsePhotoUploadsArgs = {
-  maxFiles: number;
+  maxFiles?: number;
+  initialSlots?: number;
 };
 
-export const usePhotoUploads = ({ maxFiles }: UsePhotoUploadsArgs) => {
+export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsArgs) => {
   const [files, setFiles] = useState<(File | null)[]>(
-    Array.from({ length: maxFiles }).map(() => null),
+    Array.from({ length: initialSlots }).map(() => null),
   );
 
   const previews = useMemo(() => {
@@ -24,14 +25,43 @@ export const usePhotoUploads = ({ maxFiles }: UsePhotoUploadsArgs) => {
   }, [previews]);
 
   const setFileAt = ({ index, file }: { index: number; file: File | null }) => {
-    setFiles((prev) => prev.map((p, i) => (i === index ? file : p)));
+    setFiles((prev) => {
+      const updated = prev.map((p, i) => (i === index ? file : p));
+      
+      // If we're setting a file at the last index and it's not null,
+      // and we haven't reached maxFiles limit, add a new empty slot
+      if (file && index === prev.length - 1 && (!maxFiles || prev.length < maxFiles)) {
+        return [...updated, null];
+      }
+      
+      return updated;
+    });
+  };
+
+  const removeFileAt = ({ index }: { index: number }) => {
+    setFiles((prev) => {
+      // If there's only one slot, just clear it
+      if (prev.length === 1) {
+        return [null];
+      }
+      
+      // Remove the file at the index
+      const filtered = prev.filter((_, i) => i !== index);
+      
+      // If all remaining slots are empty, keep at least one empty slot
+      if (filtered.every(f => f === null)) {
+        return [null];
+      }
+      
+      return filtered;
+    });
   };
 
   const clearAll = () => {
-    setFiles(Array.from({ length: maxFiles }).map(() => null));
+    setFiles(Array.from({ length: initialSlots }).map(() => null));
   };
 
-  return { files, previews, setFileAt, clearAll };
+  return { files, previews, setFileAt, removeFileAt, clearAll };
 };
 
 

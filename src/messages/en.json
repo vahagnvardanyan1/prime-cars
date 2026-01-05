@@ -390,7 +390,7 @@
       },
       "addCar": {
         "title": "Add Car",
-        "subtitle": "Focused modal: upload two photos and enter the essentials.",
+        "subtitle": "Focused modal: upload photos and enter the essentials.",
         "photosLabel": "Car Photos",
         "purchaseDate": "Purchase date",
         "type": "Type",
@@ -417,6 +417,11 @@
         "statusDraft": "Draft",
         "customerNotes": "Customer notes",
         "customerNotesPlaceholder": "Optional notes for the customer or internal team…",
+        "invoiceLabel": "Invoice",
+        "uploadInvoice": "Upload Invoice",
+        "format": "Format: PDF",
+        "dropToUpload": "Drop to upload",
+        "invalidFormat": "Invalid file format. Please upload a PDF file only.",
         "cancel": "Cancel",
         "submit": "Submit"
       },
