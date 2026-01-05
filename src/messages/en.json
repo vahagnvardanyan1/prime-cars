@@ -11,7 +11,7 @@
   },
   "header": {
     "logoAlt": "Prime Cars Logo",
-    "signUpNow": "Sign Up Now",
+    "signInNow": "Sign In",
     "toggleThemeAria": "Toggle theme",
     "toggleMenuAria": "Toggle menu",
     "closeMenuAria": "Close menu",
@@ -300,6 +300,7 @@
     "closeAria": "Close",
     "welcomeBack": "Welcome back",
     "subtitle": "Sign in to access your account",
+    "username": "Username",
     "email": "Email",
     "phone": "Phone",
     "emailAddress": "Email address",
@@ -311,7 +312,7 @@
     "orContinueWith": "or continue with",
     "google": "Google",
     "github": "GitHub",
-    "noAccount": "Don’t have an account?",
+    "noAccount": "Don't have an account?",
     "signUp": "Sign up"
   },
   "admin": {

@@ -11,7 +11,7 @@
   },
   "header": {
     "logoAlt": "Prime Cars լոգո",
-    "signUpNow": "Գրանցվել",
+    "signInNow": "Մուտք գործել",
     "toggleThemeAria": "Փոխել թեման",
     "toggleMenuAria": "Բացել մենյուն",
     "closeMenuAria": "Փակել մենյուն",
@@ -300,6 +300,7 @@
     "closeAria": "Փակել",
     "welcomeBack": "Բարի վերադարձ",
     "subtitle": "Մուտք գործեք՝ ձեր հաշիվը հասանելի դարձնելու համար",
+    "username": "Օգտանուն",
     "email": "Էլ. փոստ",
     "phone": "Հեռախոս",
     "emailAddress": "Էլ. փոստ",

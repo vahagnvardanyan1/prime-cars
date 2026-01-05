@@ -11,7 +11,7 @@
   },
   "header": {
     "logoAlt": "Логотип Prime Cars",
-    "signUpNow": "Зарегистрироваться",
+    "signInNow": "Войти",
     "toggleThemeAria": "Переключить тему",
     "toggleMenuAria": "Открыть меню",
     "closeMenuAria": "Закрыть меню",
@@ -300,6 +300,7 @@
     "closeAria": "Закрыть",
     "welcomeBack": "С возвращением",
     "subtitle": "Войдите, чтобы получить доступ к аккаунту",
+    "username": "Имя пользователя",
     "email": "Email",
     "phone": "Телефон",
     "emailAddress": "Email",

@@ -128,7 +128,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
                 className="px-6 py-2.5 bg-transparent border border-black/20 dark:border-white/20 text-black dark:text-white rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition-all"
                 type="button"
               >
-                {t("header.signUpNow")}
+                {t("header.signInNow")}
               </button>
             </div>
 
@@ -228,7 +228,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
             className="mt-4 px-4 py-3 bg-transparent border border-white/20 text-white rounded-lg hover:bg-white/10 transition-all text-left"
             type="button"
           >
-            {t("header.signUpNow")}
+            {t("header.signInNow")}
           </button>
         </nav>
       </div>
