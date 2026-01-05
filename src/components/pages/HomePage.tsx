@@ -65,14 +65,19 @@ export const HomePage = () => {
             </p>
           </div>
 
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
-          >
-            <CarouselContent className="-ml-2 md:-ml-4">
+          <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-white dark:from-black to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-white dark:from-black to-transparent z-10 pointer-events-none" />
+            
+            <Carousel
+              opts={{
+                align: "center",
+                loop: true,
+                slidesToScroll: 1,
+              }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-4">
               {[
                 {
                   year: "2022",
@@ -185,7 +190,7 @@ export const HomePage = () => {
                     "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80",
                 },
               ].map((car, index) => (
-                <CarouselItem key={`${car.year}-${car.name}-${index}`} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                <CarouselItem key={`${car.year}-${car.name}-${index}`} className="pl-4 basis-[85%] sm:basis-[55%] md:basis-[42%] lg:basis-[31%] xl:basis-[28%]">
                   <div className="bg-white dark:bg-[#111111] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-all group h-full">
                     <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#1a1a1a]">
                       <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 dark:bg-black/50 backdrop-blur-sm rounded-full text-gray-900 dark:text-white text-xs border border-gray-200 dark:border-white/20">
@@ -227,9 +232,10 @@ export const HomePage = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
-          </Carousel>
+              <CarouselPrevious className="left-2 hidden md:flex z-20" />
+              <CarouselNext className="right-2 hidden md:flex z-20" />
+            </Carousel>
+          </div>
         </div>
       </section>
 
