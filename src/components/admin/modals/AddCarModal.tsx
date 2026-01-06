@@ -17,7 +17,6 @@ import { useAddCarForm } from "@/hooks/admin/useAddCarForm";
 import { usePhotoUploads } from "@/hooks/admin/usePhotoUploads";
 import { fetchUsers } from "@/lib/admin/fetchUsers";
 import { createCar } from "@/lib/admin/createCar";
-import { generateRandomCarData } from "@/lib/admin/mockData";
 import { toast } from "sonner";
 
 type AddCarModalProps = {
@@ -149,25 +148,6 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
     setInvoiceError(null);
   };
 
-  const fillWithMockData = () => {
-    const mockData = generateRandomCarData();
-    
-    form.actions.setModel({ value: mockData.model });
-    form.actions.setYear({ value: mockData.year });
-    form.actions.setPriceUsd({ value: mockData.priceUsd });
-    form.actions.setPurchaseDate({ value: mockData.purchaseDate });
-    form.actions.setType({ value: mockData.type });
-    form.actions.setAuction({ value: mockData.auction });
-    form.actions.setCity({ value: mockData.city });
-    form.actions.setLot({ value: mockData.lot });
-    form.actions.setVin({ value: mockData.vin });
-    form.actions.setCustomerNotes({ value: mockData.customerNotes });
-
-    toast.success("Mock data loaded", {
-      description: "Form has been filled with random test data.",
-    });
-  };
-
   const onSubmit = async () => {
     const parsed = form.derived.parsed;
     if (!parsed) return;
@@ -252,17 +232,6 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                     {t("admin.modals.addCar.subtitle")}
                   </p>
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={fillWithMockData}
-                  className="h-9 px-4 rounded-lg border-gray-300 dark:border-white/20 text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/5"
-                >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  {t("admin.modals.addCar.fillMockData")}
-                </Button>
               </div>
             </DialogHeader>
           </div>

@@ -325,7 +325,6 @@
       "addCar": {
         "title": "Add Car",
         "subtitle": "Focused modal: upload photos and enter the essentials.",
-        "fillMockData": "Fill Mock Data",
         "photosLabel": "Car Photos",
         "user": "User",
         "selectUser": "Select a user",
