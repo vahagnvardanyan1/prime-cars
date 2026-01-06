@@ -4,12 +4,13 @@ import { authenticatedFetch } from "@/lib/auth/token";
 type UpdateUserData = {
   firstName?: string;
   lastName?: string;
+  username?: string;
   email?: string;
   phone?: string;
-  passportNumber?: string;
+  passport?: string;
   country?: string;
   companyName?: string;
-  login?: string;
+  password?: string;
 };
 
 type UpdateUserResponse = {
@@ -25,7 +26,7 @@ export const updateUser = async ({
   data: UpdateUserData;
 }): Promise<UpdateUserResponse> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/customers/${id}`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
