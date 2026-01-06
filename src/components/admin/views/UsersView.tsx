@@ -1,9 +1,11 @@
 "use client";
 
+import { Pencil, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Surface } from "@/components/admin/primitives/Surface";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -18,6 +20,9 @@ type UsersViewProps = {
   users: AdminUser[];
   isLoading?: boolean;
   onRefresh?: () => void;
+  onUpdateUser?: (user: AdminUser) => void;
+  onDeleteUser?: (user: AdminUser) => void;
+  isAdmin?: boolean;
 };
 
 const getInitials = ({ firstName, lastName }: { firstName: string; lastName: string }) => {
@@ -26,7 +31,7 @@ const getInitials = ({ firstName, lastName }: { firstName: string; lastName: str
   return `${first}${last}`;
 };
 
-export const UsersView = ({ users, isLoading = false, onRefresh }: UsersViewProps) => {
+export const UsersView = ({ users, isLoading = false, onRefresh, onUpdateUser, onDeleteUser, isAdmin = false }: UsersViewProps) => {
   const t = useTranslations();
 
   return (
@@ -53,12 +58,15 @@ export const UsersView = ({ users, isLoading = false, onRefresh }: UsersViewProp
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">Passport</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[180px]">Company</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">Country</TableHead>
+            {isAdmin && (
+              <TableHead className="px-4 py-4 text-center pr-6 sm:pr-8 text-sm font-semibold min-w-[160px]">Actions</TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={7} className="py-12">
+              <TableCell colSpan={isAdmin ? 8 : 7} className="py-12">
                 <div className="flex flex-col items-center justify-center gap-3">
                   <svg className="animate-spin h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -72,7 +80,7 @@ export const UsersView = ({ users, isLoading = false, onRefresh }: UsersViewProp
             </TableRow>
           ) : users.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="py-12">
+              <TableCell colSpan={isAdmin ? 8 : 7} className="py-12">
                 <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
                   {t("admin.usersView.noUsersFound")}
                 </div>
@@ -98,7 +106,7 @@ export const UsersView = ({ users, isLoading = false, onRefresh }: UsersViewProp
               </TableCell>
               <TableCell className="px-4 py-6 min-w-[150px]">
                 <div className="text-sm text-gray-900 dark:text-white">
-                  {u.userName || "-"}
+                  {u.username || "-"}
                 </div>
               </TableCell>
               <TableCell className="px-4 py-6 min-w-[200px]">
@@ -126,6 +134,36 @@ export const UsersView = ({ users, isLoading = false, onRefresh }: UsersViewProp
                   {u.country || "-"}
                 </div>
               </TableCell>
+
+              {/* Actions */}
+              {isAdmin && (
+                <TableCell className="px-4 py-6 text-center pr-6 sm:pr-8 min-w-[160px]">
+                  <div className="flex items-center justify-center gap-2">
+                    {onUpdateUser && (
+                      <Button
+                        onClick={() => onUpdateUser(u)}
+                        variant="outline"
+                        size="sm"
+                        className="h-9 px-3 gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 dark:border-blue-900/50 dark:text-blue-400 dark:hover:bg-blue-950/50 dark:hover:border-blue-800 dark:hover:text-blue-300 transition-all"
+                      >
+                        <Pencil className="h-4 w-4" />
+                        <span className="hidden sm:inline">Update</span>
+                      </Button>
+                    )}
+                    {onDeleteUser && (
+                      <Button
+                        onClick={() => onDeleteUser(u)}
+                        variant="outline"
+                        size="sm"
+                        className="h-9 px-3 gap-2 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-400 hover:text-red-800 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-950/50 dark:hover:border-red-700 dark:hover:text-red-300 transition-all"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span className="hidden sm:inline">Delete</span>
+                      </Button>
+                    )}
+                  </div>
+                </TableCell>
+              )}
             </TableRow>
             ))
           )}

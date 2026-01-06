@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/i18n/config";
-import { getAccessToken } from "@/lib/auth/token";
+import { authenticatedFetch } from "@/lib/auth/token";
 
 type IncreaseShippingPricesResponse = {
   success: boolean;
@@ -12,13 +12,10 @@ export const increaseShippingPrices = async ({
   amount: number;
 }): Promise<IncreaseShippingPricesResponse> => {
   try {
-    const token = getAccessToken();
-
-    const response = await fetch(`${API_BASE_URL}/shippings/increase-prices`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/shippings/increase-prices`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
       },
       body: JSON.stringify({ amount }),
     });

@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/i18n/config";
-import { getAccessToken } from "@/lib/auth/token";
+import { authenticatedFetch } from "@/lib/auth/token";
 import type { AdminUser } from "@/lib/admin/types";
 
 type FetchUsersResponse = {
@@ -10,13 +10,10 @@ type FetchUsersResponse = {
 
 export const fetchUsers = async (): Promise<FetchUsersResponse> => {
   try {
-    const token = getAccessToken();
-
-    const response = await fetch(`${API_BASE_URL}/users`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
       },
     });
 
@@ -29,13 +26,14 @@ export const fetchUsers = async (): Promise<FetchUsersResponse> => {
     }
 
     const result = await response.json();
+    debugger
 
     const users: AdminUser[] = result?.map((client: any) => ({
       id: client.id || client._id,
       customerId: client.customerId || "",
       firstName: client.firstName || "",
       lastName: client.lastName || "",
-      userName: client.userName || "",
+      username: client.username || "",
       email: client.email || "",
       passport: client.passport || "",
       phone: client.phone || "",

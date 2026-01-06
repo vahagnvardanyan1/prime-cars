@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { createUser } from "@/lib/admin/createUser";
 import { Country } from "@/lib/admin/types";
 
@@ -235,10 +236,9 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
                   {t("admin.modals.createUser.password")}
                   <span className="text-red-500 ml-1">*</span>
                 </Label>
-                <Input
+                <PasswordInput
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  type="password"
                   placeholder="••••••••"
                   className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
                 />

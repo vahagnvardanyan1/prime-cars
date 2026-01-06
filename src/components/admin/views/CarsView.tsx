@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 
+import { Pencil, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import type { AdminCar } from "@/lib/admin/types";
@@ -9,6 +10,7 @@ import { formatUsd, getCarStatusTone } from "@/lib/admin/format";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { TonePill } from "@/components/admin/primitives/TonePill";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -22,9 +24,12 @@ type CarsViewProps = {
   cars: AdminCar[];
   isLoading?: boolean;
   onRefresh?: () => void;
+  onUpdateCar?: (car: AdminCar) => void;
+  onDeleteCar?: (car: AdminCar) => void;
+  isAdmin?: boolean;
 };
 
-export const CarsView = ({ cars, isLoading = false, onRefresh }: CarsViewProps) => {
+export const CarsView = ({ cars, isLoading = false, onRefresh, onUpdateCar, onDeleteCar, isAdmin = false }: CarsViewProps) => {
   const t = useTranslations();
 
   const getStatusLabel = ({ status }: { status: AdminCar["status"] }) => {
@@ -82,13 +87,16 @@ export const CarsView = ({ cars, isLoading = false, onRefresh }: CarsViewProps) 
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">Purchase Date</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">Notes</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">Status</TableHead>
-            <TableHead className="px-4 py-4 text-right pr-6 sm:pr-8 text-sm font-semibold min-w-[140px]">Created</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">Created</TableHead>
+            {isAdmin && (
+              <TableHead className="px-4 py-4 text-center pr-6 sm:pr-8 text-sm font-semibold min-w-[160px]">Actions</TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={12} className="py-12">
+              <TableCell colSpan={isAdmin ? 13 : 12} className="py-12">
                 <div className="flex flex-col items-center justify-center gap-3">
                   <svg className="animate-spin h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -102,7 +110,7 @@ export const CarsView = ({ cars, isLoading = false, onRefresh }: CarsViewProps) 
             </TableRow>
           ) : cars.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={12} className="py-12">
+              <TableCell colSpan={isAdmin ? 13 : 12} className="py-12">
                 <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
                   {t("admin.carsView.noCarsFound")}
                 </div>
@@ -207,11 +215,41 @@ export const CarsView = ({ cars, isLoading = false, onRefresh }: CarsViewProps) 
               </TableCell>
               
               {/* Created Date */}
-              <TableCell className="px-4 py-6 text-right pr-6 sm:pr-8 min-w-[140px]">
+              <TableCell className="px-4 py-6 min-w-[140px]">
                 <div className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
                   {formatDate(car.createdAt)}
                 </div>
               </TableCell>
+              
+              {/* Actions */}
+              {isAdmin && (
+                <TableCell className="px-4 py-6 text-center pr-6 sm:pr-8 min-w-[160px]">
+                  <div className="flex items-center justify-center gap-2">
+                    {onUpdateCar && (
+                      <Button
+                        onClick={() => onUpdateCar(car)}
+                        variant="outline"
+                        size="sm"
+                        className="h-9 px-3 gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 dark:border-blue-900/50 dark:text-blue-400 dark:hover:bg-blue-950/50 dark:hover:border-blue-800 dark:hover:text-blue-300 transition-all"
+                      >
+                        <Pencil className="h-4 w-4" />
+                        <span className="hidden sm:inline">Update</span>
+                      </Button>
+                    )}
+                    {onDeleteCar && (
+                      <Button
+                        onClick={() => onDeleteCar(car)}
+                        variant="outline"
+                        size="sm"
+                        className="h-9 px-3 gap-2 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-400 hover:text-red-800 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-950/50 dark:hover:border-red-700 dark:hover:text-red-300 transition-all"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span className="hidden sm:inline">Delete</span>
+                      </Button>
+                    )}
+                  </div>
+                </TableCell>
+              )}
             </TableRow>
             ))
           )}

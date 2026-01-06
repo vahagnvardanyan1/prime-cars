@@ -229,7 +229,6 @@
       "support": "Support",
       "viewer": "Viewer"
     },
-    "breadcrumb": "Prime Cars / Admin",
     "loadingUser": "Loading user data...",
     "refresh": "Refresh",
     "topbar": {
@@ -244,7 +243,6 @@
       "activeLabel": "Active"
     },
     "sidebar": {
-      "brandLabel": "Prime Cars",
       "consoleLabel": "Admin Console",
       "addCar": "Add Car",
       "createUser": "Create User",

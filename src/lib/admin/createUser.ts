@@ -1,5 +1,5 @@
 import type { CreateUserData, CreateUserResponse } from "@/lib/admin/types";
-import { getAccessToken } from "../auth/token";
+import { authenticatedFetch } from "../auth/token";
 import { API_BASE_URL } from "@/i18n/config";
 
 export const createUser = async ({
@@ -8,17 +8,15 @@ export const createUser = async ({
   data: CreateUserData;
 }): Promise<CreateUserResponse> => {
   try {
-    
-    const response = await fetch(`${API_BASE_URL}/auth/register-client`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/auth/register-client`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${getAccessToken()}`
       },
       body: JSON.stringify({
         firstName: data.firstName,
         lastName: data.lastName,
-        userName: data.login,
+        username: data.login,
         email: data.email || "",
         password: data.password,
         phone: data.phone || "",

@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/i18n/config";
-import { getAccessToken } from "@/lib/auth/token";
+import { authenticatedFetch } from "@/lib/auth/token";
 import type { ShippingCity } from "@/lib/admin/types";
 
 type FetchShippingsResponse = {
@@ -10,13 +10,10 @@ type FetchShippingsResponse = {
 
 export const fetchShippings = async (): Promise<FetchShippingsResponse> => {
   try {
-    const token = getAccessToken();
-
-    const response = await fetch(`${API_BASE_URL}/shippings`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/shippings`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
       },
     });
 

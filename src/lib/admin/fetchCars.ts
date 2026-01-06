@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/i18n/config";
-import { getAccessToken } from "@/lib/auth/token";
+import { authenticatedFetch } from "@/lib/auth/token";
 import type { AdminCar } from "@/lib/admin/types";
 
 type FetchCarsResponse = {
@@ -10,13 +10,10 @@ type FetchCarsResponse = {
 
 export const fetchCars = async (): Promise<FetchCarsResponse> => {
   try {
-    const token = getAccessToken();
-
-    const response = await fetch(`${API_BASE_URL}/vehicles`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/vehicles`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
       },
     });
 

@@ -229,7 +229,6 @@
       "support": "Поддержка",
       "viewer": "Просмотр"
     },
-    "breadcrumb": "Prime Cars / Админ",
     "loadingUser": "Загрузка данных пользователя...",
     "refresh": "Обновить",
     "topbar": {
@@ -244,7 +243,6 @@
       "activeLabel": "Активно"
     },
     "sidebar": {
-      "brandLabel": "Prime Cars",
       "consoleLabel": "Админ‑консоль",
       "addCar": "Добавить авто",
       "createUser": "Создать пользователя",

@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/i18n/config";
-import { getAccessToken } from "@/lib/auth/token";
+import { authenticatedFetch } from "@/lib/auth/token";
 import type { AdminCar } from "@/lib/admin/types";
 
 type CreateCarData = {
@@ -32,8 +32,6 @@ export const createCar = async ({
   invoiceFile?: File | null;
 }): Promise<CreateCarResponse> => {
   try {
-    const token = getAccessToken();
-
     // Create FormData
     const formData = new FormData();
 
@@ -71,11 +69,8 @@ export const createCar = async ({
     //   formData.append("invoice", invoiceFile);
     // }
 
-    const response = await fetch(`${API_BASE_URL}/vehicles`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/vehicles`, {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-      },
       body: formData,
     });
 

@@ -229,7 +229,6 @@
       "support": "Աջակցություն",
       "viewer": "Դիտող"
     },
-    "breadcrumb": "Prime Cars / Ադմին",
     "loadingUser": "Օգտատիրոջ տվյալների բեռնում...",
     "refresh": "Թարմացնել",
     "topbar": {
@@ -244,7 +243,6 @@
       "activeLabel": "Ակտիվ"
     },
     "sidebar": {
-      "brandLabel": "Prime Cars",
       "consoleLabel": "Ադմին վահանակ",
       "addCar": "Ավելացնել ավտո",
       "createUser": "Ստեղծել օգտատեր",

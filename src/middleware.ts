@@ -5,7 +5,8 @@ import { defaultLocale, locales } from "./i18n/config";
 export default createMiddleware({
   locales,
   defaultLocale,
-  localePrefix: "as-needed",
+  localePrefix: "always",
+  localeDetection: false,
 });
 
 export const config = {

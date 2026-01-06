@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import type { AdminNavKey } from "@/hooks/admin/useAdminDashboardState";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/utils";
+import { useUser } from "@/contexts/UserContext";
 
 type AdminSidebarContentProps = {
   activeNav: AdminNavKey;
@@ -41,6 +42,7 @@ export const AdminSidebarContent = ({
   isAdmin,
 }: AdminSidebarContentProps) => {
   const t = useTranslations();
+  const { user } = useUser();
 
   const visibleNavItems = NAV_ITEMS.filter(item => {
     // Only show "users" if user is admin
@@ -50,22 +52,14 @@ export const AdminSidebarContent = ({
     return true;
   });
 
+  const companyName = user?.companyName
+
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-3 px-6 py-5">
-        <div className="relative h-10 w-10 overflow-hidden rounded-xl ring-1 ring-gray-200 dark:ring-white/10">
-          <Image
-            src={LOGO_URL}
-            alt="Prime Cars"
-            fill
-            className="object-cover"
-            sizes="40px"
-            priority
-          />
-        </div>
         <div className="min-w-0">
           <div className="text-sm font-semibold tracking-[-0.01em] text-gray-900 dark:text-white">
-            {t("admin.sidebar.brandLabel")}
+            {companyName}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">
             {t("admin.sidebar.consoleLabel")}

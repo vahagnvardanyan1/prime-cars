@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/i18n/config";
-import { getAccessToken } from "@/lib/auth/token";
+import { authenticatedFetch } from "@/lib/auth/token";
 
 export type CreateShippingData = {
   city: string;
@@ -16,20 +16,10 @@ export const createShipping = async (
   data: CreateShippingData
 ): Promise<CreateShippingResponse> => {
   try {
-    const token = getAccessToken();
-
-    if (!token) {
-      return {
-        success: false,
-        error: "No authentication token found",
-      };
-    }
-
-    const response = await fetch(`${API_BASE_URL}/shippings`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/shippings`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         city: data.city,

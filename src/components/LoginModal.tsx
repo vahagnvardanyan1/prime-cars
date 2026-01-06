@@ -8,12 +8,13 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { API_BASE_URL } from "@/i18n/config";
-import { setAccessToken } from "@/lib/auth/token";
+import { setTokens } from "@/lib/auth/token";
+import { PasswordInput } from "@/components/ui/password-input";
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLoginSuccess?: () => void;
+  onLoginSuccess?: () => Promise<void> | void;
 }
 
 export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps) => {
@@ -46,7 +47,6 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
     }
 
     setIsSubmitting(true);
-
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
@@ -54,7 +54,7 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: username,
+          username,
           password,
         }),
       });
@@ -69,9 +69,18 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
 
       const result = await response.json();
 
-      // Store access_token from backend
-      if (result.access_token) {
-        setAccessToken({ token: result.access_token });
+      // Store both access_token and refresh_token from backend
+      if (result.access_token && result.refresh_token) {
+        setTokens({ 
+          accessToken: result.access_token,
+          refreshToken: result.refresh_token
+        });
+      } else if (result.access_token) {
+        // Fallback
+        setTokens({ 
+          accessToken: result.access_token,
+          refreshToken: result.access_token 
+        });
       }
 
       toast.success("Login successful", {
@@ -82,7 +91,7 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
       setPassword("");
       
       if (onLoginSuccess) {
-        onLoginSuccess();
+        await onLoginSuccess();
       }
       
       onClose();
@@ -151,8 +160,7 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wider">
                 {t("auth.password")}
               </label>
-              <input
-                type="password"
+              <PasswordInput
                 placeholder=""
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

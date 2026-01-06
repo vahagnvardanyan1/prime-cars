@@ -62,7 +62,7 @@ export type AdminUser = {
   customerId?: string;
   firstName: string;
   lastName: string;
-  userName: string;
+  username: string;
   email: string;
   passport?: string;
   phone?: string;
