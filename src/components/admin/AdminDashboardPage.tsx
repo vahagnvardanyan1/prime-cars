@@ -18,6 +18,7 @@ import { UpdateShippingPriceModal } from "@/components/admin/modals/UpdateShippi
 import { CarsView } from "@/components/admin/views/CarsView";
 import { SettingsView } from "@/components/admin/views/SettingsView";
 import { UsersView } from "@/components/admin/views/UsersView";
+import { ImportCalculator } from "@/components/ImportCalculator";
 import type { AdminCar, AdminUser } from "@/lib/admin/types";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -253,6 +254,19 @@ export const AdminDashboardPage = () => {
               onDeleteUser={handleDeleteUserClick}
               isAdmin={isAdmin}
             />
+          ) : null}
+          {state.activeNav === "calculator" ? (
+            <div>
+              <div className="mb-6">
+                <h1 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                  {t("admin.headers.calculatorTitle")}
+                </h1>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {t("admin.headers.calculatorSubtitle")}
+                </p>
+              </div>
+              <ImportCalculator showNotice={false} />
+            </div>
           ) : null}
           {state.activeNav === "settings" ? (
             <SettingsView

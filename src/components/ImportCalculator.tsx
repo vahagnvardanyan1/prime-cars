@@ -7,7 +7,11 @@ import { Info } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { copart_logo, iaai_logo } from "@/data/images";
 
-export const ImportCalculator = () => {
+interface ImportCalculatorProps {
+  showNotice?: boolean;
+}
+
+export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) => {
   const t = useTranslations();
 
   const [activeTab, setActiveTab] = useState<"iaai" | "copart">("iaai");
@@ -294,19 +298,21 @@ export const ImportCalculator = () => {
             </div>
           </div>
 
-          <div className="mt-6 bg-[#429de6]/10 border border-[#429de6]/20 rounded-2xl p-6">
-            <div className="flex gap-3">
-              <Info className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="text-gray-900 dark:text-white mb-2">
-                  {t("calculator.form.noticeTitle")}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  {t("calculator.form.noticeBody")}
-                </p>
+          {showNotice && (
+            <div className="mt-6 bg-[#429de6]/10 border border-[#429de6]/20 rounded-2xl p-6">
+              <div className="flex gap-3">
+                <Info className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-gray-900 dark:text-white mb-2">
+                    {t("calculator.form.noticeTitle")}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {t("calculator.form.noticeBody")}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </>
       ) : (
         /* Results Section */

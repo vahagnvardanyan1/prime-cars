@@ -10,7 +10,7 @@ import { increaseShippingPrices } from "@/lib/admin/increaseShippingPrices";
 import { deleteShipping } from "@/lib/admin/deleteShipping";
 import { toast } from "sonner";
 
-export type AdminNavKey = "cars" | "users" | "settings";
+export type AdminNavKey = "cars" | "users" | "settings" | "calculator";
 
 type UpdateCityPriceModalState =
   | { isOpen: false }
