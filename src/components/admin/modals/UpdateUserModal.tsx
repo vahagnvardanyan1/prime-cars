@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 
 import { Eye, EyeOff } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import type { AdminUser } from "@/lib/admin/types";
@@ -32,6 +33,7 @@ export const UpdateUserModal = ({
   onOpenChange,
   onUserUpdated,
 }: UpdateUserModalProps) => {
+  const t = useTranslations("admin.modals.updateUser");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -70,22 +72,22 @@ export const UpdateUserModal = ({
 
     // Validation
     if (!firstName.trim()) {
-      toast.error("First name is required");
+      toast.error(t("firstNameRequired"));
       return;
     }
 
     if (!lastName.trim()) {
-      toast.error("Last name is required");
+      toast.error(t("lastNameRequired"));
       return;
     }
 
     if (!username.trim()) {
-      toast.error("Username is required");
+      toast.error(t("usernameRequired"));
       return;
     }
 
     if (!email.trim()) {
-      toast.error("Email is required");
+      toast.error(t("emailRequired"));
       return;
     }
 
@@ -108,16 +110,16 @@ export const UpdateUserModal = ({
       });
 
       if (result.success) {
-        toast.success("User updated successfully");
+        toast.success(t("successMessage"));
         onOpenChange({ open: false });
         if (onUserUpdated) {
           onUserUpdated();
         }
       } else {
-        toast.error(result.error || "Failed to update user");
+        toast.error(result.error || t("errorMessage"));
       }
     } catch (error) {
-      toast.error("An unexpected error occurred");
+      toast.error(t("unexpectedError"));
       console.error("Error updating user:", error);
     } finally {
       setIsSubmitting(false);
@@ -129,10 +131,10 @@ export const UpdateUserModal = ({
       <DialogContent className="w-[95vw] sm:w-[90vw] lg:w-[95vw] min-w-0 sm:min-w-0 lg:min-w-[1400px] max-w-[95vw] sm:max-w-[90vw] lg:max-w-[1600px] max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10 p-4 sm:p-6 lg:p-8">
         <DialogHeader>
           <DialogTitle className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-            Update User
+            {t("title")}
           </DialogTitle>
           <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
-            Update user information and credentials
+            {t("subtitle")}
           </DialogDescription>
         </DialogHeader>
 
@@ -144,13 +146,13 @@ export const UpdateUserModal = ({
                 htmlFor="firstName"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                First Name <span className="text-red-500">*</span>
+                {t("firstName")} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="firstName"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                placeholder="John"
+                placeholder={t("firstNamePlaceholder")}
                 className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
               />
             </div>
@@ -160,13 +162,13 @@ export const UpdateUserModal = ({
                 htmlFor="lastName"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Last Name <span className="text-red-500">*</span>
+                {t("lastName")} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="lastName"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                placeholder="Doe"
+                placeholder={t("lastNamePlaceholder")}
                 className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
               />
             </div>
@@ -176,13 +178,13 @@ export const UpdateUserModal = ({
                 htmlFor="username"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Username <span className="text-red-500">*</span>
+                {t("username")} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="johndoe"
+                placeholder={t("usernamePlaceholder")}
                 className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
               />
             </div>
@@ -195,14 +197,14 @@ export const UpdateUserModal = ({
                 htmlFor="email"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Email <span className="text-red-500">*</span>
+                {t("email")} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="john@example.com"
+                placeholder={t("emailPlaceholder")}
                 className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
               />
             </div>
@@ -212,13 +214,13 @@ export const UpdateUserModal = ({
                 htmlFor="phone"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Phone
+                {t("phone")}
               </Label>
               <Input
                 id="phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="+1234567890"
+                placeholder={t("phonePlaceholder")}
                 className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
               />
             </div>
@@ -228,13 +230,13 @@ export const UpdateUserModal = ({
                 htmlFor="passport"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Passport
+                {t("passport")}
               </Label>
               <Input
                 id="passport"
                 value={passport}
                 onChange={(e) => setPassport(e.target.value)}
-                placeholder="AB123456"
+                placeholder={t("passportPlaceholder")}
                 className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
               />
             </div>
@@ -247,13 +249,13 @@ export const UpdateUserModal = ({
                 htmlFor="country"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Country
+                {t("country")}
               </Label>
               <Input
                 id="country"
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
-                placeholder="United States"
+                placeholder={t("countryPlaceholder")}
                 className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
               />
             </div>
@@ -263,13 +265,13 @@ export const UpdateUserModal = ({
                 htmlFor="companyName"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Company Name
+                {t("companyName")}
               </Label>
               <Input
                 id="companyName"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
-                placeholder="Acme Inc."
+                placeholder={t("companyNamePlaceholder")}
                 className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
               />
             </div>
@@ -282,7 +284,7 @@ export const UpdateUserModal = ({
                 htmlFor="password"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Password
+                {t("password")}
               </Label>
               <div className="relative">
                 <Input
@@ -290,14 +292,14 @@ export const UpdateUserModal = ({
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Leave empty to keep current password"
+                  placeholder={t("passwordPlaceholder")}
                   className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 pr-10 sm:pr-11 lg:pr-12 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-label={showPassword ? t("hidePassword") : t("showPassword")}
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -307,7 +309,7 @@ export const UpdateUserModal = ({
                 </button>
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                Only fill this field if you want to change the password
+                {t("passwordHint")}
               </p>
             </div>
           </div>
@@ -321,7 +323,7 @@ export const UpdateUserModal = ({
             disabled={isSubmitting}
             className="w-full sm:w-auto order-2 sm:order-1 h-11 sm:h-12 border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-gray-300 dark:hover:bg-white/5"
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             type="button"
@@ -329,7 +331,7 @@ export const UpdateUserModal = ({
             disabled={isSubmitting}
             className="w-full sm:w-auto order-1 sm:order-2 h-11 sm:h-12 bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
           >
-            {isSubmitting ? "Updating..." : "Update User"}
+            {isSubmitting ? t("submitting") : t("submit")}
           </Button>
         </DialogFooter>
       </DialogContent>

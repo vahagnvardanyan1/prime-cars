@@ -34,13 +34,14 @@ const getInitials = ({ firstName, lastName }: { firstName: string; lastName: str
 
 export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, onUpdateUser, onDeleteUser, isAdmin = false }: UsersViewProps) => {
   const t = useTranslations();
+  const tTable = useTranslations("usersTable");
 
   return (
     <Surface className="overflow-hidden">
       <div className="px-6 py-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {t("admin.usersView.title")}
+            {tTable("title")}
           </h1>
         </div>
         <div className="flex items-center gap-2">
@@ -51,7 +52,7 @@ export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, o
               className="h-9 rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc] flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Create User</span>
+              <span className="hidden sm:inline">{tTable("createUser")}</span>
             </Button>
           )}
           {onRefresh && (
@@ -64,15 +65,15 @@ export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, o
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-            <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[250px]">Name</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">Username</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">Email</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">Phone</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">Passport</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[180px]">Company</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">Country</TableHead>
+            <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[250px]">{tTable("name")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">{tTable("username")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">{tTable("email")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">{tTable("phone")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">{tTable("passport")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[180px]">{tTable("company")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("country")}</TableHead>
             {isAdmin && (
-              <TableHead className="px-4 py-4 text-center pr-6 sm:pr-8 text-sm font-semibold min-w-[160px]">Actions</TableHead>
+              <TableHead className="px-4 py-4 text-center pr-6 sm:pr-8 text-sm font-semibold min-w-[160px]">{tTable("actions")}</TableHead>
             )}
           </TableRow>
         </TableHeader>
@@ -86,7 +87,7 @@ export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, o
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {t("admin.usersView.loadingUsers")}
+                    {tTable("loadingUsers")}
                   </span>
                 </div>
               </TableCell>
@@ -95,7 +96,7 @@ export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, o
             <TableRow>
               <TableCell colSpan={isAdmin ? 8 : 7} className="py-12">
                 <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
-                  {t("admin.usersView.noUsersFound")}
+                  {tTable("noUsersFound")}
                 </div>
               </TableCell>
             </TableRow>
@@ -160,7 +161,7 @@ export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, o
                         className="h-9 px-3 gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 dark:border-blue-900/50 dark:text-blue-400 dark:hover:bg-blue-950/50 dark:hover:border-blue-800 dark:hover:text-blue-300 transition-all"
                       >
                         <Pencil className="h-4 w-4" />
-                        <span className="hidden sm:inline">Update</span>
+                        <span className="hidden sm:inline">{t("admin.actions.update")}</span>
                       </Button>
                     )}
                     {onDeleteUser && (
@@ -171,7 +172,7 @@ export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, o
                         className="h-9 px-3 gap-2 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-400 hover:text-red-800 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-950/50 dark:hover:border-red-700 dark:hover:text-red-300 transition-all"
                       >
                         <Trash2 className="h-4 w-4" />
-                        <span className="hidden sm:inline">Delete</span>
+                        <span className="hidden sm:inline">{t("admin.actions.delete")}</span>
                       </Button>
                     )}
                   </div>

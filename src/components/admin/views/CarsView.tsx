@@ -32,6 +32,7 @@ type CarsViewProps = {
 
 export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdateCar, onDeleteCar, isAdmin = false }: CarsViewProps) => {
   const t = useTranslations();
+  const tTable = useTranslations("carsTable");
 
   const getStatusLabel = ({ status }: { status: AdminCar["status"] }) => {
     switch (status) {
@@ -65,7 +66,7 @@ export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdat
       <div className="px-6 py-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Cars
+            {tTable("title")}
           </h1>
         </div>
         <div className="flex items-center gap-2">
@@ -76,7 +77,7 @@ export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdat
               className="h-9 rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc] flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Add Car</span>
+              <span className="hidden sm:inline">{tTable("addCar")}</span>
             </Button>
           )}
           {onRefresh && (
@@ -89,20 +90,20 @@ export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdat
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-            <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[200px]">Car</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">Client</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">Price</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">Type</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">Auction</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">City</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">Lot</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[160px]">VIN</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">Purchase Date</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">Notes</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">Status</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">Created</TableHead>
+            <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[200px]">{tTable("car")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("client")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("price")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("type")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("auction")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("city")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("lot")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[160px]">{tTable("vin")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("purchaseDate")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">{tTable("notes")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("status")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("created")}</TableHead>
             {isAdmin && (
-              <TableHead className="px-4 py-4 text-center pr-6 sm:pr-8 text-sm font-semibold min-w-[160px]">Actions</TableHead>
+              <TableHead className="px-4 py-4 text-center pr-6 sm:pr-8 text-sm font-semibold min-w-[160px]">{tTable("actions")}</TableHead>
             )}
           </TableRow>
         </TableHeader>
@@ -246,7 +247,7 @@ export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdat
                         className="h-9 px-3 gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 dark:border-blue-900/50 dark:text-blue-400 dark:hover:bg-blue-950/50 dark:hover:border-blue-800 dark:hover:text-blue-300 transition-all"
                       >
                         <Pencil className="h-4 w-4" />
-                        <span className="hidden sm:inline">Update</span>
+                        <span className="hidden sm:inline">{t("admin.actions.update")}</span>
                       </Button>
                     )}
                     {onDeleteCar && (
@@ -257,7 +258,7 @@ export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdat
                         className="h-9 px-3 gap-2 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-400 hover:text-red-800 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-950/50 dark:hover:border-red-700 dark:hover:text-red-300 transition-all"
                       >
                         <Trash2 className="h-4 w-4" />
-                        <span className="hidden sm:inline">Delete</span>
+                        <span className="hidden sm:inline">{t("admin.actions.delete")}</span>
                       </Button>
                     )}
                   </div>

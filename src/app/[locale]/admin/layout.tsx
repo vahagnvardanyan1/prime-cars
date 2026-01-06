@@ -4,6 +4,7 @@ import { ReactNode, useState, useEffect } from "react";
 
 import { Menu } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 import { AdminPreferencesMenu } from "@/components/admin/AdminPreferencesMenu";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
@@ -20,6 +21,7 @@ type AdminLayoutProps = {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const t = useTranslations();
+  const router = useRouter();
   const { user, isAdmin, isLoading: isLoadingUser } = useUser();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -35,6 +37,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     setShowLoginModal(false);
   };
 
+  const handleLoginClose = () => {
+    setShowLoginModal(false);
+    // Redirect to home page if user closes login modal without logging in
+    if (!user) {
+      router.push("/");
+    }
+  };
+
   if (isLoadingUser) {
     return (
       <div className="flex h-screen items-center justify-center bg-white dark:bg-[#0a0a0a]">
@@ -44,6 +54,19 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             {t("admin.loadingUser")}
           </p>
         </div>
+      </div>
+    );
+  }
+
+  // If no user is authenticated, only show login modal
+  if (!user) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-white dark:bg-[#0a0a0a]">
+        <LoginModal
+          isOpen={showLoginModal}
+          onClose={handleLoginClose}
+          onLoginSuccess={handleLoginSuccess}
+        />
       </div>
     );
   }
@@ -94,12 +117,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </div>
         </main>
       </div>
-
-      <LoginModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        onLoginSuccess={handleLoginSuccess}
-      />
     </div>
   );
 }

@@ -8,7 +8,7 @@ type DeleteUserResponse = {
 
 export const deleteUser = async ({ id }: { id: string }): Promise<DeleteUserResponse> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/customers/${id}`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/${id}`, {
       method: "DELETE",
     });
 

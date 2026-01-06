@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { CreateUserModal } from "@/components/admin/modals/CreateUserModal";
@@ -23,6 +24,7 @@ import { useUser } from "@/contexts/UserContext";
 import { deleteUser } from "@/lib/admin/deleteUser";
 
 export const AdminUsersPage = () => {
+  const t = useTranslations("admin.modals.deleteUser");
   const state = useAdminUsersState();
   const { user, isAdmin } = useUser();
   const [selectedUserForUpdate, setSelectedUserForUpdate] = useState<AdminUser | null>(null);
@@ -51,20 +53,20 @@ export const AdminUsersPage = () => {
       const result = await deleteUser({ id: userToDelete.id });
 
       if (result.success) {
-        toast.success("User deleted", {
-          description: `${userToDelete.username} has been removed.`,
+        toast.success(t("success"), {
+          description: t("successDescription", { username: userToDelete.username }),
         });
         await state.loadUsers({ forceRefresh: true });
         setIsDeleteUserDialogOpen(false);
         setUserToDelete(null);
       } else {
-        toast.error("Failed to delete user", {
-          description: result.error || "Could not delete the user.",
+        toast.error(t("error"), {
+          description: result.error || t("errorDescription"),
         });
       }
     } catch (error) {
-      toast.error("Failed to delete user", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred.",
+      toast.error(t("error"), {
+        description: error instanceof Error ? error.message : t("errorDescription"),
       });
     } finally {
       setIsDeletingUser(false);
@@ -104,23 +106,31 @@ export const AdminUsersPage = () => {
           />
 
           <AlertDialog open={isDeleteUserDialogOpen} onOpenChange={setIsDeleteUserDialogOpen}>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete User</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to delete{" "}
-                  <span className="font-semibold">{userToDelete?.username}</span>
-                  ? This action cannot be undone.
+                <AlertDialogTitle className="text-gray-900 dark:text-white">
+                  {t("title")}
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
+                  {t("description", { 
+                    firstName: userToDelete?.firstName, 
+                    lastName: userToDelete?.lastName 
+                  })}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel disabled={isDeletingUser}>Cancel</AlertDialogCancel>
+                <AlertDialogCancel 
+                  disabled={isDeletingUser}
+                  className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
+                >
+                  {t("cancel")}
+                </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleConfirmDeleteUser}
                   disabled={isDeletingUser}
-                  className="bg-red-600 hover:bg-red-700"
+                  className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
                 >
-                  {isDeletingUser ? "Deleting..." : "Delete"}
+                  {isDeletingUser ? t("deleting") : t("confirm")}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
