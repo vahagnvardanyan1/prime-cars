@@ -14,16 +14,17 @@ type UpdateCityPriceModalState =
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
-export const useAdminSettingsState = () => {
-  const [citiesCache, setCitiesCache] = useState<{
-    data: ShippingCity[];
-    timestamp: number;
-  } | null>(null);
+// Module-level cache that persists across component mounts/unmounts
+let citiesCache: {
+  data: ShippingCity[];
+  timestamp: number;
+} | null = null;
 
+export const useAdminSettingsState = () => {
   const [updateCityPriceModal, setUpdateCityPriceModal] =
     useState<UpdateCityPriceModalState>({ isOpen: false });
 
-  const [cities, setCities] = useState<ShippingCity[]>([]);
+  const [cities, setCities] = useState<ShippingCity[]>(() => citiesCache?.data || []);
   const [isLoadingCities, setIsLoadingCities] = useState(false);
 
   const openUpdateCityPrice = ({ cityId }: { cityId: string }) => {
@@ -80,7 +81,7 @@ export const useAdminSettingsState = () => {
     if (!citiesCache) return false;
     const now = Date.now();
     return (now - citiesCache.timestamp) < CACHE_DURATION;
-  }, [citiesCache]);
+  }, []);
 
   const loadCities = async ({ forceRefresh = false }: { forceRefresh?: boolean } = {}) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
@@ -99,10 +100,10 @@ export const useAdminSettingsState = () => {
       
       if (result.success && result.cities) {
         setCities(result.cities);
-        setCitiesCache({
+        citiesCache = {
           data: result.cities,
           timestamp: Date.now(),
-        });
+        };
       } else {
         if (!result.error?.includes('401') && !result.error?.includes('403') && !result.error?.includes('Unauthorized')) {
           toast.error("Failed to load shipping cities", {
@@ -129,11 +130,18 @@ export const useAdminSettingsState = () => {
     cityId: string;
     nextShippingUsd: number;
   }) => {
-    setCities((prev) =>
-      prev.map((c) =>
-        c.id === cityId ? { ...c, shippingUsd: nextShippingUsd } : c,
-      ),
+    const updatedCities = cities.map((c) =>
+      c.id === cityId ? { ...c, shippingUsd: nextShippingUsd } : c,
     );
+    setCities(updatedCities);
+    
+    // Update the cache as well
+    if (citiesCache) {
+      citiesCache = {
+        data: updatedCities,
+        timestamp: citiesCache.timestamp,
+      };
+    }
   };
 
   const selectedCity = useMemo(() => {
