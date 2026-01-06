@@ -24,8 +24,10 @@ type CreateCarResponse = {
 
 export const createCar = async ({
   data,
-  images = [],
-  invoiceFile,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  images: _images = [],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  invoiceFile: _invoiceFile,
 }: {
   data: CreateCarData;
   images?: File[];

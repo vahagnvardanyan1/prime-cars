@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
+import type { ShippingCity } from "@/lib/admin/types";
 
 export type CreateShippingData = {
   city: string;
@@ -8,7 +9,7 @@ export type CreateShippingData = {
 
 export type CreateShippingResponse = {
   success: boolean;
-  data?: any;
+  data?: ShippingCity;
   error?: string;
 };
 

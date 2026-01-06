@@ -1,11 +1,6 @@
-import { Calculator } from "lucide-react";
-import { useTranslations } from "next-intl";
-
 import { ImportCalculator } from "@/components/ImportCalculator";
 
 export const CalculatorPage = () => {
-  const t = useTranslations();
-
   return (
     <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
       {/* Header */}

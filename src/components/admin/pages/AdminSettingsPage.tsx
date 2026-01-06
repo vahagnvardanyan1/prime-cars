@@ -35,7 +35,8 @@ export const AdminSettingsPage = () => {
         onOpenChange={({ open }) =>
           open ? null : state.closeUpdateCityPrice()
         }
-        onCityUpdated={() => state.loadCities({ forceRefresh: true })}
+        onConfirm={state.updateCityPrice}
+        onSuccess={() => state.loadCities({ forceRefresh: true })}
       />
     </>
   );

@@ -1,4 +1,4 @@
-import type { AdminCar, AdminUser, ShippingCity } from "@/lib/admin/types";
+import type { AdminCar, ShippingCity } from "@/lib/admin/types";
 import { VehicleType, VehicleModel, Auction } from "@/lib/admin/types";
 
 export const ADMIN_CARS: AdminCar[] = [

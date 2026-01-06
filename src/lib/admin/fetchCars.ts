@@ -2,6 +2,30 @@ import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
 import type { AdminCar } from "@/lib/admin/types";
 
+type BackendCar = {
+  _id?: string;
+  id?: string;
+  model?: string;
+  vehicleModel?: string;
+  year?: number;
+  price?: number;
+  priceUsd?: number;
+  autoPrice?: number;
+  status?: string;
+  imageUrl?: string;
+  images?: string[];
+  client?: { username: string; firstName: string; lastName: string } | string;
+  type?: string;
+  auction?: string;
+  city?: string;
+  lot?: string;
+  vin?: string;
+  purchaseDate?: string;
+  customerNotes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 type FetchCarsResponse = {
   success: boolean;
   cars?: AdminCar[];
@@ -28,22 +52,22 @@ export const fetchCars = async (): Promise<FetchCarsResponse> => {
     const result = await response.json();
 
     // Transform backend data to AdminCar format
-    const cars: AdminCar[] = result?.map((car: any) => {
+    const cars: AdminCar[] = result?.map((car: BackendCar) => {
       // Extract client name - handle both populated object and string ID
       let clientDisplay = "-";
-      if (car.client) {
+      if (car.client && typeof car.client === "object") {
         const firstName = car.client.firstName || "";
         const lastName = car.client.lastName || "";
-        clientDisplay = `${firstName} ${lastName}`.trim() || car.client.email || "-";
+        clientDisplay = `${firstName} ${lastName}`.trim() || car.client.username || "-";
       }
 
       return {
-        id: car._id || car.id,
+        id: car._id || car.id || "",
         imageUrl: car.images?.[0] || car.imageUrl || "",
         model: car.vehicleModel || car.model || "",
         year: car.year || new Date().getFullYear(),
         priceUsd: car.autoPrice || car.priceUsd || car.price || 0,
-        status: car.status || "Active",
+        status: (car.status as AdminCar["status"]) || "Active",
         client: clientDisplay,
         createdAt: car.createdAt,
         updatedAt: car.updatedAt,

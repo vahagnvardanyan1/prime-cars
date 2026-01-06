@@ -2,6 +2,14 @@ import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
 import type { ShippingCity } from "@/lib/admin/types";
 
+type BackendShipping = {
+  _id?: string;
+  id?: string;
+  city?: string;
+  shipping?: number;
+  shippingUsd?: number;
+};
+
 type FetchShippingsResponse = {
   success: boolean;
   cities?: ShippingCity[];
@@ -28,7 +36,7 @@ export const fetchShippings = async (): Promise<FetchShippingsResponse> => {
     const result = await response.json();
 
     // Transform backend data to ShippingCity format
-    const cities: ShippingCity[] = result?.map((shipping: any) => ({
+    const cities: ShippingCity[] = result?.map((shipping: BackendShipping) => ({
       id: shipping._id || shipping.id,
       city: shipping.city || "",
       shippingUsd: shipping.shipping || shipping.shippingUsd || 0,

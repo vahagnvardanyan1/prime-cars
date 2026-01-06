@@ -41,7 +41,7 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
       lastName.trim().length &&
       !isSubmitting
     );
-  }, [login, password, firstName, lastName, email, isSubmitting]);
+  }, [login, password, firstName, lastName, isSubmitting]);
 
   const close = () => {
     onOpenChange({ open: false });

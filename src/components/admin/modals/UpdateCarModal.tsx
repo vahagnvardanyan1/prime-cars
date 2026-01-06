@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 
-import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import type { AdminCar } from "@/lib/admin/types";
@@ -38,7 +37,6 @@ type User = {
 };
 
 export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: UpdateCarModalProps) => {
-  const t = useTranslations();
   const [users, setUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

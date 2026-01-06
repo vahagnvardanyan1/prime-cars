@@ -122,6 +122,20 @@ export const useAdminSettingsState = () => {
     }
   };
 
+  const updateCityPrice = ({
+    cityId,
+    nextShippingUsd,
+  }: {
+    cityId: string;
+    nextShippingUsd: number;
+  }) => {
+    setCities((prev) =>
+      prev.map((c) =>
+        c.id === cityId ? { ...c, shippingUsd: nextShippingUsd } : c,
+      ),
+    );
+  };
+
   const selectedCity = useMemo(() => {
     if (!updateCityPriceModal.isOpen) return null;
     return cities.find((c) => c.id === updateCityPriceModal.cityId) ?? null;
@@ -134,6 +148,7 @@ export const useAdminSettingsState = () => {
     openUpdateCityPrice,
     closeUpdateCityPrice,
     selectedCity,
+    updateCityPrice,
     deleteCity,
     applyGlobalAdjustment,
     loadCities,

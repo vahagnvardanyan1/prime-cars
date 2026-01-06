@@ -2,6 +2,23 @@ import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
 import type { AdminUser } from "@/lib/admin/types";
 
+type BackendUser = {
+  id?: string;
+  _id?: string;
+  customerId?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  username?: string;
+  phone?: string;
+  passport?: string;
+  location?: string;
+  country?: string;
+  companyName?: string;
+  companyCountry?: string;
+  role?: string;
+};
+
 type FetchUsersResponse = {
   success: boolean;
   users?: AdminUser[];
@@ -26,10 +43,9 @@ export const fetchUsers = async (): Promise<FetchUsersResponse> => {
     }
 
     const result = await response.json();
-    debugger
 
-    const users: AdminUser[] = result?.map((client: any) => ({
-      id: client.id || client._id,
+    const users: AdminUser[] = result?.map((client: BackendUser) => ({
+      id: client.id || client._id || "",
       customerId: client.customerId || "",
       firstName: client.firstName || "",
       lastName: client.lastName || "",
@@ -38,8 +54,9 @@ export const fetchUsers = async (): Promise<FetchUsersResponse> => {
       passport: client.passport || "",
       phone: client.phone || "",
       location: client.location || "",
-      country: client.country || "",
+      country: client.country || client.companyCountry || "",
       companyName: client.companyName || "",
+      role: (client.role as AdminUser["role"]) || "Viewer",
     })) || [];
 
     return {
