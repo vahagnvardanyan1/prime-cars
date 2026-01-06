@@ -1,8 +1,6 @@
 "use client";
 
-import Image from "next/image";
-
-import { CarFront, PlusCircle, Settings, Users, UserPlus } from "lucide-react";
+import { Calculator, CarFront, PlusCircle, Settings, Users, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import type { AdminNavKey } from "@/hooks/admin/useAdminDashboardState";
@@ -19,9 +17,6 @@ type AdminSidebarContentProps = {
   isAdmin: boolean;
 };
 
-const LOGO_URL =
-  "https://cdn-cms-uploads.picsart.com/cms-uploads/044b4c85-6f4c-44cc-a53b-bc62b40af7a3.jpg";
-
 type NavItem = {
   key: AdminNavKey;
   icon: typeof CarFront;
@@ -30,6 +25,7 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { key: "cars", icon: CarFront },
   { key: "users", icon: Users },
+  { key: "calculator", icon: Calculator },
   { key: "settings", icon: Settings },
 ];
 

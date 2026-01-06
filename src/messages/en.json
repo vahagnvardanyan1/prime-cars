@@ -252,6 +252,7 @@
       "nav": {
         "cars": "Cars",
         "users": "Users",
+        "calculator": "Calculator",
         "settings": "Settings"
       }
     },
@@ -260,6 +261,8 @@
       "carsSubtitle": "Manage inventory listings with calm, table-first clarity.",
       "usersTitle": "Users",
       "usersSubtitle": "Internal access control and role visibility (frontend-only).",
+      "calculatorTitle": "Import Calculator",
+      "calculatorSubtitle": "Estimate customs, taxes, and total import costs for vehicles.",
       "settingsTitle": "Settings",
       "settingsSubtitle": "Shipping price management with safe, powerful controls."
     },
