@@ -544,6 +544,8 @@
     "notes": "Notes",
     "status": "Status",
     "created": "Created",
+    "invoice": "Invoice",
+    "download": "Download",
     "actions": "Actions"
   },
   "usersTable": {

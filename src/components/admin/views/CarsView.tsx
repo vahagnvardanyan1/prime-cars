@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Download, Pencil, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import type { AdminCar } from "@/lib/admin/types";
@@ -102,6 +102,7 @@ export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdat
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">{tTable("notes")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("status")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("created")}</TableHead>
+            <TableHead className="px-4 py-4 text-center text-sm font-semibold min-w-[120px]">{tTable("invoice")}</TableHead>
             {isAdmin && (
               <TableHead className="px-4 py-4 text-center pr-6 sm:pr-8 text-sm font-semibold min-w-[160px]">{tTable("actions")}</TableHead>
             )}
@@ -110,7 +111,7 @@ export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdat
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={isAdmin ? 13 : 12} className="py-12">
+              <TableCell colSpan={isAdmin ? 14 : 13} className="py-12">
                 <div className="flex flex-col items-center justify-center gap-3">
                   <svg className="animate-spin h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -124,7 +125,7 @@ export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdat
             </TableRow>
           ) : cars.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={isAdmin ? 13 : 12} className="py-12">
+              <TableCell colSpan={isAdmin ? 14 : 13} className="py-12">
                 <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
                   {t("admin.carsView.noCarsFound")}
                 </div>
@@ -233,6 +234,24 @@ export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdat
                 <div className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
                   {formatDate(car.createdAt)}
                 </div>
+              </TableCell>
+              
+              {/* Invoice */}
+              <TableCell className="px-4 py-6 text-center min-w-[120px]">
+                {car.invoiceId ? (
+                  <a
+                    href={car.invoiceId}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 h-9 px-3 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-gray-400 dark:border-white/10 dark:bg-[#161b22] dark:text-gray-300 dark:hover:bg-white/5 dark:hover:border-white/20 transition-all"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span className="hidden sm:inline">{tTable("download")}</span>
+                  </a>
+                ) : (
+                  <span className="text-sm text-gray-400 dark:text-gray-600">-</span>
+                )}
               </TableCell>
               
               {/* Actions */}

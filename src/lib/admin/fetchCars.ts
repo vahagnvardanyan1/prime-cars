@@ -22,6 +22,7 @@ type BackendCar = {
   vin?: string;
   purchaseDate?: string;
   customerNotes?: string;
+  invoiceId?: string;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -69,6 +70,7 @@ export const fetchCars = async (): Promise<FetchCarsResponse> => {
         priceUsd: car.autoPrice || car.priceUsd || car.price || 0,
         status: (car.status as AdminCar["status"]) || "Active",
         client: clientDisplay,
+        invoiceId: car.invoiceId,
         createdAt: car.createdAt,
         updatedAt: car.updatedAt,
         details: {

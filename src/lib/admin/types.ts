@@ -19,6 +19,7 @@ export type AdminCar = {
   status: AdminCarStatus;
   details?: AdminCarDetails;
   client?: string;
+  invoiceId?: string;
   createdAt?: string;
   updatedAt?: string;
 };

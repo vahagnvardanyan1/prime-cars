@@ -544,6 +544,8 @@
     "notes": "Заметки",
     "status": "Статус",
     "created": "Создано",
+    "invoice": "Счет",
+    "download": "Скачать",
     "actions": "Действия"
   },
   "usersTable": {

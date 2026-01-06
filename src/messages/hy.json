@@ -544,6 +544,8 @@
     "notes": "Նշումներ",
     "status": "Կարգավիճակ",
     "created": "Ստեղծված",
+    "invoice": "Հաշիվ",
+    "download": "Ներբեռնել",
     "actions": "Գործողություններ"
   },
   "usersTable": {

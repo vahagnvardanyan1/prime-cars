@@ -26,8 +26,7 @@ export const createCar = async ({
   data,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   images: _images = [],
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  invoiceFile: _invoiceFile,
+  invoiceFile,
 }: {
   data: CreateCarData;
   images?: File[];
@@ -67,9 +66,9 @@ export const createCar = async ({
     // }
 
     // Append invoice file
-    // if (invoiceFile) {
-    //   formData.append("invoice", invoiceFile);
-    // }
+    if (invoiceFile) {
+      formData.append("invoice", invoiceFile);
+    }
 
     const response = await authenticatedFetch(`${API_BASE_URL}/vehicles`, {
       method: "POST",
