@@ -113,8 +113,8 @@ export const AdminUsersPage = () => {
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
                   {t("description", { 
-                    firstName: userToDelete?.firstName, 
-                    lastName: userToDelete?.lastName 
+                    firstName: userToDelete?.firstName || "", 
+                    lastName: userToDelete?.lastName || "" 
                   })}
                 </AlertDialogDescription>
               </AlertDialogHeader>
