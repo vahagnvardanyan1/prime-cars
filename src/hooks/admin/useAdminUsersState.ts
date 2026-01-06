@@ -8,14 +8,15 @@ import { toast } from "sonner";
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
-export const useAdminUsersState = () => {
-  const [usersCache, setUsersCache] = useState<{
-    data: AdminUser[];
-    timestamp: number;
-  } | null>(null);
+// Module-level cache that persists across component mounts/unmounts
+let usersCache: {
+  data: AdminUser[];
+  timestamp: number;
+} | null = null;
 
+export const useAdminUsersState = () => {
   const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
-  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [users, setUsers] = useState<AdminUser[]>(() => usersCache?.data || []);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
 
   const openCreateUser = () => setIsCreateUserOpen(true);
@@ -25,7 +26,7 @@ export const useAdminUsersState = () => {
     if (!usersCache) return false;
     const now = Date.now();
     return (now - usersCache.timestamp) < CACHE_DURATION;
-  }, [usersCache]);
+  }, []);
 
   const loadUsers = async ({ forceRefresh = false }: { forceRefresh?: boolean } = {}) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
@@ -44,10 +45,10 @@ export const useAdminUsersState = () => {
       
       if (result.success && result.users) {
         setUsers(result.users);
-        setUsersCache({
+        usersCache = {
           data: result.users,
           timestamp: Date.now(),
-        });
+        };
       } else {
         if (!result.error?.includes('401') && !result.error?.includes('403') && !result.error?.includes('Unauthorized')) {
           toast.error("Failed to load users", {
