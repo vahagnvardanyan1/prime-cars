@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Surface } from "@/components/admin/primitives/Surface";
@@ -20,6 +20,7 @@ type UsersViewProps = {
   users: AdminUser[];
   isLoading?: boolean;
   onRefresh?: () => void;
+  onCreateUser?: () => void;
   onUpdateUser?: (user: AdminUser) => void;
   onDeleteUser?: (user: AdminUser) => void;
   isAdmin?: boolean;
@@ -31,7 +32,7 @@ const getInitials = ({ firstName, lastName }: { firstName: string; lastName: str
   return `${first}${last}`;
 };
 
-export const UsersView = ({ users, isLoading = false, onRefresh, onUpdateUser, onDeleteUser, isAdmin = false }: UsersViewProps) => {
+export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, onUpdateUser, onDeleteUser, isAdmin = false }: UsersViewProps) => {
   const t = useTranslations();
 
   return (
@@ -42,9 +43,21 @@ export const UsersView = ({ users, isLoading = false, onRefresh, onUpdateUser, o
             {t("admin.usersView.title")}
           </h1>
         </div>
-        {onRefresh && (
-          <RefreshButton onClick={onRefresh} isLoading={isLoading} />
-        )}
+        <div className="flex items-center gap-2">
+          {isAdmin && onCreateUser && (
+            <Button
+              type="button"
+              onClick={onCreateUser}
+              className="h-9 rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc] flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Create User</span>
+            </Button>
+          )}
+          {onRefresh && (
+            <RefreshButton onClick={onRefresh} isLoading={isLoading} />
+          )}
+        </div>
       </div>
 
       <div className="overflow-x-auto">

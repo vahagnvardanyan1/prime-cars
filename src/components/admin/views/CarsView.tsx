@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import type { AdminCar } from "@/lib/admin/types";
@@ -24,12 +24,13 @@ type CarsViewProps = {
   cars: AdminCar[];
   isLoading?: boolean;
   onRefresh?: () => void;
+  onAddCar?: () => void;
   onUpdateCar?: (car: AdminCar) => void;
   onDeleteCar?: (car: AdminCar) => void;
   isAdmin?: boolean;
 };
 
-export const CarsView = ({ cars, isLoading = false, onRefresh, onUpdateCar, onDeleteCar, isAdmin = false }: CarsViewProps) => {
+export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdateCar, onDeleteCar, isAdmin = false }: CarsViewProps) => {
   const t = useTranslations();
 
   const getStatusLabel = ({ status }: { status: AdminCar["status"] }) => {
@@ -67,9 +68,21 @@ export const CarsView = ({ cars, isLoading = false, onRefresh, onUpdateCar, onDe
             Cars
           </h1>
         </div>
-        {onRefresh && (
-          <RefreshButton onClick={onRefresh} isLoading={isLoading} />
-        )}
+        <div className="flex items-center gap-2">
+          {isAdmin && onAddCar && (
+            <Button
+              type="button"
+              onClick={onAddCar}
+              className="h-9 rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc] flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Add Car</span>
+            </Button>
+          )}
+          {onRefresh && (
+            <RefreshButton onClick={onRefresh} isLoading={isLoading} />
+          )}
+        </div>
       </div>
 
       <div className="overflow-x-auto">

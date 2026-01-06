@@ -1,18 +1,16 @@
 "use client";
 
-import { Calculator, CarFront, PlusCircle, Settings, Users, UserPlus } from "lucide-react";
+import { usePathname } from "next/navigation";
+
+import { Calculator, CarFront, Settings, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import type { AdminNavKey } from "@/hooks/admin/useAdminDashboardState";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/utils";
 import { useUser } from "@/contexts/UserContext";
+import { Link } from "@/i18n/routing";
 
 type AdminSidebarContentProps = {
-  activeNav: AdminNavKey;
-  onNavChange: ({ next }: { next: AdminNavKey }) => void;
-  onAddCar: () => void;
-  onCreateUser: () => void;
   onRequestClose?: () => void;
   isAdmin: boolean;
 };
@@ -20,25 +18,33 @@ type AdminSidebarContentProps = {
 type NavItem = {
   key: AdminNavKey;
   icon: typeof CarFront;
+  href: string;
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { key: "cars", icon: CarFront },
-  { key: "users", icon: Users },
-  { key: "calculator", icon: Calculator },
-  { key: "settings", icon: Settings },
+  { key: "cars", icon: CarFront, href: "/admin" },
+  { key: "users", icon: Users, href: "/admin/users" },
+  { key: "calculator", icon: Calculator, href: "/admin/calculator" },
+  { key: "settings", icon: Settings, href: "/admin/settings" },
 ];
 
 export const AdminSidebarContent = ({
-  activeNav,
-  onNavChange,
-  onAddCar,
-  onCreateUser,
   onRequestClose,
   isAdmin,
 }: AdminSidebarContentProps) => {
   const t = useTranslations();
   const { user } = useUser();
+  const pathname = usePathname();
+
+  // Determine active nav from pathname
+  const getActiveNav = (): AdminNavKey => {
+    if (pathname.includes("/admin/users")) return "users";
+    if (pathname.includes("/admin/calculator")) return "calculator";
+    if (pathname.includes("/admin/settings")) return "settings";
+    return "cars";
+  };
+
+  const activeNav = getActiveNav();
 
   const visibleNavItems = NAV_ITEMS.filter(item => {
     // Only show "users" if user is admin
@@ -48,7 +54,7 @@ export const AdminSidebarContent = ({
     return true;
   });
 
-  const companyName = user?.companyName
+  const companyName = user?.companyName;
 
   return (
     <div className="flex h-full flex-col">
@@ -63,38 +69,6 @@ export const AdminSidebarContent = ({
         </div>
       </div>
 
-      {isAdmin && (
-        <div className="px-4">
-          <div className="rounded-2xl border border-gray-200 bg-gray-50 p-2 dark:border-white/10 dark:bg-white/5">
-            <div className="grid gap-2">
-              <Button
-                type="button"
-                className="h-10 justify-start rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc]"
-                onClick={() => {
-                  onAddCar();
-                  onRequestClose?.();
-                }}
-              >
-                <PlusCircle className="mr-2 h-4 w-4" />
-                {t("admin.sidebar.addCar")}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="h-10 justify-start rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5"
-                onClick={() => {
-                  onCreateUser();
-                  onRequestClose?.();
-                }}
-              >
-                <UserPlus className="mr-2 h-4 w-4" />
-                {t("admin.sidebar.createUser")}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <nav className="mt-6 px-3">
         <div className="px-3 text-[11px] font-medium uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
           {t("admin.sidebar.navigation")}
@@ -105,13 +79,10 @@ export const AdminSidebarContent = ({
             const isActive = item.key === activeNav;
 
             return (
-              <button
+              <Link
                 key={item.key}
-                type="button"
-                onClick={() => {
-                  onNavChange({ next: item.key });
-                  onRequestClose?.();
-                }}
+                href={item.href}
+                onClick={() => onRequestClose?.()}
                 className={cn(
                   "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[#429de6]/40",
                   isActive
@@ -137,7 +108,7 @@ export const AdminSidebarContent = ({
                     isActive ? "bg-[#429de6]" : "bg-transparent",
                   )}
                 />
-              </button>
+              </Link>
             );
           })}
         </div>
