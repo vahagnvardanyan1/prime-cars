@@ -22,27 +22,31 @@ type AdminLayoutProps = {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const t = useTranslations();
   const router = useRouter();
-  const { user, isAdmin, isLoading: isLoadingUser } = useUser();
+  const { user, isAdmin, isLoading: isLoadingUser, refreshUser } = useUser();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginSuccessful, setLoginSuccessful] = useState(false);
 
   // Check on mount if user exists
   useEffect(() => {
-    if (!isLoadingUser && !user) {
+    if (!isLoadingUser && !user && !loginSuccessful) {
       setShowLoginModal(true);
     }
-  }, [isLoadingUser, user]);
+  }, [isLoadingUser, user, loginSuccessful]);
 
   const handleLoginSuccess = async () => {
+    setLoginSuccessful(true);
+    // Refresh user data after successful login
+    await refreshUser(true); // Skip refresh mechanism since we just logged in
     setShowLoginModal(false);
   };
 
   const handleLoginClose = () => {
-    setShowLoginModal(false);
-    // Redirect to home page if user closes login modal without logging in
-    if (!user) {
+    // Only redirect if login was not successful
+    if (!loginSuccessful && !user) {
       router.push("/");
     }
+    setShowLoginModal(false);
   };
 
   if (isLoadingUser) {
@@ -58,8 +62,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     );
   }
 
-  // If no user is authenticated, only show login modal
-  if (!user) {
+  // If no user is authenticated and login wasn't just successful, only show login modal
+  if (!user && !loginSuccessful) {
     return (
       <div className="flex h-screen items-center justify-center bg-white dark:bg-[#0a0a0a]">
         <LoginModal
@@ -67,6 +71,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           onClose={handleLoginClose}
           onLoginSuccess={handleLoginSuccess}
         />
+      </div>
+    );
+  }
+  
+  // If login was successful but user data hasn't loaded yet, show loading
+  if (loginSuccessful && !user) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-white dark:bg-[#0a0a0a]">
+        <div className="text-center">
+          <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#429de6] border-r-transparent"></div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {t("admin.loadingUser")}
+          </p>
+        </div>
       </div>
     );
   }

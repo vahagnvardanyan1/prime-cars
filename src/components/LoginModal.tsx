@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
 
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -19,8 +18,6 @@ interface LoginModalProps {
 
 export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps) => {
   const t = useTranslations();
-  const router = useRouter();
-  const pathname = usePathname();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -94,14 +91,8 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
         await onLoginSuccess();
       }
       
-      onClose();
-
-      // Redirect to admin page if not already there
-      if (!pathname.includes("/admin")) {
-        // Extract locale from pathname (e.g., /en/... or /hy/...)
-        const locale = pathname.split("/")[1] || "en";
-        router.push(`/${locale}/admin`);
-      }
+      // Don't call onClose() here - handleLoginSuccess will close the modal
+      // This prevents handleLoginClose from being triggered prematurely
     } catch (error) {
       toast.error("Login failed", {
         description: error instanceof Error ? error.message : "Network error occurred.",
