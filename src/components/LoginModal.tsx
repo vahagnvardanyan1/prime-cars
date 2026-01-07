@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -18,6 +19,8 @@ interface LoginModalProps {
 
 export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps) => {
   const t = useTranslations();
+  const router = useRouter();
+  const pathname = usePathname();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,6 +30,10 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
+      // Reset form when modal closes
+      setUsername("");
+      setPassword("");
+      setIsSubmitting(false);
     }
     return () => {
       document.body.style.overflow = "unset";
@@ -61,6 +68,7 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
         toast.error("Login failed", {
           description: errorData.error || "Invalid username or password.",
         });
+        setIsSubmitting(false);
         return;
       }
 
@@ -91,13 +99,21 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
         await onLoginSuccess();
       }
       
-      // Don't call onClose() here - handleLoginSuccess will close the modal
-      // This prevents handleLoginClose from being triggered prematurely
+      const isAdminPage = pathname.includes("/admin");
+      
+      // If not on admin page, redirect to admin
+      if (!isAdminPage) {
+        // Extract locale from pathname (e.g., /en/... or /hy/...)
+        const pathParts = pathname.split("/").filter(Boolean);
+        const locale = pathParts[0] || "en";
+        router.push(`/${locale}/admin`);
+      }
+      
+      setIsSubmitting(false);
     } catch (error) {
       toast.error("Login failed", {
         description: error instanceof Error ? error.message : "Network error occurred.",
       });
-    } finally {
       setIsSubmitting(false);
     }
   };
