@@ -629,23 +629,6 @@
         "error": "Failed to create notification",
         "errorDescription": "Could not create the notification."
       },
-      "updateNotification": {
-        "title": "Update Notification",
-        "subtitle": "Edit notification details.",
-        "message": "Message",
-        "messagePlaceholder": "System Update",
-        "description": "Description",
-        "descriptionPlaceholder": "The system will undergo maintenance on Saturday.",
-        "reason": "Reason",
-        "reasonPlaceholder": "Scheduled maintenance for performance improvements",
-        "cancel": "Cancel",
-        "submit": "Update",
-        "submitting": "Updating...",
-        "success": "Notification updated",
-        "successDescription": "The notification has been updated successfully.",
-        "error": "Failed to update notification",
-        "errorDescription": "Could not update the notification."
-      },
       "deleteNotification": {
         "title": "Delete Notification",
         "description": "Are you sure you want to delete this notification? This action cannot be undone.",

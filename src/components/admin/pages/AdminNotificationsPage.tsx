@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { CreateNotificationModal } from "@/components/admin/modals/CreateNotificationModal";
-import { UpdateNotificationModal } from "@/components/admin/modals/UpdateNotificationModal";
 import { ViewNotificationModal } from "@/components/admin/modals/ViewNotificationModal";
 import { NotificationsView } from "@/components/admin/views/NotificationsView";
 import type { Notification } from "@/lib/admin/notifications/types";
@@ -31,8 +30,6 @@ export const AdminNotificationsPage = () => {
   const { user, isAdmin } = useUser();
   const [notificationToView, setNotificationToView] = useState<Notification | null>(null);
   const [isViewNotificationModalOpen, setIsViewNotificationModalOpen] = useState(false);
-  const [notificationToUpdate, setNotificationToUpdate] = useState<Notification | null>(null);
-  const [isUpdateNotificationModalOpen, setIsUpdateNotificationModalOpen] = useState(false);
   const [notificationToDelete, setNotificationToDelete] = useState<Notification | null>(null);
   const [isDeleteNotificationDialogOpen, setIsDeleteNotificationDialogOpen] = useState(false);
   const [isDeletingNotification, setIsDeletingNotification] = useState(false);
@@ -119,7 +116,6 @@ export const AdminNotificationsPage = () => {
         onRefresh={() => state.loadNotifications({ forceRefresh: true, isAdmin })}
         onCreateNotification={isAdmin ? state.openCreateNotification : undefined}
         onViewNotification={handleViewNotificationClick}
-        onUpdateNotification={isAdmin ? handleUpdateNotificationClick : undefined}
         onDeleteNotification={isAdmin ? handleDeleteNotificationClick : undefined}
         isAdmin={isAdmin}
       />
@@ -140,13 +136,6 @@ export const AdminNotificationsPage = () => {
               open ? state.openCreateNotification() : state.closeCreateNotification()
             }
             onNotificationCreated={() => state.loadNotifications({ forceRefresh: true, isAdmin })}
-          />
-
-          <UpdateNotificationModal
-            open={isUpdateNotificationModalOpen}
-            notification={notificationToUpdate}
-            onOpenChange={({ open }) => setIsUpdateNotificationModalOpen(open)}
-            onNotificationUpdated={() => state.loadNotifications({ forceRefresh: true, isAdmin })}
           />
 
           <AlertDialog open={isDeleteNotificationDialogOpen} onOpenChange={setIsDeleteNotificationDialogOpen}>

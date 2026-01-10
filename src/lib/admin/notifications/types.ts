@@ -15,12 +15,6 @@ export type CreateNotificationData = {
   reason: string;
 };
 
-export type UpdateNotificationData = {
-  message: string;
-  description: string;
-  reason: string;
-};
-
 export type NotificationFilters = {
   isRead?: string;
 };

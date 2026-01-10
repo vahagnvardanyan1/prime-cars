@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Trash2, Pencil, Eye, CheckCircle2, Circle } from "lucide-react";
+import { Plus, Trash2, Eye, CheckCircle2, Circle } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Surface } from "@/components/admin/primitives/Surface";
@@ -21,7 +21,6 @@ type NotificationsViewProps = {
   isLoading?: boolean;
   onRefresh?: () => void;
   onCreateNotification?: () => void;
-  onUpdateNotification?: (notification: Notification) => void;
   onDeleteNotification?: (notification: Notification) => void;
   onViewNotification?: (notification: Notification) => void;
   isAdmin?: boolean;
@@ -47,8 +46,7 @@ export const NotificationsView = ({
   notifications, 
   isLoading = false, 
   onRefresh, 
-  onCreateNotification, 
-  onUpdateNotification,
+  onCreateNotification,
   onDeleteNotification,
   onViewNotification,
   isAdmin = false,
@@ -176,19 +174,6 @@ export const NotificationsView = ({
                           className="h-8 w-8 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white"
                         >
                           <Eye className="h-4 w-4" />
-                        </Button>
-                      )}
-                      {isAdmin && onUpdateNotification && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onUpdateNotification(notification);
-                          }}
-                          className="h-8 w-8 text-[#429de6] hover:bg-[#429de6]/10 hover:text-[#3a8dd6] dark:text-[#429de6] dark:hover:bg-[#429de6]/20 dark:hover:text-[#3a8dd6]"
-                        >
-                          <Pencil className="h-4 w-4" />
                         </Button>
                       )}
                       {isAdmin && onDeleteNotification && (
