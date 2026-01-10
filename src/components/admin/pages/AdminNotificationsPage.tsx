@@ -70,11 +70,6 @@ export const AdminNotificationsPage = () => {
     }
   };
 
-  const handleUpdateNotificationClick = (notification: Notification) => {
-    setNotificationToUpdate(notification);
-    setIsUpdateNotificationModalOpen(true);
-  };
-
   const handleDeleteNotificationClick = (notification: Notification) => {
     setNotificationToDelete(notification);
     setIsDeleteNotificationDialogOpen(true);
