@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import type { AdminCar } from "@/lib/admin/types";
@@ -37,6 +38,7 @@ type User = {
 };
 
 export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: UpdateCarModalProps) => {
+  const t = useTranslations();
   const [users, setUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -182,8 +184,8 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
       });
 
       if (result.success) {
-        toast.success("Car Updated", {
-          description: "The car has been updated successfully.",
+        toast.success(t("admin.modals.updateCar.successTitle"), {
+          description: t("admin.modals.updateCar.successDescription"),
         });
         
         if (onCarUpdated) {
@@ -192,13 +194,13 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
         
         handleClose();
       } else {
-        toast.error("Update Failed", {
-          description: result.error || "Failed to update the car. Please try again.",
+        toast.error(t("admin.modals.updateCar.errorTitle"), {
+          description: result.error || t("admin.modals.updateCar.unexpectedError"),
         });
       }
     } catch (error) {
-      toast.error("Update Failed", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred.",
+      toast.error(t("admin.modals.updateCar.errorTitle"), {
+        description: error instanceof Error ? error.message : t("admin.modals.updateCar.unexpectedError"),
       });
     } finally {
       setIsSubmitting(false);
@@ -211,8 +213,8 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
     <Dialog open={open} onOpenChange={(isOpen) => onOpenChange({ open: isOpen })}>
       <DialogContent className="w-[calc(100vw-20px)] sm:w-[calc(100vw-40px)] lg:w-[95vw] lg:min-w-[1400px] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0b0f14] border border-gray-200 dark:border-white/10 shadow-2xl rounded-2xl sm:rounded-3xl p-0">
         <DialogHeader className="px-4 sm:px-8 lg:px-16 pt-5 sm:pt-6 lg:pt-7 pb-4 sm:pb-5 border-b border-gray-200 dark:border-white/10">
-          <DialogTitle className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Update Car</DialogTitle>
-          <p className="text-sm sm:text-base text-gray-500 dark:text-white/60 mt-1 sm:mt-2">Edit vehicle information and details</p>
+          <DialogTitle className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">{t("admin.modals.updateCar.title")}</DialogTitle>
+          <p className="text-sm sm:text-base text-gray-500 dark:text-white/60 mt-1 sm:mt-2">{t("admin.modals.updateCar.subtitle")}</p>
         </DialogHeader>
 
         <div className="px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-8 space-y-4 sm:space-y-5 lg:space-y-6 bg-gray-50/50 dark:bg-[#0b0f14]">
@@ -220,7 +222,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
             <div className="space-y-2">
               <Label htmlFor="model" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                Model *
+                {t("admin.modals.updateCar.model")} *
               </Label>
               <Input
                 id="model"
@@ -234,7 +236,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
 
             <div className="space-y-2">
               <Label htmlFor="year" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                Year *
+                {t("admin.modals.updateCar.year")} *
               </Label>
               <Input
                 id="year"
@@ -251,7 +253,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
 
             <div className="space-y-2">
               <Label htmlFor="price" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                Price (USD) *
+                {t("admin.modals.updateCar.priceUsd")} *
               </Label>
               <Input
                 id="price"
@@ -268,14 +270,14 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
 
             <div className="space-y-2">
               <Label htmlFor="type" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                Vehicle Type
+                {t("admin.modals.updateCar.vehicleType")}
               </Label>
               <Select value={vehicleType || "none"} onValueChange={(value) => setVehicleType(value === "none" ? "" : value)}>
                 <SelectTrigger id="type" className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
                   <SelectValue placeholder="truck" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
-                  <SelectItem value="none" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">No type</SelectItem>
+                  <SelectItem value="none" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("admin.modals.updateCar.noType")}</SelectItem>
                   {Object.values(VehicleType).map((type) => (
                     <SelectItem key={type} value={type} className="capitalize text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">
                       {type}
@@ -287,14 +289,14 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
 
             <div className="space-y-2">
               <Label htmlFor="auction" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                Auction
+                {t("admin.modals.updateCar.auction")}
               </Label>
               <Select value={auction || "none"} onValueChange={(value) => setAuction(value === "none" ? "" : value)}>
                 <SelectTrigger id="auction" className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
                   <SelectValue placeholder="copart" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
-                  <SelectItem value="none" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">No auction</SelectItem>
+                  <SelectItem value="none" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("admin.modals.updateCar.noAuction")}</SelectItem>
                   {Object.values(Auction).map((auctionValue) => (
                     <SelectItem key={auctionValue} value={auctionValue} className="uppercase text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">
                       {auctionValue}
@@ -309,7 +311,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
             <div className="space-y-2">
               <Label htmlFor="purchaseDate" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                Purchase Date
+                {t("admin.modals.updateCar.purchaseDate")}
               </Label>
               <Input
                 id="purchaseDate"
@@ -322,7 +324,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
 
             <div className="space-y-2">
               <Label htmlFor="city" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                City
+                {t("admin.modals.updateCar.city")}
               </Label>
               <Input
                 id="city"
@@ -335,7 +337,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
 
             <div className="space-y-2">
               <Label htmlFor="lot" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                Lot Number
+                {t("admin.modals.updateCar.lotNumber")}
               </Label>
               <Input
                 id="lot"
@@ -348,7 +350,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
 
             <div className="space-y-2">
               <Label htmlFor="vin" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                VIN
+                {t("admin.modals.updateCar.vin")}
               </Label>
               <Input
                 id="vin"
@@ -362,14 +364,14 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
 
             <div className="space-y-2">
               <Label htmlFor="client" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                Client
+                {t("admin.modals.updateCar.client")}
               </Label>
               <Select value={selectedUserId || "none"} onValueChange={(value) => setSelectedUserId(value === "none" ? "" : value)}>
                 <SelectTrigger id="client" disabled={loadingUsers} className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
-                  <SelectValue placeholder={loadingUsers ? "Loading users..." : "No client"} />
+                  <SelectValue placeholder={loadingUsers ? t("admin.modals.updateCar.loadingUsers") : t("admin.modals.updateCar.noClient")} />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl max-h-[300px]">
-                  <SelectItem value="none" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">No client</SelectItem>
+                  <SelectItem value="none" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("admin.modals.updateCar.noClient")}</SelectItem>
                   {users.map((user) => (
                     <SelectItem key={user.id} value={user.id} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">
                       {user.firstName} {user.lastName} 
@@ -383,7 +385,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
           {/* Row 3: Customer Notes (full width) */}
           <div className="space-y-2 pt-1 sm:pt-2">
             <Label htmlFor="notes" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-              Customer Notes
+              {t("admin.modals.updateCar.customerNotes")}
             </Label>
             <Textarea
               id="notes"
@@ -404,7 +406,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
             disabled={isSubmitting}
             className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[150px] h-11 sm:h-12 text-[15px] sm:text-[16px] font-medium border-2 border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 hover:dark:border-white/20 text-gray-900 dark:text-white rounded-lg transition-all duration-200"
           >
-            Cancel
+            {t("admin.modals.updateCar.cancel")}
           </Button>
           <Button
             type="button"
@@ -418,10 +420,10 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Updating...</span>
+                <span>{t("admin.modals.updateCar.updating")}</span>
               </div>
             ) : (
-              "Update Car"
+              t("admin.modals.updateCar.updateButton")
             )}
           </Button>
         </DialogFooter>
