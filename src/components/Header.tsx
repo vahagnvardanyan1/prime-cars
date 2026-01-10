@@ -71,7 +71,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
                 alt={t("header.logoAlt")}
                 className="h-10 w-auto"
                 width={240}
-                height={80}
+                height={40}
                 priority
               />
             </Link>

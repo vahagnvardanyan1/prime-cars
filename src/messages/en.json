@@ -241,7 +241,9 @@
       "themeLabel": "Appearance",
       "lightMode": "Light mode",
       "darkMode": "Dark mode",
-      "activeLabel": "Active"
+      "activeLabel": "Active",
+      "logout": "Logout",
+      "loggingOut": "Logging out..."
     },
     "sidebar": {
       "consoleLabel": "Admin Console",

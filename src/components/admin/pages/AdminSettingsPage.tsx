@@ -9,7 +9,7 @@ import { useUser } from "@/contexts/UserContext";
 
 export const AdminSettingsPage = () => {
   const state = useAdminSettingsState();
-  const { user } = useUser();
+  const { user, isAdmin } = useUser();
 
   useEffect(() => {
     if (user) {
@@ -23,6 +23,7 @@ export const AdminSettingsPage = () => {
       <SettingsView
         cities={state.cities}
         isLoading={state.isLoadingCities}
+        isAdmin={isAdmin}
         onApplyGlobalAdjustment={state.applyGlobalAdjustment}
         onUpdateCityClick={state.openUpdateCityPrice}
         onDeleteCity={state.deleteCity}
