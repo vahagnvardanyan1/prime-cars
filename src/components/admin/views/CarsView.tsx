@@ -64,7 +64,7 @@ export const CarsView = ({
   };
 
   return (
-    <Surface className="overflow-hidden">
+    <Surface>
       <div className="px-6 py-6 flex items-center justify-between">
         <div>
           <h1 className="text-sm font-bold text-gray-900 dark:text-white">

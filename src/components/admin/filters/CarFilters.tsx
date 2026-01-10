@@ -99,10 +99,13 @@ export const CarFilters = ({ filters, onFiltersChange, onClearFilters }: CarFilt
     onFiltersChange({ ...filters, purchaseDateTo: value });
   };
 
+  const handlePurchaseDateClear = () => {
+    onFiltersChange({ ...filters, purchaseDateFrom: "", purchaseDateTo: "" });
+  };
+
   return (
     <div className="px-6 py-4 border-b border-gray-200 dark:border-white/10">
       <div className="flex flex-col gap-4">
-        {/* First Row: Search and Clear Filters */}
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search Input */}
           <div className="relative flex-1">
@@ -207,6 +210,7 @@ export const CarFilters = ({ filters, onFiltersChange, onClearFilters }: CarFilt
             dateTo={filters.purchaseDateTo}
             onDateFromChange={handlePurchaseDateFromChange}
             onDateToChange={handlePurchaseDateToChange}
+            onClear={handlePurchaseDateClear}
             placeholder={t("purchaseDateRange")}
           />
         </div>
