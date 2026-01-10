@@ -44,7 +44,7 @@ export const HomePage = () => {
 
             <div className="relative">
               <Image
-                src="/hero-image.png"
+                src="/logo.png"
                 alt={t("home.hero.heroImageAlt")}
                 className="w-full h-auto relative z-10"
                 width={1000}
