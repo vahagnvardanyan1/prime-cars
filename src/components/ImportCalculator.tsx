@@ -3,9 +3,9 @@
 import Image from "next/image";
 import { useState } from "react";
 
-import { Info } from "lucide-react";
+import { Info, MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { copart_logo, iaai_logo } from "@/data/images";
+import { copart_logo, iaai_logo, manheim_logo } from "@/data/images";
 
 interface ImportCalculatorProps {
   showNotice?: boolean;
@@ -14,7 +14,7 @@ interface ImportCalculatorProps {
 export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) => {
   const t = useTranslations();
 
-  const [activeTab, setActiveTab] = useState<"iaai" | "copart">("iaai");
+  const [activeTab, setActiveTab] = useState<"iaai" | "copart" | "manheim" | "other">("iaai");
   const [importer, setImporter] = useState("legal");
   const [vehiclePrice, setVehiclePrice] = useState("");
   const [auctionFee, setAuctionFee] = useState("");
@@ -45,11 +45,11 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
         <>
           <div className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 overflow-hidden transition-colors duration-300">
             {/* Tabs */}
-            <div className="flex border-b border-gray-300 dark:border-white/10 ">
+            <div className="flex border-b border-gray-300 dark:border-white/10 overflow-x-auto scrollbar-hide">
               <button
                 type="button"
                 onClick={() => setActiveTab("iaai")}
-                className={`flex-1 py-6 px-8 transition-colors bg-black ${
+                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap ${
                   activeTab === "iaai"
                     ? "border-b-2 border-[#429de6]"
                     : "opacity-60"
@@ -68,7 +68,7 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
               <button
                 type="button"
                 onClick={() => setActiveTab("copart")}
-                className={`flex-1 py-6 px-8 transition-colors bg-black ${
+                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap ${
                   activeTab === "copart"
                     ? "border-b-2 border-[#429de6]"
                     : "opacity-60"
@@ -80,8 +80,57 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
                     alt="Copart"
                     width={120}
                     height={40}
+                    className="h-10 w-auto"
+                  />
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("manheim")}
+                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap ${
+                  activeTab === "manheim"
+                    ? "border-b-2 border-[#429de6]"
+                    : "opacity-60"
+                }`}
+              >
+                <div className="flex items-center justify-center gap-3">
+                  <Image
+                    src={manheim_logo}
+                    alt="Manheim"
+                    width={120}
+                    height={40}
                     className="h-8 w-auto"
                   />
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("other")}
+                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-all duration-300 bg-black whitespace-nowrap ${
+                  activeTab === "other"
+                    ? "border-b-2 border-[#429de6]"
+                    : "opacity-60 hover:opacity-80"
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <span className={`text-base sm:text-lg font-semibold transition-colors duration-300 ${
+                    activeTab === "other"
+                      ? "text-white"
+                      : "text-white/90"
+                  }`}>
+                    {t("calculator.form.other")}
+                  </span>
+                  <div className={`p-2 rounded-lg transition-all duration-300 ${
+                    activeTab === "other" 
+                      ? "bg-[#429de6]/20" 
+                      : "bg-white/10"
+                  }`}>
+                    <MoreHorizontal className={`w-5 h-5 transition-colors duration-300 ${
+                      activeTab === "other"
+                        ? "text-[#429de6]"
+                        : "text-white"
+                    }`} />
+                  </div>
                 </div>
               </button>
             </div>
@@ -98,11 +147,11 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
                   <label className="block text-gray-600 dark:text-gray-400 text-sm mb-3">
                     {t("calculator.form.importer")} <span className="text-red-500">*</span>
                   </label>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <button
                       type="button"
                       onClick={() => setImporter("legal")}
-                      className={`py-3 px-4 rounded-lg border transition-all ${
+                      className={`py-3 px-4 rounded-lg border transition-all text-sm sm:text-base ${
                         importer === "legal"
                           ? "border-orange-500 bg-transparent text-gray-900 dark:text-white"
                           : "border-gray-300 dark:border-gray-700 bg-transparent text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-600"
@@ -113,7 +162,7 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
                     <button
                       type="button"
                       onClick={() => setImporter("individual")}
-                      className={`py-3 px-4 rounded-lg border transition-all ${
+                      className={`py-3 px-4 rounded-lg border transition-all text-sm sm:text-base ${
                         importer === "individual"
                           ? "border-orange-500 bg-transparent text-gray-900 dark:text-white"
                           : "border-gray-300 dark:border-gray-700 bg-transparent text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-600"
@@ -225,7 +274,7 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
                 </div>
 
                 {/* Engine and Engine Volume Row */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Engine */}
                   <div>
                     <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
@@ -234,7 +283,7 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
                     <select
                       value={engine}
                       onChange={(e) => setEngine(e.target.value)}
-                      className="w-full px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] focus:border-[#429de6] text-gray-900 dark:text-white appearance-none bg-[length:12px] dark:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23ffffff%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23000000%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center]"
+                      className="w-full px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] focus:border-[#429de6] text-gray-900 dark:text-white appearance-none bg-[length:12px] dark:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23ffffff%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23000000%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center] text-sm sm:text-base"
                     >
                       <option value="">{t("calculator.form.selectEngine")}</option>
                       <option value="gasoline">{t("calculator.form.gasoline")}</option>
@@ -254,7 +303,7 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
                       step="0.1"
                       value={engineVolume}
                       onChange={(e) => setEngineVolume(e.target.value)}
-                      className="w-full px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] focus:border-[#429de6] text-gray-900 dark:text-white placeholder:text-gray-400"
+                      className="w-full px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] focus:border-[#429de6] text-gray-900 dark:text-white placeholder:text-gray-400 text-sm sm:text-base"
                     />
                   </div>
                 </div>
@@ -285,7 +334,7 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
             </div>
 
             {/* Calculate Button */}
-            <div className="mt-8 flex justify-end">
+            <div className="mt-8 flex justify-center">
               <button
                 type="submit"
                 className="px-8 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-all hover:shadow-lg hover:shadow-blue-500/20 flex items-center gap-2"

@@ -11,11 +11,6 @@ import { useTheme } from "@/components/ThemeContext";
 import { Link, usePathname } from "@/i18n/routing";
 import { siteNavItems } from "@/lib/site-nav";
 
-const LOGO_LIGHT =
-  "https://cdn-editing-temp.picsart.com/editing-temp-landings/63307d6e-bc4c-4b91-88ae-6004d88bc060.png";
-const LOGO_DARK =
-  "https://cdn-editing-temp.picsart.com/editing-temp-landings/bbe115cb-86cb-462a-9a9e-f7328eb356a4.png";
-
 type HeaderProps = {
   onLoginClick: () => void;
 };
@@ -72,17 +67,9 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
           <div className="flex items-center justify-between h-20">
             <Link href="/" className="flex items-center gap-3 group">
               <Image
-                src={LOGO_DARK}
+                src="/logo.png"
                 alt={t("header.logoAlt")}
-                className="h-20 w-auto block dark:hidden"
-                width={240}
-                height={80}
-                priority
-              />
-              <Image
-                src={LOGO_DARK}
-                alt={t("header.logoAlt")}
-                className="h-20 w-auto hidden dark:block"
+                className="h-10 w-auto"
                 width={240}
                 height={40}
                 priority
@@ -166,7 +153,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
 
       {isMobileMenuOpen && (
         <button
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] md:hidden"
+          className="fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm z-[200] md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
           type="button"
           aria-label={t("header.closeMenuAria")}
@@ -174,30 +161,23 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
       )}
 
       <div
-        className={`fixed top-0 right-0 h-full w-[280px] bg-[#111111] border-l border-white/10 z-[210] md:hidden transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-full w-[280px] bg-white dark:bg-[#111111] border-l border-gray-200 dark:border-white/10 z-[210] md:hidden transition-transform duration-300 ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between h-20 px-6 border-b border-white/10">
+        <div className="flex items-center justify-between h-20 px-6 border-b border-gray-200 dark:border-white/10">
           <Link href="/" className="block">
             <Image
-              src={LOGO_LIGHT}
+              src="/logo.png"
               alt={t("header.logoAlt")}
-              className="h-8 w-auto block dark:hidden"
-              width={120}
-              height={32}
-            />
-            <Image
-              src={LOGO_DARK}
-              alt={t("header.logoAlt")}
-              className="h-8 w-auto hidden dark:block"
+              className="h-8 w-auto"
               width={120}
               height={32}
             />
           </Link>
           <button
             onClick={() => setIsMobileMenuOpen(false)}
-            className="w-10 h-10 flex items-center justify-center text-white hover:bg-white/10 rounded-lg transition-all"
+            className="w-10 h-10 flex items-center justify-center text-gray-900 dark:text-white hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-all"
             aria-label={t("header.closeMenuAria")}
             type="button"
           >
@@ -212,8 +192,8 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
               href={item.href}
               className={`px-4 py-3 rounded-lg transition-all text-left ${
                 isActiveHref(item.href)
-                  ? "text-white bg-white/10"
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
+                  ? "text-gray-900 dark:text-white bg-black/10 dark:bg-white/10"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"
               }`}
             >
               {t(`nav.${item.key}`)}
@@ -225,7 +205,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
               onLoginClick();
               setIsMobileMenuOpen(false);
             }}
-            className="mt-4 px-4 py-3 bg-transparent border border-white/20 text-white rounded-lg hover:bg-white/10 transition-all text-left"
+            className="mt-4 px-4 py-3 bg-transparent border border-black/20 dark:border-white/20 text-gray-900 dark:text-white rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition-all text-left"
             type="button"
           >
             {t("header.signInNow")}
