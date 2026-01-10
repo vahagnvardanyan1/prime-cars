@@ -24,7 +24,7 @@ export const HomePage = () => {
         </div>
 
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12 w-full relative z-10">
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
             <div className="text-center lg:text-left">
               <h1 className="mb-6 text-gray-900 dark:text-white">
                 {t("home.hero.title")}
