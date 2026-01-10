@@ -67,7 +67,7 @@ export const CarsView = ({
     <Surface className="overflow-hidden">
       <div className="px-6 py-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-sm font-bold text-gray-900 dark:text-white">
             {tTable("title")}
           </h1>
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">

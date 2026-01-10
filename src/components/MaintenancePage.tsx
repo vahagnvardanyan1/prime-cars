@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { Wrench, Zap, Shield, Sparkles } from "lucide-react";
+import { Wrench, Zap, Sparkles } from "lucide-react";
 
 
 
@@ -62,30 +62,16 @@ export const MaintenancePage = () => {
               </div>
               
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-blue-100 dark:to-white bg-clip-text text-transparent leading-tight">
-                We'll Be Back Soon
+                We&apos;ll Be Back Soon
               </h1>
               
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                We're performing scheduled maintenance to bring you an even better experience. 
+                We&apos;re performing scheduled maintenance to bring you an even better experience. 
                 Thank you for your patience!
               </p>
             </div>
 
-            {/* Info Cards */}
-            <div className="flex justify-center max-w-4xl mx-auto mt-8 sm:mt-12 px-4">
-              {/* Status Card */}
-              <div className="group bg-white/80 dark:bg-[#0b0f14]/80 backdrop-blur-xl p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-gray-200/50 dark:border-white/10 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="p-4 bg-gradient-to-br from-green-500/10 to-green-500/5 dark:from-green-500/20 dark:to-green-500/10 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                    <Shield className="h-8 w-8 text-green-500" />
-                  </div>
-                  <div className="text-center">
-                    <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-2">Status</h3>
-                    <p className="text-green-500 font-medium">All Systems Safe</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+           
 
             {/* Progress Message */}
             <div className="max-w-2xl mx-auto px-4">
@@ -101,7 +87,7 @@ export const MaintenancePage = () => {
                     </p>
                     <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
                       Our team is implementing exciting new features and improvements. 
-                      We appreciate your patience and can't wait to show you what's new!
+                      We appreciate your patience and can&apos;t wait to show you what&apos;s new!
                     </p>
                   </div>
                 </div>
