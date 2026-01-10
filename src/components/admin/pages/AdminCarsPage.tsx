@@ -107,10 +107,10 @@ export const AdminCarsPage = () => {
           />
 
           <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete Car</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogTitle className="text-gray-900 dark:text-white">Delete Car</AlertDialogTitle>
+                <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
                   Are you sure you want to delete{" "}
                   <span className="font-semibold">
                     {carToDelete?.model} ({carToDelete?.year})
@@ -119,11 +119,16 @@ export const AdminCarsPage = () => {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel disabled={isDeletingCar}>Cancel</AlertDialogCancel>
+                <AlertDialogCancel 
+                  disabled={isDeletingCar}
+                  className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
+                >
+                  Cancel
+                </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleConfirmDelete}
                   disabled={isDeletingCar}
-                  className="bg-red-600 hover:bg-red-700"
+                  className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
                 >
                   {isDeletingCar ? "Deleting..." : "Delete"}
                 </AlertDialogAction>

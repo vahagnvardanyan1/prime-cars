@@ -106,7 +106,7 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
 
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => onOpenChange({ open: nextOpen })}>
-      <DialogContent className="w-[calc(100vw-24px)] max-w-[980px] overflow-hidden rounded-3xl border-gray-200 p-0 dark:border-white/10 dark:bg-[#0a0a0a] lg:max-w-[1100px]">
+      <DialogContent className="w-[calc(100vw-24px)] max-w-[980px] overflow-hidden rounded-3xl border-gray-200 bg-white p-0 dark:border-white/10 dark:bg-[#0a0a0a] lg:max-w-[1100px]">
         <div className="flex max-h-[85vh] flex-col">
           <div className="px-8 py-6 border-b border-gray-200 dark:border-white/10">
           <DialogHeader className="space-y-2">

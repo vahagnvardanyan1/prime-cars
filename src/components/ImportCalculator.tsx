@@ -6,6 +6,13 @@ import { useState } from "react";
 import { Info, MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { copart_logo, iaai_logo, manheim_logo } from "@/data/images";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ImportCalculatorProps {
   showNotice?: boolean;
@@ -204,15 +211,15 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
                   <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                     {t("calculator.form.auctionLocation")} <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    value={auctionLocation}
-                    onChange={(e) => setAuctionLocation(e.target.value)}
-                    className="w-full px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] focus:border-[#429de6] text-gray-900 dark:text-white appearance-none bg-[length:12px] dark:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23ffffff%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23000000%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center]"
-                  >
-                    <option value="">{t("calculator.form.selectLocation")}</option>
-                    <option value="location1">{t("calculator.form.location1")}</option>
-                    <option value="location2">{t("calculator.form.location2")}</option>
-                  </select>
+                  <Select value={auctionLocation} onValueChange={setAuctionLocation}>
+                    <SelectTrigger className="w-full h-12 bg-transparent border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white">
+                      <SelectValue placeholder={t("calculator.form.selectLocation")} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
+                      <SelectItem value="location1">{t("calculator.form.location1")}</SelectItem>
+                      <SelectItem value="location2">{t("calculator.form.location2")}</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -223,36 +230,36 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
               <div className="space-y-6 lg:pl-8">
                 {/* Date Selection: Day, Month, Year */}
                 <div className="grid grid-cols-3 gap-4">
-                  <select 
-                    value={day}
-                    onChange={(e) => setDay(e.target.value)}
-                    className="px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white appearance-none bg-[length:12px] dark:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23ffffff%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23000000%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center]"
-                  >
-                    <option value="">{t("calculator.form.day")}</option>
-                    {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                      <option key={d} value={d}>{d}</option>
-                    ))}
-                  </select>
-                  <select 
-                    value={month}
-                    onChange={(e) => setMonth(e.target.value)}
-                    className="px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white appearance-none bg-[length:12px] dark:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23ffffff%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23000000%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center]"
-                  >
-                    <option value="">{t("calculator.form.month")}</option>
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
-                  <select 
-                    value={year}
-                    onChange={(e) => setYear(e.target.value)}
-                    className="px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white appearance-none bg-[length:12px] dark:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23ffffff%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23000000%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center]"
-                  >
-                    <option value="">{t("calculator.form.year")}</option>
-                    {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                      <option key={y} value={y}>{y}</option>
-                    ))}
-                  </select>
+                  <Select value={day} onValueChange={setDay}>
+                    <SelectTrigger className="h-12 bg-transparent border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white">
+                      <SelectValue placeholder={t("calculator.form.day")} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px]">
+                      {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                        <SelectItem key={d} value={String(d)}>{d}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={month} onValueChange={setMonth}>
+                    <SelectTrigger className="h-12 bg-transparent border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white">
+                      <SelectValue placeholder={t("calculator.form.month")} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px]">
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                        <SelectItem key={m} value={String(m)}>{m}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={year} onValueChange={setYear}>
+                    <SelectTrigger className="h-12 bg-transparent border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white">
+                      <SelectValue placeholder={t("calculator.form.year")} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px]">
+                      {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                        <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {/* Vehicle Type */}
@@ -260,17 +267,17 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
                   <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                     {t("calculator.form.vehicleType")} <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    value={vehicleType}
-                    onChange={(e) => setVehicleType(e.target.value)}
-                    className="w-full px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] focus:border-[#429de6] text-gray-900 dark:text-white appearance-none bg-[length:12px] dark:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23ffffff%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23000000%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center]"
-                  >
-                    <option value="">{t("calculator.form.selectType")}</option>
-                    <option value="passenger">{t("calculator.form.passengerCar")}</option>
-                    <option value="sedan">{t("calculator.form.sedan")}</option>
-                    <option value="suv">{t("calculator.form.suv")}</option>
-                    <option value="sports">{t("calculator.form.sports")}</option>
-                  </select>
+                  <Select value={vehicleType} onValueChange={setVehicleType}>
+                    <SelectTrigger className="w-full h-12 bg-transparent border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white">
+                      <SelectValue placeholder={t("calculator.form.selectType")} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
+                      <SelectItem value="passenger">{t("calculator.form.passengerCar")}</SelectItem>
+                      <SelectItem value="sedan">{t("calculator.form.sedan")}</SelectItem>
+                      <SelectItem value="suv">{t("calculator.form.suv")}</SelectItem>
+                      <SelectItem value="sports">{t("calculator.form.sports")}</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {/* Engine and Engine Volume Row */}
@@ -280,17 +287,17 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
                     <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                       {t("calculator.form.engine")} <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      value={engine}
-                      onChange={(e) => setEngine(e.target.value)}
-                      className="w-full px-4 py-3 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] focus:border-[#429de6] text-gray-900 dark:text-white appearance-none bg-[length:12px] dark:bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23ffffff%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2712%27%20height=%2712%27%20viewBox=%270%200%2012%2012%27%3E%3Cpath%20fill=%27%23000000%27%20d=%27M6%209L1%204h10z%27/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center] text-sm sm:text-base"
-                    >
-                      <option value="">{t("calculator.form.selectEngine")}</option>
-                      <option value="gasoline">{t("calculator.form.gasoline")}</option>
-                      <option value="diesel">{t("calculator.form.diesel")}</option>
-                      <option value="electric">{t("calculator.form.electric")}</option>
-                      <option value="hybrid">{t("calculator.form.hybrid")}</option>
-                    </select>
+                    <Select value={engine} onValueChange={setEngine}>
+                      <SelectTrigger className="w-full h-12 bg-transparent border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white">
+                        <SelectValue placeholder={t("calculator.form.selectEngine")} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
+                        <SelectItem value="gasoline">{t("calculator.form.gasoline")}</SelectItem>
+                        <SelectItem value="diesel">{t("calculator.form.diesel")}</SelectItem>
+                        <SelectItem value="electric">{t("calculator.form.electric")}</SelectItem>
+                        <SelectItem value="hybrid">{t("calculator.form.hybrid")}</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* Engine Volume */}

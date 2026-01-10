@@ -77,7 +77,7 @@ export const UpdateShippingPriceModal = ({
 
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => onOpenChange({ open: nextOpen })}>
-      <DialogContent className="sm:max-w-[520px] rounded-2xl border-gray-200 p-0 dark:border-white/10 dark:bg-[#0b0f14]">
+      <DialogContent className="sm:max-w-[520px] rounded-2xl border-gray-200 bg-white p-0 dark:border-white/10 dark:bg-[#0b0f14]">
         <div className="px-7 py-6">
           <DialogHeader className="space-y-2">
             <DialogTitle className="text-gray-900 dark:text-white">

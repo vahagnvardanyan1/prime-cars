@@ -80,7 +80,7 @@ export const AddShippingModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px] rounded-2xl border-gray-200 dark:border-white/10 dark:bg-[#0b0f14]">
+      <DialogContent className="sm:max-w-[500px] rounded-2xl border-gray-200 bg-white dark:border-white/10 dark:bg-[#0b0f14]">
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-white">
             {t("admin.modals.addShipping.title")}
