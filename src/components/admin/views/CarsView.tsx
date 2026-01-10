@@ -10,6 +10,7 @@ import { formatUsd, getCarStatusTone } from "@/lib/admin/format";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { TonePill } from "@/components/admin/primitives/TonePill";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
+import { CarFilters, type CarFiltersState } from "@/components/admin/filters/CarFilters";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -28,9 +29,23 @@ type CarsViewProps = {
   onUpdateCar?: (car: AdminCar) => void;
   onDeleteCar?: (car: AdminCar) => void;
   isAdmin?: boolean;
+  filters?: CarFiltersState;
+  onFiltersChange?: (filters: CarFiltersState) => void;
+  onClearFilters?: () => void;
 };
 
-export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdateCar, onDeleteCar, isAdmin = false }: CarsViewProps) => {
+export const CarsView = ({ 
+  cars, 
+  isLoading = false, 
+  onRefresh, 
+  onAddCar, 
+  onUpdateCar, 
+  onDeleteCar, 
+  isAdmin = false,
+  filters,
+  onFiltersChange,
+  onClearFilters,
+}: CarsViewProps) => {
   const t = useTranslations();
   const tTable = useTranslations("carsTable");
 
@@ -68,6 +83,9 @@ export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdat
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             {tTable("title")}
           </h1>
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            {tTable("showing")} {cars.length} {cars.length === 1 ? tTable("carSingular") : tTable("cars")}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           {isAdmin && onAddCar && (
@@ -85,6 +103,15 @@ export const CarsView = ({ cars, isLoading = false, onRefresh, onAddCar, onUpdat
           )}
         </div>
       </div>
+
+      {/* Filters */}
+      {filters && onFiltersChange && onClearFilters && (
+        <CarFilters
+          filters={filters}
+          onFiltersChange={onFiltersChange}
+          onClearFilters={onClearFilters}
+        />
+      )}
 
       <div className="overflow-x-auto">
       <Table>

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 
 import { Surface } from "@/components/admin/primitives/Surface";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
+import { UserFilters, type UserFiltersState } from "@/components/admin/filters/UserFilters";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -24,6 +25,9 @@ type UsersViewProps = {
   onUpdateUser?: (user: AdminUser) => void;
   onDeleteUser?: (user: AdminUser) => void;
   isAdmin?: boolean;
+  filters?: UserFiltersState;
+  onFiltersChange?: (filters: UserFiltersState) => void;
+  onClearFilters?: () => void;
 };
 
 const getInitials = ({ firstName, lastName }: { firstName: string; lastName: string }) => {
@@ -32,7 +36,18 @@ const getInitials = ({ firstName, lastName }: { firstName: string; lastName: str
   return `${first}${last}`;
 };
 
-export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, onUpdateUser, onDeleteUser, isAdmin = false }: UsersViewProps) => {
+export const UsersView = ({ 
+  users, 
+  isLoading = false, 
+  onRefresh, 
+  onCreateUser, 
+  onUpdateUser, 
+  onDeleteUser, 
+  isAdmin = false,
+  filters,
+  onFiltersChange,
+  onClearFilters,
+}: UsersViewProps) => {
   const t = useTranslations();
   const tTable = useTranslations("usersTable");
 
@@ -43,6 +58,9 @@ export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, o
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             {tTable("title")}
           </h1>
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            {tTable("showing")} {users.length} {users.length === 1 ? tTable("user") : tTable("users")}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           {isAdmin && onCreateUser && (
@@ -60,6 +78,15 @@ export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, o
           )}
         </div>
       </div>
+
+      {/* Filters */}
+      {filters && onFiltersChange && onClearFilters && (
+        <UserFilters
+          filters={filters}
+          onFiltersChange={onFiltersChange}
+          onClearFilters={onClearFilters}
+        />
+      )}
 
       <div className="overflow-x-auto">
       <Table>

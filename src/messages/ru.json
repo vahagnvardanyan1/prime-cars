@@ -232,6 +232,21 @@
     },
     "loadingUser": "Загрузка данных пользователя...",
     "refresh": "Обновить",
+    "filters": {
+      "searchUsers": "Поиск по имени, имени пользователя, email, телефону или паспорту...",
+      "searchCars": "Поиск по модели, клиенту, VIN, лоту или городу...",
+      "country": "Страна",
+      "allCountries": "Все страны",
+      "role": "Роль",
+      "allRoles": "Все роли",
+      "type": "Тип",
+      "allTypes": "Все типы",
+      "auction": "Аукцион",
+      "allAuctions": "Все аукционы",
+      "status": "Статус",
+      "allStatuses": "Все статусы",
+      "clearFilters": "Очистить фильтры"
+    },
     "topbar": {
       "searchPlaceholder": "Поиск (только визуально)",
       "quickSettings": "Быстрые настройки",
@@ -573,7 +588,10 @@
     "created": "Создано",
     "invoice": "Счет",
     "download": "Скачать",
-    "actions": "Действия"
+    "actions": "Действия",
+    "showing": "Показано",
+    "carSingular": "автомобиль",
+    "cars": "автомобилей"
   },
   "usersTable": {
     "title": "Пользователи",
@@ -587,7 +605,10 @@
     "country": "Страна",
     "actions": "Действия",
     "loadingUsers": "Загрузка пользователей...",
-    "noUsersFound": "Пользователи не найдены"
+    "noUsersFound": "Пользователи не найдены",
+    "showing": "Показано",
+    "user": "пользователь",
+    "users": "пользователей"
   }
 }
 

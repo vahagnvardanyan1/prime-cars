@@ -232,6 +232,21 @@
     },
     "loadingUser": "Loading user data...",
     "refresh": "Refresh",
+    "filters": {
+      "searchUsers": "Search by name, username, email, phone or passport...",
+      "searchCars": "Search by model, client, VIN, lot or city...",
+      "country": "Country",
+      "allCountries": "All Countries",
+      "role": "Role",
+      "allRoles": "All Roles",
+      "type": "Type",
+      "allTypes": "All Types",
+      "auction": "Auction",
+      "allAuctions": "All Auctions",
+      "status": "Status",
+      "allStatuses": "All Statuses",
+      "clearFilters": "Clear Filters"
+    },
     "topbar": {
       "searchPlaceholder": "Search (visual only)",
       "quickSettings": "Quick Settings",
@@ -573,7 +588,10 @@
     "created": "Created",
     "invoice": "Invoice",
     "download": "Download",
-    "actions": "Actions"
+    "actions": "Actions",
+    "showing": "Showing",
+    "carSingular": "car",
+    "cars": "cars"
   },
   "usersTable": {
     "title": "Users",
@@ -587,7 +605,10 @@
     "country": "Country",
     "actions": "Actions",
     "loadingUsers": "Loading users...",
-    "noUsersFound": "No users found"
+    "noUsersFound": "No users found",
+    "showing": "Showing",
+    "user": "user",
+    "users": "users"
   }
 }
 

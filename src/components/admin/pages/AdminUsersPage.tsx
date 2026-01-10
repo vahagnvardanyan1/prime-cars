@@ -86,6 +86,9 @@ export const AdminUsersPage = () => {
         }}
         onDeleteUser={handleDeleteUserClick}
         isAdmin={isAdmin}
+        filters={state.filters}
+        onFiltersChange={state.updateFilters}
+        onClearFilters={state.clearFilters}
       />
 
       {isAdmin && (

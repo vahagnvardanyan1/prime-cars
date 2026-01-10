@@ -1,10 +1,9 @@
-"use client";
-
-import { useMemo, useState } from "react";
-
-import type { AdminCar } from "@/lib/admin/types";
-import { fetchCars } from "@/lib/admin/fetchCars";
+import { useMemo, useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+
+import type { AdminCar, AdminCarStatus } from "@/lib/admin/types";
+import { fetchCars } from "@/lib/admin/fetchCars";
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
@@ -14,16 +13,68 @@ let carsCache: {
   timestamp: number;
 } | null = null;
 
+export type CarFiltersState = {
+  search: string;
+  type: string;
+  auction: string;
+  status: AdminCarStatus | "all";
+};
+
+const filterCars = ({ cars, filters }: { cars: AdminCar[]; filters: CarFiltersState }) => {
+  return cars.filter((car) => {
+    // Search filter (search in model, client, VIN, lot, city)
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      const matchesSearch =
+        car.model.toLowerCase().includes(searchLower) ||
+        car.client?.toLowerCase().includes(searchLower) ||
+        car.details?.vin?.toLowerCase().includes(searchLower) ||
+        car.details?.lot?.toLowerCase().includes(searchLower) ||
+        car.details?.city?.toLowerCase().includes(searchLower);
+
+      if (!matchesSearch) return false;
+    }
+
+    // Type filter
+    if (filters.type !== "all" && car.details?.type !== filters.type) {
+      return false;
+    }
+
+    // Auction filter
+    if (filters.auction !== "all" && car.details?.auction !== filters.auction) {
+      return false;
+    }
+
+    // Status filter
+    if (filters.status !== "all" && car.status !== filters.status) {
+      return false;
+    }
+
+    return true;
+  });
+};
+
 export const useAdminCarsState = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [isAddCarOpen, setIsAddCarOpen] = useState(false);
-  const [cars, setCars] = useState<AdminCar[]>(() => carsCache?.data || []);
+  const [allCars, setAllCars] = useState<AdminCar[]>(() => carsCache?.data || []);
   const [isLoadingCars, setIsLoadingCars] = useState(false);
+
+  // Initialize filters from URL
+  const [filters, setFilters] = useState<CarFiltersState>(() => ({
+    search: searchParams.get("search") || "",
+    type: searchParams.get("type") || "all",
+    auction: searchParams.get("auction") || "all",
+    status: (searchParams.get("status") as AdminCarStatus | "all") || "all",
+  }));
 
   const openAddCar = () => setIsAddCarOpen(true);
   const closeAddCar = () => setIsAddCarOpen(false);
 
   const addCar = ({ car }: { car: AdminCar }) => {
-    setCars((prev) => [car, ...prev]);
+    setAllCars((prev) => [car, ...prev]);
   };
 
   const isCarsCacheValid = useMemo(() => {
@@ -32,6 +83,38 @@ export const useAdminCarsState = () => {
     return (now - carsCache.timestamp) < CACHE_DURATION;
   }, []);
 
+  // Apply filters to get filtered cars
+  const filteredCars = useMemo(() => {
+    return filterCars({ cars: allCars, filters });
+  }, [allCars, filters]);
+
+  // Update URL when filters change
+  const updateFilters = useCallback((newFilters: CarFiltersState) => {
+    setFilters(newFilters);
+
+    // Build URL params
+    const params = new URLSearchParams();
+    if (newFilters.search) params.set("search", newFilters.search);
+    if (newFilters.type !== "all") params.set("type", newFilters.type);
+    if (newFilters.auction !== "all") params.set("auction", newFilters.auction);
+    if (newFilters.status !== "all") params.set("status", newFilters.status);
+
+    const queryString = params.toString();
+    const newUrl = queryString ? `?${queryString}` : window.location.pathname;
+
+    router.replace(newUrl, { scroll: false });
+  }, [router]);
+
+  const clearFilters = useCallback(() => {
+    const defaultFilters: CarFiltersState = {
+      search: "",
+      type: "all",
+      auction: "all",
+      status: "all",
+    };
+    updateFilters(defaultFilters);
+  }, [updateFilters]);
+
   const loadCars = async ({ forceRefresh = false }: { forceRefresh?: boolean } = {}) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
     if (!token) {
@@ -39,7 +122,7 @@ export const useAdminCarsState = () => {
     }
 
     if (!forceRefresh && carsCache && isCarsCacheValid) {
-      setCars(carsCache.data);
+      setAllCars(carsCache.data);
       return;
     }
 
@@ -48,7 +131,7 @@ export const useAdminCarsState = () => {
       const result = await fetchCars();
       
       if (result.success && result.cars) {
-        setCars(result.cars);
+        setAllCars(result.cars);
         carsCache = {
           data: result.cars,
           timestamp: Date.now(),
@@ -72,8 +155,19 @@ export const useAdminCarsState = () => {
     }
   };
 
+  // Sync filters with URL on mount and when searchParams change
+  useEffect(() => {
+    const urlFilters: CarFiltersState = {
+      search: searchParams.get("search") || "",
+      type: searchParams.get("type") || "all",
+      auction: searchParams.get("auction") || "all",
+      status: (searchParams.get("status") as AdminCarStatus | "all") || "all",
+    };
+    setFilters(urlFilters);
+  }, [searchParams]);
+
   return {
-    cars,
+    cars: filteredCars,
     isLoadingCars,
     isAddCarOpen,
     openAddCar,
@@ -81,6 +175,9 @@ export const useAdminCarsState = () => {
     addCar,
     loadCars,
     isCarsCacheValid,
+    filters,
+    updateFilters,
+    clearFilters,
   };
 };
 
