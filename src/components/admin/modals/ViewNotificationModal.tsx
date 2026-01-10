@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Calendar, CheckCircle2, Circle } from "lucide-react";
+import { Bell, Calendar, CheckCircle2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
@@ -60,22 +60,9 @@ export const ViewNotificationModal = ({
               }`} />
             </div>
             <div className="flex-1 pt-1">
-              <div className="flex items-start justify-between gap-4">
-                <DialogTitle className="text-2xl font-semibold text-gray-900 dark:text-white pr-4">
-                  {notification.message}
-                </DialogTitle>
-                {notification.isRead ? (
-                  <span className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-xs font-medium text-gray-600 dark:text-gray-400">
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    Read
-                  </span>
-                ) : (
-                  <span className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#429de6]/10 dark:bg-[#429de6]/20 text-xs font-medium text-[#429de6]">
-                    <Circle className="h-3.5 w-3.5 fill-current" />
-                    Unread
-                  </span>
-                )}
-              </div>
+              <DialogTitle className="text-2xl font-semibold text-gray-900 dark:text-white">
+                {notification.message}
+              </DialogTitle>
               <div className="flex items-center gap-2 mt-2 text-sm text-gray-500 dark:text-gray-400">
                 <Calendar className="h-4 w-4" />
                 <time>{formatDate(notification.createdAt)}</time>
@@ -125,7 +112,7 @@ export const ViewNotificationModal = ({
             onClick={() => onOpenChange({ open: false })}
             className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
           >
-            Close
+            {t("close")}
           </Button>
         </div>
       </DialogContent>

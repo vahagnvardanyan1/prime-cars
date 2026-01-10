@@ -257,7 +257,10 @@ export const SettingsView = ({
                 {t("admin.settingsView.citiesTitle")}
               </h1>
               <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Showing {filteredCities.length} {filteredCities.length === 1 ? "city" : "cities"} for {selectedAuction.toUpperCase()}
+                {t("admin.settingsView.showingCities", { 
+                  count: filteredCities.length, 
+                  auction: selectedAuction.toUpperCase() 
+                })}
               </p>
             </div>
             <Button
@@ -341,7 +344,7 @@ export const SettingsView = ({
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Loading shipping cities...
+                      {t("admin.settingsView.loadingCities")}
                     </span>
                   </div>
                 </TableCell>
@@ -350,7 +353,7 @@ export const SettingsView = ({
               <TableRow>
                 <TableCell colSpan={3} className="py-12">
                   <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
-                    No cities found for {selectedAuction.toUpperCase()}
+                    {t("admin.settingsView.noCitiesFound", { auction: selectedAuction.toUpperCase() })}
                   </div>
                 </TableCell>
               </TableRow>

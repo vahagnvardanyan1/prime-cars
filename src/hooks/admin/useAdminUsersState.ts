@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-import type { AdminUser, AdminUserRole } from "@/lib/admin/types";
+import type { AdminUser } from "@/lib/admin/types";
 import { fetchUsers } from "@/lib/admin/fetchUsers";
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -16,7 +16,6 @@ let usersCache: {
 export type UserFiltersState = {
   search: string;
   country: string;
-  role: AdminUserRole | "all";
 };
 
 const filterUsers = ({ users, filters }: { users: AdminUser[]; filters: UserFiltersState }) => {
@@ -40,11 +39,6 @@ const filterUsers = ({ users, filters }: { users: AdminUser[]; filters: UserFilt
       return false;
     }
 
-    // Role filter
-    if (filters.role !== "all" && user.role !== filters.role) {
-      return false;
-    }
-
     return true;
   });
 };
@@ -61,7 +55,6 @@ export const useAdminUsersState = () => {
   const [filters, setFilters] = useState<UserFiltersState>(() => ({
     search: searchParams.get("search") || "",
     country: searchParams.get("country") || "all",
-    role: (searchParams.get("role") as AdminUserRole | "all") || "all",
   }));
 
   const openCreateUser = () => setIsCreateUserOpen(true);
@@ -86,7 +79,6 @@ export const useAdminUsersState = () => {
     const params = new URLSearchParams();
     if (newFilters.search) params.set("search", newFilters.search);
     if (newFilters.country !== "all") params.set("country", newFilters.country);
-    if (newFilters.role !== "all") params.set("role", newFilters.role);
 
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : window.location.pathname;
@@ -98,7 +90,6 @@ export const useAdminUsersState = () => {
     const defaultFilters: UserFiltersState = {
       search: "",
       country: "all",
-      role: "all",
     };
     updateFilters(defaultFilters);
   }, [updateFilters]);
@@ -148,7 +139,6 @@ export const useAdminUsersState = () => {
     const urlFilters: UserFiltersState = {
       search: searchParams.get("search") || "",
       country: searchParams.get("country") || "all",
-      role: (searchParams.get("role") as AdminUserRole | "all") || "all",
     };
     setFilters(urlFilters);
   }, [searchParams]);

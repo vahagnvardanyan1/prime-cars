@@ -12,12 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { AdminUserRole } from "@/lib/admin/types";
 
 export type UserFiltersState = {
   search: string;
   country: string;
-  role: AdminUserRole | "all";
 };
 
 type UserFiltersProps = {
@@ -34,18 +32,10 @@ const COUNTRIES = [
   "Other",
 ];
 
-const ROLES: Array<AdminUserRole | "all"> = [
-  "all",
-  "Admin",
-  "Manager",
-  "Support",
-  "Viewer",
-];
-
 export const UserFilters = ({ filters, onFiltersChange, onClearFilters }: UserFiltersProps) => {
   const t = useTranslations("admin.filters");
 
-  const hasActiveFilters = filters.search !== "" || filters.country !== "all" || filters.role !== "all";
+  const hasActiveFilters = filters.search !== "" || filters.country !== "all";
 
   const handleSearchChange = (search: string) => {
     onFiltersChange({ ...filters, search });
@@ -53,10 +43,6 @@ export const UserFilters = ({ filters, onFiltersChange, onClearFilters }: UserFi
 
   const handleCountryChange = (country: string) => {
     onFiltersChange({ ...filters, country });
-  };
-
-  const handleRoleChange = (role: string) => {
-    onFiltersChange({ ...filters, role: role as AdminUserRole | "all" });
   };
 
   return (
@@ -85,20 +71,6 @@ export const UserFilters = ({ filters, onFiltersChange, onClearFilters }: UserFi
               {COUNTRIES.map((country) => (
                 <SelectItem key={country} value={country}>
                   {country}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Role Filter */}
-          <Select value={filters.role} onValueChange={handleRoleChange}>
-            <SelectTrigger className="w-full sm:w-[180px] h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-              <SelectValue placeholder={t("role")} />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-              {ROLES.map((role) => (
-                <SelectItem key={role} value={role}>
-                  {role === "all" ? t("allRoles") : role}
                 </SelectItem>
               ))}
             </SelectContent>

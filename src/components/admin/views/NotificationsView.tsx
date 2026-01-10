@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Trash2, Eye, CheckCircle2, Circle } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Surface } from "@/components/admin/primitives/Surface";
@@ -88,7 +88,6 @@ export const NotificationsView = ({
               <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[200px]">{t("message")}</TableHead>
               <TableHead className="px-4 py-4 text-sm font-semibold min-w-[250px]">{t("description")}</TableHead>
               <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">{t("reason")}</TableHead>
-              <TableHead className="px-4 py-4 text-sm font-semibold min-w-[100px]">{t("status")}</TableHead>
               <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{t("createdAt")}</TableHead>
               <TableHead className="px-4 py-4 text-sm font-semibold w-[140px]">{t("actions")}</TableHead>
             </TableRow>
@@ -96,13 +95,13 @@ export const NotificationsView = ({
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-32 text-center text-gray-500 dark:text-gray-400">
+                <TableCell colSpan={5} className="h-32 text-center text-gray-500 dark:text-gray-400">
                   {t("loading")}
                 </TableCell>
               </TableRow>
             ) : notifications.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-32 text-center text-gray-500 dark:text-gray-400">
+                <TableCell colSpan={5} className="h-32 text-center text-gray-500 dark:text-gray-400">
                   {t("noNotifications")}
                 </TableCell>
               </TableRow>
@@ -145,37 +144,11 @@ export const NotificationsView = ({
                       {notification.reason || '-'}
                     </div>
                   </TableCell>
-                  <TableCell className="px-4 py-4">
-                    {notification.isRead ? (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-xs font-medium text-gray-600 dark:text-gray-400">
-                        <CheckCircle2 className="h-3 w-3" />
-                        Read
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#429de6]/10 dark:bg-[#429de6]/20 text-xs font-medium text-[#429de6]">
-                        <Circle className="h-3 w-3 fill-current" />
-                        Unread
-                      </span>
-                    )}
-                  </TableCell>
                   <TableCell className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
                     {formatDate(notification.createdAt)}
                   </TableCell>
                   <TableCell className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1">
-                      {onViewNotification && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onViewNotification(notification);
-                          }}
-                          className="h-8 w-8 text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      )}
                       {isAdmin && onDeleteNotification && (
                         <Button
                           variant="ghost"

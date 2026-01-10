@@ -32,7 +32,7 @@ export const AdminSettingsPage = () => {
         onUpdateCityClick={state.openUpdateCityPrice}
         onDeleteCity={state.deleteCity}
         onUpdateCoefficient={state.updateCoefficient}
-        onShippingCreated={() => state.loadCities({ forceRefresh: true, auction: Auction.COPART })}
+        onShippingCreated={() => state.loadCities({ forceRefresh: true, auction: state.currentAuction || Auction.COPART })}
         onLoadCities={({ auction }) => state.loadCities({ auction })}
       />
 

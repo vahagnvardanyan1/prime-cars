@@ -18,15 +18,15 @@ export const createShipping = async (
   data: CreateShippingData
 ): Promise<CreateShippingResponse> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/shippings/city-prices`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/shippings`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         city: data.city,
-        shippingUsd: data.shipping,
-        category: data.category || 'copart',
+        base_price: data.shipping,
+        category: data.category,
       }),
     });
 
