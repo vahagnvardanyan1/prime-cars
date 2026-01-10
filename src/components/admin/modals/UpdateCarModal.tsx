@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PdfUploader } from "@/components/admin/primitives/PdfUploader";
 
 type UpdateCarModalProps = {
   open: boolean;
@@ -55,6 +56,8 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
   const [lot, setLot] = useState("");
   const [vin, setVin] = useState("");
   const [customerNotes, setCustomerNotes] = useState("");
+  const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
+  const [currentInvoice, setCurrentInvoice] = useState<string>("");
 
   // Populate form when car data changes
   useEffect(() => {
@@ -69,6 +72,8 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
       setLot(car.details?.lot || "");
       setVin(car.details?.vin || "");
       setCustomerNotes(car.details?.customerNotes || "");
+      setCurrentInvoice(car.details?.invoice || "");
+      setInvoiceFile(null);
       // Note: selectedUserId is set after users are loaded
     }
   }, [car]);
@@ -129,8 +134,9 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
   }, [open, car]);
 
   const handleClose = () => {
-    // Reset selected user when closing
+    // Reset selected user and invoice when closing
     setSelectedUserId("");
+    setInvoiceFile(null);
     onOpenChange({ open: false });
   };
 
@@ -164,7 +170,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
     try {
       // Find the selected user to get their full name
       const selectedUser = users.find(u => u.id === selectedUserId);
-      debugger
+      
       const result = await updateCar({
         id: car.id,
         data: {
@@ -174,13 +180,14 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
           year: Number(year),
           autoPrice: Number(priceUsd),
           ...(vehicleType.trim() && { type: vehicleType.trim() }),
-            ...(auction.trim() && { auction: auction.trim() }),
+          ...(auction.trim() && { auction: auction.trim() }),
           ...(purchaseDate.trim() && { purchaseDate: purchaseDate.trim() }),
           ...(city.trim() && { city: city.trim() }),
           ...(lot.trim() && { lot: lot.trim() }),
           ...(vin.trim() && { vin: vin.trim() }),
           ...(customerNotes.trim() && { customerNotes: customerNotes.trim() }),
         },
+        invoiceFile,
       });
 
       if (result.success) {
@@ -382,18 +389,26 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
             </div>
           </div>
 
-          {/* Row 3: Customer Notes (full width) */}
-          <div className="space-y-2 pt-1 sm:pt-2">
-            <Label htmlFor="notes" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+          {/* Row 3: Customer Notes and Invoice Upload */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 pt-1 sm:pt-2">
+            <div className="space-y-2">
+              <Label htmlFor="notes" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
               {t("admin.modals.updateCar.customerNotes")}
-            </Label>
-            <Textarea
-              id="notes"
-              value={customerNotes}
-              onChange={(e) => setCustomerNotes(e.target.value)}
-              placeholder="Some notes"
-              rows={3}
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 resize-none bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+              </Label>
+              <Textarea
+                id="notes"
+                value={customerNotes}
+                onChange={(e) => setCustomerNotes(e.target.value)}
+                placeholder="Some notes"
+                rows={3}
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 resize-none bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+              />
+            </div>
+            
+            <PdfUploader
+              onFileSelect={setInvoiceFile}
+              currentFileName={currentInvoice}
+              disabled={isSubmitting}
             />
           </div>
         </div>

@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
+import { PdfUploader } from "@/components/admin/primitives/PdfUploader";
 import { useAddCarForm } from "@/hooks/admin/useAddCarForm";
 import { usePhotoUploads } from "@/hooks/admin/usePhotoUploads";
 import { fetchUsers } from "@/lib/admin/fetchUsers";
@@ -39,9 +40,6 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
   const { files, previews, setFileAt, removeFileAt, clearAll } = usePhotoUploads({ initialSlots: 1 });
   const form = useAddCarForm();
   const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
-  const [invoicePreview, setInvoicePreview] = useState<string | null>(null);
-  const [invoiceDragOver, setInvoiceDragOver] = useState(false);
-  const [invoiceError, setInvoiceError] = useState<string | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [loadingUsers, setLoadingUsers] = useState(false);
@@ -99,55 +97,6 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
     onOpenChange({ open: false });
   };
 
-  const validateAndSetInvoice = (file: File) => {
-    if (file.type === 'application/pdf') {
-      setInvoiceFile(file);
-      setInvoicePreview(file.name);
-      setInvoiceError(null);
-      return true;
-    } else {
-      setInvoiceError(t("admin.modals.addCar.invalidFormat"));
-      setTimeout(() => setInvoiceError(null), 3000);
-      return false;
-    }
-  };
-
-  const handleInvoiceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      validateAndSetInvoice(file);
-    }
-  };
-
-  const handleInvoiceDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setInvoiceDragOver(true);
-  };
-
-  const handleInvoiceDragLeave = (e: React.DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setInvoiceDragOver(false);
-  };
-
-  const handleInvoiceDrop = (e: React.DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setInvoiceDragOver(false);
-    
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      validateAndSetInvoice(file);
-    }
-  };
-
-  const removeInvoice = () => {
-    setInvoiceFile(null);
-    setInvoicePreview(null);
-    setInvoiceError(null);
-  };
-
   const onSubmit = async () => {
     const parsed = form.derived.parsed;
     if (!parsed) return;
@@ -200,7 +149,7 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
         
         close();
         clearAll();
-        removeInvoice();
+        setInvoiceFile(null);
         setSelectedUserId("");
         form.actions.reset();
       } else {
@@ -418,86 +367,11 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
             </div>
 
             {/* Invoice Upload Section */}
-            <div className="space-y-3 pt-4 border-t border-gray-200 dark:border-white/10">
-              <Label className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 font-semibold">
-                {t("admin.modals.addCar.invoiceLabel")}
-              </Label>
-              
-              {!invoicePreview ? (
-                <div className="space-y-2">
-                  <label 
-                    onDragOver={handleInvoiceDragOver}
-                    onDragLeave={handleInvoiceDragLeave}
-                    onDrop={handleInvoiceDrop}
-                    className={`group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-white/5 transition-all h-24 ${
-                      invoiceDragOver 
-                        ? 'border-[#429de6] bg-blue-50 dark:bg-[#429de6]/10 scale-[1.02] ring-2 ring-[#429de6]/50' 
-                        : invoiceError
-                        ? 'border-red-500 dark:border-red-500'
-                        : 'border-gray-300 dark:border-white/20'
-                    }`}
-                  >
-                    <input
-                      type="file"
-                      accept="application/pdf"
-                      className="sr-only"
-                      onChange={handleInvoiceChange}
-                    />
-                    <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gray-50 ring-1 ring-gray-200 dark:bg-white/5 dark:ring-white/10 transition-all ${
-                        invoiceDragOver ? 'scale-110 ring-2 ring-[#429de6] bg-[#429de6]/10' : ''
-                      }`}>
-                        {invoiceDragOver ? (
-                          <svg className="h-5 w-5 text-[#429de6] animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                          </svg>
-                        ) : (
-                          <svg className="h-5 w-5 text-[#429de6]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                          </svg>
-                        )}
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium">{t("admin.modals.addCar.uploadInvoice")}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {invoiceDragOver ? t("admin.modals.addCar.dropToUpload") : t("admin.modals.addCar.format")}
-                        </div>
-                      </div>
-                    </div>
-                  </label>
-                  {invoiceError && (
-                    <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-lg">
-                      <svg className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span className="text-sm text-red-600 dark:text-red-400">{invoiceError}</span>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="flex items-center justify-between p-4 rounded-xl border-2 border-gray-300 dark:border-white/20 bg-white dark:bg-black">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 dark:bg-red-500/10">
-                      <svg className="h-5 w-5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">{invoicePreview}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">PDF Document</div>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={removeInvoice}
-                    className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
-                  >
-                    <svg className="h-5 w-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              )}
+            <div className="pt-4 border-t border-gray-200 dark:border-white/10">
+              <PdfUploader
+                onFileSelect={setInvoiceFile}
+                disabled={isSubmitting}
+              />
             </div>
           </div>
 

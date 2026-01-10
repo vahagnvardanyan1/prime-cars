@@ -8,6 +8,7 @@ export type AdminCarDetails = {
   lot?: string;
   vin?: string;
   customerNotes?: string;
+  invoice?: string;
 };
 
 export type AdminCar = {
