@@ -64,7 +64,7 @@ export const CarsView = ({
   };
 
   return (
-    <Surface className="overflow-hidden">
+    <Surface>
       <div className="px-6 py-6 flex items-center justify-between">
         <div>
           <h1 className="text-sm font-bold text-gray-900 dark:text-white">
@@ -105,15 +105,15 @@ export const CarsView = ({
         <TableHeader>
           <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
             <TableHead className="px-4 py-4 text-center text-sm font-semibold w-[60px]">#</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("purchaseDate")}</TableHead>
             <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[200px]">{tTable("car")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("lot")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[160px]">{tTable("vin")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("auction")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("client")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("price")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("type")}</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("auction")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("city")}</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("lot")}</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[160px]">{tTable("vin")}</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("purchaseDate")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">{tTable("notes")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("carPaid")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("shippingPaid")}</TableHead>
@@ -151,9 +151,17 @@ export const CarsView = ({
           ) : (
             cars.map((car, index) => (
             <TableRow key={car.id} className="hover:bg-gray-50/70 dark:hover:bg-white/5">
+              {/* Row Number */}
               <TableCell className="px-4 py-6 text-center">
                 <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                   {index + 1}
+                </div>
+              </TableCell>
+              
+              {/* Purchase Date */}
+              <TableCell className="px-4 py-6 min-w-[140px]">
+                <div className="text-sm text-gray-900 dark:text-white whitespace-nowrap">
+                  {formatDate(car.details?.purchaseDate)}
                 </div>
               </TableCell>
               
@@ -182,6 +190,27 @@ export const CarsView = ({
                 </div>
               </TableCell>
               
+              {/* Lot */}
+              <TableCell className="px-4 py-6 min-w-[140px]">
+                <div className="text-sm text-gray-900 dark:text-white">
+                  {car.details?.lot || "-"}
+                </div>
+              </TableCell>
+              
+              {/* VIN */}
+              <TableCell className="px-4 py-6 min-w-[160px]">
+                <div className="text-sm text-gray-900 dark:text-white font-mono">
+                  {car.details?.vin || "-"}
+                </div>
+              </TableCell>
+              
+              {/* Auction */}
+              <TableCell className="px-4 py-6 min-w-[120px]">
+                <div className="text-sm text-gray-900 dark:text-white capitalize">
+                  {car.details?.auction || "-"}
+                </div>
+              </TableCell>
+              
               {/* Client */}
               <TableCell className="px-4 py-6 min-w-[140px]">
                 <div className="text-sm text-gray-900 dark:text-white font-medium">
@@ -203,38 +232,10 @@ export const CarsView = ({
                 </div>
               </TableCell>
               
-              {/* Auction */}
-              <TableCell className="px-4 py-6 min-w-[120px]">
-                <div className="text-sm text-gray-900 dark:text-white capitalize">
-                  {car.details?.auction || "-"}
-                </div>
-              </TableCell>
-              
               {/* City */}
               <TableCell className="px-4 py-6 min-w-[140px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {car.details?.city || "-"}
-                </div>
-              </TableCell>
-              
-              {/* Lot */}
-              <TableCell className="px-4 py-6 min-w-[140px]">
-                <div className="text-sm text-gray-900 dark:text-white">
-                  {car.details?.lot || "-"}
-                </div>
-              </TableCell>
-              
-              {/* VIN */}
-              <TableCell className="px-4 py-6 min-w-[160px]">
-                <div className="text-sm text-gray-900 dark:text-white font-mono">
-                  {car.details?.vin || "-"}
-                </div>
-              </TableCell>
-              
-              {/* Purchase Date */}
-              <TableCell className="px-4 py-6 min-w-[140px]">
-                <div className="text-sm text-gray-900 dark:text-white whitespace-nowrap">
-                  {formatDate(car.details?.purchaseDate)}
                 </div>
               </TableCell>
               
