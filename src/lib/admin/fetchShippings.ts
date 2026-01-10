@@ -1,13 +1,14 @@
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
-import type { ShippingCity } from "@/lib/admin/types";
+import type { ShippingCity, Auction } from "@/lib/admin/types";
 
 type BackendShipping = {
   _id?: string;
   id?: string;
   city?: string;
-  shipping?: number;
+  base_price?: number;
   shippingUsd?: number;
+  auction?: string;
 };
 
 type FetchShippingsResponse = {
@@ -16,9 +17,14 @@ type FetchShippingsResponse = {
   error?: string;
 };
 
-export const fetchShippings = async (): Promise<FetchShippingsResponse> => {
+export const fetchShippings = async ({ auction }: { auction?: Auction } = {}): Promise<FetchShippingsResponse> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/shippings`, {
+    // Build URL with query parameter if auction is provided
+    const url = auction 
+      ? `${API_BASE_URL}/shippings?category=${auction}`
+      : `${API_BASE_URL}/shippings`;
+    
+    const response = await authenticatedFetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -37,9 +43,10 @@ export const fetchShippings = async (): Promise<FetchShippingsResponse> => {
 
     // Transform backend data to ShippingCity format
     const cities: ShippingCity[] = result?.map((shipping: BackendShipping) => ({
-      id: shipping._id || shipping.id,
+      id: shipping._id || shipping.id || "",
       city: shipping.city || "",
-      shippingUsd: shipping.shipping || shipping.shippingUsd || 0,
+      shippingUsd: shipping.shippingUsd || shipping.base_price || 0,
+      auction: shipping.auction as any,
     })) || [];
 
     return {

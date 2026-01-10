@@ -324,6 +324,8 @@
       "loadingUsers": "Loading users..."
     },
     "settingsView": {
+      "shippingTab": "Shipping & Cities",
+      "usersTab": "User Coefficients",
       "shippingPricesTitle": "Shipping Prices",
       "shippingPricesSubtitle": "Manage city-specific shipping, with a safe global adjustment control.",
       "globalAdjustmentTitle": "Global Price Adjustment",
@@ -344,7 +346,25 @@
       "deleteTitle": "Delete {city}?",
       "deleteBody": "This will remove the city from shipping price management. This action can't be undone.",
       "cancel": "Cancel",
-      "confirmDelete": "Confirm Delete"
+      "confirmDelete": "Confirm Delete",
+      "userCoefficientsTitle": "User Coefficients",
+      "userCoefficientsDescription": "Set calculation coefficients and auction preferences for each user.",
+      "coefficientLabel": "Coefficient",
+      "currentCoefficient": "Current coefficient",
+      "auctionLabel": "Auction",
+      "auctionPlaceholder": "Select auction",
+      "auctionNone": "None",
+      "cancelButton": "Cancel",
+      "applyButton": "Update Coefficient",
+      "applyingButton": "Updating...",
+      "coefficientDialog": {
+        "title": "Update User Settings",
+        "description": "Are you sure you want to update settings for",
+        "coefficientChange": "Coefficient",
+        "auctionChange": "Auction",
+        "cancel": "Cancel",
+        "confirm": "Confirm Update"
+      }
     },
     "modals": {
       "photoUpload": {

@@ -8,12 +8,13 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { ShippingCity } from "@/lib/admin/types";
+import type { Auction, ShippingCity } from "@/lib/admin/types";
 import { updateShipping } from "@/lib/admin/updateShipping";
 
 type UpdateShippingPriceModalProps = {
   open: boolean;
   city: ShippingCity | null;
+  currentAuction: Auction;
   onOpenChange: ({ open }: { open: boolean }) => void;
   onConfirm: ({ cityId, nextShippingUsd }: { cityId: string; nextShippingUsd: number }) => void;
   onSuccess?: () => void;
@@ -22,6 +23,7 @@ type UpdateShippingPriceModalProps = {
 export const UpdateShippingPriceModal = ({
   open,
   city,
+  currentAuction,
   onOpenChange,
   onConfirm,
   onSuccess,
@@ -47,9 +49,9 @@ export const UpdateShippingPriceModal = ({
     setIsSubmitting(true);
     try {
       const result = await updateShipping({
-        id: city.id,
         city: city.city,
         shipping: nextShippingUsd,
+        category: currentAuction,
       });
 
       if (result.success) {

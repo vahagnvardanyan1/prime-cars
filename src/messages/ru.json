@@ -324,6 +324,8 @@
       "loadingUsers": "Загрузка пользователей..."
     },
     "settingsView": {
+      "shippingTab": "Доставка и города",
+      "usersTab": "Коэффициенты пользователей",
       "shippingPricesTitle": "Цены доставки",
       "shippingPricesSubtitle": "Управляйте доставкой по городам и применяйте безопасную глобальную корректировку.",
       "globalAdjustmentTitle": "Глобальная корректировка",
@@ -344,7 +346,25 @@
       "deleteTitle": "Удалить {city}?",
       "deleteBody": "Город будет удалён из управления доставкой. Действие нельзя отменить.",
       "cancel": "Отмена",
-      "confirmDelete": "Подтвердить удаление"
+      "confirmDelete": "Подтвердить удаление",
+      "userCoeffициentsTitle": "Коэффициенты пользователей",
+      "userCoefficientsDescription": "Установите расчетные коэффициенты и предпочтения аукциона для каждого пользователя.",
+      "coefficientLabel": "Коэффициент",
+      "currentCoefficient": "Текущий коэффициент",
+      "auctionLabel": "Аукцион",
+      "auctionPlaceholder": "Выберите аукцион",
+      "auctionNone": "Не выбран",
+      "cancelButton": "Отмена",
+      "applyButton": "Обновить коэффициент",
+      "applyingButton": "Обновление...",
+      "coefficientDialog": {
+        "title": "Обновить настройки пользователя",
+        "description": "Вы уверены, что хотите обновить настройки для",
+        "coefficientChange": "Коэффициент",
+        "auctionChange": "Аукцион",
+        "cancel": "Отмена",
+        "confirm": "Подтвердить обновление"
+      }
     },
     "modals": {
       "photoUpload": {

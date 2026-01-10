@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
+import { Auction } from "./types";
 
 type UpdateShippingResponse = {
   success: boolean;
@@ -7,21 +8,21 @@ type UpdateShippingResponse = {
 };
 
 export const updateShipping = async ({
-  id,
   city,
   shipping,
+  category = Auction.COPART,
 }: {
-  id: string;
   city: string;
   shipping: number;
+  category: Auction;
 }): Promise<UpdateShippingResponse> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/shippings/${id}`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/shippings/${city}/${category}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ city, shipping }),
+      body: JSON.stringify({ base_price: shipping }),
     });
 
     if (!response.ok) {

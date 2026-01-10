@@ -6,6 +6,7 @@ import { UpdateShippingPriceModal } from "@/components/admin/modals/UpdateShippi
 import { SettingsView } from "@/components/admin/views/SettingsView";
 import { useAdminSettingsState } from "@/hooks/admin/useAdminSettingsState";
 import { useUser } from "@/contexts/UserContext";
+import { Auction } from "@/lib/admin/types";
 
 export const AdminSettingsPage = () => {
   const state = useAdminSettingsState();
@@ -13,7 +14,8 @@ export const AdminSettingsPage = () => {
 
   useEffect(() => {
     if (user) {
-      state.loadCities();
+      state.loadCities({ auction: Auction.COPART }); 
+      state.loadUsers();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -22,22 +24,27 @@ export const AdminSettingsPage = () => {
     <>
       <SettingsView
         cities={state.cities}
+        users={state.users}
         isLoading={state.isLoadingCities}
+        isLoadingUsers={state.isLoadingUsers}
         isAdmin={isAdmin}
         onApplyGlobalAdjustment={state.applyGlobalAdjustment}
         onUpdateCityClick={state.openUpdateCityPrice}
         onDeleteCity={state.deleteCity}
-        onShippingCreated={() => state.loadCities({ forceRefresh: true })}
+        onUpdateCoefficient={state.updateCoefficient}
+        onShippingCreated={() => state.loadCities({ forceRefresh: true, auction: Auction.COPART })}
+        onLoadCities={({ auction }) => state.loadCities({ auction })}
       />
 
       <UpdateShippingPriceModal
         open={state.updateCityPriceModal.isOpen}
         city={state.selectedCity}
+        currentAuction={state.currentAuction || Auction.COPART}
         onOpenChange={({ open }) =>
           open ? null : state.closeUpdateCityPrice()
         }
         onConfirm={state.updateCityPrice}
-        onSuccess={() => state.loadCities({ forceRefresh: true })}
+        onSuccess={() => state.loadCities({ forceRefresh: true, auction: state.currentAuction || Auction.COPART })}
       />
     </>
   );

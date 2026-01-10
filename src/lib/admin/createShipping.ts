@@ -1,10 +1,11 @@
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
-import type { ShippingCity } from "@/lib/admin/types";
+import type { ShippingCity, Auction } from "@/lib/admin/types";
 
 export type CreateShippingData = {
   city: string;
   shipping: number;
+  category?: Auction;
 };
 
 export type CreateShippingResponse = {
@@ -17,14 +18,15 @@ export const createShipping = async (
   data: CreateShippingData
 ): Promise<CreateShippingResponse> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/shippings`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/shippings/city-prices`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         city: data.city,
-        shipping: data.shipping,
+        shippingUsd: data.shipping,
+        category: data.category || 'copart',
       }),
     });
 

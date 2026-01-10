@@ -324,6 +324,8 @@
       "loadingUsers": "Բեռնվում է..."
     },
     "settingsView": {
+      "shippingTab": "Առաքում և քաղաքներ",
+      "usersTab": "Օգտատերերի գործակիցներ",
       "shippingPricesTitle": "Առաքման գներ",
       "shippingPricesSubtitle": "Կառավարեք առաքումը ըստ քաղաքների և կիրառեք անվտանգ գլոբալ ճշգրտում։",
       "globalAdjustmentTitle": "Գլոբալ ճշգրտում",
@@ -344,7 +346,25 @@
       "deleteTitle": "Ջնջե՞լ {city}-ը",
       "deleteBody": "Քաղաքը կհեռացվի առաքման գների կառավարումից։ Գործողությունը չի կարելի հետարկել։",
       "cancel": "Չեղարկել",
-      "confirmDelete": "Հաստատել ջնջումը"
+      "confirmDelete": "Հաստատել ջնջումը",
+      "userCoefficientsTitle": "Օգտատերերի գործակիցներ",
+      "userCoefficientsDescription": "Սահմանեք հաշվարկման գործակիցներ և աճուրդի նախապատվությունները յուրաքանչյուր օգտատիրոջ համար:",
+      "coefficientLabel": "Գործակից",
+      "currentCoefficient": "Ընթացիկ գործակից",
+      "auctionLabel": "Աճուրդ",
+      "auctionPlaceholder": "Ընտրեք աճուրդը",
+      "auctionNone": "Չընտրված",
+      "cancelButton": "Չեղարկել",
+      "applyButton": "Թարմացնել գործակիցը",
+      "applyingButton": "Թարմացվում է...",
+      "coefficientDialog": {
+        "title": "Թարմացնել օգտատիրոջ կարգավորումները",
+        "description": "Համոզվա՞ծ եք, որ ցանկանում եք թարմացնել կարգավորումները համար",
+        "coefficientChange": "Գործակից",
+        "auctionChange": "Աճուրդ",
+        "cancel": "Չեղարկել",
+        "confirm": "Հաստատել թարմացումը"
+      }
     },
     "modals": {
       "photoUpload": {

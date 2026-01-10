@@ -49,7 +49,6 @@ const AUCTIONS = [
   "copart",
   "iaai",
   "manheim",
-  "adesa",
   "other",
 ];
 

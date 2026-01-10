@@ -152,7 +152,6 @@ export const authenticatedFetch = async (
     Authorization: `Bearer ${accessToken}`,
   };
 
-
   let response = await fetch(url, { ...options, headers });
 
   // If 401 Unauthorized, try to refresh token

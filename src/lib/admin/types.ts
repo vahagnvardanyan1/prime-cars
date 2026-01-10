@@ -18,6 +18,7 @@ export type AdminCar = {
   carPaid: boolean;
   shippingPaid: boolean;
   insurance: boolean;
+  status?: string;
   details?: AdminCarDetails;
   client?: string;
   invoiceId?: string;
@@ -50,6 +51,8 @@ export enum VehicleModel {
 export enum Auction {
   COPART = 'copart',
   IAAI = 'iaai',
+  MANHEIM = 'manheim',
+  OTHER = 'other',
 }
 
 export enum Country {
@@ -72,12 +75,15 @@ export type AdminUser = {
   country?: string;
   companyName?: string;
   role: AdminUserRole;
+  coefficient?: number;
+  category?: Auction;
 };
 
 export type ShippingCity = {
   id: string;
   city: string;
   shippingUsd: number;
+  auction?: Auction;
 };
 
 export type CreateUserData = {
