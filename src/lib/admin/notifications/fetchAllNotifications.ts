@@ -29,9 +29,12 @@ export const fetchAllNotifications = async (): Promise<FetchAllNotificationsResp
 
     const result = await response.json();
 
-    // Backend returns structure: { _id, notification: {...}, is_read, readedTime }
+    // Backend can return different structures:
+    // Admin endpoint might return: [{ _id, message, description, ... }] (direct)
+    // Or: [{ _id, notification: {...}, is_read }] (nested)
     const notifications: Notification[] = Array.isArray(result) ? result.map((item: BackendNotificationResponse) => {
-      const notif = item.notification || {}; // Support both nested and direct structure
+      // Check if item has nested notification object or is direct
+      const notif = item.notification || item;
       return {
         id: notif._id || notif.id || "", // notification._id - used for mark-as-read
         recordId: item._id || "", // Outer _id (user-notification record)
