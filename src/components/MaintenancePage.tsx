@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { Wrench, Zap, Shield, Sparkles } from "lucide-react";
+import { Wrench, Zap, Sparkles } from "lucide-react";
 
 
 
