@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
-import { Calculator, CarFront, Settings, Users } from "lucide-react";
+import { Calculator, CarFront, Settings, Users, Home } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import type { AdminNavKey } from "@/hooks/admin/useAdminDashboardState";
@@ -59,7 +59,7 @@ export const AdminSidebarContent = ({
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-3 px-6 py-5">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold tracking-[-0.01em] text-gray-900 dark:text-white">
             {companyName}
           </div>
@@ -67,6 +67,13 @@ export const AdminSidebarContent = ({
             {t("admin.sidebar.consoleLabel")}
           </div>
         </div>
+        <Link 
+          href="/"
+          className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 transition-all duration-200 group shrink-0"
+          title="Go to Home"
+        >
+          <Home className="h-4 w-4 text-gray-700 dark:text-gray-300 group-hover:text-[#429de6] dark:group-hover:text-[#429de6] transition-colors" />
+        </Link>
       </div>
 
       <nav className="mt-6 px-3">
