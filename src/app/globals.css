@@ -155,4 +155,14 @@
     filter: blur(60px);
     animation: glow 3s ease-in-out infinite;
   }
+
+  /* Scrollbar Hide Utility */
+  .scrollbar-hide {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 }
