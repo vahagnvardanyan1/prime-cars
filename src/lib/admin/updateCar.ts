@@ -24,9 +24,11 @@ type UpdateCarResponse = {
 export const updateCar = async ({
   id,
   data,
+  invoiceFile,
 }: {
   id: string;
   data: UpdateCarData;
+  invoiceFile?: File | null;
 }): Promise<UpdateCarResponse> => {
   try {
     // Create FormData for multipart/form-data
@@ -48,6 +50,10 @@ export const updateCar = async ({
     if (data.vin) formData.append("vin", data.vin);
     if (data.autoPrice !== undefined) formData.append("autoPrice", data.autoPrice.toString());
     if (data.customerNotes) formData.append("customerNotes", data.customerNotes);
+    
+    if (invoiceFile) {
+      formData.append("invoice", invoiceFile);
+    }
 
     const response = await authenticatedFetch(`${API_BASE_URL}/vehicles/${id}`, {
       method: "PATCH",
