@@ -9,6 +9,8 @@ import { SiteShell } from "@/components/SiteShell";
 import { ThemeProvider } from "@/components/ThemeContext";
 import { Toaster } from "@/components/ui/sonner";
 import { UserProvider } from "@/contexts/UserContext";
+import { MaintenancePage } from "@/components/MaintenancePage";
+import { isMaintenanceMode } from "@/lib/maintenance";
 
 type LocaleLayoutProps = {
   children: ReactNode;
@@ -29,6 +31,16 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   }
 
   const messages = (await import(`../../messages/${locale}.json`)).default;
+
+  if (isMaintenanceMode()) {
+    return (
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <ThemeProvider>
+          <MaintenancePage />
+        </ThemeProvider>
+      </NextIntlClientProvider>
+    );
+  }
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
