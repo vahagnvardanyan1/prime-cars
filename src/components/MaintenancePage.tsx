@@ -62,11 +62,11 @@ export const MaintenancePage = () => {
               </div>
               
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-blue-100 dark:to-white bg-clip-text text-transparent leading-tight">
-                We'll Be Back Soon
+                We&apos;ll Be Back Soon
               </h1>
               
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                We're performing scheduled maintenance to bring you an even better experience. 
+                We&apos;re performing scheduled maintenance to bring you an even better experience. 
                 Thank you for your patience!
               </p>
             </div>
@@ -101,7 +101,7 @@ export const MaintenancePage = () => {
                     </p>
                     <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
                       Our team is implementing exciting new features and improvements. 
-                      We appreciate your patience and can't wait to show you what's new!
+                      We appreciate your patience and can&apos;t wait to show you what&apos;s new!
                     </p>
                   </div>
                 </div>
