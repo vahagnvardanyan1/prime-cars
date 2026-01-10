@@ -6,9 +6,9 @@ import { Download, Pencil, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import type { AdminCar } from "@/lib/admin/types";
-import { formatUsd, getCarStatusTone } from "@/lib/admin/format";
+import { formatUsd } from "@/lib/admin/format";
 import { Surface } from "@/components/admin/primitives/Surface";
-import { TonePill } from "@/components/admin/primitives/TonePill";
+import { PaymentStatus } from "@/components/admin/primitives/PaymentStatus";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
 import { CarFilters, type CarFiltersState } from "@/components/admin/filters/CarFilters";
 import { Button } from "@/components/ui/button";
@@ -48,19 +48,6 @@ export const CarsView = ({
 }: CarsViewProps) => {
   const t = useTranslations();
   const tTable = useTranslations("carsTable");
-
-  const getStatusLabel = ({ status }: { status: AdminCar["status"] }) => {
-    switch (status) {
-      case "Active":
-        return t("admin.modals.addCar.statusActive");
-      case "Draft":
-        return t("admin.modals.addCar.statusDraft");
-      case "Pending Review":
-        return t("admin.modals.addCar.statusPending");
-      default:
-        return status;
-    }
-  };
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "-";
@@ -117,6 +104,7 @@ export const CarsView = ({
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
+            <TableHead className="px-4 py-4 text-center text-sm font-semibold w-[60px]">#</TableHead>
             <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[200px]">{tTable("car")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("client")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("price")}</TableHead>
@@ -127,7 +115,9 @@ export const CarsView = ({
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[160px]">{tTable("vin")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("purchaseDate")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">{tTable("notes")}</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("status")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("carPaid")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("shippingPaid")}</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("insurance")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("created")}</TableHead>
             <TableHead className="px-4 py-4 text-center text-sm font-semibold min-w-[120px]">{tTable("invoice")}</TableHead>
             {isAdmin && (
@@ -138,7 +128,7 @@ export const CarsView = ({
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={isAdmin ? 14 : 13} className="py-12">
+              <TableCell colSpan={isAdmin ? 17 : 16} className="py-12">
                 <div className="flex flex-col items-center justify-center gap-3">
                   <svg className="animate-spin h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -152,15 +142,21 @@ export const CarsView = ({
             </TableRow>
           ) : cars.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={isAdmin ? 14 : 13} className="py-12">
+              <TableCell colSpan={isAdmin ? 17 : 16} className="py-12">
                 <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
                   {t("admin.carsView.noCarsFound")}
                 </div>
               </TableCell>
             </TableRow>
           ) : (
-            cars.map((car) => (
+            cars.map((car, index) => (
             <TableRow key={car.id} className="hover:bg-gray-50/70 dark:hover:bg-white/5">
+              <TableCell className="px-4 py-6 text-center">
+                <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  {index + 1}
+                </div>
+              </TableCell>
+              
               {/* Car (Model + Year + Image) */}
               <TableCell className="px-6 py-6 sm:px-8 min-w-[200px]">
                 <div className="flex items-center gap-4">
@@ -249,11 +245,31 @@ export const CarsView = ({
                 </div>
               </TableCell>
               
-              {/* Status */}
+              {/* Car Payment */}
+              <TableCell className="px-4 py-6 min-w-[140px]">
+                <PaymentStatus 
+                  paid={car.carPaid} 
+                  label={car.carPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
+                  size="sm"
+                />
+              </TableCell>
+              
+              {/* Shipping Payment */}
+              <TableCell className="px-4 py-6 min-w-[140px]">
+                <PaymentStatus 
+                  paid={car.shippingPaid} 
+                  label={car.shippingPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
+                  size="sm"
+                />
+              </TableCell>
+              
+              {/* Insurance */}
               <TableCell className="px-4 py-6 min-w-[120px]">
-                <TonePill tone={getCarStatusTone({ status: car.status })}>
-                  {getStatusLabel({ status: car.status })}
-                </TonePill>
+                <PaymentStatus 
+                  paid={car.insurance} 
+                  label={car.insurance ? t("admin.modals.addCar.exists") : t("admin.modals.addCar.notExists")}
+                  size="sm"
+                />
               </TableCell>
               
               {/* Created Date */}

@@ -1,11 +1,13 @@
-import type { AdminCar, AdminCarDetails, AdminCarStatus } from "@/lib/admin/types";
+import type { AdminCar, AdminCarDetails } from "@/lib/admin/types";
 
 type CreateAdminCarArgs = {
   imageUrl: string | null;
   model: string;
   year: number;
   priceUsd: number;
-  status: AdminCarStatus;
+  carPaid: boolean;
+  shippingPaid: boolean;
+  insurance: boolean;
   details: AdminCarDetails;
 };
 
@@ -14,7 +16,9 @@ export const createAdminCar = ({
   model,
   year,
   priceUsd,
-  status,
+  carPaid,
+  shippingPaid,
+  insurance,
   details,
 }: CreateAdminCarArgs): AdminCar => {
   const safeImageUrl =
@@ -27,7 +31,9 @@ export const createAdminCar = ({
     model,
     year,
     priceUsd,
-    status,
+    carPaid,
+    shippingPaid,
+    insurance,
     details,
   };
 };

@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-import type { AdminCar, AdminCarStatus } from "@/lib/admin/types";
+import type { AdminCar } from "@/lib/admin/types";
 import { fetchCars } from "@/lib/admin/fetchCars";
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
@@ -17,7 +17,11 @@ export type CarFiltersState = {
   search: string;
   type: string;
   auction: string;
-  status: AdminCarStatus | "all";
+  carPaid: "all" | "paid" | "not-paid";
+  shippingPaid: "all" | "paid" | "not-paid";
+  insurance: "all" | "exists" | "not-exists";
+  purchaseDateFrom: string; // Format: YYYY-MM-DD
+  purchaseDateTo: string; // Format: YYYY-MM-DD
 };
 
 const filterCars = ({ cars, filters }: { cars: AdminCar[]; filters: CarFiltersState }) => {
@@ -45,9 +49,41 @@ const filterCars = ({ cars, filters }: { cars: AdminCar[]; filters: CarFiltersSt
       return false;
     }
 
-    // Status filter
-    if (filters.status !== "all" && car.status !== filters.status) {
-      return false;
+    // Car Paid filter
+    if (filters.carPaid !== "all") {
+      const isPaid = car.carPaid === true;
+      if (filters.carPaid === "paid" && !isPaid) return false;
+      if (filters.carPaid === "not-paid" && isPaid) return false;
+    }
+
+    // Shipping Paid filter
+    if (filters.shippingPaid !== "all") {
+      const isPaid = car.shippingPaid === true;
+      if (filters.shippingPaid === "paid" && !isPaid) return false;
+      if (filters.shippingPaid === "not-paid" && isPaid) return false;
+    }
+
+    // Insurance filter
+    if (filters.insurance !== "all") {
+      const hasInsurance = car.insurance === true;
+      if (filters.insurance === "exists" && !hasInsurance) return false;
+      if (filters.insurance === "not-exists" && hasInsurance) return false;
+    }
+
+    // Purchase Date Range filter
+    if (filters.purchaseDateFrom || filters.purchaseDateTo) {
+      const purchaseDate = car.details?.purchaseDate;
+      if (!purchaseDate) return false;
+      
+      const carDate = new Date(purchaseDate);
+      const carDateString = carDate.toISOString().split('T')[0]; // YYYY-MM-DD
+      
+      // If "from" is set or default to now
+      const fromDate = filters.purchaseDateFrom || new Date().toISOString().split('T')[0];
+      if (carDateString < fromDate) return false;
+      
+      // If "to" is set
+      if (filters.purchaseDateTo && carDateString > filters.purchaseDateTo) return false;
     }
 
     return true;
@@ -67,7 +103,11 @@ export const useAdminCarsState = () => {
     search: searchParams.get("search") || "",
     type: searchParams.get("type") || "all",
     auction: searchParams.get("auction") || "all",
-    status: (searchParams.get("status") as AdminCarStatus | "all") || "all",
+    carPaid: (searchParams.get("carPaid") as "all" | "paid" | "not-paid") || "all",
+    shippingPaid: (searchParams.get("shippingPaid") as "all" | "paid" | "not-paid") || "all",
+    insurance: (searchParams.get("insurance") as "all" | "exists" | "not-exists") || "all",
+    purchaseDateFrom: searchParams.get("purchaseDateFrom") || "",
+    purchaseDateTo: searchParams.get("purchaseDateTo") || "",
   }));
 
   const openAddCar = () => setIsAddCarOpen(true);
@@ -97,7 +137,11 @@ export const useAdminCarsState = () => {
     if (newFilters.search) params.set("search", newFilters.search);
     if (newFilters.type !== "all") params.set("type", newFilters.type);
     if (newFilters.auction !== "all") params.set("auction", newFilters.auction);
-    if (newFilters.status !== "all") params.set("status", newFilters.status);
+    if (newFilters.carPaid !== "all") params.set("carPaid", newFilters.carPaid);
+    if (newFilters.shippingPaid !== "all") params.set("shippingPaid", newFilters.shippingPaid);
+    if (newFilters.insurance !== "all") params.set("insurance", newFilters.insurance);
+    if (newFilters.purchaseDateFrom) params.set("purchaseDateFrom", newFilters.purchaseDateFrom);
+    if (newFilters.purchaseDateTo) params.set("purchaseDateTo", newFilters.purchaseDateTo);
 
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : window.location.pathname;
@@ -110,7 +154,11 @@ export const useAdminCarsState = () => {
       search: "",
       type: "all",
       auction: "all",
-      status: "all",
+      carPaid: "all",
+      shippingPaid: "all",
+      insurance: "all",
+      purchaseDateFrom: "",
+      purchaseDateTo: "",
     };
     updateFilters(defaultFilters);
   }, [updateFilters]);
@@ -161,7 +209,11 @@ export const useAdminCarsState = () => {
       search: searchParams.get("search") || "",
       type: searchParams.get("type") || "all",
       auction: searchParams.get("auction") || "all",
-      status: (searchParams.get("status") as AdminCarStatus | "all") || "all",
+      carPaid: (searchParams.get("carPaid") as "all" | "paid" | "not-paid") || "all",
+      shippingPaid: (searchParams.get("shippingPaid") as "all" | "paid" | "not-paid") || "all",
+      insurance: (searchParams.get("insurance") as "all" | "exists" | "not-exists") || "all",
+      purchaseDateFrom: searchParams.get("purchaseDateFrom") || "",
+      purchaseDateTo: searchParams.get("purchaseDateTo") || "",
     };
     setFilters(urlFilters);
   }, [searchParams]);

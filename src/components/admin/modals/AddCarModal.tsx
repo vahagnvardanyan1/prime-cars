@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 
 import { useTranslations } from "next-intl";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 import type { AdminCar } from "@/lib/admin/types";
 import { VehicleType, VehicleModel, Auction } from "@/lib/admin/types";
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
 import { PdfUploader } from "@/components/admin/primitives/PdfUploader";
 import { useAddCarForm } from "@/hooks/admin/useAddCarForm";
@@ -112,8 +114,11 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
           userId: selectedUserId,
           model: form.fields.model, // VehicleModel enum value
           year: parsed.year,
-          priceUsd: parsed.priceUsd,
-          type: form.fields.type, // VehicleType enum value
+                  priceUsd: parsed.priceUsd,
+                  carPaid: form.fields.carPaid,
+                  shippingPaid: form.fields.shippingPaid,
+                  insurance: form.fields.insurance,
+                  type: form.fields.type, // VehicleType enum value
           auction: form.fields.auction, // Auction enum value
           purchaseDate: parsed.details.purchaseDate,
           city: parsed.details.city,
@@ -137,7 +142,9 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
           model: form.fields.model,
           year: parsed.year,
           priceUsd: parsed.priceUsd,
-          status: form.fields.status,
+          carPaid: form.fields.carPaid,
+          shippingPaid: form.fields.shippingPaid,
+          insurance: form.fields.insurance,
           details: parsed.details,
         });
 
@@ -338,21 +345,130 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                   className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
                 />
               </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.status")}</Label>
-                <select
-                  value={form.fields.status}
-                  onChange={(e) =>
-                    form.actions.setStatus({
-                      value: e.target.value as "Active" | "Draft" | "Pending Review",
-                    })
+              {/* Car Payment */}
+              <div 
+                className={`
+                  relative overflow-hidden p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer
+                  ${form.fields.carPaid 
+                    ? 'bg-green-50/80 border-green-300 dark:bg-green-950/30 dark:border-green-800/50 hover:bg-green-50 dark:hover:bg-green-950/40' 
+                    : 'bg-orange-50/80 border-orange-300 dark:bg-orange-950/30 dark:border-orange-800/50 hover:bg-orange-50 dark:hover:bg-orange-950/40'
                   }
-                  className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white pl-4 pr-10 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6] dark:bg-black dark:text-white appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iI0Q1RDdEQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[length:16px_16px] bg-[center_right_0.75rem] bg-no-repeat [&>option]:py-1 [&>option]:px-2"
-                >
-                  <option value="Pending Review">{t("admin.modals.addCar.statusPending")}</option>
-                  <option value="Active">{t("admin.modals.addCar.statusActive")}</option>
-                  <option value="Draft">{t("admin.modals.addCar.statusDraft")}</option>
-                </select>
+                `}
+                onClick={() => form.actions.setCarPaid({ value: !form.fields.carPaid })}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      {form.fields.carPaid ? (
+                        <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                      ) : (
+                        <XCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+                      )}
+                      <Label htmlFor="car-paid-add" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
+                        {t("admin.modals.addCar.carPaid")}
+                      </Label>
+                    </div>
+                    <div className={`
+                      inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
+                      ${form.fields.carPaid 
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' 
+                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
+                      }
+                    `}>
+                      {form.fields.carPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
+                    </div>
+                  </div>
+                  <Switch
+                    id="car-paid-add"
+                    checked={form.fields.carPaid}
+                    onCheckedChange={(checked) => form.actions.setCarPaid({ value: checked })}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+              </div>
+
+              {/* Shipping Payment */}
+              <div 
+                className={`
+                  relative overflow-hidden p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer
+                  ${form.fields.shippingPaid 
+                    ? 'bg-green-50/80 border-green-300 dark:bg-green-950/30 dark:border-green-800/50 hover:bg-green-50 dark:hover:bg-green-950/40' 
+                    : 'bg-orange-50/80 border-orange-300 dark:bg-orange-950/30 dark:border-orange-800/50 hover:bg-orange-50 dark:hover:bg-orange-950/40'
+                  }
+                `}
+                onClick={() => form.actions.setShippingPaid({ value: !form.fields.shippingPaid })}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      {form.fields.shippingPaid ? (
+                        <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                      ) : (
+                        <XCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+                      )}
+                      <Label htmlFor="shipping-paid-add" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
+                        {t("admin.modals.addCar.shippingPaid")}
+                      </Label>
+                    </div>
+                    <div className={`
+                      inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
+                      ${form.fields.shippingPaid 
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' 
+                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
+                      }
+                    `}>
+                      {form.fields.shippingPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
+                    </div>
+                  </div>
+                  <Switch
+                    id="shipping-paid-add"
+                    checked={form.fields.shippingPaid}
+                    onCheckedChange={(checked) => form.actions.setShippingPaid({ value: checked })}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+              </div>
+
+              {/* Insurance */}
+              <div 
+                className={`
+                  relative overflow-hidden p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer
+                  ${form.fields.insurance 
+                    ? 'bg-blue-50/80 border-blue-300 dark:bg-blue-950/30 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-blue-950/40' 
+                    : 'bg-gray-50/80 border-gray-300 dark:bg-gray-800/30 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/40'
+                  }
+                `}
+                onClick={() => form.actions.setInsurance({ value: !form.fields.insurance })}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      {form.fields.insurance ? (
+                        <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                      ) : (
+                        <XCircle className="h-5 w-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+                      )}
+                      <Label htmlFor="insurance-add" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
+                        {t("admin.modals.addCar.insurance")}
+                      </Label>
+                    </div>
+                    <div className={`
+                      inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
+                      ${form.fields.insurance 
+                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' 
+                        : 'bg-gray-100 text-gray-700 dark:bg-gray-800/50 dark:text-gray-300'
+                      }
+                    `}>
+                      {form.fields.insurance ? t("admin.modals.addCar.exists") : t("admin.modals.addCar.notExists")}
+                    </div>
+                  </div>
+                  <Switch
+                    id="insurance-add"
+                    checked={form.fields.insurance}
+                    onCheckedChange={(checked) => form.actions.setInsurance({ value: checked })}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
               </div>
 
               <div className="space-y-2 sm:col-span-2 lg:col-span-3">

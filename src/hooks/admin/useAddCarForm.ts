@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import type { AdminCarDetails, AdminCarStatus } from "@/lib/admin/types";
+import type { AdminCarDetails } from "@/lib/admin/types";
 import { VehicleType, VehicleModel, Auction } from "@/lib/admin/types";
 
 type UseAddCarFormReturn = {
@@ -10,7 +10,9 @@ type UseAddCarFormReturn = {
     model: string;
     year: string;
     priceUsd: string;
-    status: Exclude<AdminCarStatus, "Sold">;
+    carPaid: boolean;
+    shippingPaid: boolean;
+    insurance: boolean;
     purchaseDate: string;
     type: string;
     auction: string;
@@ -23,7 +25,9 @@ type UseAddCarFormReturn = {
     setModel: ({ value }: { value: string }) => void;
     setYear: ({ value }: { value: string }) => void;
     setPriceUsd: ({ value }: { value: string }) => void;
-    setStatus: ({ value }: { value: Exclude<AdminCarStatus, "Sold"> }) => void;
+    setCarPaid: ({ value }: { value: boolean }) => void;
+    setShippingPaid: ({ value }: { value: boolean }) => void;
+    setInsurance: ({ value }: { value: boolean }) => void;
     setPurchaseDate: ({ value }: { value: string }) => void;
     setType: ({ value }: { value: string }) => void;
     setAuction: ({ value }: { value: string }) => void;
@@ -47,9 +51,9 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
   const [model, setModel] = useState<string>(VehicleModel.BMW);
   const [year, setYear] = useState("");
   const [priceUsd, setPriceUsd] = useState("");
-  const [status, setStatus] = useState<Exclude<AdminCarStatus, "Sold">>(
-    "Pending Review",
-  );
+  const [carPaid, setCarPaid] = useState(false);
+  const [shippingPaid, setShippingPaid] = useState(false);
+  const [insurance, setInsurance] = useState(false);
 
   const [purchaseDate, setPurchaseDate] = useState("");
   const [type, setType] = useState<string>(VehicleType.AUTO);
@@ -112,7 +116,9 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
     setModel(VehicleModel.BMW);
     setYear("");
     setPriceUsd("");
-    setStatus("Pending Review");
+    setCarPaid(false);
+    setShippingPaid(false);
+    setInsurance(false);
     setPurchaseDate("");
     setType(VehicleType.AUTO);
     setAuction(Auction.COPART);
@@ -127,7 +133,9 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       model,
       year,
       priceUsd,
-      status,
+      carPaid,
+      shippingPaid,
+      insurance,
       purchaseDate,
       type,
       auction,
@@ -140,7 +148,9 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       setModel: ({ value }) => setModel(value),
       setYear: ({ value }) => setYear(value),
       setPriceUsd: ({ value }) => setPriceUsd(value),
-      setStatus: ({ value }) => setStatus(value),
+      setCarPaid: ({ value }) => setCarPaid(value),
+      setShippingPaid: ({ value }) => setShippingPaid(value),
+      setInsurance: ({ value }) => setInsurance(value),
       setPurchaseDate: ({ value }) => setPurchaseDate(value),
       setType: ({ value }) => setType(value),
       setAuction: ({ value }) => setAuction(value),

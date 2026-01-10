@@ -12,13 +12,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { AdminCarStatus } from "@/lib/admin/types";
-
+import { DateRangePicker } from "@/components/admin/primitives/DateRangePicker";
 export type CarFiltersState = {
   search: string;
   type: string;
   auction: string;
-  status: AdminCarStatus | "all";
+  carPaid: "all" | "paid" | "not-paid";
+  shippingPaid: "all" | "paid" | "not-paid";
+  insurance: "all" | "exists" | "not-exists";
+  purchaseDateFrom: string;
+  purchaseDateTo: string;
 };
 
 type CarFiltersProps = {
@@ -50,14 +53,6 @@ const AUCTIONS = [
   "other",
 ];
 
-const STATUSES: Array<AdminCarStatus | "all"> = [
-  "all",
-  "Active",
-  "Draft",
-  "Pending Review",
-  "Sold",
-];
-
 export const CarFilters = ({ filters, onFiltersChange, onClearFilters }: CarFiltersProps) => {
   const t = useTranslations("admin.filters");
   const tCar = useTranslations("admin.modals.addCar");
@@ -66,7 +61,11 @@ export const CarFilters = ({ filters, onFiltersChange, onClearFilters }: CarFilt
     filters.search !== "" || 
     filters.type !== "all" || 
     filters.auction !== "all" || 
-    filters.status !== "all";
+    filters.carPaid !== "all" ||
+    filters.shippingPaid !== "all" ||
+    filters.insurance !== "all" ||
+    filters.purchaseDateFrom !== "" ||
+    filters.purchaseDateTo !== "";
 
   const handleSearchChange = (search: string) => {
     onFiltersChange({ ...filters, search });
@@ -80,13 +79,30 @@ export const CarFilters = ({ filters, onFiltersChange, onClearFilters }: CarFilt
     onFiltersChange({ ...filters, auction });
   };
 
-  const handleStatusChange = (status: string) => {
-    onFiltersChange({ ...filters, status: status as AdminCarStatus | "all" });
+  const handleCarPaidChange = (value: string) => {
+    onFiltersChange({ ...filters, carPaid: value as "all" | "paid" | "not-paid" });
+  };
+
+  const handleShippingPaidChange = (value: string) => {
+    onFiltersChange({ ...filters, shippingPaid: value as "all" | "paid" | "not-paid" });
+  };
+
+  const handleInsuranceChange = (value: string) => {
+    onFiltersChange({ ...filters, insurance: value as "all" | "exists" | "not-exists" });
+  };
+
+  const handlePurchaseDateFromChange = (value: string) => {
+    onFiltersChange({ ...filters, purchaseDateFrom: value });
+  };
+
+  const handlePurchaseDateToChange = (value: string) => {
+    onFiltersChange({ ...filters, purchaseDateTo: value });
   };
 
   return (
     <div className="px-6 py-4 border-b border-gray-200 dark:border-white/10">
       <div className="flex flex-col gap-4">
+        {/* First Row: Search and Clear Filters */}
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search Input */}
           <div className="relative flex-1">
@@ -100,9 +116,24 @@ export const CarFilters = ({ filters, onFiltersChange, onClearFilters }: CarFilt
             />
           </div>
 
+          {/* Clear Filters Button */}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClearFilters}
+            disabled={!hasActiveFilters}
+            className="h-10 px-4 whitespace-nowrap border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 hover:border-red-400 dark:hover:border-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          >
+            <X className="h-4 w-4 mr-2" />
+            {t("clearFilters")}
+          </Button>
+        </div>
+
+        {/* Second Row: All Filters */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-6 gap-3">
           {/* Type Filter */}
           <Select value={filters.type} onValueChange={handleTypeChange}>
-            <SelectTrigger className="w-full sm:w-[180px] h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
+            <SelectTrigger className="w-full min-w-[200px] h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
               <SelectValue placeholder={t("type")} />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
@@ -119,7 +150,7 @@ export const CarFilters = ({ filters, onFiltersChange, onClearFilters }: CarFilt
 
           {/* Auction Filter */}
           <Select value={filters.auction} onValueChange={handleAuctionChange}>
-            <SelectTrigger className="w-full sm:w-[180px] h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
+            <SelectTrigger className="w-full min-w-[200px] h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
               <SelectValue placeholder={t("auction")} />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
@@ -134,32 +165,50 @@ export const CarFilters = ({ filters, onFiltersChange, onClearFilters }: CarFilt
             </SelectContent>
           </Select>
 
-          {/* Status Filter */}
-          <Select value={filters.status} onValueChange={handleStatusChange}>
-            <SelectTrigger className="w-full sm:w-[180px] h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-              <SelectValue placeholder={t("status")} />
+          {/* Car Paid Filter */}
+          <Select value={filters.carPaid} onValueChange={handleCarPaidChange}>
+            <SelectTrigger className="w-full min-w-[200px] h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
+              <SelectValue placeholder={t("carPaid")} />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-              {STATUSES.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status === "all" ? t("allStatuses") : status}
-                </SelectItem>
-              ))}
+              <SelectItem value="all">{t("allCarPayments")}</SelectItem>
+              <SelectItem value="paid">{tCar("paid")}</SelectItem>
+              <SelectItem value="not-paid">{tCar("notPaid")}</SelectItem>
             </SelectContent>
           </Select>
 
-          {/* Clear Filters Button */}
-          {hasActiveFilters && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClearFilters}
-              className="h-10 px-4 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5"
-            >
-              <X className="h-4 w-4 mr-2" />
-              {t("clearFilters")}
-            </Button>
-          )}
+          {/* Shipping Paid Filter */}
+          <Select value={filters.shippingPaid} onValueChange={handleShippingPaidChange}>
+            <SelectTrigger className="w-full min-w-[200px] h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
+              <SelectValue placeholder={t("shippingPaid")} />
+            </SelectTrigger>
+            <SelectContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
+              <SelectItem value="all">{t("allShippingPayments")}</SelectItem>
+              <SelectItem value="paid">{tCar("paid")}</SelectItem>
+              <SelectItem value="not-paid">{tCar("notPaid")}</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Insurance Filter */}
+          <Select value={filters.insurance} onValueChange={handleInsuranceChange}>
+            <SelectTrigger className="w-full min-w-[200px] h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
+              <SelectValue placeholder={t("insuranceFilter")} />
+            </SelectTrigger>
+            <SelectContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
+              <SelectItem value="all">{t("allInsurance")}</SelectItem>
+              <SelectItem value="exists">{tCar("exists")}</SelectItem>
+              <SelectItem value="not-exists">{tCar("notExists")}</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Purchase Date Range */}
+          <DateRangePicker
+            dateFrom={filters.purchaseDateFrom}
+            dateTo={filters.purchaseDateTo}
+            onDateFromChange={handlePurchaseDateFromChange}
+            onDateToChange={handlePurchaseDateToChange}
+            placeholder={t("purchaseDateRange")}
+          />
         </div>
       </div>
     </div>

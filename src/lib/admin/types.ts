@@ -1,5 +1,3 @@
-export type AdminCarStatus = "Active" | "Draft" | "Pending Review" | "Sold";
-
 export type AdminCarDetails = {
   purchaseDate?: string;
   type?: string;
@@ -17,7 +15,9 @@ export type AdminCar = {
   model: string;
   year: number;
   priceUsd: number;
-  status: AdminCarStatus;
+  carPaid: boolean;
+  shippingPaid: boolean;
+  insurance: boolean;
   details?: AdminCarDetails;
   client?: string;
   invoiceId?: string;

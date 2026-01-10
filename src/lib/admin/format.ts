@@ -1,4 +1,4 @@
-import type { AdminCarStatus, AdminUserRole } from "@/lib/admin/types";
+import type { AdminUserRole } from "@/lib/admin/types";
 
 export const formatUsd = ({ value }: { value: number }) => {
   return new Intl.NumberFormat("en-US", {
@@ -6,21 +6,6 @@ export const formatUsd = ({ value }: { value: number }) => {
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(value);
-};
-
-export const getCarStatusTone = ({ status }: { status: AdminCarStatus }) => {
-  switch (status) {
-    case "Active":
-      return "success";
-    case "Pending Review":
-      return "warning";
-    case "Draft":
-      return "neutral";
-    case "Sold":
-      return "neutral";
-    default:
-      return "neutral";
-  }
 };
 
 export const getRoleTone = ({ role }: { role: AdminUserRole }) => {

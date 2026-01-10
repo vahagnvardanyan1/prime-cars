@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 import type { AdminCar } from "@/lib/admin/types";
 import { VehicleType, Auction } from "@/lib/admin/types";
@@ -14,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -58,6 +60,9 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
   const [customerNotes, setCustomerNotes] = useState("");
   const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
   const [currentInvoice, setCurrentInvoice] = useState<string>("");
+  const [carPaid, setCarPaid] = useState(false);
+  const [shippingPaid, setShippingPaid] = useState(false);
+  const [insurance, setInsurance] = useState(false);
 
   // Populate form when car data changes
   useEffect(() => {
@@ -74,6 +79,9 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
       setCustomerNotes(car.details?.customerNotes || "");
       setCurrentInvoice(car.details?.invoice || "");
       setInvoiceFile(null);
+      setCarPaid(car.carPaid || false);
+      setShippingPaid(car.shippingPaid || false);
+      setInsurance(car.insurance || false);
       // Note: selectedUserId is set after users are loaded
     }
   }, [car]);
@@ -137,6 +145,10 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
     // Reset selected user and invoice when closing
     setSelectedUserId("");
     setInvoiceFile(null);
+    setCurrentInvoice("");
+    setCarPaid(false);
+    setShippingPaid(false);
+    setInsurance(false);
     onOpenChange({ open: false });
   };
 
@@ -179,6 +191,8 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
           vehicleModel: model.trim(),
           year: Number(year),
           autoPrice: Number(priceUsd),
+          carPaid,
+          shippingPaid,
           ...(vehicleType.trim() && { type: vehicleType.trim() }),
           ...(auction.trim() && { auction: auction.trim() }),
           ...(purchaseDate.trim() && { purchaseDate: purchaseDate.trim() }),
@@ -389,7 +403,139 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
             </div>
           </div>
 
-          {/* Row 3: Customer Notes and Invoice Upload */}
+          {/* Row 3: Payment Status & Insurance */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 pt-1 sm:pt-2">
+            {/* Car Payment */}
+            <div 
+              className={`
+                relative overflow-hidden p-4 sm:p-5 rounded-xl border-2 transition-all duration-300 cursor-pointer
+                ${carPaid 
+                  ? 'bg-green-50/80 border-green-300 dark:bg-green-950/30 dark:border-green-800/50 hover:bg-green-50 dark:hover:bg-green-950/40' 
+                  : 'bg-orange-50/80 border-orange-300 dark:bg-orange-950/30 dark:border-orange-800/50 hover:bg-orange-50 dark:hover:bg-orange-950/40'
+                }
+              `}
+              onClick={() => !isSubmitting && setCarPaid(!carPaid)}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    {carPaid ? (
+                      <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                    ) : (
+                      <XCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+                    )}
+                    <Label htmlFor="car-paid" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
+                      {t("admin.modals.updateCar.carPaid")}
+                    </Label>
+                  </div>
+                  <div className={`
+                    inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
+                    ${carPaid 
+                      ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' 
+                      : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
+                    }
+                  `}>
+                    {carPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
+                  </div>
+                </div>
+                <Switch
+                  id="car-paid"
+                  checked={carPaid}
+                  onCheckedChange={setCarPaid}
+                  disabled={isSubmitting}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+
+            {/* Shipping Payment */}
+            <div 
+              className={`
+                relative overflow-hidden p-4 sm:p-5 rounded-xl border-2 transition-all duration-300 cursor-pointer
+                ${shippingPaid 
+                  ? 'bg-green-50/80 border-green-300 dark:bg-green-950/30 dark:border-green-800/50 hover:bg-green-50 dark:hover:bg-green-950/40' 
+                  : 'bg-orange-50/80 border-orange-300 dark:bg-orange-950/30 dark:border-orange-800/50 hover:bg-orange-50 dark:hover:bg-orange-950/40'
+                }
+              `}
+              onClick={() => !isSubmitting && setShippingPaid(!shippingPaid)}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    {shippingPaid ? (
+                      <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                    ) : (
+                      <XCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+                    )}
+                    <Label htmlFor="shipping-paid" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
+                      {t("admin.modals.updateCar.shippingPaid")}
+                    </Label>
+                  </div>
+                  <div className={`
+                    inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
+                    ${shippingPaid 
+                      ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' 
+                      : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
+                    }
+                  `}>
+                    {shippingPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
+                  </div>
+                </div>
+                <Switch
+                  id="shipping-paid"
+                  checked={shippingPaid}
+                  onCheckedChange={setShippingPaid}
+                  disabled={isSubmitting}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+
+            {/* Insurance */}
+            <div 
+              className={`
+                relative overflow-hidden p-4 sm:p-5 rounded-xl border-2 transition-all duration-300 cursor-pointer
+                ${insurance 
+                  ? 'bg-blue-50/80 border-blue-300 dark:bg-blue-950/30 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-blue-950/40' 
+                  : 'bg-gray-50/80 border-gray-300 dark:bg-gray-800/30 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/40'
+                }
+              `}
+              onClick={() => !isSubmitting && setInsurance(!insurance)}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    {insurance ? (
+                      <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                    ) : (
+                      <XCircle className="h-5 w-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+                    )}
+                    <Label htmlFor="insurance" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
+                      {t("admin.modals.updateCar.insurance")}
+                    </Label>
+                  </div>
+                  <div className={`
+                    inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
+                    ${insurance 
+                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' 
+                      : 'bg-gray-100 text-gray-700 dark:bg-gray-800/50 dark:text-gray-300'
+                    }
+                  `}>
+                    {insurance ? t("admin.modals.addCar.exists") : t("admin.modals.addCar.notExists")}
+                  </div>
+                </div>
+                <Switch
+                  id="insurance"
+                  checked={insurance}
+                  onCheckedChange={setInsurance}
+                  disabled={isSubmitting}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Row 4: Customer Notes and Invoice Upload */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 pt-1 sm:pt-2">
             <div className="space-y-2">
               <Label htmlFor="notes" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">

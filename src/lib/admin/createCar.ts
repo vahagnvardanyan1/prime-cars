@@ -9,6 +9,9 @@ type CreateCarData = {
   auction: string; // Auction enum value
   year: number;
   priceUsd: number;
+  carPaid: boolean;
+  shippingPaid: boolean;
+  insurance: boolean;
   purchaseDate?: string;
   city?: string;
   lot?: string;
@@ -44,6 +47,9 @@ export const createCar = async ({
     formData.append("year", data.year.toString());
     formData.append("autoPrice", data.priceUsd.toString());
     formData.append("vehicleModel", data.model);
+    formData.append("carPaid", data.carPaid.toString());
+    formData.append("shippingPaid", data.shippingPaid.toString());
+    formData.append("insurance", data.insurance.toString());
     
     // Append optional fields
     if (data.purchaseDate) {

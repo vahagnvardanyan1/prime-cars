@@ -14,6 +14,9 @@ type UpdateCarData = {
   vin?: string;
   autoPrice?: number;
   customerNotes?: string;
+  carPaid?: boolean;
+  shippingPaid?: boolean;
+  insurance?: boolean;
 };
 
 type UpdateCarResponse = {
@@ -50,7 +53,10 @@ export const updateCar = async ({
     if (data.vin) formData.append("vin", data.vin);
     if (data.autoPrice !== undefined) formData.append("autoPrice", data.autoPrice.toString());
     if (data.customerNotes) formData.append("customerNotes", data.customerNotes);
-    
+    if (data.carPaid !== undefined) formData.append("carPaid", data.carPaid.toString());
+    if (data.shippingPaid !== undefined) formData.append("shippingPaid", data.shippingPaid.toString());
+    if (data.insurance !== undefined) formData.append("insurance", data.insurance.toString());
+
     if (invoiceFile) {
       formData.append("invoice", invoiceFile);
     }
