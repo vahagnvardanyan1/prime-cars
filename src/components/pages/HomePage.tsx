@@ -44,7 +44,7 @@ export const HomePage = () => {
 
             <div className="relative">
               <Image
-                src="https://cdn-editing-temp.picsart.com/editing-temp-landings/83f467c7-128c-4e99-adc6-817310e2a1ed.png"
+                src="/hero-image.png"
                 alt={t("home.hero.heroImageAlt")}
                 className="w-full h-auto relative z-10"
                 width={1000}
