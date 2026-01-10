@@ -103,8 +103,8 @@ export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, o
           ) : (
             users.map((u) => (
             <TableRow key={u.id} className="hover:bg-gray-50/70 dark:hover:bg-white/5">
-              <TableCell className="px-6 py-6 sm:px-8 min-w-[250px]">
-                <div className="flex items-center gap-4">
+              <TableCell className="px-2 py-6 min-w-[250px]">
+                <div className="flex items-center gap-3">
                   <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gray-100 text-base font-semibold text-gray-900 ring-1 ring-gray-200 dark:bg-white/5 dark:text-white dark:ring-white/10 flex-shrink-0">
                     {getInitials({ firstName: u.firstName, lastName: u.lastName })}
                   </div>
@@ -118,32 +118,32 @@ export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, o
                   </div>
                 </div>
               </TableCell>
-              <TableCell className="px-4 py-6 min-w-[150px]">
+              <TableCell className="px-1.5 py-6 min-w-[150px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {u.username || "-"}
                 </div>
               </TableCell>
-              <TableCell className="px-4 py-6 min-w-[200px]">
+              <TableCell className="px-1.5 py-6 min-w-[200px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {u.email || "-"}
                 </div>
               </TableCell>
-              <TableCell className="px-4 py-6 min-w-[150px]">
+              <TableCell className="px-1.5 py-6 min-w-[150px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {u.phone || "-"}
                 </div>
               </TableCell>
-              <TableCell className="px-4 py-6 min-w-[150px]">
+              <TableCell className="px-1.5 py-6 min-w-[150px]">
                 <div className="text-sm text-gray-900 dark:text-white font-mono">
                   {u.passport || "-"}
                 </div>
               </TableCell>
-              <TableCell className="px-4 py-6 min-w-[180px]">
+              <TableCell className="px-1.5 py-6 min-w-[180px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {u.companyName || "-"}
                 </div>
               </TableCell>
-              <TableCell className="px-4 py-6 min-w-[120px]">
+              <TableCell className="px-1.5 py-6 min-w-[120px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {u.country || "-"}
                 </div>
@@ -151,7 +151,7 @@ export const UsersView = ({ users, isLoading = false, onRefresh, onCreateUser, o
 
               {/* Actions */}
               {isAdmin && (
-                <TableCell className="px-4 py-6 text-center pr-6 sm:pr-8 min-w-[160px]">
+                <TableCell className="px-1.5 py-6 text-center pr-2 min-w-[160px]">
                   <div className="flex items-center justify-center gap-2">
                     {onUpdateUser && (
                       <Button

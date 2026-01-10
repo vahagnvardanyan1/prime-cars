@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
 
-import { Moon, SlidersHorizontal, Sun } from "lucide-react";
+import { LogOut, Moon, SlidersHorizontal, Sun } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +20,8 @@ import { useTheme } from "@/components/ThemeContext";
 import type { Locale } from "@/i18n/config";
 import { usePathname, useRouter } from "@/i18n/routing";
 import { getLocaleOptions } from "@/i18n/localeOptions";
+import { logout } from "@/lib/admin/logout";
+import { useUser } from "@/contexts/UserContext";
 
 export const AdminPreferencesMenu = () => {
   const t = useTranslations();
@@ -26,6 +30,8 @@ export const AdminPreferencesMenu = () => {
   const params = useParams();
   const locale = useLocale() as Locale;
   const { theme, setTheme } = useTheme();
+  const { clearUser } = useUser();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const onSelectLocale = ({ nextLocale }: { nextLocale: Locale }) => {
     router.replace(
@@ -33,6 +39,31 @@ export const AdminPreferencesMenu = () => {
       { pathname, params },
       { locale: nextLocale },
     );
+  };
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    
+    try {
+      const result = await logout();
+      
+      clearUser();
+      
+      if (result.success) {
+        toast.success("Logged out successfully");
+      } else {
+        toast.warning("Logged out locally");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      
+      clearUser();
+      toast.warning("Logged out locally");
+    } finally {
+      setIsLoggingOut(false);
+      
+        window.location.href = "/";
+    }
   };
 
   return (
@@ -112,6 +143,19 @@ export const AdminPreferencesMenu = () => {
               {t("admin.topbar.activeLabel")}
             </span>
           ) : null}
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator className="my-2 bg-gray-200 dark:bg-white/10" />
+
+        <DropdownMenuItem
+          onSelect={handleLogout}
+          disabled={isLoggingOut}
+          className="cursor-pointer rounded-xl px-2 py-2 text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-500/10 focus:text-red-700 dark:focus:text-red-300"
+        >
+          <LogOut className="h-4 w-4" />
+          <span className="ml-2 text-sm font-medium">
+            {isLoggingOut ? t("admin.topbar.loggingOut") : t("admin.topbar.logout")}
+          </span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -28,6 +28,7 @@ type SettingsViewProps = {
   onDeleteCity: ({ cityId }: { cityId: string }) => Promise<void>;
   onShippingCreated?: () => void;
   isLoading?: boolean;
+  isAdmin?: boolean;
 };
 
 export const SettingsView = ({
@@ -37,6 +38,7 @@ export const SettingsView = ({
   onDeleteCity,
   onShippingCreated,
   isLoading = false,
+  isAdmin = false,
 }: SettingsViewProps) => {
   const t = useTranslations();
   const [delta, setDelta] = useState("");
@@ -47,6 +49,24 @@ export const SettingsView = ({
   const canApply = useMemo(() => {
     return delta.trim().length > 0 && Number.isFinite(Number(delta));
   }, [delta]);
+
+  const handleDeltaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    
+    if (value === "") {
+      setDelta("");
+      return;
+    }
+    
+    if (value === "-") {
+      setDelta("-");
+      return;
+    }
+    
+    if (/^-?\d*$/.test(value)) {
+      setDelta(value);
+    }
+  };
 
   const apply = async () => {
     if (!canApply || isApplying) return;
@@ -97,7 +117,7 @@ export const SettingsView = ({
               <div className="flex w-full gap-2 md:w-auto">
                 <Input
                   value={delta}
-                  onChange={(e) => setDelta(e.target.value)}
+                  onChange={handleDeltaChange}
                   inputMode="numeric"
                   placeholder="100"
                   disabled={isApplying}
@@ -127,24 +147,25 @@ export const SettingsView = ({
         </div>
       </Surface>
 
-      <Surface className="overflow-hidden">
-        <div className="px-6 py-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {t("admin.settingsView.citiesTitle")}
-            </h1>
+      {isAdmin && (
+        <Surface className="overflow-hidden">
+          <div className="px-6 py-6 flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {t("admin.settingsView.citiesTitle")}
+              </h1>
+            </div>
+            <Button
+              type="button"
+              onClick={() => setIsAddShippingModalOpen(true)}
+              className="h-9 rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc] flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">{t("admin.settingsView.addCity")}</span>
+            </Button>
           </div>
-          <Button
-            type="button"
-            onClick={() => setIsAddShippingModalOpen(true)}
-            className="h-9 rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc] flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("admin.settingsView.addCity")}</span>
-          </Button>
-        </div>
 
-        <div className="overflow-x-auto">
+          <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
@@ -263,14 +284,17 @@ export const SettingsView = ({
             )}
           </TableBody>
         </Table>
-        </div>
-      </Surface>
+          </div>
+        </Surface>
+      )}
 
-      <AddShippingModal
-        isOpen={isAddShippingModalOpen}
-        onClose={() => setIsAddShippingModalOpen(false)}
-        onShippingCreated={onShippingCreated}
-      />
+      {isAdmin && (
+        <AddShippingModal
+          isOpen={isAddShippingModalOpen}
+          onClose={() => setIsAddShippingModalOpen(false)}
+          onShippingCreated={onShippingCreated}
+        />
+      )}
     </div>
   );
 };

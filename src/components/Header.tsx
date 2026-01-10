@@ -72,7 +72,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
           <div className="flex items-center justify-between h-20">
             <Link href="/" className="flex items-center gap-3 group">
               <Image
-                src={LOGO_LIGHT}
+                src={LOGO_DARK}
                 alt={t("header.logoAlt")}
                 className="h-20 w-auto block dark:hidden"
                 width={240}
@@ -84,7 +84,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
                 alt={t("header.logoAlt")}
                 className="h-20 w-auto hidden dark:block"
                 width={240}
-                height={80}
+                height={40}
                 priority
               />
             </Link>

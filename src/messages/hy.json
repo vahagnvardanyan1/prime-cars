@@ -240,7 +240,9 @@
       "themeLabel": "Տեսք",
       "lightMode": "Բաց",
       "darkMode": "Մուգ",
-      "activeLabel": "Ակտիվ"
+      "activeLabel": "Ակտիվ",
+      "logout": "Դուրս գալ",
+      "loggingOut": "Դուրս գալիս..."
     },
     "sidebar": {
       "consoleLabel": "Ադմին վահանակ",

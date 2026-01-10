@@ -240,7 +240,9 @@
       "themeLabel": "Тема",
       "lightMode": "Светлая",
       "darkMode": "Тёмная",
-      "activeLabel": "Активно"
+      "activeLabel": "Активно",
+      "logout": "Выход",
+      "loggingOut": "Выход..."
     },
     "sidebar": {
       "consoleLabel": "Админ‑консоль",
