@@ -283,15 +283,43 @@
       "nav": {
         "cars": "Cars",
         "users": "Users",
+        "notifications": "Notifications",
         "calculator": "Calculator",
         "settings": "Settings"
       }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "showing": "Showing",
+      "notification": "notification",
+      "notifications": "notifications",
+      "create": "Create",
+      "loading": "Loading notifications...",
+      "noNotifications": "No notifications found",
+      "status": "Status",
+      "message": "Message",
+      "description": "Description",
+      "reason": "Reason",
+      "createdAt": "Created",
+      "actions": "Actions",
+      "delete": "Delete",
+      "markAsRead": "Mark as Read",
+      "later": "Later",
+      "view": "View",
+      "newNotification": "New Notification",
+      "deleteTitle": "Delete Notification",
+      "deleteDescription": "Are you sure you want to delete this notification? This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete",
+      "deleting": "Deleting..."
     },
     "headers": {
       "carsTitle": "Cars",
       "carsSubtitle": "Manage inventory listings with calm, table-first clarity.",
       "usersTitle": "Users",
       "usersSubtitle": "Internal access control and role visibility (frontend-only).",
+      "notificationsTitle": "Notifications",
+      "notificationsSubtitle": "Manage system notifications and announcements for all users.",
       "calculatorTitle": "Import Calculator",
       "calculatorSubtitle": "Estimate customs, taxes, and total import costs for vehicles.",
       "settingsTitle": "Settings",
@@ -603,6 +631,34 @@
         "successDescription": "{username} has been removed.",
         "error": "Failed to delete user",
         "errorDescription": "Could not delete the user."
+      },
+      "createNotification": {
+        "title": "Create Notification",
+        "subtitle": "Send a notification to all users.",
+        "message": "Message",
+        "messagePlaceholder": "System Update",
+        "description": "Description",
+        "descriptionPlaceholder": "The system will undergo maintenance on Saturday.",
+        "reason": "Reason",
+        "reasonPlaceholder": "Scheduled maintenance for performance improvements",
+        "cancel": "Cancel",
+        "submit": "Send to All",
+        "submitting": "Sending...",
+        "success": "Notification created",
+        "successDescription": "The notification has been sent to all users.",
+        "error": "Failed to create notification",
+        "errorDescription": "Could not create the notification."
+      },
+      "deleteNotification": {
+        "title": "Delete Notification",
+        "description": "Are you sure you want to delete this notification? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete",
+        "deleting": "Deleting...",
+        "success": "Notification deleted",
+        "successDescription": "The notification has been removed.",
+        "error": "Failed to delete notification",
+        "errorDescription": "Could not delete the notification."
       }
     },
     "actions": {

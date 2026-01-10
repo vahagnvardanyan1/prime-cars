@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useUser } from "@/contexts/UserContext";
 import { LoginModal } from "@/components/LoginModal";
+import { NotificationPopup } from "@/components/NotificationPopup";
 import { Link } from "@/i18n/routing";
 
 type AdminLayoutProps = {
@@ -92,6 +93,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-[#0a0a0a]">
+      {/* Show notification popup only for non-admin users */}
+      {user && !isAdmin && <NotificationPopup userId={user.id} />}
+      
       <AdminSidebar isAdmin={isAdmin} />
 
       <div className="flex flex-1 flex-col overflow-hidden md:ml-[280px]">
