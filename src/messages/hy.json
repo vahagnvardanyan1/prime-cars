@@ -415,7 +415,7 @@
         "purchaseDate": "Գնման ամսաթիվ",
         "type": "Տեսակ",
         "vehicleTypes": {
-          "auto": "մեքենա",
+          "auto": "Մեքենա",
           "motorcycle": "Մոտոցիկլ",
           "limousine": "Լիմուզին",
           "boat": "Նավակ",
