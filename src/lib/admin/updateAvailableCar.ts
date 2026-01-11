@@ -15,6 +15,7 @@ type UpdateAvailableCarArgs = {
     boughtPlace?: string;
     transmission?: string;
   };
+  existingPhotos?: string[];
   newPhotos?: File[];
   photosToDelete?: string[];
 };
@@ -27,6 +28,7 @@ type UpdateAvailableCarResponse = {
 export const updateAvailableCar = async ({
   id,
   data,
+  existingPhotos = [],
   newPhotos = [],
   photosToDelete = [],
 }: UpdateAvailableCarArgs): Promise<UpdateAvailableCarResponse> => {

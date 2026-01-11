@@ -140,7 +140,26 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
     });
   }, [maxFiles]);
 
-  return { files, previews, setFileAt, removeFileAt, clearAll, addMultipleFiles };
+  const reorderFiles = useCallback((fromIndex: number, toIndex: number) => {
+    setFiles((prev) => {
+      // Don't reorder if one of the indices is out of bounds
+      if (fromIndex < 0 || toIndex < 0 || fromIndex >= prev.length || toIndex >= prev.length) {
+        return prev;
+      }
+      
+      // Don't reorder if either index points to null (empty slot)
+      if (prev[fromIndex] === null || prev[toIndex] === null) {
+        return prev;
+      }
+      
+      const updated = [...prev];
+      const [movedFile] = updated.splice(fromIndex, 1);
+      updated.splice(toIndex, 0, movedFile);
+      return updated;
+    });
+  }, []);
+
+  return { files, previews, setFileAt, removeFileAt, clearAll, addMultipleFiles, reorderFiles };
 };
 
 

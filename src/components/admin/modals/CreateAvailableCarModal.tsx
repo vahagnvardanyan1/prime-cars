@@ -50,7 +50,7 @@ export const CreateAvailableCarModal = ({
   onSuccess,
 }: CreateAvailableCarModalProps) => {
   const t = useTranslations("admin.modals.createAvailableCar");
-  const { files, previews, setFileAt, removeFileAt, clearAll, addMultipleFiles } = usePhotoUploads({ 
+  const { files, previews, setFileAt, removeFileAt, clearAll, addMultipleFiles, reorderFiles } = usePhotoUploads({ 
     maxFiles: 50, 
     initialSlots: 1 
   });
@@ -221,6 +221,7 @@ export const CreateAvailableCarModal = ({
                 onPickFile={setFileAt}
                 onRemoveFile={removeFileAt}
                 onPickMultipleFiles={addMultipleFiles}
+                onReorder={reorderFiles}
                 tileClassName="h-[140px] sm:h-[160px]"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400">

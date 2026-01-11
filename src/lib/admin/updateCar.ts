@@ -30,12 +30,14 @@ export const updateCar = async ({
   id,
   data,
   invoiceFile,
+  existingPhotos,
   newPhotos,
   photosToDelete,
 }: {
   id: string;
   data: UpdateCarData;
   invoiceFile?: File | null;
+  existingPhotos?: string[];
   newPhotos?: File[];
   photosToDelete?: string[];
 }): Promise<UpdateCarResponse> => {

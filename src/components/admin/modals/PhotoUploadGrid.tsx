@@ -16,6 +16,7 @@ type PhotoUploadGridProps = {
   onPickFile: ({ index, file }: { index: number; file: File | null }) => void;
   onRemoveFile: ({ index }: { index: number }) => void;
   onPickMultipleFiles?: (files: File[]) => void;
+  onReorder?: (fromIndex: number, toIndex: number) => void;
   tileClassName?: string;
 };
 
@@ -28,6 +29,8 @@ type PhotoTileProps = {
   onPickFile: ({ index, file }: { index: number; file: File | null }) => void;
   onRemoveFile: ({ index }: { index: number }) => void;
   onPickMultipleFiles?: (files: File[]) => void;
+  onReorder?: (fromIndex: number, toIndex: number) => void;
+  isDragOver?: boolean;
 };
 
 const PhotoTile = memo(({
@@ -38,9 +41,12 @@ const PhotoTile = memo(({
   onPickFile,
   onRemoveFile,
   onPickMultipleFiles,
+  onReorder,
+  isDragOver,
 }: PhotoTileProps) => {
   const t = useTranslations();
   const [isDragging, setIsDragging] = useState(false);
+  const [isReorderDragging, setIsReorderDragging] = useState(false);
   
   const inputId = `${label.replace(/\s+/g, "-").toLowerCase()}-${index}`;
   
@@ -111,23 +117,65 @@ const PhotoTile = memo(({
     e.stopPropagation();
     onRemoveFile({ index });
   }, [index, onRemoveFile]);
+
+  // Reorder handlers
+  const handleReorderDragStart = useCallback((e: DragEvent<HTMLDivElement>) => {
+    if (!preview || !onReorder) return;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+    setIsReorderDragging(true);
+  }, [index, preview, onReorder]);
+
+  const handleReorderDragEnd = useCallback(() => {
+    setIsReorderDragging(false);
+  }, []);
+
+  const handleReorderDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
+    if (!preview || !onReorder) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }, [preview, onReorder]);
+
+  const handleReorderDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
+    if (!preview || !onReorder) return;
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+    if (!isNaN(fromIndex) && fromIndex !== index) {
+      onReorder(fromIndex, index);
+    }
+  }, [index, preview, onReorder]);
   
   return (
-    <label
-      htmlFor={inputId}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
+    <div
+      draggable={!!preview && !!onReorder}
+      onDragStart={handleReorderDragStart}
+      onDragEnd={handleReorderDragEnd}
+      onDragOver={handleReorderDragOver}
+      onDrop={handleReorderDrop}
       className={cn(
-        "group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-white transition-all duration-200",
-        "h-[120px]",
-        "border-gray-200 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:hover:bg-white/5",
-        preview ? "border-solid" : "",
-        isDragging && "border-[#429de6] bg-blue-50 dark:bg-[#429de6]/10 scale-[1.02] ring-2 ring-[#429de6]/50",
-        tileClassName,
+        "transition-all duration-200",
+        isReorderDragging && "opacity-40 scale-95",
+        isDragOver && preview && onReorder && "scale-105"
       )}
-      suppressHydrationWarning
     >
+      <label
+        htmlFor={inputId}
+        onDragOver={!preview ? handleDragOver : undefined}
+        onDragLeave={!preview ? handleDragLeave : undefined}
+        onDrop={!preview ? handleDrop : undefined}
+        className={cn(
+          "group relative flex items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-white transition-all duration-200",
+          "h-[120px]",
+          "border-gray-200 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:hover:bg-white/5",
+          preview ? "border-solid cursor-grab active:cursor-grabbing" : "cursor-pointer",
+          isDragging && !preview && "border-[#429de6] bg-blue-50 dark:bg-[#429de6]/10 scale-[1.02] ring-2 ring-[#429de6]/50",
+          isDragOver && preview && onReorder && "ring-2 ring-[#429de6] border-[#429de6]",
+          tileClassName,
+        )}
+        suppressHydrationWarning
+      >
       <input
         id={inputId}
         type="file"
@@ -187,6 +235,7 @@ const PhotoTile = memo(({
         </div>
       )}
     </label>
+    </div>
   );
 });
 
@@ -198,8 +247,18 @@ export const PhotoUploadGrid = ({
   onPickFile,
   onRemoveFile,
   onPickMultipleFiles,
+  onReorder,
   tileClassName,
 }: PhotoUploadGridProps) => {
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  const handleReorder = useCallback((fromIndex: number, toIndex: number) => {
+    if (onReorder) {
+      onReorder(fromIndex, toIndex);
+    }
+    setDragOverIndex(null);
+  }, [onReorder]);
+
   // Memoize the tiles to prevent unnecessary re-renders
   const tiles = useMemo(() => {
     return previews.map((preview, i) => (
@@ -212,9 +271,11 @@ export const PhotoUploadGrid = ({
         onPickFile={onPickFile}
         onRemoveFile={onRemoveFile}
         onPickMultipleFiles={onPickMultipleFiles}
+        onReorder={handleReorder}
+        isDragOver={dragOverIndex === i}
       />
     ));
-  }, [previews, label, tileClassName, onPickFile, onRemoveFile, onPickMultipleFiles]);
+  }, [previews, label, tileClassName, onPickFile, onRemoveFile, onPickMultipleFiles, handleReorder, dragOverIndex]);
 
   return (
     <div suppressHydrationWarning>

@@ -49,7 +49,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Photo management
-  const { files, previews: newPreviews, setFileAt, removeFileAt, clearAll, addMultipleFiles } = usePhotoUploads({ 
+  const { files, previews: newPreviews, setFileAt, removeFileAt, clearAll, addMultipleFiles, reorderFiles } = usePhotoUploads({ 
     maxFiles: 25, 
     initialSlots: 1 
   });
@@ -166,6 +166,15 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
     }
   };
 
+  const handleReorderExistingPhotos = (fromIndex: number, toIndex: number) => {
+    setExistingPhotos((prev) => {
+      const updated = [...prev];
+      const [movedPhoto] = updated.splice(fromIndex, 1);
+      updated.splice(toIndex, 0, movedPhoto);
+      return updated;
+    });
+  };
+
   const handleClose = () => {
     // Reset selected user and invoice when closing
     setSelectedUserId("");
@@ -276,11 +285,30 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
               Existing Car Photos {existingPhotos.length > 0 && `(${existingPhotos.length})`}
             </Label>
             
-            {/* Existing Photos - Readonly, can only be deleted */}
+            {/* Existing Photos - Reorderable and deletable */}
             {existingPhotos.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {existingPhotos.map((photoUrl, index) => (
-                  <div key={`existing-${index}`} className="group relative h-[140px] sm:h-[160px] overflow-hidden rounded-2xl border border-solid border-gray-200 dark:border-white/10">
+                  <div 
+                    key={`existing-${index}`}
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.effectAllowed = 'move';
+                      e.dataTransfer.setData('text/plain', index.toString());
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = 'move';
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const fromIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+                      if (!isNaN(fromIndex) && fromIndex !== index) {
+                        handleReorderExistingPhotos(fromIndex, index);
+                      }
+                    }}
+                    className="group relative h-[140px] sm:h-[160px] overflow-hidden rounded-2xl border border-solid border-gray-200 dark:border-white/10 cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-[#429de6] transition-all"
+                  >
                     <img
                       src={photoUrl}
                       alt={`Car photo ${index + 1}`}
@@ -292,7 +320,10 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                     </div>
                     <button
                       type="button"
-                      onClick={() => handleRemoveExistingPhoto(index)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveExistingPhoto(index);
+                      }}
                       className="absolute top-2 right-2 p-1.5 bg-red-500 hover:bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:scale-110"
                       aria-label="Remove photo"
                     >
@@ -316,6 +347,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 onPickFile={setFileAt}
                 onRemoveFile={removeFileAt}
                 onPickMultipleFiles={addMultipleFiles}
+                onReorder={reorderFiles}
                 tileClassName="h-[140px] sm:h-[160px]"
               />
             </div>
