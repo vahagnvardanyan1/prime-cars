@@ -41,8 +41,10 @@
       "title": "Most Popular Car Rental Deals",
       "description": "Discover unbeatable deals on the most sought-after rental cars. Whether you need a stylish ride for a special occasion or a reliable vehicle for everyday use…",
       "rentalPriceLabel": "Rental Price",
+      "priceLabel": "Price",
       "seeTourDetails": "See Tour Details",
       "periodPerDay": "/day",
+      "noCars": "No cars available at the moment",
       "specs": {
         "automatic": "Automatic",
         "coupe": "Coupe",
@@ -85,6 +87,102 @@
         "yearOldest": "Year: Oldest First"
       }
     }
+  },
+  "carsPage": {
+    "badge": "Premium Collection",
+    "title": "Premium Vehicle Collection",
+    "subtitle": "Discover our carefully selected inventory of luxury and performance vehicles. Whether you're looking for immediate availability, tracking incoming shipments, or seeking a custom order—we have you covered.",
+    "browseTitle": "Browse Vehicles",
+    "tabs": {
+      "current": "Available Now",
+      "currentShort": "Available",
+      "currentDesc": "Ready to drive today",
+      "arriving": "In Transit",
+      "arrivingShort": "In Transit",
+      "arrivingDesc": "Track your shipment",
+      "order": "Custom Order",
+      "orderShort": "Custom Order",
+      "orderDesc": "Source any vehicle"
+    },
+    "categories": {
+      "current": "In Stock",
+      "arriving": "Arriving Soon",
+      "order": "Order Now"
+    },
+    "showing": "{count, plural, =0 {No vehicles} one {# vehicle} other {# vehicles}}",
+    "price": "Price",
+    "startingFrom": "Starting from",
+    "eta": "Expected Arrival",
+    "viewCta": "View Details",
+    "requestCta": "Request Quote",
+    "sort": "Sort",
+    "sortOptions": {
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low",
+      "yearNewest": "Year: Newest First",
+      "yearOldest": "Year: Oldest First"
+    },
+    "empty": {
+      "currentTitle": "No Vehicles Available",
+      "currentDescription": "We're currently updating our inventory. New arrivals are coming soon. Check back or browse our other categories.",
+      "arrivingTitle": "No Vehicles In Transit",
+      "arrivingDescription": "Currently no vehicles are being shipped. Browse our available inventory or place a custom order for your dream car.",
+      "orderTitle": "Custom Order Available",
+      "orderDescription": "Can't find what you're looking for? Contact us to discuss sourcing any vehicle from international auctions tailored to your exact specifications."
+    }
+  },
+  "carDetails": {
+    "backButton": "Back to Cars",
+    "loading": {
+      "title": "Loading Vehicle Details...",
+      "description": "Please wait while we fetch the information"
+    },
+    "badges": {
+      "available": "Available Now",
+      "arriving": "In Transit",
+      "order": "Order Available"
+    },
+    "shippingProgress": "Shipping Progress",
+    "estimatedArrival": "Estimated Arrival",
+    "specifications": "Specifications",
+    "specs": {
+      "year": "Year",
+      "horsepower": "Horsepower",
+      "engine": "Engine",
+      "transmission": "Transmission",
+      "fuelType": "Fuel Type",
+      "location": "Location"
+    },
+    "contactButton": "Contact Us",
+    "shareButton": "Share",
+    "note": {
+      "title": "Note",
+      "description": "All prices are in USD and subject to change. Contact us for the most current pricing and availability."
+    },
+    "notFound": {
+      "title": "Car Not Found",
+      "description": "The car you're looking for doesn't exist or has been removed.",
+      "backButton": "Back to Cars"
+    },
+    "racing": {
+      "title": "Experience The Speed",
+      "subtitle": "Feel the power and performance",
+      "horsepower": "Horsepower",
+      "acceleration": "mph in 3.5s",
+      "model": "Model Year",
+      "cta": "Ready to take it for a spin?"
+    },
+    "lightbox": {
+      "close": "Close",
+      "previous": "Previous",
+      "next": "Next",
+      "keyboardHint": "Use arrow keys to navigate • Press ESC to close"
+    },
+    "share": {
+      "success": "Link copied to clipboard!",
+      "text": "Check out this {year} {brand} {model} for ${price}"
+    },
+    "horsepowerUnit": "HP"
   },
   "calculator": {
     "page": {

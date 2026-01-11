@@ -71,7 +71,7 @@ export const CarsView = ({
             {tTable("title")}
           </h1>
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {tTable("showing")} {cars.length} {cars.length === 1 ? tTable("carSingular") : tTable("cars")}
+            {tTable("showing")} {cars?.length || 0} {cars?.length === 1 ? tTable("carSingular") : tTable("cars")}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -140,7 +140,7 @@ export const CarsView = ({
                 </div>
               </TableCell>
             </TableRow>
-          ) : cars.length === 0 ? (
+          ) : !cars || cars.length === 0 ? (
             <TableRow>
               <TableCell colSpan={isAdmin ? 17 : 16} className="py-12">
                 <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">

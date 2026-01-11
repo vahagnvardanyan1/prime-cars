@@ -12,7 +12,7 @@ export const localeNames: Record<Locale, string> = {
 
 
 
-export const API_BASE_URL = "https://prime-auto-backend.vercel.app";
+export const API_BASE_URL = "https://prime-auto-backend-production.up.railway.app";
 
 
 
