@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/i18n/config";
+
 import { authenticatedFetch } from "@/lib/auth/token";
 
 export type MarkNotificationAsReadResponse = {

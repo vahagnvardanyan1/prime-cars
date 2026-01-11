@@ -1,11 +1,19 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
+
 import { useRouter, useSearchParams } from "next/navigation";
+
 import { toast } from "sonner";
 
 import type { AdminUser } from "@/lib/admin/types";
-import { fetchUsers } from "@/lib/admin/fetchUsers";
 
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+import { fetchUsers } from "@/lib/admin/fetchUsers";
+import { isCacheValid, createCacheEntry } from "@/lib/utils/cache";
+import { isAuthenticated, isAuthError } from "@/lib/utils/error-handling";
+import { buildUrlParams, updateUrlWithParams } from "@/lib/utils/url-params";
+import { filterUsers, defaultUserFilters } from "@/lib/utils/user-filters";
+import type { UserFiltersState } from "@/lib/utils/user-filters";
+
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 // Module-level cache that persists across component mounts/unmounts
 let usersCache: {
@@ -13,35 +21,7 @@ let usersCache: {
   timestamp: number;
 } | null = null;
 
-export type UserFiltersState = {
-  search: string;
-  country: string;
-};
-
-const filterUsers = ({ users, filters }: { users: AdminUser[]; filters: UserFiltersState }) => {
-  return users.filter((user) => {
-    // Search filter (search in name, username, email, phone, passport)
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      const matchesSearch =
-        user.firstName.toLowerCase().includes(searchLower) ||
-        user.lastName.toLowerCase().includes(searchLower) ||
-        user.username.toLowerCase().includes(searchLower) ||
-        user.email?.toLowerCase().includes(searchLower) ||
-        user.phone?.toLowerCase().includes(searchLower) ||
-        user.passport?.toLowerCase().includes(searchLower);
-
-      if (!matchesSearch) return false;
-    }
-
-    // Country filter
-    if (filters.country !== "all" && user.country !== filters.country) {
-      return false;
-    }
-
-    return true;
-  });
-};
+export type { UserFiltersState };
 
 export const useAdminUsersState = () => {
   const router = useRouter();
@@ -73,9 +53,7 @@ export const useAdminUsersState = () => {
   const closeCreateUser = () => setIsCreateUserOpen(false);
 
   const isUsersCacheValid = useMemo(() => {
-    if (!usersCache) return false;
-    const now = Date.now();
-    return (now - usersCache.timestamp) < CACHE_DURATION;
+    return isCacheValid({ cache: usersCache, duration: CACHE_DURATION });
   }, []);
 
   // Apply filters to get filtered users
@@ -88,25 +66,21 @@ export const useAdminUsersState = () => {
     setFilters(newFilters);
 
     // Build URL params
-    const params = new URLSearchParams();
-    if (newFilters.search) params.set("search", newFilters.search);
-    if (newFilters.country !== "all") params.set("country", newFilters.country);
+    const params = buildUrlParams({ 
+      params: {
+        search: newFilters.search,
+        country: newFilters.country !== "all" ? newFilters.country : "",
+      }
+    });
 
-    const queryString = params.toString();
-    const newUrl = queryString ? `?${queryString}` : window.location.pathname;
-
-    router.replace(newUrl, { scroll: false });
+    updateUrlWithParams({ params, router });
   }, [router]);
 
   const clearFilters = useCallback(() => {
-    const defaultFilters: UserFiltersState = {
-      search: "",
-      country: "all",
-    };
-    updateFilters(defaultFilters);
+    updateFilters(defaultUserFilters);
   }, [updateFilters]);
 
-  const loadUsers = async ({ 
+  const loadUsers = useCallback(async ({ 
     forceRefresh = false,
     page,
     limit,
@@ -115,20 +89,17 @@ export const useAdminUsersState = () => {
     page?: number;
     limit?: number;
   } = {}) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-    if (!token) {
+    if (!isAuthenticated()) {
       return;
     }
 
     const pageToFetch = page !== undefined ? page : currentPage;
     const limitToFetch = limit !== undefined ? limit : pageSize;
 
-    // Skip cache check - always fetch fresh data for pagination to work correctly
     const useCache = !forceRefresh && usersCache && isUsersCacheValid;
     
     if (useCache) {
       setAllUsers(usersCache.data);
-      // Don't return here - still need to set pagination info
     }
 
     if (!useCache) {
@@ -144,12 +115,9 @@ export const useAdminUsersState = () => {
         setTotalPages(result.totalPages || 0);
         setCurrentPage(result.page || pageToFetch);
         
-        usersCache = {
-          data: result.users,
-          timestamp: Date.now(),
-        };
+        usersCache = createCacheEntry({ data: result.users });
       } else {
-        if (!result.error?.includes('401') && !result.error?.includes('403') && !result.error?.includes('Unauthorized')) {
+        if (!isAuthError({ errorMessage: result.error })) {
           toast.error("Failed to load users", {
             description: result.error || "Could not fetch users from server.",
           });
@@ -157,7 +125,7 @@ export const useAdminUsersState = () => {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "";
-      if (!errorMessage.includes('401') && !errorMessage.includes('403') && !errorMessage.includes('Unauthorized')) {
+      if (!isAuthError({ errorMessage })) {
         toast.error("Failed to load users", {
           description: errorMessage || "An unexpected error occurred.",
         });
@@ -165,7 +133,7 @@ export const useAdminUsersState = () => {
     } finally {
       setIsLoadingUsers(false);
     }
-  };
+  }, [currentPage, pageSize, isUsersCacheValid]);
 
   const changePage = useCallback((page: number) => {
     setCurrentPage(page);
@@ -174,10 +142,10 @@ export const useAdminUsersState = () => {
     const params = new URLSearchParams(window.location.search);
     params.set("page", page.toString());
     params.set("pageSize", pageSize.toString());
-    router.replace(`?${params.toString()}`, { scroll: false });
+    updateUrlWithParams({ params, router });
     
     loadUsers({ page, limit: pageSize });
-  }, [pageSize, router]);
+  }, [pageSize, router, loadUsers]);
 
   const changePageSize = useCallback((size: number) => {
     setPageSize(size);
@@ -187,10 +155,10 @@ export const useAdminUsersState = () => {
     const params = new URLSearchParams(window.location.search);
     params.set("page", "1");
     params.set("pageSize", size.toString());
-    router.replace(`?${params.toString()}`, { scroll: false });
+    updateUrlWithParams({ params, router });
     
     loadUsers({ page: 1, limit: size });
-  }, [router]);
+  }, [router, loadUsers]);
 
   // Sync filters and pagination with URL on mount and when searchParams change
   useEffect(() => {
@@ -217,7 +185,7 @@ export const useAdminUsersState = () => {
         setPageSize(parsedSize);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, currentPage, pageSize]);
 
   return {
     users: filteredUsers,
@@ -239,4 +207,3 @@ export const useAdminUsersState = () => {
     changePageSize,
   };
 };
-

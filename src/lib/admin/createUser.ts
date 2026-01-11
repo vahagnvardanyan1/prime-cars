@@ -1,6 +1,8 @@
 import type { CreateUserData, CreateUserResponse } from "@/lib/admin/types";
-import { authenticatedFetch } from "../auth/token";
+
 import { API_BASE_URL } from "@/i18n/config";
+
+import { authenticatedFetch } from "@/lib/auth/token";
 
 export const createUser = async ({
   data,

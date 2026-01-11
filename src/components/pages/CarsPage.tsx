@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useCarsPage } from "@/hooks/useCarsPage";
 import type { Car, CarCategory } from "@/lib/cars/types";
 
@@ -268,7 +268,6 @@ const CarsGrid = ({ cars, isLoading, category, sortFn, viewMode }: { cars: Car[]
 
 export const CarsPage = () => {
   const t = useTranslations("carsPage");
-  const router = useRouter();
   const { currentCars, arrivingCars, orderCars, isLoading, loadCarsForCategory } = useCarsPage();
   const [activeTab, setActiveTab] = useState<CarCategory>("AVAILABLE");
   const [sortOption, setSortOption] = useState<SortOption>("year-newest");

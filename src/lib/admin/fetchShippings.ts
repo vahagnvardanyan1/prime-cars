@@ -1,6 +1,8 @@
-import { API_BASE_URL } from "@/i18n/config";
-import { authenticatedFetch } from "@/lib/auth/token";
 import type { ShippingCity, Auction } from "@/lib/admin/types";
+
+import { API_BASE_URL } from "@/i18n/config";
+
+import { authenticatedFetch } from "@/lib/auth/token";
 
 type BackendShipping = {
   _id?: string;

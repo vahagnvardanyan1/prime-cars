@@ -24,18 +24,35 @@ export const CreateNotificationModal = ({
   onNotificationCreated,
 }: CreateNotificationModalProps) => {
   const t = useTranslations("admin.modals.createNotification");
+  const tValidation = useTranslations("auth.validation");
   const [message, setMessage] = useState("");
   const [description, setDescription] = useState("");
   const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{
+    message?: string;
+    description?: string;
+  }>({});
+
+  const validateForm = () => {
+    const newErrors: typeof errors = {};
+
+    if (!message.trim()) {
+      newErrors.message = tValidation("fieldRequired");
+    }
+
+    if (!description.trim()) {
+      newErrors.description = tValidation("fieldRequired");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!message.trim() || !description.trim()) {
-      toast.error(t("error"), {
-        description: "Please fill in all required fields.",
-      });
+    if (!validateForm()) {
       return;
     }
 
@@ -59,6 +76,7 @@ export const CreateNotificationModal = ({
         setMessage("");
         setDescription("");
         setReason("");
+        setErrors({});
         
         onNotificationCreated();
         onOpenChange({ open: false });
@@ -81,6 +99,7 @@ export const CreateNotificationModal = ({
       setMessage("");
       setDescription("");
       setReason("");
+      setErrors({});
       onOpenChange({ open: false });
     }
   };
@@ -100,31 +119,55 @@ export const CreateNotificationModal = ({
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="space-y-2">
             <Label htmlFor="message" className="text-sm font-medium text-gray-900 dark:text-white">
-              {t("message")}
+              {t("message")} <span className="text-red-500 ml-1">*</span>
             </Label>
             <Input
               id="message"
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) => {
+                setMessage(e.target.value);
+                if (errors.message) {
+                  setErrors({ ...errors, message: undefined });
+                }
+              }}
               placeholder={t("messagePlaceholder")}
               disabled={isSubmitting}
-              className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 text-gray-900 dark:text-white"
+              className={`bg-white dark:bg-[#161b22] text-gray-900 dark:text-white ${
+                errors.message
+                  ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                  : 'border-gray-200 dark:border-white/10'
+              }`}
             />
+            {errors.message && (
+              <p className="text-sm text-red-500 dark:text-red-400">{errors.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="description" className="text-sm font-medium text-gray-900 dark:text-white">
-              {t("description")}
+              {t("description")} <span className="text-red-500 ml-1">*</span>
             </Label>
             <Textarea
               id="description"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                if (errors.description) {
+                  setErrors({ ...errors, description: undefined });
+                }
+              }}
               placeholder={t("descriptionPlaceholder")}
               disabled={isSubmitting}
               rows={3}
-              className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 text-gray-900 dark:text-white"
+              className={`bg-white dark:bg-[#161b22] text-gray-900 dark:text-white ${
+                errors.description
+                  ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                  : 'border-gray-200 dark:border-white/10'
+              }`}
             />
+            {errors.description && (
+              <p className="text-sm text-red-500 dark:text-red-400">{errors.description}</p>
+            )}
           </div>
 
           <div className="space-y-2">

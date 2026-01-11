@@ -319,7 +319,21 @@
     "google": "Google",
     "github": "GitHub",
     "noAccount": "Нет аккаунта?",
-    "signUp": "Регистрация"
+    "signUp": "Регистрация",
+    "validation": {
+      "usernameRequired": "Имя пользователя обязательно",
+      "usernameMinLength": "Имя пользователя должно быть не менее 3 символов",
+      "passwordRequired": "Пароль обязателен",
+      "passwordMinLength": "Пароль должен быть не менее 6 символов",
+      "emailRequired": "Email обязателен",
+      "emailInvalid": "Пожалуйста, введите действительный email",
+      "firstNameRequired": "Имя обязательно",
+      "lastNameRequired": "Фамилия обязательна",
+      "fieldRequired": "Это поле обязательно",
+      "minLength": "Должно быть не менее {min} символов",
+      "maxLength": "Должно быть не более {max} символов",
+      "phoneInvalid": "Пожалуйста, введите действительный номер телефона"
+    }
   },
   "admin": {
     "roles": {

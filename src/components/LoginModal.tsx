@@ -24,6 +24,10 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{
+    username?: string;
+    password?: string;
+  }>({});
 
   useEffect(() => {
     if (isOpen) {
@@ -34,19 +38,36 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
       setUsername("");
       setPassword("");
       setIsSubmitting(false);
+      setErrors({});
     }
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
+  const validateForm = () => {
+    const newErrors: { username?: string; password?: string } = {};
+
+    if (!username.trim()) {
+      newErrors.username = t("auth.validation.usernameRequired");
+    } else if (username.trim().length < 3) {
+      newErrors.username = t("auth.validation.usernameMinLength");
+    }
+
+    if (!password.trim()) {
+      newErrors.password = t("auth.validation.passwordRequired");
+    } else if (password.trim().length < 6) {
+      newErrors.password = t("auth.validation.passwordMinLength");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username.trim() || !password.trim()) {
-      toast.error("Validation error", {
-        description: "Please enter both username and password.",
-      });
+    if (!validateForm()) {
       return;
     }
 
@@ -99,6 +120,7 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
 
       setUsername("");
       setPassword("");
+      setErrors({});
       
       if (onLoginSuccess) {
         await onLoginSuccess();
@@ -162,10 +184,24 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
                 type="text"
                 placeholder=""
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  if (errors.username) {
+                    setErrors({ ...errors, username: undefined });
+                  }
+                }}
                 disabled={isSubmitting}
-                className="w-full px-6 py-4 bg-transparent border-2 border-gray-300 dark:border-white/20 rounded-xl focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-all text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`w-full px-6 py-4 bg-transparent border-2 rounded-xl focus:outline-none transition-all text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-lg disabled:opacity-50 disabled:cursor-not-allowed ${
+                  errors.username
+                    ? 'border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500'
+                    : 'border-gray-300 dark:border-white/20 focus:border-[#429de6] dark:focus:border-[#429de6]'
+                }`}
               />
+              {errors.username && (
+                <p className="text-sm text-red-500 dark:text-red-400 mt-1">
+                  {errors.username}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -175,10 +211,24 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
               <PasswordInput
                 placeholder=""
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (errors.password) {
+                    setErrors({ ...errors, password: undefined });
+                  }
+                }}
                 disabled={isSubmitting}
-                className="w-full px-6 py-4 bg-transparent border-2 border-gray-300 dark:border-white/20 rounded-xl focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-all text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`w-full px-6 py-4 bg-transparent border-2 rounded-xl focus:outline-none transition-all text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-lg disabled:opacity-50 disabled:cursor-not-allowed ${
+                  errors.password
+                    ? 'border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500'
+                    : 'border-gray-300 dark:border-white/20 focus:border-[#429de6] dark:focus:border-[#429de6]'
+                }`}
               />
+              {errors.password && (
+                <p className="text-sm text-red-500 dark:text-red-400 mt-1">
+                  {errors.password}
+                </p>
+              )}
             </div>
 
             <button

@@ -319,7 +319,21 @@
     "google": "Google",
     "github": "GitHub",
     "noAccount": "Don't have an account?",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "validation": {
+      "usernameRequired": "Username is required",
+      "usernameMinLength": "Username must be at least 3 characters",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email address",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "fieldRequired": "This field is required",
+      "minLength": "Must be at least {min} characters",
+      "maxLength": "Must be no more than {max} characters",
+      "phoneInvalid": "Please enter a valid phone number"
+    }
   },
   "admin": {
     "roles": {

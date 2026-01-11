@@ -4,10 +4,8 @@ import { useState, useEffect } from "react";
 
 import { toast } from "sonner";
 
-import { AddCarModal } from "@/components/admin/modals/AddCarModal";
-import { UpdateCarModal } from "@/components/admin/modals/UpdateCarModal";
-import { CarsView } from "@/components/admin/views/CarsView";
 import type { AdminCar } from "@/lib/admin/types";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,9 +16,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useAdminCarsState } from "@/hooks/admin/useAdminCarsState";
+
 import { useUser } from "@/contexts/UserContext";
+
+import { useAdminCarsState } from "@/hooks/admin/useAdminCarsState";
 import { deleteCar } from "@/lib/admin/deleteCar";
+import { AddCarModal } from "@/components/admin/modals/AddCarModal";
+import { UpdateCarModal } from "@/components/admin/modals/UpdateCarModal";
+import { CarsView } from "@/components/admin/views/CarsView";
 
 export const AdminCarsPage = () => {
   const state = useAdminCarsState();

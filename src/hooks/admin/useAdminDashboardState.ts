@@ -2,13 +2,18 @@
 
 import { useMemo, useState, useEffect } from "react";
 
+import { toast } from "sonner";
+
 import type { AdminCar, AdminUser, ShippingCity } from "@/lib/admin/types";
+
 import { fetchUsers } from "@/lib/admin/fetchUsers";
 import { fetchCars } from "@/lib/admin/fetchCars";
 import { fetchShippings } from "@/lib/admin/fetchShippings";
 import { increaseShippingPrices } from "@/lib/admin/increaseShippingPrices";
 import { deleteShipping } from "@/lib/admin/deleteShipping";
-import { toast } from "sonner";
+import { isCacheValid, createCacheEntry } from "@/lib/utils/cache";
+import { isAuthenticated, isAuthError } from "@/lib/utils/error-handling";
+import type { CacheEntry } from "@/lib/utils/cache";
 
 export type AdminNavKey = "cars" | "availableCars" | "users" | "settings" | "calculator" | "notifications";
 
@@ -16,22 +21,13 @@ type UpdateCityPriceModalState =
   | { isOpen: false }
   | { isOpen: true; cityId: string };
 
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export const useAdminDashboardState = () => {
   const [activeNav, setActiveNav] = useState<AdminNavKey>("cars");
-  const [usersCache, setUsersCache] = useState<{
-    data: AdminUser[];
-    timestamp: number;
-  } | null>(null);
-  const [carsCache, setCarsCache] = useState<{
-    data: AdminCar[];
-    timestamp: number;
-  } | null>(null);
-  const [citiesCache, setCitiesCache] = useState<{
-    data: ShippingCity[];
-    timestamp: number;
-  } | null>(null);
+  const [usersCache, setUsersCache] = useState<CacheEntry<AdminUser[]> | null>(null);
+  const [carsCache, setCarsCache] = useState<CacheEntry<AdminCar[]> | null>(null);
+  const [citiesCache, setCitiesCache] = useState<CacheEntry<ShippingCity[]> | null>(null);
 
   const [isAddCarOpen, setIsAddCarOpen] = useState(false);
   const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
@@ -81,7 +77,6 @@ export const useAdminDashboardState = () => {
         toast.success("Shipping city deleted", {
           description: "The shipping city has been removed successfully.",
         });
-        // Reload cities from backend to get updated data
         await loadCities({ forceRefresh: true });
       } else {
         toast.error("Failed to delete shipping city", {
@@ -89,8 +84,9 @@ export const useAdminDashboardState = () => {
         });
       }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred.";
       toast.error("Failed to delete shipping city", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred.",
+        description: errorMessage,
       });
     }
   };
@@ -103,7 +99,6 @@ export const useAdminDashboardState = () => {
         toast.success("Shipping prices updated", {
           description: `All prices increased by ${delta > 0 ? '+' : ''}${delta} USD.`,
         });
-        // Reload cities from backend to get updated data
         await loadCities({ forceRefresh: true });
       } else {
         toast.error("Failed to update shipping prices", {
@@ -111,8 +106,9 @@ export const useAdminDashboardState = () => {
         });
       }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred.";
       toast.error("Failed to update shipping prices", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred.",
+        description: errorMessage,
       });
     }
   };
@@ -122,28 +118,20 @@ export const useAdminDashboardState = () => {
   };
 
   const isUsersCacheValid = useMemo(() => {
-    if (!usersCache) return false;
-    const now = Date.now();
-    return (now - usersCache.timestamp) < CACHE_DURATION;
+    return isCacheValid({ cache: usersCache, duration: CACHE_DURATION });
   }, [usersCache]);
 
   const isCarsCacheValid = useMemo(() => {
-    if (!carsCache) return false;
-    const now = Date.now();
-    return (now - carsCache.timestamp) < CACHE_DURATION;
+    return isCacheValid({ cache: carsCache, duration: CACHE_DURATION });
   }, [carsCache]);
 
   const isCitiesCacheValid = useMemo(() => {
-    if (!citiesCache) return false;
-    const now = Date.now();
-    return (now - citiesCache.timestamp) < CACHE_DURATION;
+    return isCacheValid({ cache: citiesCache, duration: CACHE_DURATION });
   }, [citiesCache]);
 
   const loadUsers = async ({ forceRefresh = false }: { forceRefresh?: boolean } = {}) => {
-    // Check if user is authenticated
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-    if (!token) {
-      return; // Don't show error if not authenticated
+    if (!isAuthenticated()) {
+      return;
     }
 
     // Check cache first
@@ -158,22 +146,17 @@ export const useAdminDashboardState = () => {
       
       if (result.success && result.users) {
         setUsers(result.users);
-        setUsersCache({
-          data: result.users,
-          timestamp: Date.now(),
-        });
+        setUsersCache(createCacheEntry({ data: result.users }));
       } else {
-        // Only show error if authenticated (not 401/403 errors)
-        if (!result.error?.includes('401') && !result.error?.includes('403') && !result.error?.includes('Unauthorized')) {
+        if (!isAuthError({ errorMessage: result.error })) {
           toast.error("Failed to load users", {
             description: result.error || "Could not fetch users from server.",
           });
         }
       }
     } catch (error) {
-      // Only show error if it's not an auth error
       const errorMessage = error instanceof Error ? error.message : "";
-      if (!errorMessage.includes('401') && !errorMessage.includes('403') && !errorMessage.includes('Unauthorized')) {
+      if (!isAuthError({ errorMessage })) {
         toast.error("Failed to load users", {
           description: errorMessage || "An unexpected error occurred.",
         });
@@ -184,10 +167,8 @@ export const useAdminDashboardState = () => {
   };
 
   const loadCars = async ({ forceRefresh = false }: { forceRefresh?: boolean } = {}) => {
-    // Check if user is authenticated
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-    if (!token) {
-      return; // Don't show error if not authenticated
+    if (!isAuthenticated()) {
+      return;
     }
 
     // Check cache first
@@ -202,22 +183,17 @@ export const useAdminDashboardState = () => {
       
       if (result.success && result.cars) {
         setCars(result.cars);
-        setCarsCache({
-          data: result.cars,
-          timestamp: Date.now(),
-        });
+        setCarsCache(createCacheEntry({ data: result.cars }));
       } else {
-        // Only show error if authenticated (not 401/403 errors)
-        if (!result.error?.includes('401') && !result.error?.includes('403') && !result.error?.includes('Unauthorized')) {
+        if (!isAuthError({ errorMessage: result.error })) {
           toast.error("Failed to load cars", {
             description: result.error || "Could not fetch cars from server.",
           });
         }
       }
     } catch (error) {
-      // Only show error if it's not an auth error
       const errorMessage = error instanceof Error ? error.message : "";
-      if (!errorMessage.includes('401') && !errorMessage.includes('403') && !errorMessage.includes('Unauthorized')) {
+      if (!isAuthError({ errorMessage })) {
         toast.error("Failed to load cars", {
           description: errorMessage || "An unexpected error occurred.",
         });
@@ -228,10 +204,8 @@ export const useAdminDashboardState = () => {
   };
 
   const loadCities = async ({ forceRefresh = false }: { forceRefresh?: boolean } = {}) => {
-    // Check if user is authenticated
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-    if (!token) {
-      return; // Don't show error if not authenticated
+    if (!isAuthenticated()) {
+      return;
     }
 
     // Check cache first
@@ -246,22 +220,17 @@ export const useAdminDashboardState = () => {
       
       if (result.success && result.cities) {
         setCities(result.cities);
-        setCitiesCache({
-          data: result.cities,
-          timestamp: Date.now(),
-        });
+        setCitiesCache(createCacheEntry({ data: result.cities }));
       } else {
-        // Only show error if authenticated (not 401/403 errors)
-        if (!result.error?.includes('401') && !result.error?.includes('403') && !result.error?.includes('Unauthorized')) {
+        if (!isAuthError({ errorMessage: result.error })) {
           toast.error("Failed to load shipping cities", {
             description: result.error || "Could not fetch shipping cities from server.",
           });
         }
       }
     } catch (error) {
-      // Only show error if it's not an auth error
       const errorMessage = error instanceof Error ? error.message : "";
-      if (!errorMessage.includes('401') && !errorMessage.includes('403') && !errorMessage.includes('Unauthorized')) {
+      if (!isAuthError({ errorMessage })) {
         toast.error("Failed to load shipping cities", {
           description: errorMessage || "An unexpected error occurred.",
         });
@@ -273,7 +242,6 @@ export const useAdminDashboardState = () => {
 
   useEffect(() => {
     if (activeNav === "users" && !isLoadingUsers) {
-      // Load from cache if valid, otherwise fetch
       if (usersCache && isUsersCacheValid) {
         setUsers(usersCache.data);
       } else if (!usersCache || !isUsersCacheValid) {
@@ -282,7 +250,6 @@ export const useAdminDashboardState = () => {
     }
     
     if (activeNav === "cars" && !isLoadingCars) {
-      // Load from cache if valid, otherwise fetch
       if (carsCache && isCarsCacheValid) {
         setCars(carsCache.data);
       } else if (!carsCache || !isCarsCacheValid) {
@@ -291,7 +258,6 @@ export const useAdminDashboardState = () => {
     }
 
     if (activeNav === "settings" && !isLoadingCities) {
-      // Load from cache if valid, otherwise fetch
       if (citiesCache && isCitiesCacheValid) {
         setCities(citiesCache.data);
       } else if (!citiesCache || !isCitiesCacheValid) {
@@ -343,8 +309,3 @@ export const useAdminDashboardState = () => {
     isCitiesCacheValid,
   };
 };
-
-
-
-
-
