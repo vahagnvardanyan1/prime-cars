@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import type { Car, CarCategory } from "@/lib/cars/types";
-import { fetchCarsByCategory, fetchAllAvailableCars } from "@/lib/cars/fetchCars";
+import { fetchCarsByCategory, fetchAllAvailableCars, fetchAvailableCarsPaginated } from "@/lib/cars/fetchCars";
 import { createAvailableCar } from "@/lib/admin/createAvailableCar";
 import { updateAvailableCar } from "@/lib/admin/updateAvailableCar";
 import { deleteAvailableCar } from "@/lib/admin/deleteAvailableCar";
@@ -12,18 +12,50 @@ import type { AvailableCarFormData, UpdateAvailableCarFormData } from "@/lib/adm
 export const availableCarsKeys = {
   all: ["availableCars"] as const,
   lists: () => [...availableCarsKeys.all, "list"] as const,
-  list: (category?: CarCategory) => 
+  list: (category?: CarCategory, page?: number, limit?: number, search?: string) => 
     category 
-      ? [...availableCarsKeys.lists(), category] as const 
-      : [...availableCarsKeys.lists(), "all"] as const,
+      ? [...availableCarsKeys.lists(), category, page, limit, search] as const 
+      : [...availableCarsKeys.lists(), "all", page, limit, search] as const,
   details: () => [...availableCarsKeys.all, "detail"] as const,
   detail: (id: string) => [...availableCarsKeys.details(), id] as const,
 };
 
-// Fetch all available cars
-export const useAvailableCars = () => {
+// Fetch paginated available cars
+export const useAvailableCars = ({
+  page = 1,
+  limit = 25,
+  search,
+  carCategory,
+}: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  carCategory?: CarCategory;
+} = {}) => {
   return useQuery({
-    queryKey: availableCarsKeys.list(),
+    queryKey: availableCarsKeys.list(carCategory, page, limit, search),
+    queryFn: async () => {
+      const response = await fetchAvailableCarsPaginated({ page, limit, search, carCategory });
+      if (!response.success) {
+        throw new Error(response.error || "Failed to fetch available cars");
+      }
+      return {
+        cars: response.cars || [],
+        total: response.total || 0,
+        totalPages: response.totalPages || 0,
+        currentPage: response.page || page,
+        pageSize: response.limit || limit,
+      };
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
+  });
+};
+
+// Fetch all available cars (non-paginated, for backward compatibility)
+export const useAllAvailableCars = () => {
+  return useQuery({
+    queryKey: ["availableCars", "all"],
     queryFn: async () => {
       const response = await fetchAllAvailableCars();
       if (!response.success) {

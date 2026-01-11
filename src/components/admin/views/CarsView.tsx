@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
 import Image from "next/image";
 
-import { Download, Pencil, Plus, Trash2 } from "lucide-react";
+import { Download, Pencil, Plus, Trash2, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import type { AdminCar } from "@/lib/admin/types";
@@ -13,6 +15,7 @@ import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
 import { Pagination } from "@/components/admin/primitives/Pagination";
 import { CarFilters, type CarFiltersState } from "@/components/admin/filters/CarFilters";
 import { Button } from "@/components/ui/button";
+import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
 import {
   Table,
   TableBody,
@@ -63,6 +66,65 @@ export const CarsView = ({
 }: CarsViewProps) => {
   const t = useTranslations();
   const tTable = useTranslations("carsTable");
+  
+  // Photo carousel state
+  const [carouselOpen, setCarouselOpen] = useState(false);
+  const [selectedCarPhotos, setSelectedCarPhotos] = useState<string[]>([]);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  const handlePhotoClick = (photos: string[] | undefined, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (photos && photos.length > 0) {
+      setSelectedCarPhotos(photos);
+      setCurrentPhotoIndex(0);
+      setImageLoading(true);
+      setCarouselOpen(true);
+    }
+  };
+
+  const handleNextPhoto = () => {
+    setImageLoading(true);
+    setCurrentPhotoIndex((prev) => 
+      prev < selectedCarPhotos.length - 1 ? prev + 1 : 0
+    );
+  };
+
+  const handlePrevPhoto = () => {
+    setImageLoading(true);
+    setCurrentPhotoIndex((prev) => 
+      prev > 0 ? prev - 1 : selectedCarPhotos.length - 1
+    );
+  };
+
+  // Keyboard navigation for carousel
+  useEffect(() => {
+    if (!carouselOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        handlePrevPhoto();
+      } else if (e.key === 'ArrowRight') {
+        handleNextPhoto();
+      } else if (e.key === 'Escape') {
+        setCarouselOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [carouselOpen, selectedCarPhotos.length]);
+
+  // Preload ALL images when carousel opens for instant navigation
+  useEffect(() => {
+    if (!carouselOpen || selectedCarPhotos.length === 0) return;
+
+    // Preload all images at once
+    selectedCarPhotos.forEach((photoUrl) => {
+      const img = new window.Image();
+      img.src = photoUrl;
+    });
+  }, [carouselOpen, selectedCarPhotos]);
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "-";
@@ -79,6 +141,7 @@ export const CarsView = ({
   };
 
   return (
+    <>
     <Surface>
       <div className="px-6 py-6 flex items-center justify-between">
         <div>
@@ -120,6 +183,7 @@ export const CarsView = ({
         <TableHeader>
           <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
             <TableHead className="px-4 py-4 text-center text-sm font-semibold w-[60px]">#</TableHead>
+            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[100px]">{tTable("photos")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("purchaseDate")}</TableHead>
             <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[200px]">{tTable("car")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("lot")}</TableHead>
@@ -143,7 +207,7 @@ export const CarsView = ({
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={isAdmin ? 17 : 16} className="py-12">
+              <TableCell colSpan={isAdmin ? 18 : 17} className="py-12">
                 <div className="flex flex-col items-center justify-center gap-3">
                   <svg className="animate-spin h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -157,7 +221,7 @@ export const CarsView = ({
             </TableRow>
           ) : !cars || cars.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={isAdmin ? 17 : 16} className="py-12">
+              <TableCell colSpan={isAdmin ? 18 : 17} className="py-12">
                 <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
                   {t("admin.carsView.noCarsFound")}
                 </div>
@@ -172,6 +236,29 @@ export const CarsView = ({
                   {(currentPage - 1) * pageSize + index + 1}
                 </div>
               </TableCell>
+
+              {/* Photo (Clickable) */}
+              <TableCell className="px-4 py-6">
+                {car.imageUrl && (
+                  <button
+                    onClick={(e) => handlePhotoClick(car.photos, e)}
+                    className="relative h-16 w-20 overflow-hidden rounded-xl ring-1 ring-gray-200 dark:ring-white/10 flex-shrink-0 hover:ring-2 hover:ring-[#429de6] transition-all cursor-pointer"
+                  >
+                    <Image
+                      src={car.imageUrl}
+                      alt={car.model}
+                      fill
+                      className="object-cover"
+                      sizes="80px"
+                    />
+                    {car.photos && car.photos.length > 1 && (
+                      <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded">
+                        +{car.photos.length - 1}
+                      </div>
+                    )}
+                  </button>
+                )}
+              </TableCell>
               
               {/* Purchase Date */}
               <TableCell className="px-4 py-6 min-w-[140px]">
@@ -180,27 +267,14 @@ export const CarsView = ({
                 </div>
               </TableCell>
               
-              {/* Car (Model + Year + Image) */}
+              {/* Car (Model + Year) */}
               <TableCell className="px-6 py-6 sm:px-8 min-w-[200px]">
-                <div className="flex items-center gap-4">
-                  {car.imageUrl && (
-                    <div className="relative h-16 w-20 overflow-hidden rounded-xl ring-1 ring-gray-200 dark:ring-white/10 flex-shrink-0">
-                      <Image
-                        src={car.imageUrl}
-                        alt={car.model}
-                        fill
-                        className="object-cover"
-                        sizes="80px"
-                      />
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <div className="truncate text-base font-semibold text-gray-900 dark:text-white">
-                      {car.model}
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      {car.year}
-                    </div>
+                <div className="min-w-0">
+                  <div className="truncate text-base font-semibold text-gray-900 dark:text-white">
+                    {car.model}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {car.year}
                   </div>
                 </div>
               </TableCell>
@@ -317,6 +391,18 @@ export const CarsView = ({
               {isAdmin && (
                 <TableCell className="px-4 py-6 text-center pr-6 sm:pr-8 min-w-[160px]">
                   <div className="flex items-center justify-center gap-2">
+                    {car.photos && car.photos.length > 0 && (
+                      <DownloadImagesButton
+                        images={car.photos}
+                        carName={`${car.model} ${car.year}`}
+                        variant="outline"
+                        size="sm"
+                        useZip={true}
+                        showCount={false}
+                        compactText={true}
+                        className="h-9 px-3 gap-2 border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400 hover:text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-950/50 dark:hover:border-emerald-700 dark:hover:text-emerald-300 transition-all"
+                      />
+                    )}
                     {onUpdateCar && (
                       <Button
                         onClick={() => onUpdateCar(car)}
@@ -361,6 +447,71 @@ export const CarsView = ({
         />
       )}
     </Surface>
+
+    {/* Photo Lightbox Modal */}
+    {carouselOpen && (
+      <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4">
+        {/* Close Button */}
+        <button
+          onClick={() => setCarouselOpen(false)}
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-full transition-all z-20"
+          aria-label="Close"
+        >
+          <X className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+        </button>
+
+        {/* Previous Button */}
+        {selectedCarPhotos.length > 1 && (
+          <button
+            onClick={handlePrevPhoto}
+            className="absolute left-2 sm:left-4 p-2 sm:p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all z-20"
+            aria-label="Previous photo"
+          >
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+          </button>
+        )}
+
+        {/* Main Image */}
+        <div className="relative w-full max-w-7xl h-[85vh] sm:h-[90vh] flex items-center justify-center">
+          {/* Loading Spinner */}
+          {imageLoading && (
+            <div className="absolute inset-0 flex items-center justify-center z-10">
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-white" />
+            </div>
+          )}
+          
+          {selectedCarPhotos.length > 0 && (
+            <img
+              src={selectedCarPhotos[currentPhotoIndex]}
+              alt={`Photo ${currentPhotoIndex + 1}`}
+              className={`max-w-full max-h-full object-contain transition-opacity duration-200 ${
+                imageLoading ? 'opacity-0' : 'opacity-100'
+              }`}
+              onLoad={() => setImageLoading(false)}
+            />
+          )}
+        </div>
+
+        {/* Next Button */}
+        {selectedCarPhotos.length > 1 && (
+          <button
+            onClick={handleNextPhoto}
+            className="absolute right-2 sm:right-4 p-2 sm:p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all z-20"
+            aria-label="Next photo"
+          >
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+          </button>
+        )}
+
+        {/* Photo Counter */}
+        {selectedCarPhotos.length > 1 && (
+          <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium">
+            {currentPhotoIndex + 1} / {selectedCarPhotos.length}
+          </div>
+        )}
+      </div>
+    )}
+  </>
   );
 };
 

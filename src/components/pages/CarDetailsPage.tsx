@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, MapPin, Gauge, Fuel, Settings, Calendar, TrendingUp, X, ChevronRight } from "lucide-react";
+import { ChevronLeft, MapPin, Gauge, Fuel, Settings, Calendar, TrendingUp, X, ChevronRight, Download } from "lucide-react";
 import { useCarDetails } from "@/hooks/useCarDetails";
+import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
 
 export const CarDetailsPage = ({ carId }: { carId: string }) => {
   const t = useTranslations("carDetails");
   const router = useRouter();
-  const { car, isLoading } = useCarDetails(carId);
+  const { car, isLoading } = useCarDetails({ carId });
   const [selectedImage, setSelectedImage] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -326,19 +327,35 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
+            <div className="space-y-2.5 sm:space-y-3">
+              {/* Primary Action */}
               <a 
                 href="tel:+37444771130"
-                className="flex-1 px-5 sm:px-6 py-3 sm:py-3.5 bg-[#429de6] hover:bg-[#3a8acc] text-white text-sm sm:text-base font-semibold rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95 text-center"
+                className="block w-full px-5 sm:px-6 py-3 sm:py-3.5 bg-[#429de6] hover:bg-[#3a8acc] text-white text-sm sm:text-base font-semibold rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95 text-center"
               >
                 {t("contactButton")}
               </a>
-              <button 
-                onClick={handleShare}
-                className="relative px-5 sm:px-6 py-3 sm:py-3.5 bg-white dark:bg-white/10 text-gray-900 dark:text-white text-sm sm:text-base border border-gray-200 dark:border-white/20 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-white/20 transition-all duration-200"
-              >
-                {t("shareButton")}
-              </button>
+              
+              {/* Secondary Actions */}
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                <button 
+                  onClick={handleShare}
+                  className="px-4 sm:px-5 py-3 sm:py-3.5 bg-white dark:bg-white/10 text-gray-900 dark:text-white text-sm sm:text-base border border-gray-200 dark:border-white/20 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-white/20 transition-all duration-200"
+                >
+                  {t("shareButton")}
+                </button>
+                
+                <DownloadImagesButton
+                  images={photos}
+                  carName={`${car.brand} ${car.model} ${car.year}`}
+                  variant="outline"
+                  size="default"
+                  useZip={true}
+                  showCount={false}
+                  compactText={true}
+                  className="px-4 sm:px-5 py-3 sm:py-3.5 bg-white dark:bg-white/10 text-gray-900 dark:text-white text-sm sm:text-base border border-gray-200 dark:border-white/20 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-white/20 transition-all duration-200 h-auto justify-center"
+                />
+              </div>
             </div>
 
             {/* Share Success Toast */}

@@ -1,5 +1,14 @@
 import { CarDetailsPage } from "@/components/pages/CarDetailsPage";
 
-export default function CarPage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: {
+    id: string;
+    locale: string;
+  };
+};
+
+const Page = ({ params }: PageProps) => {
   return <CarDetailsPage carId={params.id} />;
-}
+};
+
+export default Page;

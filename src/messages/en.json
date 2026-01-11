@@ -2,6 +2,27 @@
   "meta": {
     "localeName": "English"
   },
+  "common": {
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "download": "Download",
+    "downloading": "Downloading"
+  },
+  "downloadImages": {
+    "button": "Download Photos",
+    "buttonShort": "Download Images",
+    "downloading": "Downloading...",
+    "downloadAll": "Download All ({count})",
+    "success": "Downloaded successfully",
+    "successMessage": "Downloaded {count} {count, plural, =1 {photo} other {photos}} as ZIP",
+    "successIndividual": "Successfully downloaded {count} of {total} {count, plural, =1 {image} other {images}}",
+    "error": "Download failed",
+    "errorMessage": "Failed to download images. Please try again.",
+    "noImages": "No images to download",
+    "partial": "Partial download",
+    "partialMessage": "Downloaded {count} of {total} images. {failed} failed."
+  },
   "nav": {
     "home": "Home",
     "cars": "Cars",
@@ -114,7 +135,7 @@
     "startingFrom": "Starting from",
     "eta": "Expected Arrival",
     "viewCta": "View Details",
-    "requestCta": "Request Quote",
+    "requestCta": "Order Now",
     "sort": "Sort",
     "sortOptions": {
       "priceAsc": "Price: Low to High",
@@ -916,6 +937,7 @@
   "carsTable": {
     "title": "Cars",
     "addCar": "Add Car",
+    "photos": "Photos",
     "car": "Car",
     "client": "Client",
     "price": "Price",

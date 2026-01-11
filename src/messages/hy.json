@@ -2,6 +2,27 @@
   "meta": {
     "localeName": "Հայերեն"
   },
+  "common": {
+    "success": "Հաջողություն",
+    "error": "Սխալ",
+    "warning": "Զգուշացում",
+    "download": "Ներբեռնել",
+    "downloading": "Ներբեռնում"
+  },
+  "downloadImages": {
+    "button": "Ներբեռնել նկարները",
+    "buttonShort": "Ներբեռնել նկարները",
+    "downloading": "Ներբեռնվում է...",
+    "downloadAll": "Ներբեռնել բոլորը ({count})",
+    "success": "Հաջողությամբ ներբեռնվեց",
+    "successMessage": "Ներբեռնվեց {count} {count, plural, =1 {լուսանկար} other {լուսանկար}} ZIP ֆայլում",
+    "successIndividual": "Հաջողությամբ ներբեռնվեց {count} {total}-ից {count, plural, =1 {նկար} other {նկար}}",
+    "error": "Ներբեռնումը ձախողվեց",
+    "errorMessage": "Չհաջողվեց ներբեռնել նկարները։ Փորձեք կրկին։",
+    "noImages": "Ներբեռնելու լուսանկարներ չկան",
+    "partial": "Մասնակի ներբեռնում",
+    "partialMessage": "Ներբեռնվեց {count} {total}-ից։ {failed} ձախողվեց։"
+  },
   "nav": {
     "home": "Գլխավոր",
     "cars": "Ավտոմեքենաներ",
@@ -114,7 +135,7 @@
     "startingFrom": "Սկսած",
     "eta": "Ակնկալվող ժամանում",
     "viewCta": "Դիտել մանրամասները",
-    "requestCta": "Պահանջել գին",
+    "requestCta": "Պատվիրել հիմա",
     "sort": "Դասավորել",
     "sortOptions": {
       "priceAsc": "Գին: Ցածրից բարձր",
@@ -917,6 +938,7 @@
   "carsTable": {
     "title": "Մեքենաներ",
     "addCar": "Ավելացնել մեքենա",
+    "photos": "Նկարներ",
     "car": "Մեքենա",
     "client": "Հաճախորդ",
     "price": "Գին",

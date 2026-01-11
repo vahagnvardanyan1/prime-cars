@@ -63,6 +63,73 @@ export const fetchAllCarsLegacy = async (): Promise<FetchCarsResponse> => {
   }
 };
 
+// Fetch paginated available cars from the /available-cars/paginated endpoint
+export const fetchAvailableCarsPaginated = async ({
+  page = 1,
+  limit = 25,
+  search,
+  carCategory,
+}: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  carCategory?: CarCategory;
+} = {}): Promise<FetchCarsResponse & { total?: number; totalPages?: number; page?: number; limit?: number }> => {
+  try {
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
+    if (search) {
+      params.append("search", search);
+    }
+    if (carCategory) {
+      params.append("carCategory", carCategory);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/available-cars/paginated?${params.toString()}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    
+    // Response structure similar to vehicles: { status, data: { data: [...], meta: {...} } }
+    const dataWrapper = responseData?.data;
+    const carsArray: BackendAvailableCar[] = dataWrapper?.data || [];
+    const meta = dataWrapper?.meta || {};
+
+    // Map backend cars to frontend Car type
+    const cars = carsArray.map(mapBackendCarToFrontend);
+
+    return {
+      success: true,
+      cars,
+      total: meta.totalItems || 0,
+      page: meta.currentPage || page,
+      limit: meta.itemsPerPage || limit,
+      totalPages: meta.totalPages || 0,
+    };
+  } catch (error) {
+    console.error("Error fetching paginated available cars:", error);
+    return {
+      success: false,
+      cars: [],
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+      total: 0,
+      page: 1,
+      limit: 25,
+      totalPages: 0,
+    };
+  }
+};
+
 // Fetch all available cars from the /available-cars endpoint
 export const fetchAllAvailableCars = async (): Promise<FetchCarsResponse> => {
   try {

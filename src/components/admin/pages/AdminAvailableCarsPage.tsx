@@ -25,7 +25,7 @@ import {
 import { useUser } from "@/contexts/UserContext";
 import type { Car, CarCategory } from "@/lib/cars/types";
 import { 
-  useAvailableCarsByCategory, 
+  useAvailableCars, 
   useDeleteAvailableCar 
 } from "@/hooks/admin/useAvailableCars";
 
@@ -49,6 +49,16 @@ export const AdminAvailableCarsPage = () => {
   const getInitialSearch = (): string => {
     return searchParams.get("search") || "";
   };
+
+  const getInitialPageSize = (): number => {
+    const saved = searchParams.get("pageSize");
+    return saved ? parseInt(saved, 10) : 25;
+  };
+
+  const getInitialPageForTab = (tab: string): number => {
+    const saved = searchParams.get(`${tab.toLowerCase()}Page`);
+    return saved ? parseInt(saved, 10) : 1;
+  };
   
   const [activeTab, setActiveTab] = useState<CarCategory>(getInitialTab());
   const [searchQuery, setSearchQuery] = useState(getInitialSearch());
@@ -58,24 +68,55 @@ export const AdminAvailableCarsPage = () => {
   const [carToDelete, setCarToDelete] = useState<Car | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // React Query hooks for each category
+  // Pagination state for each tab - initialize from URL
+  const [availablePage, setAvailablePage] = useState(() => getInitialPageForTab("AVAILABLE"));
+  const [onroadPage, setOnroadPage] = useState(() => getInitialPageForTab("ONROAD"));
+  const [transitPage, setTransitPage] = useState(() => getInitialPageForTab("TRANSIT"));
+  const [pageSize, setPageSize] = useState(getInitialPageSize);
+
+  // Get current page for active tab
+  const getCurrentPage = () => {
+    switch (activeTab) {
+      case "AVAILABLE": return availablePage;
+      case "ONROAD": return onroadPage;
+      case "TRANSIT": return transitPage;
+      default: return 1;
+    }
+  };
+
+  // React Query hook with pagination for each category
   const { 
-    data: availableCars = [], 
+    data: availableData,
     isLoading: isLoadingAvailable, 
     refetch: refetchAvailable 
-  } = useAvailableCarsByCategory("AVAILABLE");
+  } = useAvailableCars({
+    page: availablePage,
+    limit: pageSize,
+    search: searchQuery,
+    carCategory: "AVAILABLE",
+  });
   
   const { 
-    data: onroadCars = [], 
+    data: onroadData,
     isLoading: isLoadingOnroad, 
     refetch: refetchOnroad 
-  } = useAvailableCarsByCategory("ONROAD");
+  } = useAvailableCars({
+    page: onroadPage,
+    limit: pageSize,
+    search: searchQuery,
+    carCategory: "ONROAD",
+  });
   
   const { 
-    data: transitCars = [], 
+    data: transitData,
     isLoading: isLoadingTransit, 
     refetch: refetchTransit 
-  } = useAvailableCarsByCategory("TRANSIT");
+  } = useAvailableCars({
+    page: transitPage,
+    limit: pageSize,
+    search: searchQuery,
+    carCategory: "TRANSIT",
+  });
 
   // Delete mutation
   const deleteMutation = useDeleteAvailableCar();
@@ -87,12 +128,36 @@ export const AdminAvailableCarsPage = () => {
     }
   }, [isAdmin, router]);
 
-  // Update active tab and search from URL
+  // Sync state with URL changes
   useEffect(() => {
     const tabFromUrl = getInitialTab();
     setActiveTab(tabFromUrl);
+    
     const searchFromUrl = getInitialSearch();
     setSearchQuery(searchFromUrl);
+
+    // Sync pagination from URL
+    const urlAvailablePage = searchParams.get("availablePage");
+    const urlOnroadPage = searchParams.get("onroadPage");
+    const urlTransitPage = searchParams.get("transitPage");
+    const urlPageSize = searchParams.get("pageSize");
+
+    if (urlAvailablePage) {
+      const parsed = parseInt(urlAvailablePage, 10);
+      if (parsed !== availablePage) setAvailablePage(parsed);
+    }
+    if (urlOnroadPage) {
+      const parsed = parseInt(urlOnroadPage, 10);
+      if (parsed !== onroadPage) setOnroadPage(parsed);
+    }
+    if (urlTransitPage) {
+      const parsed = parseInt(urlTransitPage, 10);
+      if (parsed !== transitPage) setTransitPage(parsed);
+    }
+    if (urlPageSize) {
+      const parsed = parseInt(urlPageSize, 10);
+      if (parsed !== pageSize) setPageSize(parsed);
+    }
   }, [searchParams]);
 
   const handleUpdateCar = (car: Car) => {
@@ -102,20 +167,40 @@ export const AdminAvailableCarsPage = () => {
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    // Update URL with search parameter
+    
+    // Reset all pages to 1 when search changes
+    setAvailablePage(1);
+    setOnroadPage(1);
+    setTransitPage(1);
+    
+    // Update URL with search parameter and reset pages
     const params = new URLSearchParams(searchParams.toString());
     if (value.trim()) {
       params.set("search", value);
     } else {
       params.delete("search");
     }
+    params.set("availablePage", "1");
+    params.set("onroadPage", "1");
+    params.set("transitPage", "1");
+    
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
   const handleClearSearch = () => {
     setSearchQuery("");
+    
+    // Reset all pages to 1 when clearing search
+    setAvailablePage(1);
+    setOnroadPage(1);
+    setTransitPage(1);
+    
     const params = new URLSearchParams(searchParams.toString());
     params.delete("search");
+    params.set("availablePage", "1");
+    params.set("onroadPage", "1");
+    params.set("transitPage", "1");
+    
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
@@ -156,6 +241,47 @@ export const AdminAvailableCarsPage = () => {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
+  // Pagination handlers with URL updates
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    switch (activeTab) {
+      case "AVAILABLE":
+        setAvailablePage(page);
+        params.set("availablePage", page.toString());
+        break;
+      case "ONROAD":
+        setOnroadPage(page);
+        params.set("onroadPage", page.toString());
+        break;
+      case "TRANSIT":
+        setTransitPage(page);
+        params.set("transitPage", page.toString());
+        break;
+    }
+    
+    // Update URL
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    
+    // Reset all pages to 1 when page size changes
+    setAvailablePage(1);
+    setOnroadPage(1);
+    setTransitPage(1);
+    
+    // Update URL with new page size and reset all page numbers
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("pageSize", size.toString());
+    params.set("availablePage", "1");
+    params.set("onroadPage", "1");
+    params.set("transitPage", "1");
+    
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+
   const handleRefresh = () => {
     switch (activeTab) {
       case "AVAILABLE":
@@ -170,39 +296,20 @@ export const AdminAvailableCarsPage = () => {
     }
   };
 
-  // Get all cars from all categories for search
-  const allCars = [...availableCars, ...onroadCars, ...transitCars];
-
-  // Filter all cars based on search query
-  const getSearchResults = () => {
-    if (!searchQuery.trim()) return null;
-    
-    const query = searchQuery.toLowerCase();
-    return allCars.filter((car) => (
-      car.brand.toLowerCase().includes(query) ||
-      car.model.toLowerCase().includes(query) ||
-      car.year.toString().includes(query) ||
-      car.location?.toLowerCase().includes(query) ||
-      car.engine?.toLowerCase().includes(query) ||
-      car.fuelType?.toLowerCase().includes(query) ||
-      car.vin?.toLowerCase().includes(query)
-    ));
-  };
-
-  const searchResults = getSearchResults();
+  // Check if user is searching
   const isSearching = searchQuery.trim().length > 0;
 
-  // Get current cars based on active tab
-  const getCurrentCars = () => {
+  // Get current data based on active tab
+  const getCurrentData = () => {
     switch (activeTab) {
       case "AVAILABLE":
-        return availableCars;
+        return availableData || { cars: [], total: 0, totalPages: 0, currentPage: 1, pageSize: 25 };
       case "ONROAD":
-        return onroadCars;
+        return onroadData || { cars: [], total: 0, totalPages: 0, currentPage: 1, pageSize: 25 };
       case "TRANSIT":
-        return transitCars;
+        return transitData || { cars: [], total: 0, totalPages: 0, currentPage: 1, pageSize: 25 };
       default:
-        return [];
+        return { cars: [], total: 0, totalPages: 0, currentPage: 1, pageSize: 25 };
     }
   };
 
@@ -218,6 +325,8 @@ export const AdminAvailableCarsPage = () => {
         return false;
     }
   };
+
+  const currentData = getCurrentData();
 
   // Don't render anything if not admin
   if (!isAdmin) {
@@ -283,13 +392,13 @@ export const AdminAvailableCarsPage = () => {
             >
               <span className="flex items-center gap-2">
                 <span>{t("tabs.current")}</span>
-                {!isLoadingAvailable && availableCars.length > 0 && (
+                {!isLoadingAvailable && availableData && availableData.total > 0 && (
                   <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
                     activeTab === "AVAILABLE" 
                       ? "bg-white/20 text-white" 
                       : "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400"
                   }`}>
-                    {availableCars.length}
+                    {availableData.total}
                   </span>
                 )}
               </span>
@@ -305,13 +414,13 @@ export const AdminAvailableCarsPage = () => {
             >
               <span className="flex items-center gap-2">
                 <span>{t("tabs.arriving")}</span>
-                {!isLoadingOnroad && onroadCars.length > 0 && (
+                {!isLoadingOnroad && onroadData && onroadData.total > 0 && (
                   <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
                     activeTab === "ONROAD" 
                       ? "bg-white/20 text-white" 
                       : "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400"
                   }`}>
-                    {onroadCars.length}
+                    {onroadData.total}
                   </span>
                 )}
               </span>
@@ -327,13 +436,13 @@ export const AdminAvailableCarsPage = () => {
             >
               <span className="flex items-center gap-2">
                 <span>{t("tabs.order")}</span>
-                {!isLoadingTransit && transitCars.length > 0 && (
+                {!isLoadingTransit && transitData && transitData.total > 0 && (
                   <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
                     activeTab === "TRANSIT" 
                       ? "bg-white/20 text-white" 
                       : "bg-blue-100 dark:bg-[#429de6]/20 text-blue-700 dark:text-[#429de6]"
                   }`}>
-                    {transitCars.length}
+                    {transitData.total}
                   </span>
                 )}
               </span>
@@ -341,73 +450,81 @@ export const AdminAvailableCarsPage = () => {
           </div>
         )}
 
-        {/* Search Results - Show when searching */}
-        {isSearching ? (
-          <div>
-            <div className="mb-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {searchResults && searchResults.length > 0 
-                  ? tAvailableCars("searchResults", { count: searchResults.length, query: searchQuery })
-                  : tAvailableCars("noResults", { query: searchQuery })
-                }
-              </p>
+        {/* Content - Show paginated results (search is now server-side) */}
+        {searchQuery.trim().length > 0 && (
+          <div className="mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {currentData.total > 0 
+                ? tAvailableCars("searchResults", { count: currentData.total, query: searchQuery })
+                : tAvailableCars("noResults", { query: searchQuery })
+              }
+            </p>
+          </div>
+        )}
+        
+        {currentData.total === 0 && searchQuery.trim().length > 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+            <div className="w-20 h-20 rounded-2xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-4">
+              <Search className="w-10 h-10 text-gray-400 dark:text-gray-500" />
             </div>
-            {searchResults && searchResults.length > 0 ? (
-              <AvailableCarsView
-                cars={searchResults}
-                isLoading={false}
-                onRefresh={handleRefresh}
-                onUpdateCar={handleUpdateCar}
-                onDeleteCar={handleDeleteCar}
-                isAdmin={isAdmin}
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-                <div className="w-20 h-20 rounded-2xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-4">
-                  <Search className="w-10 h-10 text-gray-400 dark:text-gray-500" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  No results found
-                </h3>
-                <p className="text-gray-500 dark:text-gray-400 max-w-md">
-                  No cars match your search &quot;{searchQuery}&quot;. Try different keywords.
-                </p>
-              </div>
-            )}
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              No results found
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 max-w-md">
+              No cars match your search &quot;{searchQuery}&quot;. Try different keywords.
+            </p>
           </div>
         ) : (
-          /* Tab Content - Only show when not searching */
+          /* Tab Content */
           <>
             <TabsContent value="AVAILABLE" className="mt-0">
               <AvailableCarsView 
-                cars={getCurrentCars()} 
-                isLoading={getCurrentLoading()} 
+                cars={availableData?.cars || []} 
+                isLoading={isLoadingAvailable} 
                 onRefresh={handleRefresh}
                 onUpdateCar={handleUpdateCar}
                 onDeleteCar={handleDeleteCar}
                 isAdmin={isAdmin}
+                currentPage={availableData?.currentPage || 1}
+                totalPages={availableData?.totalPages || 0}
+                pageSize={availableData?.pageSize || pageSize}
+                totalItems={availableData?.total || 0}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
               />
             </TabsContent>
 
             <TabsContent value="ONROAD" className="mt-0">
               <AvailableCarsView 
-                cars={getCurrentCars()} 
-                isLoading={getCurrentLoading()} 
+                cars={onroadData?.cars || []} 
+                isLoading={isLoadingOnroad} 
                 onRefresh={handleRefresh}
                 onUpdateCar={handleUpdateCar}
                 onDeleteCar={handleDeleteCar}
                 isAdmin={isAdmin}
+                currentPage={onroadData?.currentPage || 1}
+                totalPages={onroadData?.totalPages || 0}
+                pageSize={onroadData?.pageSize || pageSize}
+                totalItems={onroadData?.total || 0}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
               />
             </TabsContent>
 
             <TabsContent value="TRANSIT" className="mt-0">
               <AvailableCarsView 
-                cars={getCurrentCars()} 
-                isLoading={getCurrentLoading()} 
+                cars={transitData?.cars || []} 
+                isLoading={isLoadingTransit} 
                 onRefresh={handleRefresh}
                 onUpdateCar={handleUpdateCar}
                 onDeleteCar={handleDeleteCar}
                 isAdmin={isAdmin}
+                currentPage={transitData?.currentPage || 1}
+                totalPages={transitData?.totalPages || 0}
+                pageSize={transitData?.pageSize || pageSize}
+                totalItems={transitData?.total || 0}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
               />
             </TabsContent>
           </>

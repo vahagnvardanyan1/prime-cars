@@ -28,6 +28,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginSuccessful, setLoginSuccessful] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  // Track if component has mounted to prevent hydration errors
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   // Check on mount if user exists
   useEffect(() => {
@@ -51,7 +57,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     setShowLoginModal(false);
   };
 
-  if (isLoadingUser) {
+  // Show loading on server-side and initial client render to prevent hydration mismatch
+  if (!hasMounted || isLoadingUser) {
     return (
       <div className="flex h-screen items-center justify-center bg-white dark:bg-[#0a0a0a]">
         <div className="text-center">
@@ -92,7 +99,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-[#0a0a0a]">
+    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-[#0a0a0a]" suppressHydrationWarning>
       {/* Show notification popup only for non-admin users */}
       {user && !isAdmin && <NotificationPopup userId={user.id} />}
       

@@ -9,7 +9,9 @@ import { useTranslations } from "next-intl";
 import type { Car } from "@/lib/cars/types";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
+import { Pagination } from "@/components/admin/primitives/Pagination";
 import { Button } from "@/components/ui/button";
+import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
 import {
   Table,
   TableBody,
@@ -27,8 +29,13 @@ type AvailableCarsViewProps = {
   onUpdateCar?: (car: Car) => void;
   onDeleteCar?: (car: Car) => void;
   isAdmin?: boolean;
+  // Pagination
   currentPage?: number;
+  totalPages?: number;
   pageSize?: number;
+  totalItems?: number;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (size: number) => void;
 };
 
 export const AvailableCarsView = ({ 
@@ -39,8 +46,13 @@ export const AvailableCarsView = ({
   onUpdateCar, 
   onDeleteCar, 
   isAdmin = false,
+  // Pagination
   currentPage = 1,
+  totalPages = 1,
   pageSize = 25,
+  totalItems = 0,
+  onPageChange,
+  onPageSizeChange,
 }: AvailableCarsViewProps) => {
   const t = useTranslations("admin.availableCars");
   const [carouselOpen, setCarouselOpen] = useState(false);
@@ -181,7 +193,7 @@ export const AvailableCarsView = ({
                     {/* Row Number */}
                     <TableCell className="px-4 py-6 text-center">
                       <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        {(currentPage - 1) * pageSize + index}
+                        {(currentPage - 1) * pageSize + index + 1}
                       </div>
                     </TableCell>
                     
@@ -286,6 +298,18 @@ export const AvailableCarsView = ({
                     {isAdmin && (
                       <TableCell className="px-4 py-6 text-center pr-6 sm:pr-8">
                         <div className="flex items-center justify-center gap-2">
+                          {car.photos && car.photos.length > 0 && (
+                            <DownloadImagesButton
+                              images={car.photos}
+                              carName={`${car.brand} ${car.model} ${car.year}`}
+                              variant="outline"
+                              size="sm"
+                              useZip={true}
+                              showCount={false}
+                              compactText={true}
+                              className="h-9 px-3 gap-2 border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400 hover:text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-950/50 dark:hover:border-emerald-700 dark:hover:text-emerald-300 transition-all"
+                            />
+                          )}
                           {onUpdateCar && (
                             <Button
                               onClick={() => onUpdateCar(car)}
@@ -317,6 +341,19 @@ export const AvailableCarsView = ({
             </TableBody>
           </Table>
         </div>
+
+        {/* Pagination */}
+        {onPageChange && onPageSizeChange && totalPages > 0 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={onPageChange}
+            onPageSizeChange={onPageSizeChange}
+            pageSizeOptions={[25, 50, 100]}
+          />
+        )}
       </Surface>
 
       {/* Photo Lightbox Modal */}

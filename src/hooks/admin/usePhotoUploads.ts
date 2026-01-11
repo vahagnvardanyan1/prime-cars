@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type UsePhotoUploadsArgs = {
   maxFiles?: number;
@@ -11,20 +11,52 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
   const [files, setFiles] = useState<(File | null)[]>(
     Array.from({ length: initialSlots }).map(() => null),
   );
+  
+  // Store preview URLs separately with a ref to track which files they belong to
+  const [previews, setPreviews] = useState<(string | null)[]>(
+    Array.from({ length: initialSlots }).map(() => null)
+  );
+  const fileToUrlMap = useRef<Map<File, string>>(new Map());
 
-  const previews = useMemo(() => {
-    return files.map((file) => (file ? URL.createObjectURL(file) : null));
+  // Update previews only when files actually change
+  useEffect(() => {
+    const newPreviews = files.map((file) => {
+      if (!file) return null;
+      
+      // Reuse existing URL if we already have one for this file
+      if (fileToUrlMap.current.has(file)) {
+        return fileToUrlMap.current.get(file)!;
+      }
+      
+      // Create new URL only for new files
+      const url = URL.createObjectURL(file);
+      fileToUrlMap.current.set(file, url);
+      return url;
+    });
+    
+    // Revoke URLs for files that are no longer in the list
+    const currentFiles = new Set(files.filter((f): f is File => f !== null));
+    for (const [file, url] of fileToUrlMap.current.entries()) {
+      if (!currentFiles.has(file)) {
+        URL.revokeObjectURL(url);
+        fileToUrlMap.current.delete(file);
+      }
+    }
+    
+    setPreviews(newPreviews);
   }, [files]);
 
+  // Cleanup all URLs on unmount
   useEffect(() => {
     return () => {
-      previews.forEach((url) => {
-        if (url) URL.revokeObjectURL(url);
-      });
+      for (const url of fileToUrlMap.current.values()) {
+        URL.revokeObjectURL(url);
+      }
+      fileToUrlMap.current.clear();
     };
-  }, [previews]);
+  }, []);
 
-  const setFileAt = ({ index, file }: { index: number; file: File | null }) => {
+  const setFileAt = useCallback(({ index, file }: { index: number; file: File | null }) => {
     setFiles((prev) => {
       const updated = prev.map((p, i) => (i === index ? file : p));
       
@@ -36,9 +68,9 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
       
       return updated;
     });
-  };
+  }, [maxFiles]);
 
-  const removeFileAt = ({ index }: { index: number }) => {
+  const removeFileAt = useCallback(({ index }: { index: number }) => {
     setFiles((prev) => {
       // If there's only one slot, just clear it
       if (prev.length === 1) {
@@ -55,13 +87,13 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
       
       return filtered;
     });
-  };
+  }, []);
 
-  const clearAll = () => {
+  const clearAll = useCallback(() => {
     setFiles(Array.from({ length: initialSlots }).map(() => null));
-  };
+  }, [initialSlots]);
 
-  const addMultipleFiles = (newFiles: File[]) => {
+  const addMultipleFiles = useCallback((newFiles: File[]) => {
     setFiles((prev) => {
       // Find the first empty slot index
       const firstEmptyIndex = prev.findIndex(f => f === null);
@@ -106,7 +138,7 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
       
       return updated;
     });
-  };
+  }, [maxFiles]);
 
   return { files, previews, setFileAt, removeFileAt, clearAll, addMultipleFiles };
 };

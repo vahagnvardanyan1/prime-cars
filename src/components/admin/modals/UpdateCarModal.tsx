@@ -24,6 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PdfUploader } from "@/components/admin/primitives/PdfUploader";
+import { usePhotoUploads } from "@/hooks/admin/usePhotoUploads";
+import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
 
 type UpdateCarModalProps = {
   open: boolean;
@@ -45,6 +47,14 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
   const [users, setUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Photo management
+  const { files, previews: newPreviews, setFileAt, removeFileAt, clearAll, addMultipleFiles } = usePhotoUploads({ 
+    maxFiles: 25, 
+    initialSlots: 1 
+  });
+  const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
+  const [photosToDelete, setPhotosToDelete] = useState<string[]>([]);
 
   // Form state
   const [selectedUserId, setSelectedUserId] = useState<string>("");
@@ -82,8 +92,15 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
       setCarPaid(car.carPaid || false);
       setShippingPaid(car.shippingPaid || false);
       setInsurance(car.insurance || false);
+      
+      // Initialize photos
+      const carPhotos = car.photos || [];
+      setExistingPhotos(carPhotos);
+      setPhotosToDelete([]);
+      clearAll();
       // Note: selectedUserId is set after users are loaded
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [car]);
 
   // Fetch users
@@ -141,6 +158,14 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
     }
   }, [open, car]);
 
+  const handleRemoveExistingPhoto = (index: number) => {
+    const photoUrl = existingPhotos[index];
+    if (photoUrl) {
+      setPhotosToDelete((prev) => [...prev, photoUrl]);
+      setExistingPhotos((prev) => prev.filter((_, i) => i !== index));
+    }
+  };
+
   const handleClose = () => {
     // Reset selected user and invoice when closing
     setSelectedUserId("");
@@ -177,6 +202,9 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
       return;
     }
 
+    // Filter out null files to get only new photos
+    const newPhotoFiles = files.filter((file): file is File => file !== null);
+
     setIsSubmitting(true);
 
     try {
@@ -202,6 +230,8 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
           ...(customerNotes.trim() && { customerNotes: customerNotes.trim() }),
         },
         invoiceFile,
+        newPhotos: newPhotoFiles,
+        photosToDelete,
       });
 
       if (result.success) {
@@ -239,6 +269,68 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
         </DialogHeader>
 
         <div className="px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-8 space-y-4 sm:space-y-5 lg:space-y-6 bg-gray-50/50 dark:bg-[#0b0f14]">
+          {/* Car Photos */}
+          <div className="space-y-3">
+            <Label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+              Existing Car Photos {existingPhotos.length > 0 && `(${existingPhotos.length})`}
+            </Label>
+            
+            {/* Existing Photos - Readonly, can only be deleted */}
+            {existingPhotos.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                {existingPhotos.map((photoUrl, index) => (
+                  <div key={`existing-${index}`} className="group relative h-[140px] sm:h-[160px] overflow-hidden rounded-2xl border border-solid border-gray-200 dark:border-white/10">
+                    <img
+                      src={photoUrl}
+                      alt={`Car photo ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/0 to-black/0 opacity-0 transition-opacity group-hover:opacity-100" />
+                    <div className="absolute bottom-2 left-2 rounded-full bg-white/90 px-2 py-1 text-[11px] font-medium text-gray-900 opacity-0 transition-opacity group-hover:opacity-100">
+                      Photo {index + 1}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveExistingPhoto(index)}
+                      className="absolute top-2 right-2 p-1.5 bg-red-500 hover:bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:scale-110"
+                      aria-label="Remove photo"
+                    >
+                      <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* New Photos Upload */}
+            <div className="space-y-2 pt-2">
+              <Label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+                Add New Photos
+              </Label>
+              <PhotoUploadGrid
+                label=""
+                previews={newPreviews}
+                onPickFile={setFileAt}
+                onRemoveFile={removeFileAt}
+                onPickMultipleFiles={addMultipleFiles}
+                tileClassName="h-[140px] sm:h-[160px]"
+              />
+            </div>
+
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-gray-200 dark:border-white/10">
+              <p className="text-gray-500 dark:text-gray-400">
+                {existingPhotos.length} existing • {files.filter(f => f !== null).length} new • Up to 25 photos total
+              </p>
+              {photosToDelete.length > 0 && (
+                <p className="text-amber-600 dark:text-amber-400 font-medium">
+                  {photosToDelete.length} photo{photosToDelete.length > 1 ? 's' : ''} will be deleted
+                </p>
+              )}
+            </div>
+          </div>
+
           {/* Row 1: Model, Year, Price, Vehicle Type, Auction */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
             <div className="space-y-2">

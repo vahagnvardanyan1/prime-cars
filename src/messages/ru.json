@@ -2,6 +2,27 @@
   "meta": {
     "localeName": "Русский"
   },
+  "common": {
+    "success": "Успех",
+    "error": "Ошибка",
+    "warning": "Предупреждение",
+    "download": "Скачать",
+    "downloading": "Загрузка"
+  },
+  "downloadImages": {
+    "button": "Скачать фото",
+    "buttonShort": "Скачать изображения",
+    "downloading": "Загрузка...",
+    "downloadAll": "Скачать все ({count})",
+    "success": "Успешно загружено",
+    "successMessage": "Загружено {count} {count, plural, =1 {фото} other {фото}} в ZIP",
+    "successIndividual": "Успешно загружено {count} из {total} {count, plural, =1 {изображение} =2 {изображения} =3 {изображения} =4 {изображения} other {изображений}}",
+    "error": "Ошибка загрузки",
+    "errorMessage": "Не удалось загрузить изображения. Попробуйте снова.",
+    "noImages": "Нет изображений для загрузки",
+    "partial": "Частичная загрузка",
+    "partialMessage": "Загружено {count} из {total}. {failed} не удалось."
+  },
   "nav": {
     "home": "Главная",
     "cars": "Авто",
@@ -114,7 +135,7 @@
     "startingFrom": "От",
     "eta": "Ожидаемое прибытие",
     "viewCta": "Подробнее",
-    "requestCta": "Запросить цену",
+    "requestCta": "Заказать сейчас",
     "sort": "Сортировка",
     "sortOptions": {
       "priceAsc": "Цена: По возрастанию",
@@ -917,6 +938,7 @@
   "carsTable": {
     "title": "Автомобили",
     "addCar": "Добавить автомобиль",
+    "photos": "Фото",
     "car": "Автомобиль",
     "client": "Клиент",
     "price": "Цена",

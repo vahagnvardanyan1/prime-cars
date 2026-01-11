@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import type { Car } from "@/lib/cars/types";
 
-import { fetchCarById } from "@/lib/cars/fetchCars";
+import { fetchAvailableCarById } from "@/lib/cars/fetchCars";
 
 export const useCarDetails = ({ carId }: { carId: string }) => {
   const [car, setCar] = useState<Car | null>(null);
@@ -16,7 +16,7 @@ export const useCarDetails = ({ carId }: { carId: string }) => {
       setIsLoading(true);
       setError(null);
       
-      const result = await fetchCarById(carId);
+      const result = await fetchAvailableCarById(carId);
       
       if (result.success && result.car) {
         setCar(result.car);

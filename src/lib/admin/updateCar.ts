@@ -29,10 +29,14 @@ export const updateCar = async ({
   id,
   data,
   invoiceFile,
+  newPhotos,
+  photosToDelete,
 }: {
   id: string;
   data: UpdateCarData;
   invoiceFile?: File | null;
+  newPhotos?: File[];
+  photosToDelete?: string[];
 }): Promise<UpdateCarResponse> => {
   try {
     // Create FormData for multipart/form-data
@@ -60,6 +64,20 @@ export const updateCar = async ({
 
     if (invoiceFile) {
       formData.append("invoice", invoiceFile);
+    }
+
+    // Append new photos
+    if (newPhotos && newPhotos.length > 0) {
+      newPhotos.forEach((photo) => {
+        formData.append("photos", photo);
+      });
+    }
+
+    // Append photos to delete
+    if (photosToDelete && photosToDelete.length > 0) {
+      photosToDelete.forEach((photoUrl) => {
+        formData.append("photosToDelete", photoUrl);
+      });
     }
 
     const response = await authenticatedFetch(`${API_BASE_URL}/vehicles/${id}`, {
