@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 
-import type { AdminCar, ShippingCity } from "@/lib/admin/types";
+import type { ShippingCity } from "@/lib/admin/types";
 import { useUsers, useAdminCars, useShipping, useDeleteShipping, useIncreaseShippingPrices } from "@/lib/react-query/hooks";
 import { toast } from "sonner";
 
@@ -58,6 +58,8 @@ export const useAdminDashboardStateRefactored = () => {
     nextShippingUsd: number;
   }) => {
     // This would be handled by a mutation in the actual implementation
+    // Placeholder to avoid unused variable warnings
+    console.log('Update city price:', cityId, nextShippingUsd);
     // For now, just refetch
     refetchCities();
   };

@@ -68,7 +68,7 @@ const fetchAdminCars = async (params?: FetchCarsParams): Promise<FetchCarsRespon
   const cars = Array.isArray(result) ? result : result.data || [];
 
   return {
-    cars: cars.map((car: any) => ({
+    cars: cars.map((car: Record<string, unknown>) => ({
       id: car._id || car.id,
       imageUrl: car.imageUrl || car.image || "",
       model: car.model,

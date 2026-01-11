@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import type { ShippingCity, AdminUser } from "@/lib/admin/types";
+import type { ShippingCity } from "@/lib/admin/types";
 import { Auction } from "@/lib/admin/types";
 import { useShipping, useUsers, useDeleteShipping, useUpdateUserCoefficient, useIncreaseShippingPrices } from "@/lib/react-query/hooks";
 import { toast } from "sonner";
@@ -92,7 +92,7 @@ export const useAdminSettingsStateRefactored = () => {
     updateCityPriceModal,
     openUpdateCityPrice,
     closeUpdateCityPrice,
-    selectedCity,
+    selectedCity: selectedCity as ShippingCity | null,
 
     cities,
     users,

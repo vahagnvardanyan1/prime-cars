@@ -1,9 +1,12 @@
 "use client";
 
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext } from "react";
+import type { ReactNode } from "react";
 
 import { useMe, useLogout } from "@/lib/react-query/hooks/useAuth";
+
 import { removeTokens } from "@/lib/auth/token";
+import { isAdmin } from "@/lib/rbac/permissions";
 
 type User = {
   id: string;
@@ -40,10 +43,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     logout();
   };
 
-  const isAdmin = user?.role?.toLowerCase() === "admin";
+  const userIsAdmin = user?.role ? isAdmin({ role: user.role }) : false;
 
   return (
-    <UserContext.Provider value={{ user: user || null, isLoading, isAdmin, refreshUser, clearUser }}>
+    <UserContext.Provider value={{ user: user || null, isLoading, isAdmin: userIsAdmin, refreshUser, clearUser }}>
       {children}
     </UserContext.Provider>
   );

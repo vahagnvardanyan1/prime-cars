@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { fetchAllHomeCars } from "@/lib/public/fetchHomeCars";
 import type { HomeCar } from "@/lib/public/types";
+
+import { fetchAllHomeCars } from "@/lib/public/fetchHomeCars";
 
 type HomePageCarsState = {
   currentCars: HomeCar[];

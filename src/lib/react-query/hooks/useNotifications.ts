@@ -46,7 +46,7 @@ const fetchNotifications = async (params?: FetchNotificationsParams): Promise<Fe
   const result = await response.json();
   const notifications = Array.isArray(result) ? result : result.data || [];
 
-  const mapped = notifications.map((item: any) => {
+  const mapped = notifications.map((item: Record<string, unknown>) => {
     const notif = item.notification || item;
     return {
       id: notif._id || notif.id || "",

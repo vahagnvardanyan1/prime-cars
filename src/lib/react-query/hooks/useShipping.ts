@@ -37,7 +37,7 @@ const fetchShipping = async (params?: FetchShippingParams): Promise<ShippingCity
   const result = await response.json();
   const shipping = Array.isArray(result) ? result : result.data || [];
 
-  return shipping.map((item: any) => ({
+  return shipping.map((item: Record<string, unknown>) => ({
     id: item._id || item.id,
     city: item.city,
     shippingUsd: item.shippingUsd || item.price,

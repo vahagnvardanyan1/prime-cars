@@ -1,11 +1,19 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
+
 import { useRouter, useSearchParams } from "next/navigation";
+
 import { toast } from "sonner";
 
 import type { AdminCar } from "@/lib/admin/types";
-import { fetchCars } from "@/lib/admin/fetchCars";
 
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+import { fetchCars } from "@/lib/admin/fetchCars";
+import { isCacheValid, createCacheEntry } from "@/lib/utils/cache";
+import { isAuthenticated, isAuthError } from "@/lib/utils/error-handling";
+import { buildUrlParams, updateUrlWithParams } from "@/lib/utils/url-params";
+import { filterCars, defaultCarFilters } from "@/lib/utils/car-filters";
+import type { CarFiltersState } from "@/lib/utils/car-filters";
+
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 // Module-level cache that persists across component mounts/unmounts
 let carsCache: {
@@ -13,82 +21,7 @@ let carsCache: {
   timestamp: number;
 } | null = null;
 
-export type CarFiltersState = {
-  search: string;
-  type: string;
-  auction: string;
-  carPaid: "all" | "paid" | "not-paid";
-  shippingPaid: "all" | "paid" | "not-paid";
-  insurance: "all" | "exists" | "not-exists";
-  purchaseDateFrom: string; // Format: YYYY-MM-DD
-  purchaseDateTo: string; // Format: YYYY-MM-DD
-};
-
-const filterCars = ({ cars, filters }: { cars: AdminCar[]; filters: CarFiltersState }) => {
-  return cars.filter((car) => {
-    // Search filter (search in model, client, VIN, lot, city)
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      const matchesSearch =
-        car.model.toLowerCase().includes(searchLower) ||
-        car.client?.toLowerCase().includes(searchLower) ||
-        car.details?.vin?.toLowerCase().includes(searchLower) ||
-        car.details?.lot?.toLowerCase().includes(searchLower) ||
-        car.details?.city?.toLowerCase().includes(searchLower);
-
-      if (!matchesSearch) return false;
-    }
-
-    // Type filter
-    if (filters.type !== "all" && car.details?.type !== filters.type) {
-      return false;
-    }
-
-    // Auction filter
-    if (filters.auction !== "all" && car.details?.auction !== filters.auction) {
-      return false;
-    }
-
-    // Car Paid filter
-    if (filters.carPaid !== "all") {
-      const isPaid = car.carPaid === true;
-      if (filters.carPaid === "paid" && !isPaid) return false;
-      if (filters.carPaid === "not-paid" && isPaid) return false;
-    }
-
-    // Shipping Paid filter
-    if (filters.shippingPaid !== "all") {
-      const isPaid = car.shippingPaid === true;
-      if (filters.shippingPaid === "paid" && !isPaid) return false;
-      if (filters.shippingPaid === "not-paid" && isPaid) return false;
-    }
-
-    // Insurance filter
-    if (filters.insurance !== "all") {
-      const hasInsurance = car.insurance === true;
-      if (filters.insurance === "exists" && !hasInsurance) return false;
-      if (filters.insurance === "not-exists" && hasInsurance) return false;
-    }
-
-    // Purchase Date Range filter
-    if (filters.purchaseDateFrom || filters.purchaseDateTo) {
-      const purchaseDate = car.details?.purchaseDate;
-      if (!purchaseDate) return false;
-      
-      const carDate = new Date(purchaseDate);
-      const carDateString = carDate.toISOString().split('T')[0]; // YYYY-MM-DD
-      
-      // If "from" is set or default to now
-      const fromDate = filters.purchaseDateFrom || new Date().toISOString().split('T')[0];
-      if (carDateString < fromDate) return false;
-      
-      // If "to" is set
-      if (filters.purchaseDateTo && carDateString > filters.purchaseDateTo) return false;
-    }
-
-    return true;
-  });
-};
+export type { CarFiltersState };
 
 export const useAdminCarsState = () => {
   const router = useRouter();
@@ -130,9 +63,7 @@ export const useAdminCarsState = () => {
   };
 
   const isCarsCacheValid = useMemo(() => {
-    if (!carsCache) return false;
-    const now = Date.now();
-    return (now - carsCache.timestamp) < CACHE_DURATION;
+    return isCacheValid({ cache: carsCache, duration: CACHE_DURATION });
   }, []);
 
   // Apply filters to get filtered cars
@@ -145,37 +76,27 @@ export const useAdminCarsState = () => {
     setFilters(newFilters);
 
     // Build URL params
-    const params = new URLSearchParams();
-    if (newFilters.search) params.set("search", newFilters.search);
-    if (newFilters.type !== "all") params.set("type", newFilters.type);
-    if (newFilters.auction !== "all") params.set("auction", newFilters.auction);
-    if (newFilters.carPaid !== "all") params.set("carPaid", newFilters.carPaid);
-    if (newFilters.shippingPaid !== "all") params.set("shippingPaid", newFilters.shippingPaid);
-    if (newFilters.insurance !== "all") params.set("insurance", newFilters.insurance);
-    if (newFilters.purchaseDateFrom) params.set("purchaseDateFrom", newFilters.purchaseDateFrom);
-    if (newFilters.purchaseDateTo) params.set("purchaseDateTo", newFilters.purchaseDateTo);
+    const params = buildUrlParams({ 
+      params: {
+        search: newFilters.search,
+        type: newFilters.type !== "all" ? newFilters.type : "",
+        auction: newFilters.auction !== "all" ? newFilters.auction : "",
+        carPaid: newFilters.carPaid !== "all" ? newFilters.carPaid : "",
+        shippingPaid: newFilters.shippingPaid !== "all" ? newFilters.shippingPaid : "",
+        insurance: newFilters.insurance !== "all" ? newFilters.insurance : "",
+        purchaseDateFrom: newFilters.purchaseDateFrom,
+        purchaseDateTo: newFilters.purchaseDateTo,
+      }
+    });
 
-    const queryString = params.toString();
-    const newUrl = queryString ? `?${queryString}` : window.location.pathname;
-
-    router.replace(newUrl, { scroll: false });
+    updateUrlWithParams({ params, router });
   }, [router]);
 
   const clearFilters = useCallback(() => {
-    const defaultFilters: CarFiltersState = {
-      search: "",
-      type: "all",
-      auction: "all",
-      carPaid: "all",
-      shippingPaid: "all",
-      insurance: "all",
-      purchaseDateFrom: "",
-      purchaseDateTo: "",
-    };
-    updateFilters(defaultFilters);
+    updateFilters(defaultCarFilters);
   }, [updateFilters]);
 
-  const loadCars = async ({ 
+  const loadCars = useCallback(async ({ 
     forceRefresh = false,
     page,
     limit,
@@ -184,21 +105,17 @@ export const useAdminCarsState = () => {
     page?: number;
     limit?: number;
   } = {}) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-    if (!token) {
+    if (!isAuthenticated()) {
       return;
     }
 
     const pageToFetch = page !== undefined ? page : currentPage;
     const limitToFetch = limit !== undefined ? limit : pageSize;
 
-    // Skip cache check - always fetch fresh data for pagination to work correctly
-    // Cache causes issues with pagination state
     const useCache = !forceRefresh && carsCache && isCarsCacheValid;
     
     if (useCache) {
       setAllCars(carsCache.data);
-      // Don't return here - still need to set pagination info
     }
 
     if (!useCache) {
@@ -214,12 +131,9 @@ export const useAdminCarsState = () => {
         setTotalPages(result.totalPages || 0);
         setCurrentPage(result.page || pageToFetch);
         
-        carsCache = {
-          data: result.cars,
-          timestamp: Date.now(),
-        };
+        carsCache = createCacheEntry({ data: result.cars });
       } else {
-        if (!result.error?.includes('401') && !result.error?.includes('403') && !result.error?.includes('Unauthorized')) {
+        if (!isAuthError({ errorMessage: result.error })) {
           toast.error("Failed to load cars", {
             description: result.error || "Could not fetch cars from server.",
           });
@@ -227,7 +141,7 @@ export const useAdminCarsState = () => {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "";
-      if (!errorMessage.includes('401') && !errorMessage.includes('403') && !errorMessage.includes('Unauthorized')) {
+      if (!isAuthError({ errorMessage })) {
         toast.error("Failed to load cars", {
           description: errorMessage || "An unexpected error occurred.",
         });
@@ -235,7 +149,7 @@ export const useAdminCarsState = () => {
     } finally {
       setIsLoadingCars(false);
     }
-  };
+  }, [currentPage, pageSize, isCarsCacheValid]);
 
   const changePage = useCallback((page: number) => {
     setCurrentPage(page);
@@ -244,23 +158,23 @@ export const useAdminCarsState = () => {
     const params = new URLSearchParams(window.location.search);
     params.set("page", page.toString());
     params.set("pageSize", pageSize.toString());
-    router.replace(`?${params.toString()}`, { scroll: false });
+    updateUrlWithParams({ params, router });
     
     loadCars({ page, limit: pageSize });
-  }, [pageSize, router]);
+  }, [pageSize, router, loadCars]);
 
   const changePageSize = useCallback((size: number) => {
     setPageSize(size);
-    setCurrentPage(1); // Reset to first page when changing page size
+    setCurrentPage(1);
     
     // Update URL
     const params = new URLSearchParams(window.location.search);
     params.set("page", "1");
     params.set("pageSize", size.toString());
-    router.replace(`?${params.toString()}`, { scroll: false });
+    updateUrlWithParams({ params, router });
     
     loadCars({ page: 1, limit: size });
-  }, [router]);
+  }, [router, loadCars]);
 
   // Sync filters and pagination with URL on mount and when searchParams change
   useEffect(() => {
@@ -293,7 +207,7 @@ export const useAdminCarsState = () => {
         setPageSize(parsedSize);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, currentPage, pageSize]);
 
   return {
     cars: filteredCars,
@@ -316,4 +230,3 @@ export const useAdminCarsState = () => {
     changePageSize,
   };
 };
-

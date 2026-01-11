@@ -1,6 +1,8 @@
-import { API_BASE_URL } from "@/i18n/config";
-import { authenticatedFetch } from "../auth/token";
 import { Auction } from "./types";
+
+import { API_BASE_URL } from "@/i18n/config";
+
+import { authenticatedFetch } from "@/lib/auth/token";
 
 type UpdateUserCoefficientResponse = {
   success: boolean;

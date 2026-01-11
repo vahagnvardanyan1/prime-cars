@@ -1,3 +1,8 @@
+/**
+ * Role-Based Access Control (RBAC) Permission System
+ * Defines user roles, permissions, and access control functions
+ */
+
 export enum UserRole {
   ADMIN = "admin",
   MANAGER = "manager",
@@ -120,6 +125,9 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   ],
 };
 
+/**
+ * Checks if a role has a specific permission
+ */
 export const hasPermission = ({ role, permission }: { role: string; permission: Permission }): boolean => {
   const normalizedRole = role.toLowerCase() as UserRole;
   const permissions = ROLE_PERMISSIONS[normalizedRole];
@@ -131,23 +139,38 @@ export const hasPermission = ({ role, permission }: { role: string; permission: 
   return permissions.includes(permission);
 };
 
+/**
+ * Checks if a role has any of the specified permissions
+ */
 export const hasAnyPermission = ({ role, permissions }: { role: string; permissions: Permission[] }): boolean => {
   return permissions.some(permission => hasPermission({ role, permission }));
 };
 
+/**
+ * Checks if a role has all of the specified permissions
+ */
 export const hasAllPermissions = ({ role, permissions }: { role: string; permissions: Permission[] }): boolean => {
   return permissions.every(permission => hasPermission({ role, permission }));
 };
 
-export const isAdmin = (role: string): boolean => {
+/**
+ * Checks if a role is Admin
+ */
+export const isAdmin = ({ role }: { role: string }): boolean => {
   return role.toLowerCase() === UserRole.ADMIN;
 };
 
-export const isManager = (role: string): boolean => {
+/**
+ * Checks if a role is Manager
+ */
+export const isManager = ({ role }: { role: string }): boolean => {
   return role.toLowerCase() === UserRole.MANAGER;
 };
 
-export const canAccessAdminPanel = (role: string): boolean => {
+/**
+ * Checks if a role can access the admin panel
+ */
+export const canAccessAdminPanel = ({ role }: { role: string }): boolean => {
   const normalizedRole = role.toLowerCase() as UserRole;
   return [UserRole.ADMIN, UserRole.MANAGER, UserRole.SUPPORT, UserRole.VIEWER].includes(normalizedRole);
 };

@@ -1,9 +1,14 @@
 "use client";
 
 import { useUser } from "@/contexts/UserContext";
-import { hasPermission, hasAnyPermission, hasAllPermissions, canAccessAdminPanel, type Permission } from "./permissions";
 
-export const usePermission = (permission: Permission): boolean => {
+import type { Permission } from "./permissions";
+import { hasPermission, hasAnyPermission, hasAllPermissions, canAccessAdminPanel, isAdmin, isManager } from "./permissions";
+
+/**
+ * Hook to check if the current user has a specific permission
+ */
+export const usePermission = ({ permission }: { permission: Permission }): boolean => {
   const { user } = useUser();
   
   if (!user || !user.role) {
@@ -13,7 +18,10 @@ export const usePermission = (permission: Permission): boolean => {
   return hasPermission({ role: user.role, permission });
 };
 
-export const usePermissions = (permissions: Permission[]): {
+/**
+ * Hook to check multiple permissions for the current user
+ */
+export const usePermissions = ({ permissions }: { permissions: Permission[] }): {
   hasAny: boolean;
   hasAll: boolean;
   check: (permission: Permission) => boolean;
@@ -35,6 +43,9 @@ export const usePermissions = (permissions: Permission[]): {
   };
 };
 
+/**
+ * Hook to check if the current user can access the admin panel
+ */
 export const useCanAccessAdminPanel = (): boolean => {
   const { user } = useUser();
   
@@ -42,18 +53,23 @@ export const useCanAccessAdminPanel = (): boolean => {
     return false;
   }
   
-  return canAccessAdminPanel(user.role);
+  return canAccessAdminPanel({ role: user.role });
 };
 
+/**
+ * Hook to get the current user's role and role-based flags
+ */
 export const useRole = () => {
   const { user } = useUser();
   
+  const userRole = user?.role || null;
+  
   return {
-    role: user?.role || null,
-    isAdmin: user?.role?.toLowerCase() === "admin",
-    isManager: user?.role?.toLowerCase() === "manager",
-    isSupport: user?.role?.toLowerCase() === "support",
-    isViewer: user?.role?.toLowerCase() === "viewer",
-    isUser: user?.role?.toLowerCase() === "user",
+    role: userRole,
+    isAdmin: userRole ? isAdmin({ role: userRole }) : false,
+    isManager: userRole ? isManager({ role: userRole }) : false,
+    isSupport: userRole?.toLowerCase() === "support",
+    isViewer: userRole?.toLowerCase() === "viewer",
+    isUser: userRole?.toLowerCase() === "user",
   };
 };

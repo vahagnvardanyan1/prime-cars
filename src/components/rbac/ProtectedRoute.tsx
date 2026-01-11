@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect } from "react";
+import type { ReactNode } from "react";
 
 import { useRouter } from "next/navigation";
 
+import { useUser } from "@/contexts/UserContext";
+
 import { usePermission, useCanAccessAdminPanel } from "@/lib/rbac/hooks";
 import { Permission } from "@/lib/rbac/permissions";
-import { useUser } from "@/contexts/UserContext";
 
 type ProtectedRouteProps = {
   children: ReactNode;
@@ -25,7 +27,7 @@ export const ProtectedRoute = ({
 }: ProtectedRouteProps) => {
   const router = useRouter();
   const { user, isLoading } = useUser();
-  const hasPermission = usePermission(permission || Permission.VIEW_OWN_PROFILE);
+  const hasPermission = usePermission({ permission: permission || Permission.VIEW_OWN_PROFILE });
   const canAccessAdmin = useCanAccessAdminPanel();
 
   useEffect(() => {

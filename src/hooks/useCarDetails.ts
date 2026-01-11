@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import type { Car } from "@/lib/cars/types";
+
 import { fetchCarById } from "@/lib/cars/fetchCars";
 
-export const useCarDetails = (carId: string) => {
+export const useCarDetails = ({ carId }: { carId: string }) => {
   const [car, setCar] = useState<Car | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

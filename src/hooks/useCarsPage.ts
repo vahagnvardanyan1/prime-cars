@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { fetchCarsByCategory } from "@/lib/cars/fetchCars";
 import type { Car, CarCategory } from "@/lib/cars/types";
+
+import { fetchCarsByCategory } from "@/lib/cars/fetchCars";
 
 type CarsCache = {
   [K in CarCategory]?: Car[];

@@ -43,7 +43,7 @@ const fetchUsers = async (params?: FetchUsersParams): Promise<FetchUsersResponse
   const users = Array.isArray(result) ? result : result.data || [];
 
   return {
-    users: users.map((user: any) => ({
+    users: users.map((user: Record<string, unknown>) => ({
       id: user._id || user.id,
       customerId: user.customerId,
       firstName: user.firstName,

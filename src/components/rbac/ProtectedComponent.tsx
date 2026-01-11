@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 
 import { usePermission, usePermissions } from "@/lib/rbac/hooks";
-import { Permission } from "@/lib/rbac/permissions";
+import type { Permission } from "@/lib/rbac/permissions";
 
 type ProtectedComponentProps = {
   children: ReactNode;
@@ -21,10 +21,12 @@ export const ProtectedComponent = ({
   fallback = null,
 }: ProtectedComponentProps) => {
   // Single permission check
-  const hasSinglePermission = usePermission(permission || Permission.VIEW_OWN_PROFILE);
+  const hasSinglePermission = usePermission({ 
+    permission: permission || "view_own_profile" as Permission 
+  });
   
   // Multiple permissions check
-  const { hasAny, hasAll } = usePermissions(permissions || []);
+  const { hasAny, hasAll } = usePermissions({ permissions: permissions || [] });
 
   let hasAccess = false;
 

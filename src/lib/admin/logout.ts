@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/i18n/config";
+
 import { authenticatedFetch, removeTokens } from "@/lib/auth/token";
 
 type LogoutResponse = {

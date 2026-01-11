@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, MapPin, Gauge, Fuel, Settings, Calendar, TrendingUp, X, ChevronRight, ChevronLeft as ChevronLeftIcon } from "lucide-react";
+import { ChevronLeft, MapPin, Gauge, Fuel, Settings, Calendar, TrendingUp, X, ChevronRight } from "lucide-react";
 import { useCarDetails } from "@/hooks/useCarDetails";
 
 export const CarDetailsPage = ({ carId }: { carId: string }) => {
