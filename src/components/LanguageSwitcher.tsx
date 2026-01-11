@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {

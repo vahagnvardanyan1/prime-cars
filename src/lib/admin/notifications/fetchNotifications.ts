@@ -39,7 +39,7 @@ export const fetchNotifications = async ({
       };
     }
 
-    const result = await response.json();
+    const result = (await response.json())?.data;
 
     // Backend returns structure: { _id, notification: {...}, is_read, readedTime }
     const notifications: Notification[] = Array.isArray(result) ? result.map((item: BackendNotificationResponse) => {

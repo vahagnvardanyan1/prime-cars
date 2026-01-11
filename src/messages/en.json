@@ -330,6 +330,11 @@
     },
     "loadingUser": "Loading user data...",
     "refresh": "Refresh",
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemsPerPage": "Items per page"
+    },
     "filters": {
       "searchUsers": "Search by name, username, email, phone or passport...",
       "searchCars": "Search by model, client, VIN, lot or city...",

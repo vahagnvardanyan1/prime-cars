@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 
 import { Surface } from "@/components/admin/primitives/Surface";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
+import { Pagination } from "@/components/admin/primitives/Pagination";
 import { UserFilters, type UserFiltersState } from "@/components/admin/filters/UserFilters";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +29,13 @@ type UsersViewProps = {
   filters?: UserFiltersState;
   onFiltersChange?: (filters: UserFiltersState) => void;
   onClearFilters?: () => void;
+  // Pagination
+  currentPage?: number;
+  totalPages?: number;
+  pageSize?: number;
+  totalItems?: number;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (size: number) => void;
 };
 
 const getInitials = ({ firstName, lastName }: { firstName: string; lastName: string }) => {
@@ -47,6 +55,13 @@ export const UsersView = ({
   filters,
   onFiltersChange,
   onClearFilters,
+  // Pagination
+  currentPage = 1,
+  totalPages = 1,
+  pageSize = 25,
+  totalItems = 0,
+  onPageChange,
+  onPageSizeChange,
 }: UsersViewProps) => {
   const t = useTranslations();
   const tTable = useTranslations("usersTable");
@@ -211,6 +226,18 @@ export const UsersView = ({
         </TableBody>
       </Table>
       </div>
+
+      {/* Pagination */}
+      {onPageChange && onPageSizeChange && totalPages > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={totalItems}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+        />
+      )}
     </Surface>
   );
 };

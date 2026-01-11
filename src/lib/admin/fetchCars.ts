@@ -30,17 +30,36 @@ type BackendCar = {
 type FetchCarsResponse = {
   success: boolean;
   cars?: AdminCar[];
+  total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
   error?: string;
 };
 
-export const fetchCars = async (): Promise<FetchCarsResponse> => {
+type FetchCarsParams = {
+  page?: number;
+  limit?: number;
+};
+
+export const fetchCars = async ({ 
+  page = 1, 
+  limit = 25 
+}: FetchCarsParams = {}): Promise<FetchCarsResponse> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/vehicles`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
+
+    const response = await authenticatedFetch(
+      `${API_BASE_URL}/vehicles/paginated?${params.toString()}`, 
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ error: "Failed to fetch cars" }));
@@ -50,10 +69,23 @@ export const fetchCars = async (): Promise<FetchCarsResponse> => {
       };
     }
 
-    const result = await response.json();
+    const responseData = await response.json();
+    
+    // Response structure: { status, data: { data: [...], meta: {...} } }
+    const dataWrapper = responseData?.data;
+    const carsArray = dataWrapper?.data || [];
+    const meta = dataWrapper?.meta || {};
+
+    // Extract pagination info from meta
+    const paginationInfo = {
+      total: meta.totalItems || 0,
+      page: meta.currentPage || page,
+      limit: meta.itemsPerPage || limit,
+      totalPages: meta.totalPages || 0,
+    };
 
     // Transform backend data to AdminCar format
-    const cars: AdminCar[] = result?.map((car: BackendCar) => {
+    const cars: AdminCar[] = carsArray.map((car: BackendCar) => {
       // Extract client name - handle both populated object and string ID
       let clientDisplay = "-";
       if (car.client && typeof car.client === "object") {
@@ -88,6 +120,7 @@ export const fetchCars = async (): Promise<FetchCarsResponse> => {
     return {
       success: true,
       cars,
+      ...paginationInfo,
     };
   } catch (error) {
     console.error("Error fetching cars:", error);

@@ -22,17 +22,36 @@ type BackendUser = {
 type FetchUsersResponse = {
   success: boolean;
   users?: AdminUser[];
+  total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
   error?: string;
 };
 
-export const fetchUsers = async (): Promise<FetchUsersResponse> => {
+type FetchUsersParams = {
+  page?: number;
+  limit?: number;
+};
+
+export const fetchUsers = async ({ 
+  page = 1, 
+  limit = 25 
+}: FetchUsersParams = {}): Promise<FetchUsersResponse> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/users`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
+
+    const response = await authenticatedFetch(
+      `${API_BASE_URL}/users/paginated?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ error: "Failed to fetch users" }));
@@ -42,9 +61,22 @@ export const fetchUsers = async (): Promise<FetchUsersResponse> => {
       };
     }
 
-    const result = await response.json();
+    const responseData = await response.json();
+    
+    // Response structure: { status, data: { data: [...], meta: {...} } }
+    const dataWrapper = responseData?.data;
+    const usersArray = dataWrapper?.data || [];
+    const meta = dataWrapper?.meta || {};
 
-    const users: AdminUser[] = result?.map((client: BackendUser) => ({
+    // Extract pagination info from meta
+    const paginationInfo = {
+      total: meta.totalItems || 0,
+      page: meta.currentPage || page,
+      limit: meta.itemsPerPage || limit,
+      totalPages: meta.totalPages || 0,
+    };
+
+    const users: AdminUser[] = usersArray.map((client: BackendUser) => ({
       id: client.id || client._id || "",
       customerId: client.customerId || "",
       firstName: client.firstName || "",
@@ -57,11 +89,12 @@ export const fetchUsers = async (): Promise<FetchUsersResponse> => {
       country: client.country || client.companyCountry || "",
       companyName: client.companyName || "",
       role: (client.role as AdminUser["role"]) || "Viewer",
-    })) || [];
+    }));
 
     return {
       success: true,
       users,
+      ...paginationInfo,
     };
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -71,4 +104,3 @@ export const fetchUsers = async (): Promise<FetchUsersResponse> => {
     };
   }
 };
-

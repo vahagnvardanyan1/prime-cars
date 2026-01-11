@@ -10,6 +10,7 @@ import { formatUsd } from "@/lib/admin/format";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { PaymentStatus } from "@/components/admin/primitives/PaymentStatus";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
+import { Pagination } from "@/components/admin/primitives/Pagination";
 import { CarFilters, type CarFiltersState } from "@/components/admin/filters/CarFilters";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +33,13 @@ type CarsViewProps = {
   filters?: CarFiltersState;
   onFiltersChange?: (filters: CarFiltersState) => void;
   onClearFilters?: () => void;
+  // Pagination
+  currentPage?: number;
+  totalPages?: number;
+  pageSize?: number;
+  totalItems?: number;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (size: number) => void;
 };
 
 export const CarsView = ({ 
@@ -45,6 +53,13 @@ export const CarsView = ({
   filters,
   onFiltersChange,
   onClearFilters,
+  // Pagination
+  currentPage = 1,
+  totalPages = 1,
+  pageSize = 25,
+  totalItems = 0,
+  onPageChange,
+  onPageSizeChange,
 }: CarsViewProps) => {
   const t = useTranslations();
   const tTable = useTranslations("carsTable");
@@ -154,7 +169,7 @@ export const CarsView = ({
               {/* Row Number */}
               <TableCell className="px-4 py-6 text-center">
                 <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  {index + 1}
+                  {(currentPage - 1) * pageSize + index + 1}
                 </div>
               </TableCell>
               
@@ -333,6 +348,18 @@ export const CarsView = ({
         </TableBody>
       </Table>
       </div>
+
+      {/* Pagination */}
+      {onPageChange && onPageSizeChange && totalPages > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={totalItems}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+        />
+      )}
     </Surface>
   );
 };
