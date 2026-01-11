@@ -319,7 +319,21 @@
     "google": "Google",
     "github": "GitHub",
     "noAccount": "Չունե՞ք հաշիվ",
-    "signUp": "Գրանցվել"
+    "signUp": "Գրանցվել",
+    "validation": {
+      "usernameRequired": "Օգտանունը պարտադիր է",
+      "usernameMinLength": "Օգտանունը պետք է լինի առնվազն 3 նիշ",
+      "passwordRequired": "Գաղտնաբառը պարտադիր է",
+      "passwordMinLength": "Գաղտնաբառը պետք է լինի առնվազն 6 նիշ",
+      "emailRequired": "Էլ. փոստը պարտադիր է",
+      "emailInvalid": "Խնդրում ենք մուտքագրել վավեր էլ. փոստ",
+      "firstNameRequired": "Անունը պարտադիր է",
+      "lastNameRequired": "Ազգանունը պարտադիր է",
+      "fieldRequired": "Այս դաշտը պարտադիր է",
+      "minLength": "Պետք է լինի առնվազն {min} նիշ",
+      "maxLength": "Պետք է լինի ոչ ավելի քան {max} նիշ",
+      "phoneInvalid": "Խնդրում ենք մուտքագրել վավեր հեռախոսահամար"
+    }
   },
   "admin": {
     "roles": {

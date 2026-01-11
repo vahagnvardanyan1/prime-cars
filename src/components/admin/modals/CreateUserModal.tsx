@@ -32,6 +32,14 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    login?: string;
+    password?: string;
+    phone?: string;
+  }>({});
 
   const isSubmitEnabled = useMemo(() => {
     return (
@@ -57,10 +65,53 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
     setEmail("");
     setLogin("");
     setPassword("");
+    setErrors({});
+  };
+
+  const validateForm = () => {
+    const newErrors: typeof errors = {};
+    const tValidation = t.raw("auth.validation");
+
+    if (!firstName.trim()) {
+      newErrors.firstName = tValidation.firstNameRequired;
+    }
+
+    if (!lastName.trim()) {
+      newErrors.lastName = tValidation.lastNameRequired;
+    }
+
+    if (!login.trim()) {
+      newErrors.login = tValidation.usernameRequired;
+    } else if (login.trim().length < 3) {
+      newErrors.login = tValidation.usernameMinLength;
+    }
+
+    if (!password.trim()) {
+      newErrors.password = tValidation.passwordRequired;
+    } else if (password.trim().length < 6) {
+      newErrors.password = tValidation.passwordMinLength;
+    }
+
+    if (email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.trim())) {
+        newErrors.email = tValidation.emailInvalid;
+      }
+    }
+
+    if (phone.trim()) {
+      const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+      if (!phoneRegex.test(phone.trim()) || phone.trim().length < 8) {
+        newErrors.phone = tValidation.phoneInvalid;
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const onSubmit = async () => {
-    if (!isSubmitEnabled) return;
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
 
@@ -146,10 +197,22 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
                 </Label>
                 <Input
                   value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
+                  onChange={(e) => {
+                    setFirstName(e.target.value);
+                    if (errors.firstName) {
+                      setErrors({ ...errors, firstName: undefined });
+                    }
+                  }}
                   placeholder={t("admin.modals.createUser.firstNamePlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                    errors.firstName
+                      ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                      : 'border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]'
+                  }`}
                 />
+                {errors.firstName && (
+                  <p className="text-sm text-red-500 dark:text-red-400">{errors.firstName}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -159,10 +222,22 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
                 </Label>
                 <Input
                   value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
+                  onChange={(e) => {
+                    setLastName(e.target.value);
+                    if (errors.lastName) {
+                      setErrors({ ...errors, lastName: undefined });
+                    }
+                  }}
                   placeholder={t("admin.modals.createUser.lastNamePlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                    errors.lastName
+                      ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                      : 'border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]'
+                  }`}
                 />
+                {errors.lastName && (
+                  <p className="text-sm text-red-500 dark:text-red-400">{errors.lastName}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -195,11 +270,23 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
                 </Label>
                 <Input
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    if (errors.phone) {
+                      setErrors({ ...errors, phone: undefined });
+                    }
+                  }}
                   type="tel"
                   placeholder={t("admin.modals.createUser.phonePlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                    errors.phone
+                      ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                      : 'border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]'
+                  }`}
                 />
+                {errors.phone && (
+                  <p className="text-sm text-red-500 dark:text-red-400">{errors.phone}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -211,11 +298,21 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
                   itemType="email"
                   onChange={(e) => {
                     setEmail(e.target.value);
+                    if (errors.email) {
+                      setErrors({ ...errors, email: undefined });
+                    }
                   }}
                   type="email"
                   placeholder={t("admin.modals.createUser.emailPlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                    errors.email
+                      ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                      : 'border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]'
+                  }`}
                 />
+                {errors.email && (
+                  <p className="text-sm text-red-500 dark:text-red-400">{errors.email}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -225,10 +322,22 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
                 </Label>
                 <Input
                   value={login}
-                  onChange={(e) => setLogin(e.target.value)}
+                  onChange={(e) => {
+                    setLogin(e.target.value);
+                    if (errors.login) {
+                      setErrors({ ...errors, login: undefined });
+                    }
+                  }}
                   placeholder={t("admin.modals.createUser.loginPlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                    errors.login
+                      ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                      : 'border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]'
+                  }`}
                 />
+                {errors.login && (
+                  <p className="text-sm text-red-500 dark:text-red-400">{errors.login}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -238,11 +347,23 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
                 </Label>
                 <PasswordInput
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errors.password) {
+                      setErrors({ ...errors, password: undefined });
+                    }
+                  }}
                   placeholder="••••••••"
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                    errors.password
+                      ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                      : 'border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]'
+                  }`}
                 />
-            </div>
+                {errors.password && (
+                  <p className="text-sm text-red-500 dark:text-red-400">{errors.password}</p>
+                )}
+              </div>
           </div>
         </div>
 
