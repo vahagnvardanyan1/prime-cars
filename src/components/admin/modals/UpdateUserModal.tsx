@@ -34,6 +34,7 @@ export const UpdateUserModal = ({
   onUserUpdated,
 }: UpdateUserModalProps) => {
   const t = useTranslations("admin.modals.updateUser");
+  const tValidation = useTranslations("auth.validation");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -45,6 +46,14 @@ export const UpdateUserModal = ({
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{
+    firstName?: string;
+    lastName?: string;
+    username?: string;
+    email?: string;
+    phone?: string;
+    password?: string;
+  }>({});
 
   // Populate form when user data changes
   useEffect(() => {
@@ -58,6 +67,7 @@ export const UpdateUserModal = ({
       setCountry(user.country || "");
       setCompanyName(user.companyName || "");
       setPassword(""); // Never pre-fill password
+      setErrors({}); // Clear errors when user changes
     }
   }, [user]);
 
@@ -67,27 +77,51 @@ export const UpdateUserModal = ({
     }
   };
 
-  const handleSubmit = async () => {
-    if (!user) return;
+  const validateForm = () => {
+    const newErrors: typeof errors = {};
 
-    // Validation
     if (!firstName.trim()) {
-      toast.error(t("firstNameRequired"));
-      return;
+      newErrors.firstName = tValidation("firstNameRequired");
     }
 
     if (!lastName.trim()) {
-      toast.error(t("lastNameRequired"));
-      return;
+      newErrors.lastName = tValidation("lastNameRequired");
     }
 
     if (!username.trim()) {
-      toast.error(t("usernameRequired"));
-      return;
+      newErrors.username = tValidation("usernameRequired");
+    } else if (username.trim().length < 3) {
+      newErrors.username = tValidation("usernameMinLength");
     }
 
     if (!email.trim()) {
-      toast.error(t("emailRequired"));
+      newErrors.email = tValidation("emailRequired");
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.trim())) {
+        newErrors.email = tValidation("emailInvalid");
+      }
+    }
+
+    if (phone.trim()) {
+      const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+      if (!phoneRegex.test(phone.trim()) || phone.trim().length < 8) {
+        newErrors.phone = tValidation("phoneInvalid");
+      }
+    }
+
+    if (password.trim() && password.trim().length < 6) {
+      newErrors.password = tValidation("passwordMinLength");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!user) return;
+
+    if (!validateForm()) {
       return;
     }
 
@@ -151,10 +185,22 @@ export const UpdateUserModal = ({
               <Input
                 id="firstName"
                 value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={(e) => {
+                  setFirstName(e.target.value);
+                  if (errors.firstName) {
+                    setErrors({ ...errors, firstName: undefined });
+                  }
+                }}
                 placeholder={t("firstNamePlaceholder")}
-                className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
+                className={`h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 ${
+                  errors.firstName
+                    ? 'border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500 focus:ring-red-500 dark:focus:ring-red-500'
+                    : 'border-gray-300 dark:border-white/10 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500'
+                }`}
               />
+              {errors.firstName && (
+                <p className="text-sm text-red-500 dark:text-red-400">{errors.firstName}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -167,10 +213,22 @@ export const UpdateUserModal = ({
               <Input
                 id="lastName"
                 value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={(e) => {
+                  setLastName(e.target.value);
+                  if (errors.lastName) {
+                    setErrors({ ...errors, lastName: undefined });
+                  }
+                }}
                 placeholder={t("lastNamePlaceholder")}
-                className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
+                className={`h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 ${
+                  errors.lastName
+                    ? 'border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500 focus:ring-red-500 dark:focus:ring-red-500'
+                    : 'border-gray-300 dark:border-white/10 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500'
+                }`}
               />
+              {errors.lastName && (
+                <p className="text-sm text-red-500 dark:text-red-400">{errors.lastName}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -183,10 +241,22 @@ export const UpdateUserModal = ({
               <Input
                 id="username"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  if (errors.username) {
+                    setErrors({ ...errors, username: undefined });
+                  }
+                }}
                 placeholder={t("usernamePlaceholder")}
-                className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
+                className={`h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 ${
+                  errors.username
+                    ? 'border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500 focus:ring-red-500 dark:focus:ring-red-500'
+                    : 'border-gray-300 dark:border-white/10 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500'
+                }`}
               />
+              {errors.username && (
+                <p className="text-sm text-red-500 dark:text-red-400">{errors.username}</p>
+              )}
             </div>
           </div>
 
@@ -203,10 +273,22 @@ export const UpdateUserModal = ({
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) {
+                    setErrors({ ...errors, email: undefined });
+                  }
+                }}
                 placeholder={t("emailPlaceholder")}
-                className="h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500"
+                className={`h-12 sm:h-[44px] lg:h-[48px] w-full text-base sm:text-[15px] lg:text-base px-3 sm:px-3 lg:px-4 bg-white dark:bg-[#161b22] text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 ${
+                  errors.email
+                    ? 'border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500 focus:ring-red-500 dark:focus:ring-red-500'
+                    : 'border-gray-300 dark:border-white/10 focus:border-blue-500 dark:focus:border-blue-500 focus:ring-blue-500 dark:focus:ring-blue-500'
+                }`}
               />
+              {errors.email && (
+                <p className="text-sm text-red-500 dark:text-red-400">{errors.email}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">

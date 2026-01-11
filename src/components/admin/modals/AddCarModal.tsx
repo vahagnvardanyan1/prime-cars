@@ -100,6 +100,10 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
   };
 
   const onSubmit = async () => {
+    if (!form.validate()) {
+      return;
+    }
+
     const parsed = form.derived.parsed;
     if (!parsed) return;
 
@@ -234,10 +238,20 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                 </Label>
                 <Input
                   value={form.fields.purchaseDate}
-                  onChange={(e) => form.actions.setPurchaseDate({ value: e.target.value })}
+                  onChange={(e) => {
+                    form.actions.setPurchaseDate({ value: e.target.value });
+                    form.actions.clearError({ field: "purchaseDate" });
+                  }}
                   type="date"
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                    form.errors.purchaseDate
+                      ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                      : 'border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]'
+                  }`}
                 />
+                {form.errors.purchaseDate && (
+                  <p className="text-sm text-red-500 dark:text-red-400">{form.errors.purchaseDate}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -279,14 +293,26 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                 </select>
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.year")}</Label>
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {t("admin.modals.addCar.year")} <span className="text-red-500 ml-1">*</span>
+                </Label>
                 <Input
                   value={form.fields.year}
-                  onChange={(e) => form.actions.setYear({ value: e.target.value })}
+                  onChange={(e) => {
+                    form.actions.setYear({ value: e.target.value });
+                    form.actions.clearError({ field: "year" });
+                  }}
                   inputMode="numeric"
                   placeholder={t("admin.modals.addCar.yearPlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                    form.errors.year
+                      ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                      : 'border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]'
+                  }`}
                 />
+                {form.errors.year && (
+                  <p className="text-sm text-red-500 dark:text-red-400">{form.errors.year}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -329,21 +355,41 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.vin")}</Label>
                 <Input
                   value={form.fields.vin}
-                  onChange={(e) => form.actions.setVin({ value: e.target.value })}
+                  onChange={(e) => {
+                    form.actions.setVin({ value: e.target.value });
+                    form.actions.clearError({ field: "vin" });
+                  }}
                   placeholder={t("admin.modals.addCar.vinPlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                    form.errors.vin
+                      ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                      : 'border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]'
+                  }`}
                 />
+                {form.errors.vin && (
+                  <p className="text-sm text-red-500 dark:text-red-400">{form.errors.vin}</p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.price")}</Label>
                 <Input
                   value={form.fields.priceUsd}
-                  onChange={(e) => form.actions.setPriceUsd({ value: e.target.value })}
+                  onChange={(e) => {
+                    form.actions.setPriceUsd({ value: e.target.value });
+                    form.actions.clearError({ field: "priceUsd" });
+                  }}
                   inputMode="numeric"
                   placeholder={t("admin.modals.addCar.pricePlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                    form.errors.priceUsd
+                      ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                      : 'border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]'
+                  }`}
                 />
+                {form.errors.priceUsd && (
+                  <p className="text-sm text-red-500 dark:text-red-400">{form.errors.priceUsd}</p>
+                )}
               </div>
               {/* Car Payment */}
               <div 

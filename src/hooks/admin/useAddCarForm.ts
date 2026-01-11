@@ -5,6 +5,16 @@ import { useMemo, useState } from "react";
 import type { AdminCarDetails } from "@/lib/admin/types";
 import { VehicleType, VehicleModel, Auction } from "@/lib/admin/types";
 
+type FormErrors = {
+  model?: string;
+  year?: string;
+  priceUsd?: string;
+  purchaseDate?: string;
+  vin?: string;
+  lot?: string;
+  city?: string;
+};
+
 type UseAddCarFormReturn = {
   fields: {
     model: string;
@@ -36,6 +46,7 @@ type UseAddCarFormReturn = {
     setVin: ({ value }: { value: string }) => void;
     setCustomerNotes: ({ value }: { value: string }) => void;
     reset: () => void;
+    clearError: ({ field }: { field: keyof FormErrors }) => void;
   };
   derived: {
     isSubmitEnabled: boolean;
@@ -45,6 +56,8 @@ type UseAddCarFormReturn = {
       details: AdminCarDetails;
     } | null;
   };
+  errors: FormErrors;
+  validate: () => boolean;
 };
 
 export const useAddCarForm = (): UseAddCarFormReturn => {
@@ -62,6 +75,7 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
   const [lot, setLot] = useState("");
   const [vin, setVin] = useState("");
   const [customerNotes, setCustomerNotes] = useState("");
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const isSubmitEnabled = useMemo(() => {
     const yearNumber = Number(year);
@@ -112,6 +126,53 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
     priceUsd,
   ]);
 
+  const validate = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!model.trim()) {
+      newErrors.model = "Model is required";
+    }
+
+    if (!year.trim()) {
+      newErrors.year = "Year is required";
+    } else {
+      const yearNumber = Number(year);
+      if (!Number.isFinite(yearNumber) || yearNumber < 1900 || yearNumber > new Date().getFullYear() + 1) {
+        newErrors.year = "Please enter a valid year";
+      }
+    }
+
+    if (!priceUsd.trim()) {
+      newErrors.priceUsd = "Price is required";
+    } else {
+      const priceNumber = Number(priceUsd);
+      if (!Number.isFinite(priceNumber) || priceNumber <= 0) {
+        newErrors.priceUsd = "Please enter a valid price";
+      }
+    }
+
+    if (!purchaseDate.trim()) {
+      newErrors.purchaseDate = "Purchase date is required";
+    }
+
+    if (!vin.trim()) {
+      newErrors.vin = "VIN is required";
+    } else if (vin.trim().length < 17) {
+      newErrors.vin = "VIN must be at least 17 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const clearError = ({ field }: { field: keyof FormErrors }) => {
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  };
+
   const reset = () => {
     setModel(VehicleModel.BMW);
     setYear("");
@@ -126,6 +187,7 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
     setLot("");
     setVin("");
     setCustomerNotes("");
+    setErrors({});
   };
 
   return {
@@ -159,8 +221,11 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       setVin: ({ value }) => setVin(value),
       setCustomerNotes: ({ value }) => setCustomerNotes(value),
       reset,
+      clearError,
     },
     derived: { isSubmitEnabled, parsed },
+    errors,
+    validate,
   };
 };
 
