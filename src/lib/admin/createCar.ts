@@ -29,8 +29,7 @@ type CreateCarResponse = {
 
 export const createCar = async ({
   data,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  images: _images = [],
+  images = [],
   invoiceFile,
 }: {
   data: CreateCarData;
@@ -67,11 +66,11 @@ export const createCar = async ({
 
 
     // Append image files
-    // if (images && images.length > 0) {
-    //   images.forEach((image) => {
-    //     // formData.append("images", image);
-    //   });
-    // }
+    if (images && images.length > 0) {
+      images.forEach((image) => {
+        formData.append("carPhotos", image);
+      });
+    }
 
     // Append invoice file
     if (invoiceFile) {

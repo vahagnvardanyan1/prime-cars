@@ -1,48 +1,29 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { fetchAllAvailableCars } from "@/lib/cars/fetchCars";
 import type { Car } from "@/lib/cars/types";
 
-type HomeCarsState = {
-  cars: Car[];
-  isLoading: boolean;
-  error: string | null;
-};
-
 export const useHomeCars = () => {
-  const [state, setState] = useState<HomeCarsState>({
-    cars: [],
-    isLoading: true,
-    error: null,
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["homeCars", "all"],
+    queryFn: async () => {
+      const result = await fetchAllAvailableCars();
+      if (!result.success) {
+        throw new Error(result.error || "Failed to load cars");
+      }
+      return result.cars || [];
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10, // 10 minutes
+    retry: 2,
   });
 
-  const loadCars = useCallback(async () => {
-    setState((prev) => ({ ...prev, isLoading: true, error: null }));
-
-    const result = await fetchAllAvailableCars();
-    if (result.success) {
-      setState({
-        cars: result.cars || [],
-        isLoading: false,
-        error: null,
-      });
-    } else {
-      setState({
-        cars: [],
-        isLoading: false,
-        error: result.error || "Failed to load cars",
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    loadCars();
-  }, [loadCars]);
-
   return {
-    ...state,
-    refetch: loadCars,
+    cars: data || [],
+    isLoading,
+    error: error ? (error as Error).message : null,
+    refetch,
   };
 };

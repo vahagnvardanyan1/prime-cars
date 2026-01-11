@@ -12,6 +12,7 @@ export type AdminCarDetails = {
 export type AdminCar = {
   id: string;
   imageUrl: string;
+  photos?: string[];
   model: string;
   year: number;
   priceUsd: number;

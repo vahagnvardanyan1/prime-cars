@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 
 import type { Car, CarCategory } from "@/lib/cars/types";
+import { translateEngineType, translateFuelType } from "@/lib/utils/translateVehicleSpecs";
 
 type CarCardProps = {
   car: Car;
@@ -87,7 +88,7 @@ export const CarCard = ({ car }: CarCardProps) => {
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
-                  {car.engine}
+                  {translateEngineType(car.engine, tCarDetails)}
                 </span>
                 {(car.horsepower || car.fuelType) && <span className="text-gray-300 dark:text-gray-600">•</span>}
               </>
@@ -98,7 +99,7 @@ export const CarCard = ({ car }: CarCardProps) => {
                 {car.fuelType && <span className="text-gray-300 dark:text-gray-600">•</span>}
               </>
             )}
-            {car.fuelType && <span>{car.fuelType}</span>}
+            {car.fuelType && <span>{translateFuelType(car.fuelType, tCarDetails)}</span>}
           </div>
         )}
 

@@ -174,6 +174,28 @@
       "fuelType": "Тип топлива",
       "location": "Местоположение"
     },
+    "engineTypes": {
+      "GASOLINE": "Бензин",
+      "DIESEL": "Дизель",
+      "ELECTRIC": "Электрический",
+      "HYBRID": "Гибрид"
+    },
+    "transmissionTypes": {
+      "AUTOMATIC": "Автоматическая",
+      "MANUAL": "Механическая",
+      "CVT": "CVT",
+      "SEMI_AUTOMATIC": "Полуавтоматическая",
+      "DUAL_CLUTCH": "Двойное сцепление"
+    },
+    "fuelTypes": {
+      "GASOLINE": "Бензин",
+      "DIESEL": "Дизель",
+      "ELECTRIC": "Электрический",
+      "HYBRID": "Гибрид",
+      "PETROL": "Бензин",
+      "GAS": "Газ",
+      "PLUGIN_HYBRID": "Подключаемый гибрид"
+    },
     "contactButton": "Связаться с нами",
     "shareButton": "Поделиться",
     "note": {
@@ -420,7 +442,7 @@
       "internalNote": "Прототип без бэкенда. Все действия локальны в браузере.",
       "nav": {
         "cars": "Авто",
-        "availableCars": "Доступные авто",
+        "availableCars": "Продаваемые авто",
         "users": "Пользователи",
         "notifications": "Уведомления",
         "calculator": "Калькулятор",
@@ -428,14 +450,14 @@
       }
     },
     "availableCars": {
-      "title": "Доступные автомобили",
-      "subtitle": "Просмотр всех доступных автомобилей по категориям",
+      "title": "Продаваемые автомобили",
+      "subtitle": "Просмотр всех продаваемых автомобилей по категориям",
       "createCar": "Создать автомобиль",
       "searchPlaceholder": "Поиск по марке, модели, году, местоположению...",
       "searchResults": "Найдено {count} {count, plural, one {автомобиль} other {автомобилей}} по запросу \"{query}\"",
       "noResults": "Нет результатов для \"{query}\"",
       "clearSearch": "Очистить поиск",
-      "showingTitle": "Доступные автомобили",
+      "showingTitle": "Продаваемые автомобили",
       "showing": "Показано {count} {count, plural, =0 {автомобилей} one {автомобиль} other {автомобилей}}",
       "table": {
         "number": "#",

@@ -221,6 +221,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
           autoPrice: Number(priceUsd),
           carPaid,
           shippingPaid,
+          insurance,
           ...(vehicleType.trim() && { type: vehicleType.trim() }),
           ...(auction.trim() && { auction: auction.trim() }),
           ...(purchaseDate.trim() && { purchaseDate: purchaseDate.trim() }),

@@ -386,7 +386,7 @@ export const SettingsView = ({
                         <Button
                           type="button"
                           variant="outline"
-                          className="h-10 px-4 rounded-xl border-gray-200 bg-white text-[#da565b] hover:bg-red-50 hover:text-[#da565b] dark:border-white/10 dark:bg-[#0b0f14] dark:hover:bg-white/5"
+                          className="h-10 px-4 rounded-xl border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-800 dark:border-white/10 dark:bg-[#0b0f14] dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                           disabled={deletingCityId === c.id}
                         >
                           {deletingCityId === c.id ? (

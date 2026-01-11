@@ -1,34 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import type { Car } from "@/lib/cars/types";
-
 import { fetchAvailableCarById } from "@/lib/cars/fetchCars";
 
 export const useCarDetails = ({ carId }: { carId: string }) => {
-  const [car, setCar] = useState<Car | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadCar = async () => {
-      setIsLoading(true);
-      setError(null);
-      
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["carDetails", carId],
+    queryFn: async () => {
       const result = await fetchAvailableCarById(carId);
-      
-      if (result.success && result.car) {
-        setCar(result.car);
-      } else {
-        setError(result.error || "Failed to load car");
+      if (!result.success || !result.car) {
+        throw new Error(result.error || "Failed to load car");
       }
-      
-      setIsLoading(false);
-    };
+      return result.car;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10, // 10 minutes
+    retry: 2,
+    enabled: !!carId, // Only fetch if carId exists
+  });
 
-    loadCar();
-  }, [carId]);
-
-  return { car, isLoading, error };
+  return {
+    car: data || null,
+    isLoading,
+    error: error ? (error as Error).message : null,
+  };
 };

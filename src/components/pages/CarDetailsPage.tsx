@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { ChevronLeft, MapPin, Gauge, Fuel, Settings, Calendar, TrendingUp, X, ChevronRight, Download } from "lucide-react";
 import { useCarDetails } from "@/hooks/useCarDetails";
 import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
+import { translateEngineType, translateTransmission, translateFuelType } from "@/lib/utils/translateVehicleSpecs";
 
 export const CarDetailsPage = ({ carId }: { carId: string }) => {
   const t = useTranslations("carDetails");
@@ -17,6 +18,33 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
   const [showShareSuccess, setShowShareSuccess] = useState(false);
 
   const photos = car?.photos || (car ? [car.imageUrl] : []);
+
+  // Preload images for faster navigation
+  useEffect(() => {
+    if (photos.length === 0) return;
+
+    // Preload all images when component mounts
+    photos.forEach((photo) => {
+      const img = new Image();
+      img.src = photo;
+    });
+  }, [photos]);
+
+  // Preload adjacent images when lightbox index changes
+  useEffect(() => {
+    if (!isLightboxOpen || photos.length === 0) return;
+
+    const preloadImage = (index: number) => {
+      if (index >= 0 && index < photos.length) {
+        const img = new Image();
+        img.src = photos[index];
+      }
+    };
+
+    // Preload next and previous images
+    preloadImage((lightboxIndex + 1) % photos.length);
+    preloadImage((lightboxIndex - 1 + photos.length) % photos.length);
+  }, [isLightboxOpen, lightboxIndex, photos]);
 
   // Keyboard navigation for lightbox
   useEffect(() => {
@@ -167,7 +195,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-4 sm:py-5 lg:py-6">
         {/* Back Button */}
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push("/cars")}
           className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors mb-4 sm:mb-5 lg:mb-6 group"
         >
           <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -185,6 +213,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
               <img
                 src={photos[selectedImage]}
                 alt={`${car.brand} ${car.model}`}
+                loading="eager"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
               {/* Zoom icon overlay */}
@@ -212,6 +241,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
                   <img
                     src={photo}
                     alt={`${car.brand} ${car.model} - ${index + 1}`}
+                    loading={index <= 5 ? "eager" : "lazy"}
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -281,7 +311,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-xs text-gray-500 dark:text-gray-400">{t("specs.engine")}</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{car.engine}</p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{translateEngineType(car.engine, t)}</p>
                     </div>
                   </div>
                 )}
@@ -294,7 +324,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
                     <div className="min-w-0 flex-1">
                       <p className="text-xs text-gray-500 dark:text-gray-400">{t("specs.transmission")}</p>
                       <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {car.transmission}
+                        {translateTransmission(car.transmission, t)}
                       </p>
                     </div>
                   </div>
@@ -307,7 +337,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-xs text-gray-500 dark:text-gray-400">{t("specs.fuelType")}</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{car.fuelType}</p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{translateFuelType(car.fuelType, t)}</p>
                     </div>
                   </div>
                 )}
@@ -386,28 +416,39 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
           {/* Close Button */}
           <button
             onClick={closeLightbox}
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-full transition-all z-20"
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              closeLightbox();
+            }}
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-full transition-all z-50 touch-none"
             aria-label={t("lightbox.close")}
           >
-            <X className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6 text-white pointer-events-none" />
           </button>
 
           {/* Previous Button */}
           {photos.length > 1 && (
             <button
               onClick={prevPhoto}
-              className="absolute left-2 sm:left-4 p-2 sm:p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all z-20"
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                prevPhoto();
+              }}
+              className="absolute left-2 sm:left-4 p-2 sm:p-3 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-full transition-all z-50 touch-none"
               aria-label={t("lightbox.previous")}
             >
-              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white pointer-events-none" />
             </button>
           )}
 
           {/* Main Image */}
-          <div className="relative w-full max-w-7xl max-h-[85vh] sm:max-h-[90vh]">
+          <div className="relative w-full max-w-7xl max-h-[85vh] sm:max-h-[90vh] pointer-events-none">
             <img
               src={photos[lightboxIndex]}
               alt={`${car.brand} ${car.model} - ${lightboxIndex + 1}`}
+              loading="eager"
               className="w-full h-full max-h-[85vh] sm:max-h-[90vh] object-contain"
             />
           </div>
@@ -416,10 +457,15 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
           {photos.length > 1 && (
             <button
               onClick={nextPhoto}
-              className="absolute right-2 sm:right-4 p-2 sm:p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all z-20"
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                nextPhoto();
+              }}
+              className="absolute right-2 sm:right-4 p-2 sm:p-3 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-full transition-all z-50 touch-none"
               aria-label={t("lightbox.next")}
             >
-              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-white pointer-events-none" />
             </button>
           )}
 
@@ -429,21 +475,26 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
           </div>
 
           {/* Thumbnail Strip - Desktop Only */}
-          <div className="hidden sm:flex absolute bottom-4 left-1/2 transform -translate-x-1/2 gap-2 px-4 py-3 bg-black/70 backdrop-blur-sm rounded-xl max-w-[90vw] overflow-x-auto">
+          <div className="hidden sm:flex absolute bottom-4 left-1/2 transform -translate-x-1/2 gap-2 px-4 py-3 bg-black/70 backdrop-blur-sm rounded-xl max-w-[90vw] overflow-x-auto z-40">
             {photos.map((photo, index) => (
               <button
                 key={index}
                 onClick={() => setLightboxIndex(index)}
-                className={`flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden transition-all ${
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setLightboxIndex(index);
+                }}
+                className={`flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden transition-all touch-none ${
                   lightboxIndex === index
                     ? "ring-2 ring-[#429de6] scale-110"
-                    : "opacity-60 hover:opacity-100"
+                    : "opacity-60 hover:opacity-100 active:opacity-80"
                 }`}
               >
                 <img
                   src={photo}
                   alt={`Thumbnail ${index + 1}`}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover pointer-events-none"
                 />
               </button>
             ))}

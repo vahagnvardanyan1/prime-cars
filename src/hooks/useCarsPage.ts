@@ -1,151 +1,115 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import type { Car, CarCategory } from "@/lib/cars/types";
-
 import { fetchCarsByCategory } from "@/lib/cars/fetchCars";
 
-type CarsCache = {
-  [K in CarCategory]?: Car[];
-};
-
-type LoadingState = {
-  [K in CarCategory]: boolean;
-};
-
-type CarsPageState = {
-  currentCars: Car[];
-  arrivingCars: Car[];
-  orderCars: Car[];
-  loadingState: LoadingState;
-  errors: string[];
+// Query keys for caching
+const carsPageKeys = {
+  all: ["carsPage"] as const,
+  byCategory: (category: CarCategory) => [...carsPageKeys.all, category] as const,
 };
 
 export const useCarsPage = () => {
-  const [state, setState] = useState<CarsPageState>({
-    currentCars: [],
-    arrivingCars: [],
-    orderCars: [],
-    loadingState: {
-      AVAILABLE: true,
-      ONROAD: false,
-      TRANSIT: false,
+  // Fetch AVAILABLE cars
+  const {
+    data: currentCars = [],
+    isLoading: isLoadingAvailable,
+    error: availableError,
+    refetch: refetchAvailable,
+  } = useQuery({
+    queryKey: carsPageKeys.byCategory("AVAILABLE"),
+    queryFn: async () => {
+      const result = await fetchCarsByCategory({ category: "AVAILABLE" });
+      if (!result.success) {
+        throw new Error(result.error || "Failed to fetch available cars");
+      }
+      return Array.isArray(result.cars) ? result.cars : [];
     },
-    errors: [],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10, // 10 minutes
+    retry: 2,
   });
 
-  const cacheRef = useRef<CarsCache>({});
-  const loadingRef = useRef<Set<CarCategory>>(new Set());
-  const hasInitialized = useRef(false);
+  // Fetch ONROAD cars (lazy loaded)
+  const {
+    data: arrivingCars = [],
+    isLoading: isLoadingOnroad,
+    error: onroadError,
+    refetch: refetchOnroad,
+  } = useQuery({
+    queryKey: carsPageKeys.byCategory("ONROAD"),
+    queryFn: async () => {
+      const result = await fetchCarsByCategory({ category: "ONROAD" });
+      if (!result.success) {
+        throw new Error(result.error || "Failed to fetch onroad cars");
+      }
+      return Array.isArray(result.cars) ? result.cars : [];
+    },
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+    retry: 2,
+    enabled: false, // Don't auto-fetch, load on demand
+  });
 
-  const loadCarsForCategory = useCallback(async (category: CarCategory, forceRefresh = false) => {
-    console.log(`🔄 Loading ${category} cars, forceRefresh: ${forceRefresh}`);
-    
-    // Check if already cached (skip cache if forceRefresh is true)
-    if (!forceRefresh && cacheRef.current[category]) {
-      console.log(`📦 Using cached data for ${category}`);
-      // Already cached, restore from cache to state
-      setState((prev) => {
-        const newState = { ...prev };
-        const cachedCars = cacheRef.current[category] || [];
-        // Ensure it's still an array
-        const safeCachedCars = Array.isArray(cachedCars) ? cachedCars : [];
-        
-        if (category === "AVAILABLE") {
-          newState.currentCars = safeCachedCars;
-        } else if (category === "ONROAD") {
-          newState.arrivingCars = safeCachedCars;
-        } else if (category === "TRANSIT") {
-          newState.orderCars = safeCachedCars;
-        }
-        
-        return newState;
-      });
-      return;
+  // Fetch TRANSIT cars (lazy loaded)
+  const {
+    data: orderCars = [],
+    isLoading: isLoadingTransit,
+    error: transitError,
+    refetch: refetchTransit,
+  } = useQuery({
+    queryKey: carsPageKeys.byCategory("TRANSIT"),
+    queryFn: async () => {
+      const result = await fetchCarsByCategory({ category: "TRANSIT" });
+      if (!result.success) {
+        throw new Error(result.error || "Failed to fetch transit cars");
+      }
+      return Array.isArray(result.cars) ? result.cars : [];
+    },
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+    retry: 2,
+    enabled: false, // Don't auto-fetch, load on demand
+  });
+
+  const isLoading = (category: CarCategory) => {
+    switch (category) {
+      case "AVAILABLE":
+        return isLoadingAvailable;
+      case "ONROAD":
+        return isLoadingOnroad;
+      case "TRANSIT":
+        return isLoadingTransit;
+      default:
+        return false;
     }
+  };
 
-    // Check if already loading this category
-    if (loadingRef.current.has(category)) {
-      return;
+  const loadCarsForCategory = async (category: CarCategory) => {
+    switch (category) {
+      case "AVAILABLE":
+        return refetchAvailable();
+      case "ONROAD":
+        return refetchOnroad();
+      case "TRANSIT":
+        return refetchTransit();
     }
+  };
 
-    // Mark as loading
-    loadingRef.current.add(category);
-
-    // Set loading state for this category
-    setState((prev) => ({
-      ...prev,
-      loadingState: {
-        ...prev.loadingState,
-        [category]: true,
-      },
-    }));
-
-    const result = await fetchCarsByCategory({ category });
-
-    // Remove from loading set
-    loadingRef.current.delete(category);
-
-    if (result.success && result.cars) {
-      // Ensure cars is an array
-      const carsArray = Array.isArray(result.cars) ? result.cars : [];
-      
-      console.log(`✅ Fetched ${carsArray.length} cars for ${category}`);
-      
-      // Update cache
-      cacheRef.current = {
-        ...cacheRef.current,
-        [category]: carsArray,
-      };
-
-      // Update state based on category
-      setState((prev) => {
-        const newState = { ...prev };
-        if (category === "AVAILABLE") {
-          newState.currentCars = carsArray;
-        } else if (category === "ONROAD") {
-          newState.arrivingCars = carsArray;
-        } else if (category === "TRANSIT") {
-          newState.orderCars = carsArray;
-        }
-        newState.loadingState = {
-          ...prev.loadingState,
-          [category]: false,
-        };
-        return newState;
-      });
-    } else {
-      // Handle error - set empty array
-      setState((prev) => ({
-        ...prev,
-        loadingState: {
-          ...prev.loadingState,
-          [category]: false,
-        },
-        errors: result.error
-          ? [...prev.errors, `${category}: ${result.error}`]
-          : prev.errors,
-      }));
-    }
-  }, []);
-
-  // Load AVAILABLE cars on mount (only once)
-  useEffect(() => {
-    if (!hasInitialized.current) {
-      hasInitialized.current = true;
-      loadCarsForCategory("AVAILABLE");
-    }
-  }, [loadCarsForCategory]);
-
-  const isLoading = (category: CarCategory) => state.loadingState[category];
+  const errors = [
+    availableError ? `AVAILABLE: ${(availableError as Error).message}` : null,
+    onroadError ? `ONROAD: ${(onroadError as Error).message}` : null,
+    transitError ? `TRANSIT: ${(transitError as Error).message}` : null,
+  ].filter(Boolean) as string[];
 
   return {
-    currentCars: Array.isArray(state.currentCars) ? state.currentCars : [],
-    arrivingCars: Array.isArray(state.arrivingCars) ? state.arrivingCars : [],
-    orderCars: Array.isArray(state.orderCars) ? state.orderCars : [],
+    currentCars,
+    arrivingCars,
+    orderCars,
     isLoading,
-    errors: state.errors,
+    errors,
     loadCarsForCategory,
   };
 };

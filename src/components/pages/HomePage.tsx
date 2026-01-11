@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 
 import { ImportCalculator } from "@/components/ImportCalculator";
+import { translateEngineType, translateTransmission, translateFuelType } from "@/lib/utils/translateVehicleSpecs";
 import {
   Carousel,
   CarouselContent,
@@ -17,6 +18,7 @@ import { useHomeCars } from "@/hooks/useHomeCars";
 
 export const HomePage = () => {
   const t = useTranslations();
+  const tCarDetails = useTranslations("carDetails");
   const router = useRouter();
   const { cars, isLoading } = useHomeCars();
 
@@ -70,8 +72,8 @@ export const HomePage = () => {
           </div>
 
           <div className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-white dark:from-black to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-white dark:from-black to-transparent z-10 pointer-events-none" />
+            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white dark:from-black to-transparent z-10 pointer-events-none md:w-28" />
+            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white dark:from-black to-transparent z-10 pointer-events-none md:w-28" />
             
             <Carousel
               opts={{
@@ -127,9 +129,24 @@ export const HomePage = () => {
                         className="bg-white dark:bg-[#111111] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-all group h-full cursor-pointer"
                       >
                         <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#1a1a1a]">
-                          <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 dark:bg-black/50 backdrop-blur-sm rounded-full text-gray-900 dark:text-white text-xs border border-gray-200 dark:border-white/20">
+                          {/* Year Badge - Left */}
+                          <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 dark:bg-black/50 backdrop-blur-sm rounded-full text-gray-900 dark:text-white text-xs border border-gray-200 dark:border-white/20 z-10">
                             {car.year}
                           </div>
+                          
+                          {/* Category Badge - Right */}
+                          <div className={`absolute top-4 right-4 px-3 py-1 backdrop-blur-sm rounded-full text-xs font-semibold border z-10 ${
+                            car.category === "AVAILABLE" 
+                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" 
+                              : car.category === "ONROAD" 
+                              ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" 
+                              : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
+                          }`}>
+                            {car.category === "AVAILABLE" && t("carDetails.badges.available")}
+                            {car.category === "ONROAD" && t("carDetails.badges.arriving")}
+                            {car.category === "TRANSIT" && t("carDetails.badges.order")}
+                          </div>
+                          
                           <Image
                             src={carImage}
                             alt={carName}
@@ -141,11 +158,11 @@ export const HomePage = () => {
                         <div className="p-6">
                           <h3 className="mb-2 line-clamp-2">{carName}</h3>
                           <p className="text-sm mb-4 text-gray-600 dark:text-gray-400">
-                            {car.transmission && `${car.transmission}`}
+                            {car.transmission && translateTransmission(car.transmission, tCarDetails)}
                             {car.transmission && car.fuelType && " • "}
-                            {car.fuelType && `${car.fuelType}`}
+                            {car.fuelType && translateFuelType(car.fuelType, tCarDetails)}
                             {(car.transmission || car.fuelType) && car.engine && " • "}
-                            {car.engine && `${car.engine}`}
+                            {car.engine && translateEngineType(car.engine, tCarDetails)}
                           </p>
                           <div className="border-t border-gray-200 dark:border-white/10 pt-4">
                             <div className="text-gray-500 dark:text-gray-400 text-xs mb-1">
@@ -162,8 +179,8 @@ export const HomePage = () => {
                 })
               )}
             </CarouselContent>
-              <CarouselPrevious className="left-2 hidden md:flex z-20" />
-              <CarouselNext className="right-2 hidden md:flex z-20" />
+              <CarouselPrevious className="left-2 hidden md:flex z-20 h-12 w-12 border-2 border-[#429de6]/40 bg-white/95 dark:bg-black/70 backdrop-blur-xl hover:bg-gradient-to-br hover:from-[#429de6] hover:to-[#3a8acc] hover:border-[#429de6] dark:hover:from-[#429de6] dark:hover:to-[#3a8acc] hover:scale-110 hover:shadow-2xl hover:shadow-[#429de6]/40 transition-all duration-300 text-gray-700 hover:text-white dark:text-gray-300 dark:hover:text-white disabled:opacity-30 disabled:hover:scale-100 disabled:cursor-not-allowed" />
+              <CarouselNext className="right-2 hidden md:flex z-20 h-12 w-12 border-2 border-[#429de6]/40 bg-white/95 dark:bg-black/70 backdrop-blur-xl hover:bg-gradient-to-br hover:from-[#429de6] hover:to-[#3a8acc] hover:border-[#429de6] dark:hover:from-[#429de6] dark:hover:to-[#3a8acc] hover:scale-110 hover:shadow-2xl hover:shadow-[#429de6]/40 transition-all duration-300 text-gray-700 hover:text-white dark:text-gray-300 dark:hover:text-white disabled:opacity-30 disabled:hover:scale-100 disabled:cursor-not-allowed" />
             </Carousel>
           </div>
         </div>

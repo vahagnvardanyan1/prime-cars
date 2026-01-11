@@ -15,7 +15,7 @@ type BackendCar = {
   autoPrice?: number;
   status?: string;
   imageUrl?: string;
-  images?: string[];
+  vehiclePhotos?: string[];
   client?: { username: string; firstName: string; lastName: string } | string;
   type?: string;
   auction?: string;
@@ -25,6 +25,9 @@ type BackendCar = {
   purchaseDate?: string;
   customerNotes?: string;
   invoiceId?: string;
+  paid?: boolean;
+  shippingPaid?: boolean;
+  insurance?: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -98,10 +101,14 @@ export const fetchCars = async ({
 
       return {
         id: car._id || car.id || "",
-        imageUrl: car.images?.[0] || car.imageUrl || "",
+        imageUrl: car.vehiclePhotos?.[0] || car.imageUrl || "",
+        photos: car.vehiclePhotos && car.vehiclePhotos.length > 0 ? car.vehiclePhotos : undefined,
         model: car.vehicleModel || car.model || "",
         year: car.year || new Date().getFullYear(),
         priceUsd: car.autoPrice || car.priceUsd || car.price || 0,
+        carPaid: car.paid || false,
+        shippingPaid: car.shippingPaid || false,
+        insurance: car.insurance || false,
         status: (car.status as AdminCar["status"]) || "Active",
         client: clientDisplay,
         invoiceId: car.invoiceId,

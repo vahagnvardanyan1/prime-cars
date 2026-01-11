@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "@/i18n/config";
 
 import { authenticatedFetch } from "@/lib/auth/token";
+import { da } from "zod/v4/locales";
 
 type UpdateCarData = {
   client?: string;
@@ -58,7 +59,7 @@ export const updateCar = async ({
     if (data.vin) formData.append("vin", data.vin);
     if (data.autoPrice !== undefined) formData.append("autoPrice", data.autoPrice.toString());
     if (data.customerNotes) formData.append("customerNotes", data.customerNotes);
-    if (data.carPaid !== undefined) formData.append("carPaid", data.carPaid.toString());
+    if (data.carPaid !== undefined) formData.append("paid", data.carPaid.toString());
     if (data.shippingPaid !== undefined) formData.append("shippingPaid", data.shippingPaid.toString());
     if (data.insurance !== undefined) formData.append("insurance", data.insurance.toString());
 
@@ -69,14 +70,13 @@ export const updateCar = async ({
     // Append new photos
     if (newPhotos && newPhotos.length > 0) {
       newPhotos.forEach((photo) => {
-        formData.append("photos", photo);
+        formData.append("vehiclePhotos", photo);
       });
     }
 
-    // Append photos to delete
     if (photosToDelete && photosToDelete.length > 0) {
-      photosToDelete.forEach((photoUrl) => {
-        formData.append("photosToDelete", photoUrl);
+      photosToDelete.forEach((photo) => {
+        formData.append("deletePhotoUrls", photo);
       });
     }
 

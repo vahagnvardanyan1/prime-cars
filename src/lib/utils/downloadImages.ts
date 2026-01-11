@@ -126,8 +126,6 @@ export const downloadCarImagesAsZip = async ({
       try {
         // Use /files endpoint to proxy the image and avoid CORS issues
         const proxyUrl = `${API_BASE_URL}/files?url=${encodeURIComponent(imageUrl)}`;
-        debugger
-
         const response = await fetch(proxyUrl);
         
         if (!response.ok) {

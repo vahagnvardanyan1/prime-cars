@@ -153,7 +153,7 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
             </button>
             <button
               onClick={handleDeleteClick}
-              className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all duration-200 hover:shadow-md active:scale-95"
+              className="p-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-all duration-200 hover:shadow-md active:scale-95"
               title="Delete Car"
             >
               <Trash2 className="w-4 h-4" />

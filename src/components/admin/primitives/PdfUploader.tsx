@@ -109,7 +109,7 @@ export const PdfUploader = ({ onFileSelect, currentFileName, disabled = false }:
               variant="ghost"
               size="icon"
               onClick={handleRemove}
-              className="h-8 w-8 text-gray-500 hover:text-red-600 dark:text-white/60 dark:hover:text-red-400 flex-shrink-0"
+              className="h-8 w-8 text-gray-500 hover:text-gray-700 dark:text-white/60 dark:hover:text-white/80 flex-shrink-0"
             >
               <X className="h-4 w-4" />
             </Button>

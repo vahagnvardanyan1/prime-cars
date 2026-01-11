@@ -211,7 +211,7 @@ export const UsersView = ({
                         onClick={() => onDeleteUser(u)}
                         variant="outline"
                         size="sm"
-                        className="h-9 px-3 gap-2 border-red-300 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-400 hover:text-red-800 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 dark:hover:bg-red-950/50 dark:hover:border-red-700 dark:hover:text-red-300 transition-all"
+                        className="h-9 px-3 gap-2 border-gray-300 bg-gray-50 text-gray-700 hover:bg-gray-100 hover:border-gray-400 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-900/30 dark:text-gray-400 dark:hover:bg-gray-900/50 dark:hover:border-gray-600 dark:hover:text-gray-300 transition-all"
                       >
                         <Trash2 className="h-4 w-4" />
                         <span className="hidden sm:inline">{t("admin.actions.delete")}</span>

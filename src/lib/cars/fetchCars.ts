@@ -107,7 +107,6 @@ export const fetchAvailableCarsPaginated = async ({
 
     // Map backend cars to frontend Car type
     const cars = carsArray.map(mapBackendCarToFrontend);
-
     return {
       success: true,
       cars,
