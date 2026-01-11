@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
+import { useSearchParams } from "next/navigation";
 import { translateFuelType, translateTransmission } from "@/lib/utils/translateVehicleSpecs";
 
 import { CarCard } from "@/components/pages/cars/CarCard";
@@ -269,9 +270,18 @@ const CarsGrid = ({ cars, isLoading, category, sortFn, viewMode }: { cars: Car[]
 
 export const CarsPage = () => {
   const t = useTranslations("carsPage");
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { currentCars, arrivingCars, orderCars, isLoading, loadCarsForCategory } = useCarsPage();
+  
+  // Initialize sort from URL or default to year-newest
   const [activeTab, setActiveTab] = useState<CarCategory>("AVAILABLE");
-  const [sortOption, setSortOption] = useState<SortOption>("year-newest");
+  const [sortOption, setSortOption] = useState<SortOption>(() => {
+    const sortFromUrl = searchParams.get("sort") as SortOption;
+    return sortFromUrl && ["price-asc", "price-desc", "year-newest", "year-oldest"].includes(sortFromUrl)
+      ? sortFromUrl
+      : "year-newest";
+  });
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [isMobile, setIsMobile] = useState(false);
 
@@ -289,6 +299,15 @@ export const CarsPage = () => {
   const handleTabChange = (category: CarCategory) => {
     setActiveTab(category);
     loadCarsForCategory(category);
+  };
+
+  const handleSortChange = (newSort: SortOption) => {
+    setSortOption(newSort);
+    
+    // Update URL with new sort parameter
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("sort", newSort);
+    router.push(`?${params.toString()}`);
   };
 
   const sortCars = (cars: Car[]): Car[] => {
@@ -348,7 +367,7 @@ export const CarsPage = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-64 p-1.5 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 shadow-xl">
                 <DropdownMenuItem 
-                  onClick={() => setSortOption("price-asc")} 
+                  onClick={() => handleSortChange("price-asc")} 
                   className="cursor-pointer rounded-md px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10"
                 >
                   <div className="flex items-center justify-between w-full">
@@ -366,7 +385,7 @@ export const CarsPage = () => {
                   </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
-                  onClick={() => setSortOption("price-desc")} 
+                  onClick={() => handleSortChange("price-desc")} 
                   className="cursor-pointer rounded-md px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10"
                 >
                   <div className="flex items-center justify-between w-full">
@@ -385,7 +404,7 @@ export const CarsPage = () => {
                 </DropdownMenuItem>
                 <div className="h-px bg-gray-200 dark:bg-white/10 my-1.5" />
                 <DropdownMenuItem 
-                  onClick={() => setSortOption("year-newest")} 
+                  onClick={() => handleSortChange("year-newest")} 
                   className="cursor-pointer rounded-md px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10"
                 >
                   <div className="flex items-center justify-between w-full">
@@ -403,7 +422,7 @@ export const CarsPage = () => {
                   </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
-                  onClick={() => setSortOption("year-oldest")} 
+                  onClick={() => handleSortChange("year-oldest")} 
                   className="cursor-pointer rounded-md px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10"
                 >
                   <div className="flex items-center justify-between w-full">
