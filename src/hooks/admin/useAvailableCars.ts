@@ -128,17 +128,20 @@ export const useUpdateAvailableCar = () => {
     mutationFn: async ({
       id,
       data,
+      existingPhotos,
       newPhotos,
       photosToDelete,
     }: {
       id: string;
       data: UpdateAvailableCarFormData;
+      existingPhotos?: string[];
       newPhotos?: File[];
       photosToDelete?: string[];
     }) => {
       const response = await updateAvailableCar({
         id,
         data,
+        existingPhotos,
         newPhotos,
         photosToDelete,
       });

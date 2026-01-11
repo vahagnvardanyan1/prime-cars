@@ -535,6 +535,15 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
               <PdfUploader
                 onFileSelect={setInvoiceFile}
                 disabled={isSubmitting}
+                translations={{
+                  label: t("admin.modals.addCar.invoiceLabel"),
+                  dragDrop: t("admin.modals.addCar.dragDropInvoice"),
+                  dropHere: t("admin.modals.addCar.dropPdfHere"),
+                  clickToBrowse: t("admin.modals.addCar.clickToBrowse"),
+                  maxSize: t("admin.modals.addCar.pdfOnlyMaxSize"),
+                  onlyPdfAllowed: t("admin.modals.addCar.onlyPdfAllowed"),
+                  fileSizeLimit: t("admin.modals.addCar.fileSizeLimit")
+                }}
               />
             </div>
           </div>

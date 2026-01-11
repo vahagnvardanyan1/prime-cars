@@ -181,6 +181,7 @@ export const UpdateAvailableCarModal = ({
       await updateMutation.mutateAsync({
         id: car.id,
         data: updateData,
+        existingPhotos,
         newPhotos: newPhotoFiles,
         photosToDelete,
       });
@@ -272,7 +273,7 @@ export const UpdateAvailableCarModal = ({
             {/* New Photos Upload */}
             <div className="space-y-2 pt-2">
               <Label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                Add New Photos
+                {t("addNewPhotos")}
               </Label>
               <PhotoUploadGrid
                 label=""

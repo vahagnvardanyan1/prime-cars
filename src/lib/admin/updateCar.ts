@@ -69,6 +69,13 @@ export const updateCar = async ({
       formData.append("invoice", invoiceFile);
     }
 
+    // Append reordered existing photo URLs to maintain order
+    if (existingPhotos && existingPhotos.length > 0) {
+      existingPhotos.forEach((photoUrl) => {
+        formData.append("reorderedPhotoUrls", photoUrl);
+      });
+    }
+
     // Append new photos
     if (newPhotos && newPhotos.length > 0) {
       newPhotos.forEach((photo) => {
@@ -76,6 +83,7 @@ export const updateCar = async ({
       });
     }
 
+    // Mark photos for deletion
     if (photosToDelete && photosToDelete.length > 0) {
       photosToDelete.forEach((photo) => {
         formData.append("deletePhotoUrls", photo);

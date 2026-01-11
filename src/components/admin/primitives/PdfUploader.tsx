@@ -11,9 +11,31 @@ type PdfUploaderProps = {
   onFileSelect: (file: File | null) => void;
   currentFileName?: string;
   disabled?: boolean;
+  translations?: {
+    label: string;
+    dragDrop: string;
+    dropHere: string;
+    clickToBrowse: string;
+    maxSize: string;
+    onlyPdfAllowed: string;
+    fileSizeLimit: string;
+  };
 };
 
-export const PdfUploader = ({ onFileSelect, currentFileName, disabled = false }: PdfUploaderProps) => {
+export const PdfUploader = ({ 
+  onFileSelect, 
+  currentFileName, 
+  disabled = false,
+  translations = {
+    label: "Invoice (PDF)",
+    dragDrop: "Drag and drop your invoice",
+    dropHere: "Drop the PDF file here",
+    clickToBrowse: "or click to browse",
+    maxSize: "PDF only, max 10MB",
+    onlyPdfAllowed: "Only PDF files are allowed",
+    fileSizeLimit: "File size must be less than 10MB"
+  }
+}: PdfUploaderProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState<string>("");
@@ -22,13 +44,13 @@ export const PdfUploader = ({ onFileSelect, currentFileName, disabled = false }:
     setError("");
 
     if (file.type !== "application/pdf") {
-      setError("Only PDF files are allowed");
+      setError(translations.onlyPdfAllowed);
       return false;
     }
 
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
-      setError("File size must be less than 10MB");
+      setError(translations.fileSizeLimit);
       return false;
     }
 
@@ -87,7 +109,7 @@ export const PdfUploader = ({ onFileSelect, currentFileName, disabled = false }:
   return (
     <div className="space-y-2">
       <Label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-        Invoice (PDF)
+        {translations.label}
       </Label>
       
       {displayFileName ? (
@@ -144,15 +166,15 @@ export const PdfUploader = ({ onFileSelect, currentFileName, disabled = false }:
             </div>
             
             <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
-              {isDragging ? "Drop the PDF file here" : "Drag and drop your invoice"}
+              {isDragging ? translations.dropHere : translations.dragDrop}
             </p>
             
             <p className="text-xs text-gray-500 dark:text-white/60 mb-3">
-              or click to browse
+              {translations.clickToBrowse}
             </p>
             
             <p className="text-xs text-gray-400 dark:text-white/40">
-              PDF only, max 10MB
+              {translations.maxSize}
             </p>
           </div>
         </div>

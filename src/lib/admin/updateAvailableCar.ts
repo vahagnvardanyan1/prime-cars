@@ -57,10 +57,21 @@ export const updateAvailableCar = async ({
     if (data.boughtPlace) formData.append("boughtPlace", data.boughtPlace);
     if (data.transmission) formData.append("transmission", data.transmission);
 
-    newPhotos && newPhotos.forEach((photo) => {
-      formData.append("carPhotos", photo);
-    });
+    // Append reordered existing photo URLs to maintain order
+    if (existingPhotos && existingPhotos.length > 0) {
+      existingPhotos.forEach((photoUrl) => {
+        formData.append("reorderedPhotoUrls", photoUrl);
+      });
+    }
 
+    // Append new photos
+    if (newPhotos && newPhotos.length > 0) {
+      newPhotos.forEach((photo) => {
+        formData.append("carPhotos", photo);
+      });
+    }
+
+    // Mark photos for deletion
     if (photosToDelete && photosToDelete.length > 0) {
       photosToDelete.forEach((photo) => {
         formData.append("deletePhotoUrls", photo);
