@@ -62,6 +62,13 @@ export enum Country {
   RUSSIA = 'Russia',
 }
 
+export enum EngineType {
+  GASOLINE = 'GASOLINE',
+  DIESEL = 'DIESEL',
+  ELECTRIC = 'ELECTRIC',
+  HYBRID = 'HYBRID',
+}
+
 export type AdminUser = {
   id: string;
   customerId?: string;

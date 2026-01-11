@@ -61,7 +61,54 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
     setFiles(Array.from({ length: initialSlots }).map(() => null));
   };
 
-  return { files, previews, setFileAt, removeFileAt, clearAll };
+  const addMultipleFiles = (newFiles: File[]) => {
+    setFiles((prev) => {
+      // Find the first empty slot index
+      const firstEmptyIndex = prev.findIndex(f => f === null);
+      
+      if (firstEmptyIndex === -1) {
+        // No empty slots, append all new files
+        const allFiles = [...prev.filter(f => f !== null), ...newFiles];
+        // Respect maxFiles limit
+        const limitedFiles = maxFiles ? allFiles.slice(0, maxFiles) : allFiles;
+        // Add one empty slot at the end if under the limit
+        if (!maxFiles || limitedFiles.length < maxFiles) {
+          return [...limitedFiles, null];
+        }
+        return limitedFiles;
+      }
+      
+      // Fill empty slots with new files
+      const updated = [...prev];
+      let fileIndex = 0;
+      
+      for (let i = firstEmptyIndex; i < updated.length && fileIndex < newFiles.length; i++) {
+        if (updated[i] === null) {
+          updated[i] = newFiles[fileIndex];
+          fileIndex++;
+        }
+      }
+      
+      // Add remaining files if any
+      while (fileIndex < newFiles.length) {
+        if (!maxFiles || updated.length < maxFiles) {
+          updated.push(newFiles[fileIndex]);
+          fileIndex++;
+        } else {
+          break;
+        }
+      }
+      
+      // Add one empty slot at the end if under the limit
+      if (!maxFiles || updated.length < maxFiles) {
+        return [...updated, null];
+      }
+      
+      return updated;
+    });
+  };
+
+  return { files, previews, setFileAt, removeFileAt, clearAll, addMultipleFiles };
 };
 
 

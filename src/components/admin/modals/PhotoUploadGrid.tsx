@@ -15,6 +15,7 @@ type PhotoUploadGridProps = {
   previews: (string | null)[];
   onPickFile: ({ index, file }: { index: number; file: File | null }) => void;
   onRemoveFile: ({ index }: { index: number }) => void;
+  onPickMultipleFiles?: (files: File[]) => void;
   tileClassName?: string;
 };
 
@@ -23,6 +24,7 @@ export const PhotoUploadGrid = ({
   previews,
   onPickFile,
   onRemoveFile,
+  onPickMultipleFiles,
   tileClassName,
 }: PhotoUploadGridProps) => {
   const t = useTranslations();
@@ -31,8 +33,28 @@ export const PhotoUploadGrid = ({
   const onChangeAt =
     ({ index }: { index: number }) =>
     (e: ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0] ?? null;
-      onPickFile({ index, file });
+      const files = e.target.files;
+      
+      if (!files || files.length === 0) {
+        return;
+      }
+      
+      // If multiple files selected and we have the handler, use it
+      if (files.length > 1 && onPickMultipleFiles) {
+        const fileArray = Array.from(files).filter(f => f.type.startsWith('image/'));
+        onPickMultipleFiles(fileArray);
+        // Reset the input
+        e.target.value = '';
+        return;
+      }
+      
+      // Single file
+      const file = files[0];
+      if (file && file.type.startsWith('image/')) {
+        onPickFile({ index, file });
+      }
+      // Reset the input
+      e.target.value = '';
     };
 
   const handleDragOver = ({ index }: { index: number }) => (e: DragEvent<HTMLLabelElement>) => {
@@ -52,7 +74,21 @@ export const PhotoUploadGrid = ({
     e.stopPropagation();
     setDragOverIndex(null);
     
-    const file = e.dataTransfer.files?.[0];
+    const files = e.dataTransfer.files;
+    
+    if (!files || files.length === 0) {
+      return;
+    }
+    
+    // If multiple files dropped and we have the handler, use it
+    if (files.length > 1 && onPickMultipleFiles) {
+      const fileArray = Array.from(files).filter(f => f.type.startsWith('image/'));
+      onPickMultipleFiles(fileArray);
+      return;
+    }
+    
+    // Single file
+    const file = files[0];
     if (file && file.type.startsWith('image/')) {
       onPickFile({ index, file });
     }
@@ -92,6 +128,7 @@ export const PhotoUploadGrid = ({
                 id={inputId}
                 type="file"
                 accept="image/*"
+                multiple={!!onPickMultipleFiles}
                 className="sr-only"
                 onChange={onChangeAt({ index: i })}
               />

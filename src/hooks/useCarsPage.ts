@@ -38,9 +38,12 @@ export const useCarsPage = () => {
   const loadingRef = useRef<Set<CarCategory>>(new Set());
   const hasInitialized = useRef(false);
 
-  const loadCarsForCategory = useCallback(async (category: CarCategory) => {
-    // Check if already cached
-    if (cacheRef.current[category]) {
+  const loadCarsForCategory = useCallback(async (category: CarCategory, forceRefresh = false) => {
+    console.log(`🔄 Loading ${category} cars, forceRefresh: ${forceRefresh}`);
+    
+    // Check if already cached (skip cache if forceRefresh is true)
+    if (!forceRefresh && cacheRef.current[category]) {
+      console.log(`📦 Using cached data for ${category}`);
       // Already cached, restore from cache to state
       setState((prev) => {
         const newState = { ...prev };
@@ -86,6 +89,8 @@ export const useCarsPage = () => {
     if (result.success && result.cars) {
       // Ensure cars is an array
       const carsArray = Array.isArray(result.cars) ? result.cars : [];
+      
+      console.log(`✅ Fetched ${carsArray.length} cars for ${category}`);
       
       // Update cache
       cacheRef.current = {

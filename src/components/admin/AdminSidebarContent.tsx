@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
-import { Calculator, CarFront, Settings, Users, Home, Bell } from "lucide-react";
+import { Calculator, CarFront, Settings, Users, Home, Bell, Car } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import type { AdminNavKey } from "@/hooks/admin/useAdminDashboardState";
@@ -23,6 +23,7 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { key: "cars", icon: CarFront, href: "/admin" },
+  { key: "availableCars", icon: Car, href: "/admin/available-cars" },
   { key: "users", icon: Users, href: "/admin/users" },
   { key: "notifications", icon: Bell, href: "/admin/notifications" },
   { key: "calculator", icon: Calculator, href: "/admin/calculator" },
@@ -39,6 +40,7 @@ export const AdminSidebarContent = ({
 
   // Determine active nav from pathname
   const getActiveNav = (): AdminNavKey => {
+    if (pathname.includes("/admin/available-cars")) return "availableCars";
     if (pathname.includes("/admin/users")) return "users";
     if (pathname.includes("/admin/notifications")) return "notifications";
     if (pathname.includes("/admin/calculator")) return "calculator";
@@ -49,8 +51,8 @@ export const AdminSidebarContent = ({
   const activeNav = getActiveNav();
 
   const visibleNavItems = NAV_ITEMS.filter(item => {
-    // Only show "users" if user is admin
-    if (item.key === 'users') {
+    // Only show "users" and "availableCars" if user is admin
+    if (item.key === 'users' || item.key === 'availableCars') {
       return isAdmin;
     }
     return true;

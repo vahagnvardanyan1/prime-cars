@@ -39,7 +39,7 @@ type User = {
 
 export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: AddCarModalProps) => {
   const t = useTranslations();
-  const { files, previews, setFileAt, removeFileAt, clearAll } = usePhotoUploads({ initialSlots: 1 });
+  const { files, previews, setFileAt, removeFileAt, clearAll, addMultipleFiles } = usePhotoUploads({ initialSlots: 1 });
   const form = useAddCarForm();
   const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
   const [users, setUsers] = useState<User[]>([]);
@@ -202,6 +202,7 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                 previews={previews}
                 onPickFile={setFileAt}
                 onRemoveFile={removeFileAt}
+                onPickMultipleFiles={addMultipleFiles}
                 tileClassName="h-[160px]"
               />
             </div>
