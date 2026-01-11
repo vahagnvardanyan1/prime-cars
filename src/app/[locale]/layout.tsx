@@ -9,6 +9,7 @@ import { SiteShell } from "@/components/SiteShell";
 import { ThemeProvider } from "@/components/ThemeContext";
 import { Toaster } from "@/components/ui/sonner";
 import { UserProvider } from "@/contexts/UserContext";
+import { QueryProvider } from "@/contexts/QueryProvider";
 import { MaintenancePage } from "@/components/MaintenancePage";
 import { isMaintenanceMode } from "@/lib/maintenance";
 
@@ -44,12 +45,14 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <ThemeProvider>
-        <UserProvider>
-          <SiteShell>{children}</SiteShell>
-          <Toaster />
-        </UserProvider>
-      </ThemeProvider>
+      <QueryProvider>
+        <ThemeProvider>
+          <UserProvider>
+            <SiteShell>{children}</SiteShell>
+            <Toaster />
+          </UserProvider>
+        </ThemeProvider>
+      </QueryProvider>
     </NextIntlClientProvider>
   );
 };
