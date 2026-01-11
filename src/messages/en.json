@@ -428,6 +428,7 @@
         "engine": "Engine",
         "hp": "HP",
         "transmission": "Transmission",
+        "description": "Description",
         "actions": "Actions",
         "update": "Update",
         "delete": "Delete"
@@ -819,6 +820,7 @@
         "subtitle": "Add a new car to the available inventory",
         "carPhotos": "Car Photos",
         "uploadHelp": "Upload up to 50 photos. Click or drag and drop images to upload.",
+        "photoRequired": "At least one photo is required",
         "carModel": "Car Model",
         "year": "Year",
         "vin": "VIN",
@@ -859,6 +861,7 @@
         "photosWillBeDeleted": "{count} {count, plural, one {photo} other {photos}} will be deleted",
         "newPhotos": "New Photos",
         "addPhotos": "Add photos (up to {max} total)",
+        "photoRequired": "At least one photo is required",
         "carModel": "Car Model",
         "year": "Year",
         "vin": "VIN",

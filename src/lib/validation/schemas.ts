@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+// Constants to avoid hydration issues
+const CURRENT_YEAR = 2026;
+const MAX_YEAR = CURRENT_YEAR + 1;
+
 // ============================================
 // Authentication Schemas
 // ============================================
@@ -153,7 +157,7 @@ export const createCarSchema = z.object({
   year: z
     .number()
     .min(1900, "Year must be after 1900")
-    .max(new Date().getFullYear() + 1, `Year cannot be after ${new Date().getFullYear() + 1}`),
+    .max(MAX_YEAR, `Year cannot be after ${MAX_YEAR}`),
   priceUsd: z
     .number()
     .positive("Price must be greater than 0")
@@ -275,7 +279,7 @@ export const calculatorSchema = z.object({
   year: z
     .number()
     .min(1900, "Year must be after 1900")
-    .max(new Date().getFullYear() + 1, `Year cannot be after ${new Date().getFullYear() + 1}`),
+    .max(MAX_YEAR, `Year cannot be after ${MAX_YEAR}`),
   engineVolume: z
     .number()
     .positive("Engine volume must be greater than 0")

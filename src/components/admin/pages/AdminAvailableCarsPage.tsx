@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { AvailableCarsView } from "@/components/admin/views/AvailableCarsView";
@@ -22,10 +22,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useCarsPage } from "@/hooks/useCarsPage";
 import { useUser } from "@/contexts/UserContext";
-import { deleteAvailableCar } from "@/lib/admin/deleteAvailableCar";
 import type { Car, CarCategory } from "@/lib/cars/types";
+import { 
+  useAvailableCarsByCategory, 
+  useDeleteAvailableCar 
+} from "@/hooks/admin/useAvailableCars";
 
 export const AdminAvailableCarsPage = () => {
   const t = useTranslations("carsPage");
@@ -34,7 +36,6 @@ export const AdminAvailableCarsPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isAdmin } = useUser();
-  const { currentCars, arrivingCars, orderCars, isLoading, loadCarsForCategory } = useCarsPage();
   
   // Initialize activeTab from URL or default to AVAILABLE
   const getInitialTab = (): CarCategory => {
@@ -45,14 +46,39 @@ export const AdminAvailableCarsPage = () => {
     return "AVAILABLE";
   };
   
+  const getInitialSearch = (): string => {
+    return searchParams.get("search") || "";
+  };
+  
   const [activeTab, setActiveTab] = useState<CarCategory>(getInitialTab());
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(getInitialSearch());
   const [selectedCarForUpdate, setSelectedCarForUpdate] = useState<Car | null>(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [carToDelete, setCarToDelete] = useState<Car | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+
+  // React Query hooks for each category
+  const { 
+    data: availableCars = [], 
+    isLoading: isLoadingAvailable, 
+    refetch: refetchAvailable 
+  } = useAvailableCarsByCategory("AVAILABLE");
+  
+  const { 
+    data: onroadCars = [], 
+    isLoading: isLoadingOnroad, 
+    refetch: refetchOnroad 
+  } = useAvailableCarsByCategory("ONROAD");
+  
+  const { 
+    data: transitCars = [], 
+    isLoading: isLoadingTransit, 
+    refetch: refetchTransit 
+  } = useAvailableCarsByCategory("TRANSIT");
+
+  // Delete mutation
+  const deleteMutation = useDeleteAvailableCar();
 
   // Redirect non-admin users
   useEffect(() => {
@@ -61,16 +87,36 @@ export const AdminAvailableCarsPage = () => {
     }
   }, [isAdmin, router]);
 
-  // Load cars for the active tab from URL on mount
+  // Update active tab and search from URL
   useEffect(() => {
     const tabFromUrl = getInitialTab();
     setActiveTab(tabFromUrl);
-    loadCarsForCategory(tabFromUrl);
+    const searchFromUrl = getInitialSearch();
+    setSearchQuery(searchFromUrl);
   }, [searchParams]);
 
   const handleUpdateCar = (car: Car) => {
     setSelectedCarForUpdate(car);
     setIsUpdateModalOpen(true);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    // Update URL with search parameter
+    const params = new URLSearchParams(searchParams.toString());
+    if (value.trim()) {
+      params.set("search", value);
+    } else {
+      params.delete("search");
+    }
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("search");
+    router.push(`?${params.toString()}`, { scroll: false });
   };
 
   const handleDeleteCar = (car: Car) => {
@@ -81,43 +127,28 @@ export const AdminAvailableCarsPage = () => {
   const confirmDelete = async () => {
     if (!carToDelete) return;
 
-    setIsDeleting(true);
     try {
-      const result = await deleteAvailableCar({ id: carToDelete.id });
-
-      if (result.success) {
-        toast.success(tAdmin("deleteAvailableCar.success"));
-        setIsDeleteDialogOpen(false);
-        setCarToDelete(null);
-        // Reload the current category with force refresh
-        loadCarsForCategory(activeTab, true);
-      } else {
-        toast.error(result.error || tAdmin("deleteAvailableCar.error"));
-      }
+      await deleteMutation.mutateAsync({ id: carToDelete.id });
+      toast.success(tAdmin("deleteAvailableCar.success"));
+      setIsDeleteDialogOpen(false);
+      setCarToDelete(null);
     } catch (error) {
-      toast.error("An error occurred while deleting the car");
-    } finally {
-      setIsDeleting(false);
+      toast.error(error instanceof Error ? error.message : "Failed to delete car");
     }
   };
 
   const handleUpdateSuccess = () => {
     setIsUpdateModalOpen(false);
     setSelectedCarForUpdate(null);
-    // Reload the current category with force refresh to get updated data
-    loadCarsForCategory(activeTab, true);
     toast.success(tAvailableCars("carUpdated"));
   };
 
   const handleCreateSuccess = () => {
     setIsCreateModalOpen(false);
-    // Reload the current category with force refresh to get new data
-    loadCarsForCategory(activeTab, true);
   };
 
   const handleTabChange = (category: CarCategory) => {
     setActiveTab(category);
-    loadCarsForCategory(category);
     
     // Update URL with the selected tab
     const params = new URLSearchParams(searchParams.toString());
@@ -125,8 +156,22 @@ export const AdminAvailableCarsPage = () => {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
+  const handleRefresh = () => {
+    switch (activeTab) {
+      case "AVAILABLE":
+        refetchAvailable();
+        break;
+      case "ONROAD":
+        refetchOnroad();
+        break;
+      case "TRANSIT":
+        refetchTransit();
+        break;
+    }
+  };
+
   // Get all cars from all categories for search
-  const allCars = [...(currentCars || []), ...(arrivingCars || []), ...(orderCars || [])];
+  const allCars = [...availableCars, ...onroadCars, ...transitCars];
 
   // Filter all cars based on search query
   const getSearchResults = () => {
@@ -139,12 +184,40 @@ export const AdminAvailableCarsPage = () => {
       car.year.toString().includes(query) ||
       car.location?.toLowerCase().includes(query) ||
       car.engine?.toLowerCase().includes(query) ||
-      car.fuelType?.toLowerCase().includes(query)
+      car.fuelType?.toLowerCase().includes(query) ||
+      car.vin?.toLowerCase().includes(query)
     ));
   };
 
   const searchResults = getSearchResults();
   const isSearching = searchQuery.trim().length > 0;
+
+  // Get current cars based on active tab
+  const getCurrentCars = () => {
+    switch (activeTab) {
+      case "AVAILABLE":
+        return availableCars;
+      case "ONROAD":
+        return onroadCars;
+      case "TRANSIT":
+        return transitCars;
+      default:
+        return [];
+    }
+  };
+
+  const getCurrentLoading = () => {
+    switch (activeTab) {
+      case "AVAILABLE":
+        return isLoadingAvailable;
+      case "ONROAD":
+        return isLoadingOnroad;
+      case "TRANSIT":
+        return isLoadingTransit;
+      default:
+        return false;
+    }
+  };
 
   // Don't render anything if not admin
   if (!isAdmin) {
@@ -181,9 +254,19 @@ export const AdminAvailableCarsPage = () => {
               type="text"
               placeholder={tAvailableCars("searchPlaceholder")}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 text-sm bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#429de6] focus:border-transparent text-gray-900 dark:text-white placeholder:text-gray-400"
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="w-full pl-10 pr-10 py-2.5 text-sm bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#429de6] focus:border-transparent text-gray-900 dark:text-white placeholder:text-gray-400"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                aria-label="Clear search"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -200,13 +283,13 @@ export const AdminAvailableCarsPage = () => {
             >
               <span className="flex items-center gap-2">
                 <span>{t("tabs.current")}</span>
-                {!isLoading("AVAILABLE") && currentCars.length > 0 && (
+                {!isLoadingAvailable && availableCars.length > 0 && (
                   <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
                     activeTab === "AVAILABLE" 
                       ? "bg-white/20 text-white" 
                       : "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400"
                   }`}>
-                    {currentCars.length}
+                    {availableCars.length}
                   </span>
                 )}
               </span>
@@ -222,13 +305,13 @@ export const AdminAvailableCarsPage = () => {
             >
               <span className="flex items-center gap-2">
                 <span>{t("tabs.arriving")}</span>
-                {!isLoading("ONROAD") && arrivingCars.length > 0 && (
+                {!isLoadingOnroad && onroadCars.length > 0 && (
                   <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
                     activeTab === "ONROAD" 
                       ? "bg-white/20 text-white" 
                       : "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400"
                   }`}>
-                    {arrivingCars.length}
+                    {onroadCars.length}
                   </span>
                 )}
               </span>
@@ -244,13 +327,13 @@ export const AdminAvailableCarsPage = () => {
             >
               <span className="flex items-center gap-2">
                 <span>{t("tabs.order")}</span>
-                {!isLoading("TRANSIT") && orderCars.length > 0 && (
+                {!isLoadingTransit && transitCars.length > 0 && (
                   <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
                     activeTab === "TRANSIT" 
                       ? "bg-white/20 text-white" 
                       : "bg-blue-100 dark:bg-[#429de6]/20 text-blue-700 dark:text-[#429de6]"
                   }`}>
-                    {orderCars.length}
+                    {transitCars.length}
                   </span>
                 )}
               </span>
@@ -261,24 +344,19 @@ export const AdminAvailableCarsPage = () => {
         {/* Search Results - Show when searching */}
         {isSearching ? (
           <div>
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {searchResults && searchResults.length > 0 
                   ? tAvailableCars("searchResults", { count: searchResults.length, query: searchQuery })
                   : tAvailableCars("noResults", { query: searchQuery })
                 }
               </p>
-              <button
-                onClick={() => setSearchQuery("")}
-                className="text-sm text-[#429de6] hover:text-[#3a8acc] font-medium"
-              >
-                {tAvailableCars("clearSearch")}
-              </button>
             </div>
             {searchResults && searchResults.length > 0 ? (
               <AvailableCarsView
                 cars={searchResults}
                 isLoading={false}
+                onRefresh={handleRefresh}
                 onUpdateCar={handleUpdateCar}
                 onDeleteCar={handleDeleteCar}
                 isAdmin={isAdmin}
@@ -302,8 +380,9 @@ export const AdminAvailableCarsPage = () => {
           <>
             <TabsContent value="AVAILABLE" className="mt-0">
               <AvailableCarsView 
-                cars={currentCars} 
-                isLoading={isLoading("AVAILABLE")} 
+                cars={getCurrentCars()} 
+                isLoading={getCurrentLoading()} 
+                onRefresh={handleRefresh}
                 onUpdateCar={handleUpdateCar}
                 onDeleteCar={handleDeleteCar}
                 isAdmin={isAdmin}
@@ -312,8 +391,9 @@ export const AdminAvailableCarsPage = () => {
 
             <TabsContent value="ONROAD" className="mt-0">
               <AvailableCarsView 
-                cars={arrivingCars} 
-                isLoading={isLoading("ONROAD")} 
+                cars={getCurrentCars()} 
+                isLoading={getCurrentLoading()} 
+                onRefresh={handleRefresh}
                 onUpdateCar={handleUpdateCar}
                 onDeleteCar={handleDeleteCar}
                 isAdmin={isAdmin}
@@ -322,8 +402,9 @@ export const AdminAvailableCarsPage = () => {
 
             <TabsContent value="TRANSIT" className="mt-0">
               <AvailableCarsView 
-                cars={orderCars} 
-                isLoading={isLoading("TRANSIT")} 
+                cars={getCurrentCars()} 
+                isLoading={getCurrentLoading()} 
+                onRefresh={handleRefresh}
                 onUpdateCar={handleUpdateCar}
                 onDeleteCar={handleDeleteCar}
                 isAdmin={isAdmin}
@@ -370,17 +451,17 @@ export const AdminAvailableCarsPage = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel 
-              disabled={isDeleting}
+              disabled={deleteMutation.isPending}
               className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
             >
               {tAdmin("deleteAvailableCar.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              disabled={isDeleting}
+              disabled={deleteMutation.isPending}
               className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
             >
-              {isDeleting ? tAdmin("deleteAvailableCar.deleting") : tAdmin("deleteAvailableCar.confirm")}
+              {deleteMutation.isPending ? tAdmin("deleteAvailableCar.deleting") : tAdmin("deleteAvailableCar.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

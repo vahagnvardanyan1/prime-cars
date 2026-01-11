@@ -55,7 +55,6 @@ export const updateAvailableCar = async ({
     if (data.boughtPlace) formData.append("boughtPlace", data.boughtPlace);
     if (data.transmission) formData.append("transmission", data.transmission);
 
-    debugger
     newPhotos.forEach((photo) => {
       formData.append("carPhotos", photo);
     });

@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 
 import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+
+// Constants to avoid hydration issues
+const CURRENT_YEAR = 2026;
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,43 +29,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { CarCategory } from "@/lib/cars/types";
-import { createAvailableCar } from "@/lib/admin/createAvailableCar";
 import { usePhotoUploads } from "@/hooks/admin/usePhotoUploads";
 import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
 import { EngineType } from "@/lib/admin/types";
+import { availableCarSchema } from "@/lib/admin/schemas/availableCar.schema";
+import { useCreateAvailableCar } from "@/hooks/admin/useAvailableCars";
+import type { z } from "zod";
+
+type AvailableCarFormData = z.infer<typeof availableCarSchema>;
 
 type CreateAvailableCarModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-};
-
-type FormData = {
-  carModel: string;
-  carYear: number;
-  carVin: string;
-  carPrice: number;
-  carCategory: CarCategory;
-  carDescription: string;
-  engineType: EngineType | "";
-  engineHp: number;
-  engineSize: number;
-  boughtPlace: string;
-  transmission: string;
-};
-
-const initialFormData: FormData = {
-  carModel: "",
-  carYear: new Date().getFullYear(),
-  carVin: "",
-  carPrice: 0,
-  carCategory: "AVAILABLE",
-  carDescription: "",
-  engineType: "",
-  engineHp: 0,
-  engineSize: 0,
-  boughtPlace: "",
-  transmission: "",
 };
 
 export const CreateAvailableCarModal = ({
@@ -69,64 +50,151 @@ export const CreateAvailableCarModal = ({
   onSuccess,
 }: CreateAvailableCarModalProps) => {
   const t = useTranslations("admin.modals.createAvailableCar");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<FormData>(initialFormData);
   const { files, previews, setFileAt, removeFileAt, clearAll, addMultipleFiles } = usePhotoUploads({ 
     maxFiles: 50, 
     initialSlots: 1 
   });
 
-  const handleChange = (field: keyof FormData, value: string | number) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  const form = useForm<AvailableCarFormData>({
+    resolver: zodResolver(availableCarSchema),
+    mode: "onChange", // Validate on change after first submit
+    reValidateMode: "onChange",
+    defaultValues: {
+      carModel: "",
+      carYear: CURRENT_YEAR,
+      carVin: "",
+      carPrice: 0,
+      carCategory: "AVAILABLE",
+      carDescription: "",
+      engineType: EngineType.GASOLINE,
+      engineHp: 0,
+      engineSize: 0,
+      boughtPlace: "",
+      transmission: "",
+    },
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, errors, isSubmitted },
+    reset,
+    setValue,
+    watch,
+  } = form;
+
+  const createMutation = useCreateAvailableCar();
+
+  // Watch all fields together for better performance
+  const formValues = watch();
+
+  // Simple check: enable button if basic required fields have any content
+  // Let the validation schema handle detailed validation on submit
+  // engineType defaults to GASOLINE so no need to check
+  const hasBasicRequiredFields = 
+    formValues.carModel && formValues.carModel.trim().length > 0 && 
+    formValues.carVin && formValues.carVin.trim().length > 0 && 
+    formValues.carPrice !== undefined && formValues.carPrice !== null &&
+    formValues.carYear !== undefined && formValues.carYear !== null &&
+    formValues.carCategory;
+
+  const isSubmitDisabled = !hasBasicRequiredFields || isSubmitting;
+
+  useEffect(() => {
+    if (isOpen) {
+      reset(
+        {
+          carModel: "",
+          carYear: CURRENT_YEAR,
+          carVin: "",
+          carPrice: 0,
+          carCategory: "AVAILABLE",
+          carDescription: "",
+          engineType: EngineType.GASOLINE,
+          engineHp: 0,
+          engineSize: 0,
+          boughtPlace: "",
+          transmission: "",
+        },
+        {
+          keepErrors: false,
+          keepDirty: false,
+          keepIsSubmitted: false,
+          keepTouched: false,
+          keepIsValid: false,
+          keepSubmitCount: false,
+        }
+      );
+      clearAll();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const handleClose = () => {
-    setFormData(initialFormData);
+    reset(
+      {
+        carModel: "",
+        carYear: CURRENT_YEAR,
+        carVin: "",
+        carPrice: 0,
+        carCategory: "AVAILABLE",
+        carDescription: "",
+        engineType: EngineType.GASOLINE,
+        engineHp: 0,
+        engineSize: 0,
+        boughtPlace: "",
+        transmission: "",
+      },
+      {
+        keepErrors: false,
+        keepDirty: false,
+        keepIsSubmitted: false,
+        keepTouched: false,
+        keepIsValid: false,
+        keepSubmitCount: false,
+      }
+    );
     clearAll();
     onClose();
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const onSubmit = async (data: AvailableCarFormData) => {
+    // Check if at least one photo is uploaded
+    const photoFiles = files.filter((file): file is File => file !== null);
+    
+    if (photoFiles.length === 0) {
+      toast.error(t("errorTitle"), {
+        description: t("photoRequired"),
+      });
+      return;
+    }
 
+    // The Zod schema validation happens automatically via zodResolver
+    // If we reach here, form validation has passed
     try {
-      // Filter out null files
-      const photoFiles = files.filter((file): file is File => file !== null);
-      
-      const result = await createAvailableCar({ 
-        data: formData,
+      await createMutation.mutateAsync({
+        data,
         photos: photoFiles,
       });
+
+      toast.success(t("successTitle"), {
+        description: t("successDescription"),
+      });
       
-      if (result.success) {
-        toast.success(t("successTitle"), {
-          description: t("successDescription"),
+      onSuccess();
+      handleClose();
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(t("errorTitle"), {
+          description: error.message,
         });
-        onSuccess();
-        handleClose();
       } else {
         toast.error(t("errorTitle"), {
-          description: result.error || t("errorDescription"),
+          description: t("networkError"),
         });
       }
-    } catch (error) {
-      console.error("Error creating available car:", error);
-      toast.error(t("errorTitle"), {
-        description: error instanceof Error ? error.message : t("networkError"),
-      });
-    } finally {
-      setIsSubmitting(false);
     }
   };
-
-  const isFormValid = formData.carModel.trim() !== "" &&
-    formData.carYear > 1900 &&
-    formData.carVin.trim() !== "" &&
-    formData.carPrice > 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
@@ -140,12 +208,12 @@ export const CreateAvailableCarModal = ({
           </p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-0">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-0">
           <div className="px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-8 space-y-4 sm:space-y-5 lg:space-y-6 bg-gray-50/50 dark:bg-[#0b0f14]">
             {/* Car Photos */}
             <div className="space-y-3">
               <Label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                {t("carPhotos")}
+                {t("carPhotos")} <span className="text-red-500">*</span>
               </Label>
               <PhotoUploadGrid
                 label=""
@@ -158,80 +226,84 @@ export const CreateAvailableCarModal = ({
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 {t("uploadHelp")}
               </p>
+              {isSubmitted && files.filter((file): file is File => file !== null).length === 0 && (
+                <p className="text-xs text-red-500">{t("photoRequired")}</p>
+              )}
             </div>
 
             {/* Row 1: Model, Year, VIN, Price, Category, Bought Place */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-6 lg:gap-8">
               <div className="space-y-2">
                 <Label htmlFor="model" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  {t("carModel")} *
+                  {t("carModel")} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="model"
-                  value={formData.carModel}
-                  onChange={(e) => handleChange("carModel", e.target.value)}
+                  {...register("carModel")}
                   placeholder="BMW X5"
-                  required
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
+                {isSubmitted && errors.carModel && (
+                  <p className="text-xs text-red-500 mt-1">{errors.carModel.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="year" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  {t("year")} *
+                  {t("year")} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="year"
                   type="number"
-                  value={formData.carYear}
-                  onChange={(e) => handleChange("carYear", parseInt(e.target.value) || 0)}
+                  {...register("carYear", { valueAsNumber: true })}
                   placeholder="2024"
-                  min="1900"
-                  max={new Date().getFullYear() + 1}
-                  required
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
+                {isSubmitted && errors.carYear && (
+                  <p className="text-xs text-red-500 mt-1">{errors.carYear.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="vin" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  {t("vin")} *
+                  {t("vin")} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="vin"
-                  value={formData.carVin}
-                  onChange={(e) => handleChange("carVin", e.target.value.toUpperCase())}
+                  {...register("carVin")}
                   placeholder={t("vinPlaceholder")}
                   maxLength={17}
-                  required
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 font-mono"
+                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 font-mono uppercase"
                 />
+                {isSubmitted && errors.carVin && (
+                  <p className="text-xs text-red-500 mt-1">{errors.carVin.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="price" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  {t("priceUsd")} *
+                  {t("priceUsd")} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="price"
                   type="number"
-                  value={formData.carPrice}
-                  onChange={(e) => handleChange("carPrice", parseFloat(e.target.value) || 0)}
-                  placeholder="0"
-                  min="0"
-                  step="1"
-                  required
+                  step="0.01"
+                  {...register("carPrice", { valueAsNumber: true })}
+                  placeholder="e.g., 25000"
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
+                {isSubmitted && errors.carPrice && (
+                  <p className="text-xs text-red-500 mt-1">{errors.carPrice.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="category" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  {t("category")} *
+                  {t("category")} <span className="text-red-500">*</span>
                 </Label>
                 <Select
-                  value={formData.carCategory}
-                  onValueChange={(value) => handleChange("carCategory", value as CarCategory)}
+                  value={formValues.carCategory}
+                  onValueChange={(value) => setValue("carCategory", value as CarCategory, { shouldValidate: true, shouldDirty: true })}
                 >
                   <SelectTrigger id="category" className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
                     <SelectValue />
@@ -250,8 +322,7 @@ export const CreateAvailableCarModal = ({
                 </Label>
                 <Input
                   id="boughtPlace"
-                  value={formData.boughtPlace}
-                  onChange={(e) => handleChange("boughtPlace", e.target.value)}
+                  {...register("boughtPlace")}
                   placeholder={t("boughtPlacePlaceholder")}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
@@ -262,23 +333,25 @@ export const CreateAvailableCarModal = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
               <div className="space-y-2">
                 <Label htmlFor="engineType" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  {t("engineType")}
+                  {t("engineType")} <span className="text-red-500">*</span>
                 </Label>
                 <Select
-                  value={formData.engineType || "none"}
-                  onValueChange={(value) => handleChange("engineType", value === "none" ? "" : value)}
+                  value={formValues.engineType}
+                  onValueChange={(value) => setValue("engineType", value as typeof EngineType[keyof typeof EngineType], { shouldValidate: true, shouldDirty: true })}
                 >
                   <SelectTrigger id="engineType" className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
                     <SelectValue placeholder={t("selectEngine")} />
                   </SelectTrigger>
                   <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
-                    <SelectItem value="none" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">None</SelectItem>
                     <SelectItem value={EngineType.GASOLINE} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("engineTypeGasoline")}</SelectItem>
                     <SelectItem value={EngineType.DIESEL} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("engineTypeDiesel")}</SelectItem>
                     <SelectItem value={EngineType.ELECTRIC} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("engineTypeElectric")}</SelectItem>
                     <SelectItem value={EngineType.HYBRID} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("engineTypeHybrid")}</SelectItem>
                   </SelectContent>
                 </Select>
+                {isSubmitted && errors.engineType && (
+                  <p className="text-xs text-red-500 mt-1">{errors.engineType.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -288,10 +361,8 @@ export const CreateAvailableCarModal = ({
                 <Input
                   id="engineHp"
                   type="number"
-                  value={formData.engineHp || ""}
-                  onChange={(e) => handleChange("engineHp", parseInt(e.target.value) || 0)}
+                  {...register("engineHp", { valueAsNumber: true })}
                   placeholder="HP"
-                  min="0"
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
               </div>
@@ -303,11 +374,9 @@ export const CreateAvailableCarModal = ({
                 <Input
                   id="engineSize"
                   type="number"
-                  value={formData.engineSize || ""}
-                  onChange={(e) => handleChange("engineSize", parseFloat(e.target.value) || 0)}
-                  placeholder="L"
-                  min="0"
                   step="0.1"
+                  {...register("engineSize", { valueAsNumber: true })}
+                  placeholder="L"
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
               </div>
@@ -318,8 +387,7 @@ export const CreateAvailableCarModal = ({
                 </Label>
                 <Input
                   id="transmission"
-                  value={formData.transmission}
-                  onChange={(e) => handleChange("transmission", e.target.value)}
+                  {...register("transmission")}
                   placeholder={t("transmissionPlaceholder")}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
@@ -333,8 +401,7 @@ export const CreateAvailableCarModal = ({
               </Label>
               <Textarea
                 id="description"
-                value={formData.carDescription}
-                onChange={(e) => handleChange("carDescription", e.target.value)}
+                {...register("carDescription")}
                 placeholder={t("descriptionPlaceholder")}
                 rows={3}
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 resize-none bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
@@ -354,7 +421,7 @@ export const CreateAvailableCarModal = ({
             </Button>
             <Button
               type="submit"
-              disabled={!isFormValid || isSubmitting}
+              disabled={isSubmitDisabled}
               className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[150px] h-11 sm:h-12 text-[15px] sm:text-[16px] bg-gradient-to-r from-[#429de6] to-[#3b8ed4] hover:from-[#3a8acc] hover:to-[#3280bb] text-white font-semibold rounded-lg shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (

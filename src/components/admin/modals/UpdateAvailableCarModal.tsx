@@ -3,7 +3,10 @@
 import { useState, useEffect } from "react";
 
 import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +28,8 @@ import {
 import type { Car, CarCategory } from "@/lib/cars/types";
 import { usePhotoUploads } from "@/hooks/admin/usePhotoUploads";
 import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
-import { updateAvailableCar } from "@/lib/admin/updateAvailableCar";
+import { updateAvailableCarSchema, type UpdateAvailableCarFormData } from "@/lib/admin/schemas/availableCar.schema";
+import { useUpdateAvailableCar } from "@/hooks/admin/useAvailableCars";
 
 type UpdateAvailableCarModalProps = {
   isOpen: boolean;
@@ -34,20 +38,25 @@ type UpdateAvailableCarModalProps = {
   onSuccess: () => void;
 };
 
-type FormData = {
-  brand: string;
-  model: string;
-  year: number;
-  priceUsd: number;
-  category: CarCategory;
-  location?: string;
-  engine?: string;
-  horsepower?: number;
-  fuelType?: string;
-  transmission?: string;
-  estimatedArrival?: string;
-  shippingProgress?: number;
-};
+// Constants to avoid hydration issues
+const CURRENT_YEAR = 2026;
+const MAX_YEAR = CURRENT_YEAR + 2;
+
+// Create a form-specific schema that matches the UI structure
+const updateFormSchema = z.object({
+  model: z.string().min(1, "Model is required").optional().or(z.literal("")),
+  year: z.number({ message: "Year must be a number" }).min(1900).max(MAX_YEAR).optional(),
+  priceUsd: z.number({ message: "Price must be a number" }).positive("Price must be greater than 0").optional(),
+  category: z.enum(["AVAILABLE", "ONROAD", "TRANSIT"]).optional(),
+  location: z.string().optional().or(z.literal("")),
+  engine: z.string().optional().or(z.literal("")),
+  horsepower: z.number({ message: "Horsepower must be a number" }).optional().or(z.literal(0)),
+  fuelType: z.string().optional().or(z.literal("")),
+  transmission: z.string().optional().or(z.literal("")),
+  description: z.string().max(1000, "Description must be less than 1000 characters").optional().or(z.literal("")),
+});
+
+type FormData = z.infer<typeof updateFormSchema>;
 
 export const UpdateAvailableCarModal = ({
   isOpen,
@@ -56,22 +65,7 @@ export const UpdateAvailableCarModal = ({
   onSuccess,
 }: UpdateAvailableCarModalProps) => {
   const t = useTranslations("admin.modals.updateAvailableCar");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    brand: car.brand,
-    model: car.model,
-    year: car.year,
-    priceUsd: car.priceUsd,
-    category: car.category,
-    location: car.location || "",
-    engine: car.engine || "",
-    horsepower: car.horsepower || 0,
-    fuelType: car.fuelType || "",
-    transmission: car.transmission || "",
-    estimatedArrival: car.estimatedArrival || "",
-    shippingProgress: car.shippingProgress || 0,
-  });
-
+  
   // Photo management
   const { files, previews: newPreviews, setFileAt, removeFileAt, clearAll, addMultipleFiles } = usePhotoUploads({ 
     maxFiles: 50, 
@@ -79,93 +73,119 @@ export const UpdateAvailableCarModal = ({
   });
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
   const [photosToDelete, setPhotosToDelete] = useState<string[]>([]);
+  const [photoError, setPhotoError] = useState<string>("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isSubmitted },
+    reset,
+    setValue,
+    watch,
+  } = useForm<FormData>({
+    resolver: zodResolver(updateFormSchema),
+    mode: "onChange",
+    defaultValues: {
+      model: "",
+      year: 0,
+      priceUsd: 0,
+      category: "AVAILABLE",
+      location: "",
+      engine: "",
+      horsepower: 0,
+      fuelType: "",
+      transmission: "",
+      description: "",
+    },
+  });
+
+  const updateMutation = useUpdateAvailableCar();
+
+  const category = watch("category");
 
   useEffect(() => {
     if (isOpen) {
-      setFormData({
-        brand: car.brand,
+      reset({
         model: car.model,
         year: car.year,
         priceUsd: car.priceUsd,
         category: car.category,
         location: car.location || "",
-        engine: car.engine || "",
+        engine: car.engineSize?.toString() || "",
         horsepower: car.horsepower || 0,
         fuelType: car.fuelType || "",
         transmission: car.transmission || "",
-        estimatedArrival: car.estimatedArrival || "",
-        shippingProgress: car.shippingProgress || 0,
+        description: car.description || "",
       });
       
       // Initialize photos
       const carPhotos = car.photos || [];
-      console.log("🖼️ Initializing modal with photos:", carPhotos);
       setExistingPhotos(carPhotos);
       setPhotosToDelete([]);
+      setPhotoError("");
       clearAll();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, car.id]);
 
-  const handleChange = (field: keyof FormData, value: string | number) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const handleRemoveExistingPhoto = (index: number) => {
+    const photoUrl = existingPhotos[index];
+    if (photoUrl) {
+      setPhotosToDelete((prev) => [...prev, photoUrl]);
+      setExistingPhotos((prev) => prev.filter((_, i) => i !== index));
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
+  const onSubmit = async (formData: FormData) => {
+    // Filter out null files to get only new photos
+    const newPhotoFiles = files.filter((file): file is File => file !== null);
+    
+    // Validate at least one photo exists (existing or new)
+    const totalPhotos = existingPhotos.length + newPhotoFiles.length;
+    if (totalPhotos === 0) {
+      const errorMsg = t("photoRequired");
+      setPhotoError(errorMsg);
+      toast.error(t("errorTitle"), {
+        description: errorMsg,
+      });
+      return;
+    }
+    
+    setPhotoError("");
+    
     try {
-      // Filter out null files to get only new photos
-      const newPhotoFiles = files.filter((file): file is File => file !== null);
-      
       // Map form data to backend expected format
-      const updateData = {
-        carModel: `${formData.brand} ${formData.model}`.trim(),
+      const updateData: UpdateAvailableCarFormData = {
+        carModel: formData.model?.trim() || "",
         carYear: formData.year,
-        carVin: car.vin || "", // Keep original VIN
+        carVin: car.vin || "",
         carPrice: formData.priceUsd,
         carCategory: formData.category,
-        engineType: formData.fuelType || "",
+        carDescription: formData.description || "",
+        engineType: (formData.fuelType as UpdateAvailableCarFormData['engineType']) || "",
         engineHp: formData.horsepower || 0,
         engineSize: parseFloat(formData.engine || "0") || 0,
         boughtPlace: formData.location || "",
         transmission: formData.transmission || "",
       };
 
-      const response = await updateAvailableCar({ 
-        id: car.id, 
+      await updateMutation.mutateAsync({
+        id: car.id,
         data: updateData,
+        newPhotos: newPhotoFiles,
         photosToDelete,
-        newPhotos: newPhotoFiles
       });
 
-      if (response.success) {
-        // Call onSuccess first to trigger data reload in parent
-        onSuccess();
-        // Then close the modal
-        onClose();
-      } else {
-        // Ensure error is always a string
-        const errorMessage = typeof response.error === 'string' 
-          ? response.error 
-          : "An unexpected error occurred";
-        
-        console.error("Update failed:", response.error);
-        toast.error("Failed to Update Car", { 
-          description: errorMessage
-        });
-      }
+      toast.success("Car Updated Successfully", {
+        description: "The car information has been updated.",
+      });
+
+      onSuccess();
+      onClose();
     } catch (error) {
-      console.error("Error updating car:", error);
       toast.error("Failed to Update Car", {
         description: error instanceof Error ? error.message : "An unexpected error occurred",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -181,7 +201,7 @@ export const UpdateAvailableCarModal = ({
           </p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-0">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-0">
           <div className="px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-8 space-y-4 sm:space-y-5 lg:space-y-6 bg-gray-50/50 dark:bg-[#0b0f14]">
           {/* Car Photos */}
           <div className="space-y-3">
@@ -205,13 +225,7 @@ export const UpdateAvailableCarModal = ({
                     </div>
                     <button
                       type="button"
-                      onClick={() => {
-                        const photoUrl = existingPhotos[index];
-                        if (photoUrl) {
-                          setPhotosToDelete((prev) => [...prev, photoUrl]);
-                          setExistingPhotos((prev) => prev.filter((_, i) => i !== index));
-                        }
-                      }}
+                      onClick={() => handleRemoveExistingPhoto(index)}
                       className="absolute top-2 right-2 p-1.5 bg-red-500 hover:bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:scale-110"
                       aria-label="Remove photo"
                     >
@@ -249,6 +263,9 @@ export const UpdateAvailableCarModal = ({
                 </p>
               )}
             </div>
+            {isSubmitted && photoError && (
+              <p className="text-xs text-red-500 dark:text-red-400 mt-1">{photoError}</p>
+            )}
           </div>
 
           {/* Basic Information */}
@@ -257,31 +274,22 @@ export const UpdateAvailableCarModal = ({
               Basic Information
             </h3>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 sm:gap-6 lg:gap-8">
-              <div className="space-y-2">
-                <Label htmlFor="brand" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide whitespace-nowrap">
-                  Brand <span className="text-red-500 dark:text-red-400">*</span>
-                </Label>
-                <Input
-                  id="brand"
-                  value={formData.brand}
-                  onChange={(e) => handleChange("brand", e.target.value)}
-                  required
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
-                />
-              </div>
-
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
               <div className="space-y-2">
                 <Label htmlFor="model" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
                   Model <span className="text-red-500 dark:text-red-400">*</span>
                 </Label>
                 <Input
                   id="model"
-                  value={formData.model}
-                  onChange={(e) => handleChange("model", e.target.value)}
-                  required
+                  {...register("model")}
+                  placeholder="BMW X5"
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
+                {errors.model && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                    {errors.model.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -291,11 +299,14 @@ export const UpdateAvailableCarModal = ({
                 <Input
                   id="year"
                   type="number"
-                  value={formData.year}
-                  onChange={(e) => handleChange("year", parseInt(e.target.value))}
-                  required
+                  {...register("year", { valueAsNumber: true })}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
+                {errors.year && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                    {errors.year.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -305,11 +316,14 @@ export const UpdateAvailableCarModal = ({
                 <Input
                   id="priceUsd"
                   type="number"
-                  value={formData.priceUsd}
-                  onChange={(e) => handleChange("priceUsd", parseFloat(e.target.value))}
-                  required
+                  {...register("priceUsd", { valueAsNumber: true })}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
+                {errors.priceUsd && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                    {errors.priceUsd.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -317,8 +331,8 @@ export const UpdateAvailableCarModal = ({
                   Category <span className="text-red-500 dark:text-red-400">*</span>
                 </Label>
                 <Select
-                  value={formData.category}
-                  onValueChange={(value) => handleChange("category", value as CarCategory)}
+                  value={category}
+                  onValueChange={(value) => setValue("category", value as CarCategory)}
                 >
                   <SelectTrigger className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
                     <SelectValue />
@@ -329,6 +343,11 @@ export const UpdateAvailableCarModal = ({
                     <SelectItem value="TRANSIT" className="text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10">Transit</SelectItem>
                   </SelectContent>
                 </Select>
+                {errors.category && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                    {errors.category.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -337,10 +356,14 @@ export const UpdateAvailableCarModal = ({
                 </Label>
                 <Input
                   id="location"
-                  value={formData.location}
-                  onChange={(e) => handleChange("location", e.target.value)}
+                  {...register("location")}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
+                {errors.location && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                    {errors.location.message}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -351,18 +374,22 @@ export const UpdateAvailableCarModal = ({
               Engine & Performance
             </h3>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
               <div className="space-y-2">
                 <Label htmlFor="engine" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  Engine
+                  Engine Size (L)
                 </Label>
                 <Input
                   id="engine"
-                  value={formData.engine}
-                  onChange={(e) => handleChange("engine", e.target.value)}
-                  placeholder="e.g., 2.0L Turbo"
+                  {...register("engine")}
+                  placeholder="e.g., 2.0"
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
+                {errors.engine && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                    {errors.engine.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -372,10 +399,14 @@ export const UpdateAvailableCarModal = ({
                 <Input
                   id="horsepower"
                   type="number"
-                  value={formData.horsepower}
-                  onChange={(e) => handleChange("horsepower", parseInt(e.target.value) || 0)}
+                  {...register("horsepower", { valueAsNumber: true })}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
+                {errors.horsepower && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                    {errors.horsepower.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -384,11 +415,15 @@ export const UpdateAvailableCarModal = ({
                 </Label>
                 <Input
                   id="fuelType"
-                  value={formData.fuelType}
-                  onChange={(e) => handleChange("fuelType", e.target.value)}
+                  {...register("fuelType")}
                   placeholder="e.g., Gasoline, Diesel"
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
+                {errors.fuelType && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                    {errors.fuelType.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -397,53 +432,39 @@ export const UpdateAvailableCarModal = ({
                 </Label>
                 <Input
                   id="transmission"
-                  value={formData.transmission}
-                  onChange={(e) => handleChange("transmission", e.target.value)}
+                  {...register("transmission")}
                   placeholder="e.g., Automatic, Manual"
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
+                {errors.transmission && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                    {errors.transmission.message}
+                  </p>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Shipping Information (for ONROAD category) */}
-          {formData.category === "ONROAD" && (
-            <div className="space-y-3 sm:space-y-4">
-              <h3 className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-gray-700 dark:text-white/80">
-                Shipping Information
-              </h3>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-                <div className="space-y-2">
-                  <Label htmlFor="estimatedArrival" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                    Estimated Arrival
-                  </Label>
-                  <Input
-                    id="estimatedArrival"
-                    type="date"
-                    value={formData.estimatedArrival}
-                    onChange={(e) => handleChange("estimatedArrival", e.target.value)}
-                    className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="shippingProgress" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                    Shipping Progress (%)
-                  </Label>
-                  <Input
-                    id="shippingProgress"
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={formData.shippingProgress}
-                    onChange={(e) => handleChange("shippingProgress", parseInt(e.target.value) || 0)}
-                    className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
-                  />
-                </div>
-              </div>
+          {/* Description */}
+          <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="description" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+                Car Description
+              </Label>
+              <textarea
+                id="description"
+                {...register("description")}
+                placeholder="Enter detailed description of the car..."
+                rows={4}
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 resize-none bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+              />
+              {errors.description && (
+                <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                  {errors.description.message}
+                </p>
+              )}
             </div>
-          )}
+          </div>
           </div>
 
           <DialogFooter className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-7 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-[#0b0f14]">

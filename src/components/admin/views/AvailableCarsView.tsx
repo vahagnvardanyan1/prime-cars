@@ -154,13 +154,14 @@ export const AvailableCarsView = ({
                 <TableHead className="min-w-[120px]">{t("table.engine")}</TableHead>
                 <TableHead className="min-w-[100px]">{t("table.hp")}</TableHead>
                 <TableHead className="min-w-[140px]">{t("table.transmission")}</TableHead>
+                <TableHead className="min-w-[200px]">{t("table.description")}</TableHead>
                 {isAdmin && <TableHead className="text-center min-w-[160px]">{t("table.actions")}</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={isAdmin ? 12 : 11} className="py-12">
+                  <TableCell colSpan={isAdmin ? 13 : 12} className="py-12">
                     <div className="flex items-center justify-center">
                       <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-[#429de6]" />
                     </div>
@@ -168,7 +169,7 @@ export const AvailableCarsView = ({
                 </TableRow>
               ) : !cars || cars.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={isAdmin ? 12 : 11} className="py-12">
+                  <TableCell colSpan={isAdmin ? 13 : 12} className="py-12">
                     <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
                       {t("noCarsFound")}
                     </div>
@@ -271,6 +272,13 @@ export const AvailableCarsView = ({
                     <TableCell className="px-4 py-6">
                       <div className="text-sm text-gray-900 dark:text-white capitalize">
                         {car.transmission?.toLowerCase() || "-"}
+                      </div>
+                    </TableCell>
+                    
+                    {/* Description */}
+                    <TableCell className="px-4 py-6">
+                      <div className="text-sm text-gray-900 dark:text-white line-clamp-2" title={car.description || "-"}>
+                        {car.description || "-"}
                       </div>
                     </TableCell>
                     
