@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "../auth/token";
 import { Auction } from "./types";
 
@@ -22,7 +23,7 @@ export const updateUserCoefficient = async ({
     }
     
     const response = await authenticatedFetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/shippings/admin/bulk-default-prices?userId=${userId}`,
+      `${API_BASE_URL}/shippings/admin/bulk-default-prices?userId=${userId}`,
       {
         method: "PATCH",
         headers: {
