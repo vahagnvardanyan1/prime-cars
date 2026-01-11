@@ -48,7 +48,7 @@ export const createCar = async ({
     formData.append("year", data.year.toString());
     formData.append("autoPrice", data.priceUsd.toString());
     formData.append("vehicleModel", data.model);
-    formData.append("carPaid", data.carPaid.toString());
+    formData.append("paid", data.carPaid.toString());
     formData.append("shippingPaid", data.shippingPaid.toString());
     formData.append("insurance", data.insurance.toString());
     
