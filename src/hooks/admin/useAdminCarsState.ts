@@ -97,6 +97,18 @@ export const useAdminCarsState = () => {
   const [isAddCarOpen, setIsAddCarOpen] = useState(false);
   const [allCars, setAllCars] = useState<AdminCar[]>(() => carsCache?.data || []);
   const [isLoadingCars, setIsLoadingCars] = useState(false);
+  
+  // Pagination state - initialize from URL
+  const [currentPage, setCurrentPage] = useState<number>(() => {
+    const saved = searchParams.get("page");
+    return saved ? parseInt(saved, 10) : 1;
+  });
+  const [pageSize, setPageSize] = useState<number>(() => {
+    const saved = searchParams.get("pageSize");
+    return saved ? parseInt(saved, 10) : 25;
+  });
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   // Initialize filters from URL
   const [filters, setFilters] = useState<CarFiltersState>(() => ({
@@ -163,23 +175,45 @@ export const useAdminCarsState = () => {
     updateFilters(defaultFilters);
   }, [updateFilters]);
 
-  const loadCars = async ({ forceRefresh = false }: { forceRefresh?: boolean } = {}) => {
+  const loadCars = async ({ 
+    forceRefresh = false,
+    page,
+    limit,
+  }: { 
+    forceRefresh?: boolean;
+    page?: number;
+    limit?: number;
+  } = {}) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
     if (!token) {
       return;
     }
 
-    if (!forceRefresh && carsCache && isCarsCacheValid) {
+    const pageToFetch = page !== undefined ? page : currentPage;
+    const limitToFetch = limit !== undefined ? limit : pageSize;
+
+    // Skip cache check - always fetch fresh data for pagination to work correctly
+    // Cache causes issues with pagination state
+    const useCache = !forceRefresh && carsCache && isCarsCacheValid;
+    
+    if (useCache) {
       setAllCars(carsCache.data);
-      return;
+      // Don't return here - still need to set pagination info
     }
 
-    setIsLoadingCars(true);
+    if (!useCache) {
+      setIsLoadingCars(true);
+    }
+    
     try {
-      const result = await fetchCars();
+      const result = await fetchCars({ page: pageToFetch, limit: limitToFetch });
       
       if (result.success && result.cars) {
         setAllCars(result.cars);
+        setTotalItems(result.total || 0);
+        setTotalPages(result.totalPages || 0);
+        setCurrentPage(result.page || pageToFetch);
+        
         carsCache = {
           data: result.cars,
           timestamp: Date.now(),
@@ -203,7 +237,32 @@ export const useAdminCarsState = () => {
     }
   };
 
-  // Sync filters with URL on mount and when searchParams change
+  const changePage = useCallback((page: number) => {
+    setCurrentPage(page);
+    
+    // Update URL with new page
+    const params = new URLSearchParams(window.location.search);
+    params.set("page", page.toString());
+    params.set("pageSize", pageSize.toString());
+    router.replace(`?${params.toString()}`, { scroll: false });
+    
+    loadCars({ page, limit: pageSize });
+  }, [pageSize, router]);
+
+  const changePageSize = useCallback((size: number) => {
+    setPageSize(size);
+    setCurrentPage(1); // Reset to first page when changing page size
+    
+    // Update URL
+    const params = new URLSearchParams(window.location.search);
+    params.set("page", "1");
+    params.set("pageSize", size.toString());
+    router.replace(`?${params.toString()}`, { scroll: false });
+    
+    loadCars({ page: 1, limit: size });
+  }, [router]);
+
+  // Sync filters and pagination with URL on mount and when searchParams change
   useEffect(() => {
     const urlFilters: CarFiltersState = {
       search: searchParams.get("search") || "",
@@ -216,6 +275,24 @@ export const useAdminCarsState = () => {
       purchaseDateTo: searchParams.get("purchaseDateTo") || "",
     };
     setFilters(urlFilters);
+    
+    // Sync pagination from URL
+    const urlPage = searchParams.get("page");
+    const urlPageSize = searchParams.get("pageSize");
+    
+    if (urlPage) {
+      const parsedPage = parseInt(urlPage, 10);
+      if (parsedPage !== currentPage) {
+        setCurrentPage(parsedPage);
+      }
+    }
+    
+    if (urlPageSize) {
+      const parsedSize = parseInt(urlPageSize, 10);
+      if (parsedSize !== pageSize) {
+        setPageSize(parsedSize);
+      }
+    }
   }, [searchParams]);
 
   return {
@@ -230,6 +307,13 @@ export const useAdminCarsState = () => {
     filters,
     updateFilters,
     clearFilters,
+    // Pagination
+    currentPage,
+    pageSize,
+    totalItems,
+    totalPages,
+    changePage,
+    changePageSize,
   };
 };
 

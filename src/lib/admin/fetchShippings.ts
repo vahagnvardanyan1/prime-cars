@@ -39,14 +39,15 @@ export const fetchShippings = async ({ auction }: { auction?: Auction } = {}): P
       };
     }
 
-    const result = await response.json();
+    const result = (await response.json())?.data;
+    console.log('result', result);
 
     // Transform backend data to ShippingCity format
     const cities: ShippingCity[] = result?.map((shipping: BackendShipping) => ({
       id: shipping._id || shipping.id || "",
       city: shipping.city || "",
       shippingUsd: shipping.shippingUsd || shipping.base_price || 0,
-      auction: shipping.auction as any,
+      auction: shipping.auction,
     })) || [];
 
     return {

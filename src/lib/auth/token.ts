@@ -87,8 +87,6 @@ export const refreshAccessToken = async (): Promise<string | null> => {
   isRefreshing = true;
 
   try {
-    console.log("🔄 Refreshing access token...");
-    
     const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
       method: "POST",
       headers: {
@@ -108,7 +106,8 @@ export const refreshAccessToken = async (): Promise<string | null> => {
       return null;
     }
 
-    const data = await response.json();
+    const data = (await response.json()).data;
+
     const newAccessToken = data.access_token;
     const newRefreshToken = data.refresh_token || refreshToken;
 
@@ -117,8 +116,6 @@ export const refreshAccessToken = async (): Promise<string | null> => {
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
     });
-
-    console.log("✅ Access token refreshed successfully");
     
     // Notify all waiting subscribers
     onTokenRefreshed(newAccessToken);

@@ -88,6 +88,12 @@ export const AdminCarsPage = () => {
         filters={state.filters}
         onFiltersChange={state.updateFilters}
         onClearFilters={state.clearFilters}
+        currentPage={state.currentPage}
+        totalPages={state.totalPages}
+        pageSize={state.pageSize}
+        totalItems={state.totalItems}
+        onPageChange={state.changePage}
+        onPageSizeChange={state.changePageSize}
       />
 
       {isAdmin && (

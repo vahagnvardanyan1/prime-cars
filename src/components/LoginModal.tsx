@@ -74,17 +74,22 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
 
       const result = await response.json();
 
+      // Tokens are nested in result.data
+      const data = result.data || result;
+      const accessToken = data.access_token;
+      const refreshToken = data.refresh_token;
+
       // Store both access_token and refresh_token from backend
-      if (result.access_token && result.refresh_token) {
+      if (accessToken && refreshToken) {
         setTokens({ 
-          accessToken: result.access_token,
-          refreshToken: result.refresh_token
+          accessToken: accessToken,
+          refreshToken: refreshToken
         });
-      } else if (result.access_token) {
+      } else if (accessToken) {
         // Fallback
         setTokens({ 
-          accessToken: result.access_token,
-          refreshToken: result.access_token 
+          accessToken: accessToken,
+          refreshToken: accessToken 
         });
       }
 

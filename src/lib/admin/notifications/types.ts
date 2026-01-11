@@ -39,4 +39,5 @@ export type BackendNotificationResponse = {
   notification?: BackendNotificationData;
   is_read?: boolean;
   readedTime?: string | null;
+  userId?: string;
 };

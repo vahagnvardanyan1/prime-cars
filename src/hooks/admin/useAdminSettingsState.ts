@@ -19,7 +19,7 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 // Module-level cache that persists across component mounts/unmounts
 // Cache per auction category
-let citiesCache: Map<string, {
+const citiesCache: Map<string, {
   data: ShippingCity[];
   timestamp: number;
 }> = new Map();
