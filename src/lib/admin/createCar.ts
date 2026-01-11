@@ -68,7 +68,7 @@ export const createCar = async ({
     // Append image files
     if (images && images.length > 0) {
       images.forEach((image) => {
-        formData.append("carPhotos", image);
+        formData.append("vehiclePhotos", image);
       });
     }
 
