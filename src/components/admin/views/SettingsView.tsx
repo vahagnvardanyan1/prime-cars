@@ -52,6 +52,7 @@ export const SettingsView = ({
   isAdmin = false,
 }: SettingsViewProps) => {
   const t = useTranslations();
+  const tSettings = useTranslations("admin.settings");
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -221,7 +222,7 @@ export const SettingsView = ({
                   value={delta}
                   onChange={handleDeltaChange}
                   inputMode="numeric"
-                  placeholder="100"
+                  placeholder={tSettings("adjustmentPlaceholder")}
                   disabled={isApplying}
                   className="h-11 w-full rounded-xl border-[#429de6]/20 bg-white text-gray-900 shadow-none focus-visible:ring-[#429de6]/30 md:w-[140px] dark:border-[#429de6]/25 dark:bg-[#0a0a0a] dark:text-white"
                 />
@@ -237,7 +238,7 @@ export const SettingsView = ({
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      <span>Applying...</span>
+                      <span>{tSettings("applying")}</span>
                     </div>
                   ) : (
                     t("admin.settingsView.applyToAll")
@@ -466,7 +467,7 @@ export const SettingsView = ({
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 type="text"
-                placeholder="Search by name, username, email, or company..."
+                placeholder={tSettings("searchUserPlaceholder")}
                 value={userSearch}
                 onChange={(e) => setUserSearch(e.target.value)}
                 className="pl-10 h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10 focus-visible:ring-[#429de6]"

@@ -241,7 +241,7 @@ export const CreateAvailableCarModal = ({
                 <Input
                   id="model"
                   {...register("carModel")}
-                  placeholder="BMW X5"
+                  placeholder={t("modelPlaceholder")}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.carModel && (
@@ -257,7 +257,7 @@ export const CreateAvailableCarModal = ({
                   id="year"
                   type="number"
                   {...register("carYear", { valueAsNumber: true })}
-                  placeholder="2024"
+                  placeholder={t("yearPlaceholder")}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.carYear && (
@@ -290,7 +290,7 @@ export const CreateAvailableCarModal = ({
                   type="number"
                   step="0.01"
                   {...register("carPrice", { valueAsNumber: true })}
-                  placeholder="e.g., 25000"
+                  placeholder={t("pricePlaceholder")}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.carPrice && (
@@ -363,7 +363,7 @@ export const CreateAvailableCarModal = ({
                   id="engineHp"
                   type="number"
                   {...register("engineHp", { valueAsNumber: true })}
-                  placeholder="HP"
+                  placeholder={t("hpPlaceholder")}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
               </div>
@@ -377,7 +377,7 @@ export const CreateAvailableCarModal = ({
                   type="number"
                   step="0.1"
                   {...register("engineSize", { valueAsNumber: true })}
-                  placeholder="L"
+                  placeholder={t("enginePlaceholder")}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
               </div>

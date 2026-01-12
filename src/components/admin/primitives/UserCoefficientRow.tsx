@@ -131,7 +131,7 @@ export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficien
             type="text"
             value={coefficient}
             onChange={handleCoefficientChange}
-            placeholder="100"
+            placeholder={t("coefficientPlaceholder")}
             disabled={isUpdating}
             className="w-24 h-9 text-center bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"
           />

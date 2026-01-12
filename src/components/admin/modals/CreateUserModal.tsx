@@ -353,7 +353,7 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
                       setErrors({ ...errors, password: undefined });
                     }
                   }}
-                  placeholder="••••••••"
+                  placeholder={t("passwordPlaceholder")}
                   className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
                     errors.password
                       ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'

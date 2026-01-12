@@ -17,6 +17,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+import { useTranslations } from "next-intl";
+
 import { useUser } from "@/contexts/UserContext";
 
 import { useAdminCarsState } from "@/hooks/admin/useAdminCarsState";
@@ -26,6 +28,7 @@ import { UpdateCarModal } from "@/components/admin/modals/UpdateCarModal";
 import { CarsView } from "@/components/admin/views/CarsView";
 
 export const AdminCarsPage = () => {
+  const t = useTranslations();
   const state = useAdminCarsState();
   const { user, isAdmin } = useUser();
   const [selectedCarForUpdate, setSelectedCarForUpdate] = useState<AdminCar | null>(null);
@@ -118,13 +121,14 @@ export const AdminCarsPage = () => {
           <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
             <AlertDialogContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-gray-900 dark:text-white">Delete Car</AlertDialogTitle>
+                <AlertDialogTitle className="text-gray-900 dark:text-white">
+                  {t("admin.carsView.deleteCar.title")}
+                </AlertDialogTitle>
                 <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
-                  Are you sure you want to delete{" "}
-                  <span className="font-semibold">
-                    {carToDelete?.model} ({carToDelete?.year})
-                  </span>
-                  ? This action cannot be undone.
+                  {t("admin.carsView.deleteCar.description", { 
+                    model: carToDelete?.model || "", 
+                    year: carToDelete?.year || "" 
+                  })}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -132,14 +136,14 @@ export const AdminCarsPage = () => {
                   disabled={isDeletingCar}
                   className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
                 >
-                  Cancel
+                  {t("admin.carsView.deleteCar.cancel")}
                 </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleConfirmDelete}
                   disabled={isDeletingCar}
                   className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
                 >
-                  {isDeletingCar ? "Deleting..." : "Delete"}
+                  {isDeletingCar ? t("admin.carsView.deleteCar.deleting") : t("admin.carsView.deleteCar.delete")}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

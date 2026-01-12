@@ -55,7 +55,7 @@ export const AdminUsersPageRefactored = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search users..."
+            placeholder={t("admin.usersView.searchPlaceholder")}
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
             className="pl-10"
@@ -161,7 +161,7 @@ export const AdminUsersPageRefactored = () => {
                             disabled={deleteUserMutation.isPending}
                             className="text-gray-600 hover:text-gray-700 dark:text-gray-400"
                           >
-                            {deleteUserMutation.isPending ? "Deleting..." : "Delete"}
+                            {deleteUserMutation.isPending ? t("admin.usersView.deleting") : t("admin.modals.deleteUser.confirm")}
                           </Button>
                         </ProtectedComponent>
                       </td>

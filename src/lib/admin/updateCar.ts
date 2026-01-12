@@ -1,7 +1,6 @@
 import { API_BASE_URL } from "@/i18n/config";
 
 import { authenticatedFetch } from "@/lib/auth/token";
-import { da } from "zod/v4/locales";
 
 type UpdateCarData = {
   client?: string;

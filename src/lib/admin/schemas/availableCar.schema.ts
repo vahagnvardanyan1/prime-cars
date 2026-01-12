@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { CarCategory } from "@/lib/cars/types";
+
 import { EngineType } from "@/lib/admin/types";
 
 // Constants to avoid hydration issues

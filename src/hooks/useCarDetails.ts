@@ -2,7 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import type { Car } from "@/lib/cars/types";
 import { fetchAvailableCarById } from "@/lib/cars/fetchCars";
 
 export const useCarDetails = ({ carId }: { carId: string }) => {

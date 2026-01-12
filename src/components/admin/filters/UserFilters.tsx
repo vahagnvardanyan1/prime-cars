@@ -24,16 +24,11 @@ type UserFiltersProps = {
   onClearFilters: () => void;
 };
 
-const COUNTRIES = [
-  "Armenia",
-  "USA",
-  "Georgia",
-  "Russia",
-  "Other",
-];
+const COUNTRY_KEYS = ["armenia", "usa", "georgia", "russia", "other"] as const;
 
 export const UserFilters = ({ filters, onFiltersChange, onClearFilters }: UserFiltersProps) => {
   const t = useTranslations("admin.filters");
+  const tCountries = useTranslations("admin.modals.createUser.countries");
 
   const hasActiveFilters = filters.search !== "" || filters.country !== "all";
 
@@ -68,9 +63,9 @@ export const UserFilters = ({ filters, onFiltersChange, onClearFilters }: UserFi
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
               <SelectItem value="all">{t("allCountries")}</SelectItem>
-              {COUNTRIES.map((country) => (
-                <SelectItem key={country} value={country}>
-                  {country}
+              {COUNTRY_KEYS.map((countryKey) => (
+                <SelectItem key={countryKey} value={tCountries(countryKey)}>
+                  {tCountries(countryKey)}
                 </SelectItem>
               ))}
             </SelectContent>

@@ -315,7 +315,7 @@ export const UpdateAvailableCarModal = ({
                 <Input
                   id="model"
                   {...register("model")}
-                  placeholder="BMW X5"
+                  placeholder={t("modelPlaceholder")}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.model && (
@@ -415,7 +415,7 @@ export const UpdateAvailableCarModal = ({
                 <Input
                   id="engine"
                   {...register("engine")}
-                  placeholder="e.g., 2.0"
+                  placeholder={t("enginePlaceholder")}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.engine && (
@@ -449,7 +449,7 @@ export const UpdateAvailableCarModal = ({
                 <Input
                   id="fuelType"
                   {...register("fuelType")}
-                  placeholder="e.g., Gasoline, Diesel"
+                  placeholder={t("fuelTypePlaceholder")}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.fuelType && (
@@ -466,7 +466,7 @@ export const UpdateAvailableCarModal = ({
                 <Input
                   id="transmission"
                   {...register("transmission")}
-                  placeholder="e.g., Automatic, Manual"
+                  placeholder={t("transmissionPlaceholder")}
                   className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.transmission && (
@@ -487,7 +487,7 @@ export const UpdateAvailableCarModal = ({
               <textarea
                 id="description"
                 {...register("description")}
-                placeholder="Enter detailed description of the car..."
+                placeholder={t("descriptionPlaceholder")}
                 rows={4}
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 resize-none bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />

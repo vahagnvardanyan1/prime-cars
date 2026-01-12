@@ -2,7 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import type { Car, CarCategory } from "@/lib/cars/types";
+import type { CarCategory } from "@/lib/cars/types";
+
 import { fetchCarsByCategory } from "@/lib/cars/fetchCars";
 
 // Query keys for caching

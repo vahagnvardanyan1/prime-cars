@@ -136,7 +136,7 @@ export const CreateUserModalFormik = ({ open, onOpenChange, onUserCreated }: Cre
                     <Field
                       name="password"
                       type="password"
-                      placeholder=""
+                      placeholder={t("passwordPlaceholder")}
                       className={`h-11 w-full rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white px-4 ${
                         touched.password && errors.password
                           ? "border-red-500 dark:border-red-500 focus-visible:ring-red-500"

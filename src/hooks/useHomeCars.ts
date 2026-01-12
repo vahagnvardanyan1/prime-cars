@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { fetchAllAvailableCars } from "@/lib/cars/fetchCars";
-import type { Car } from "@/lib/cars/types";
 
 export const useHomeCars = () => {
   const { data, isLoading, error, refetch } = useQuery({

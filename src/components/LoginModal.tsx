@@ -182,7 +182,7 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
               </label>
               <input
                 type="text"
-                placeholder=""
+                placeholder={t("auth.usernamePlaceholder")}
                 value={username}
                 onChange={(e) => {
                   setUsername(e.target.value);
@@ -209,7 +209,7 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
                 {t("auth.password")}
               </label>
               <PasswordInput
-                placeholder=""
+                placeholder={t("auth.passwordPlaceholder")}
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);

@@ -6,7 +6,6 @@ const mapBackendCarToFrontend = (backendCar: BackendAvailableCar): Car => {
   // Extract brand from model (e.g., "BMW X5" -> brand: "BMW", model: "X5")
   const modelParts = backendCar.carModel.split(' ');
   const brand = modelParts[0] || backendCar.carModel;
-  const model = modelParts.slice(1).join(' ') || backendCar.carModel;
 
   return {
     id: backendCar.id,

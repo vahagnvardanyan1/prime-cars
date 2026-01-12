@@ -90,7 +90,7 @@ export const LoginModalFormik = ({ open, onOpenChange, onLoginSuccess }: LoginMo
                   <Field
                     name="password"
                     type="password"
-                    placeholder=""
+                    placeholder={t("auth.passwordPlaceholder")}
                     autoComplete="current-password"
                     className={`h-11 w-full rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white px-4 ${
                       touched.password && errors.password
