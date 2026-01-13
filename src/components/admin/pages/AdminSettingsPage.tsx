@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { UpdateShippingPriceModal } from "@/components/admin/modals/UpdateShippingPriceModal";
 import { SettingsView } from "@/components/admin/views/SettingsView";
@@ -9,13 +10,21 @@ import { useUser } from "@/contexts/UserContext";
 import { Auction } from "@/lib/admin/types";
 
 export const AdminSettingsPage = () => {
-  const state = useAdminSettingsState();
   const { user, isAdmin } = useUser();
+  const state = useAdminSettingsState({ isAdmin });
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (user) {
-      state.loadCities({ auction: Auction.COPART }); 
+      // Read auction from URL, default to COPART
+      const auctionParam = searchParams.get("auction");
+      const initialAuction = (auctionParam && Object.values(Auction).includes(auctionParam as Auction))
+        ? auctionParam as Auction
+        : Auction.COPART;
+      
+      state.loadCities({ auction: initialAuction }); 
       state.loadUsers();
+      state.loadGlobalAdjustment(initialAuction);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -34,6 +43,8 @@ export const AdminSettingsPage = () => {
         onUpdateCoefficient={state.updateCoefficient}
         onShippingCreated={() => state.loadCities({ forceRefresh: true, auction: state.currentAuction || Auction.COPART })}
         onLoadCities={({ auction }) => state.loadCities({ auction })}
+        onLoadGlobalAdjustment={({ auction }) => state.loadGlobalAdjustment(auction)}
+        globalAdjustment={state.globalAdjustment}
       />
 
       <UpdateShippingPriceModal

@@ -13,7 +13,7 @@ export const deleteShipping = async ({
   id: string;
 }): Promise<DeleteShippingResponse> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/shippings/${id}`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/shippings/admin/city-prices/${id}`, {
       method: "DELETE",
     });
 

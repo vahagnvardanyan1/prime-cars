@@ -9,6 +9,8 @@ import { increaseShippingPrices } from "@/lib/admin/increaseShippingPrices";
 import { deleteShipping } from "@/lib/admin/deleteShipping";
 import { fetchUsers } from "@/lib/admin/fetchUsers";
 import { updateUserCoefficient } from "@/lib/admin/updateUserCoefficient";
+import { fetchGlobalAdjustment } from "@/lib/admin/fetchGlobalAdjustment";
+import { adjustUserShippingPrice } from "@/lib/admin/adjustUserShippingPrice";
 import { toast } from "sonner";
 
 type UpdateCityPriceModalState =
@@ -24,7 +26,7 @@ const citiesCache: Map<string, {
   timestamp: number;
 }> = new Map();
 
-export const useAdminSettingsState = () => {
+export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) => {
   const [updateCityPriceModal, setUpdateCityPriceModal] =
     useState<UpdateCityPriceModalState>({ isOpen: false });
 
@@ -34,6 +36,14 @@ export const useAdminSettingsState = () => {
   
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  
+  const [globalAdjustment, setGlobalAdjustment] = useState<{
+    adjustmentAmount?: number;
+    basePrice?: number;
+    category?: string;
+    lastAdjustmentAmount?: number;
+    lastAdjustmentDate?: string;
+  }>({});
 
   const openUpdateCityPrice = ({ cityId }: { cityId: string }) => {
     setUpdateCityPriceModal({ isOpen: true, cityId });
@@ -68,18 +78,24 @@ export const useAdminSettingsState = () => {
     }
   };
 
-  const applyGlobalAdjustment = async ({ delta }: { delta: number }) => {
+  const applyGlobalAdjustment = async ({ delta, auction }: { delta: number; auction: Auction }) => {
     try {
-      const result = await increaseShippingPrices({ amount: delta });
+      const result = await increaseShippingPrices({ amount: delta, auction, isAdmin });
       
       if (result.success) {
+        const message = isAdmin
+          ? `All ${auction.toUpperCase()} prices ${delta > 0 ? 'increased' : 'decreased'} by ${Math.abs(delta)} USD.`
+          : `Your shipping prices ${delta > 0 ? 'increased' : 'decreased'} by ${Math.abs(delta)} USD.`;
+        
         toast.success("Shipping prices updated", {
-          description: `All prices increased by ${delta > 0 ? '+' : ''}${delta} USD.`,
+          description: message,
         });
-        // Clear all cache entries since prices changed globally
-        citiesCache.clear();
-        console.log("🧹 Cleared all cities cache after global price adjustment");
+        // Clear cache for the affected auction
+        citiesCache.delete(auction);
+        console.log(`🧹 Cleared ${auction} cities cache after price adjustment`);
         await loadCities({ forceRefresh: true, auction: currentAuction || undefined });
+        // Reload global adjustment to get the updated value
+        await loadGlobalAdjustment(auction);
       } else {
         toast.error("Failed to update shipping prices", {
           description: result.error || "Could not update prices.",
@@ -179,6 +195,11 @@ export const useAdminSettingsState = () => {
   };
 
   const loadUsers = async () => {
+    // Only load users if user is admin
+    if (!isAdmin) {
+      return;
+    }
+
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
     if (!token) {
       return;
@@ -209,14 +230,31 @@ export const useAdminSettingsState = () => {
     }
   };
 
-  const updateCoefficient = async ({ userId, coefficient, category }: { userId: string; coefficient: number; category?: Auction }) => {
+  const updateCoefficient = async ({ userId, coefficient, category, adjustmentAmount }: { userId: string; coefficient: number; category?: Auction; adjustmentAmount?: number }) => {
     try {
       const result = await updateUserCoefficient({ userId, coefficient, category: category as string | undefined });
       
       if (result.success) {
+        // If adjustment amount is provided and category is selected, also adjust shipping prices
+        if (adjustmentAmount !== undefined && category !== undefined) {
+          const adjustResult = await adjustUserShippingPrice({
+            userId,
+            category,
+            adjustmentAmount,
+          });
+          
+          if (!adjustResult.success) {
+            toast.error("Failed to adjust shipping prices", {
+              description: adjustResult.error || "Could not adjust shipping prices for user.",
+            });
+            return;
+          }
+        }
+        
         const messages = [];
         if (coefficient !== undefined) messages.push(`coefficient: ${coefficient}`);
         if (category !== undefined) messages.push(`auction: ${category.toUpperCase()}`);
+        if (adjustmentAmount !== undefined) messages.push(`price adjustment: ${adjustmentAmount > 0 ? '+' : ''}${adjustmentAmount}`);
         
         toast.success("User settings updated", {
           description: `Updated ${messages.join(', ')}.`,
@@ -233,6 +271,18 @@ export const useAdminSettingsState = () => {
       toast.error("Failed to update user settings", {
         description: error instanceof Error ? error.message : "An unexpected error occurred.",
       });
+    }
+  };
+
+  const loadGlobalAdjustment = async (category?: Auction) => {
+    try {
+      const result = await fetchGlobalAdjustment(category);
+      
+      if (result.success && result.data) {
+        setGlobalAdjustment(result.data);
+      }
+    } catch (error) {
+      console.error("Error loading global adjustment:", error);
     }
   };
 
@@ -258,6 +308,8 @@ export const useAdminSettingsState = () => {
     isLoadingUsers,
     loadUsers,
     updateCoefficient,
+    globalAdjustment,
+    loadGlobalAdjustment,
   };
 };
 

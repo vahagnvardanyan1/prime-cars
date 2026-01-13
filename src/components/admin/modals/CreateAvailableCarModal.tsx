@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { CarCategory } from "@/lib/cars/types";
+import { Transmission } from "@/lib/cars/types";
 import { usePhotoUploads } from "@/hooks/admin/usePhotoUploads";
 import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
 import { EngineType } from "@/lib/admin/types";
@@ -386,12 +387,23 @@ export const CreateAvailableCarModal = ({
                 <Label htmlFor="transmission" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
                   {t("transmission")}
                 </Label>
-                <Input
-                  id="transmission"
-                  {...register("transmission")}
-                  placeholder={t("transmissionPlaceholder")}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
-                />
+                <Select
+                  value={formValues.transmission}
+                  onValueChange={(value) => setValue("transmission", value as typeof Transmission[keyof typeof Transmission], { shouldValidate: true, shouldDirty: true })}
+                >
+                  <SelectTrigger id="transmission" className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
+                    <SelectValue placeholder={t("transmissionPlaceholder")} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
+                    <SelectItem value={Transmission.AUTOMATIC} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("transmissionAutomatic")}</SelectItem>
+                    <SelectItem value={Transmission.MECHANIC} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("transmissionMechanic")}</SelectItem>
+                    <SelectItem value={Transmission.VARIATOR} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("transmissionVariator")}</SelectItem>
+                    <SelectItem value={Transmission.ROBOT} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("transmissionRobot")}</SelectItem>
+                  </SelectContent>
+                </Select>
+                {isSubmitted && errors.transmission && (
+                  <p className="text-xs text-red-500 mt-1">{errors.transmission.message}</p>
+                )}
               </div>
             </div>
 

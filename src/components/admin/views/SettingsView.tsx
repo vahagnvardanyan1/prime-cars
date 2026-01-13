@@ -3,18 +3,21 @@
 import { useMemo, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Eye, EyeOff } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AddShippingModal } from "@/components/admin/modals/AddShippingModal";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { UserCoefficientRow } from "@/components/admin/primitives/UserCoefficientRow";
 import { formatUsd } from "@/lib/admin/format";
 import type { ShippingCity, AdminUser } from "@/lib/admin/types";
 import { Auction } from "@/lib/admin/types";
+import { API_BASE_URL } from "@/i18n/config";
+import { authenticatedFetch } from "@/lib/auth/token";
 import {
   Table,
   TableBody,
@@ -27,15 +30,23 @@ import {
 type SettingsViewProps = {
   cities: ShippingCity[];
   users: AdminUser[];
-  onApplyGlobalAdjustment: ({ delta }: { delta: number }) => Promise<void>;
+  onApplyGlobalAdjustment: ({ delta, auction }: { delta: number; auction: Auction }) => Promise<void>;
   onUpdateCityClick: ({ cityId }: { cityId: string }) => void;
   onDeleteCity: ({ cityId }: { cityId: string }) => Promise<void>;
   onUpdateCoefficient: ({ userId, coefficient, category }: { userId: string; coefficient: number; category?: Auction }) => Promise<void>;
   onShippingCreated?: () => void;
   onLoadCities?: ({ auction }: { auction: Auction }) => Promise<void>;
+  onLoadGlobalAdjustment?: ({ auction }: { auction: Auction }) => Promise<void>;
   isLoading?: boolean;
   isLoadingUsers?: boolean;
   isAdmin?: boolean;
+  globalAdjustment?: {
+    adjustmentAmount?: number;
+    basePrice?: number;
+    category?: string;
+    lastAdjustmentAmount?: number;
+    lastAdjustmentDate?: string;
+  };
 };
 
 export const SettingsView = ({
@@ -47,9 +58,11 @@ export const SettingsView = ({
   onUpdateCoefficient,
   onShippingCreated,
   onLoadCities,
+  onLoadGlobalAdjustment,
   isLoading = false,
   isLoadingUsers = false,
   isAdmin = false,
+  globalAdjustment,
 }: SettingsViewProps) => {
   const t = useTranslations();
   const tSettings = useTranslations("admin.settings");
@@ -61,23 +74,87 @@ export const SettingsView = ({
   const [isApplying, setIsApplying] = useState(false);
   const [deletingCityId, setDeletingCityId] = useState<string | null>(null);
   const [userSearch, setUserSearch] = useState("");
-  const [selectedAuction, setSelectedAuction] = useState<Auction>(Auction.COPART);
+  const [adjustmentAuction, setAdjustmentAuction] = useState<Auction>(Auction.COPART);
+  const [showAdjustmentValue, setShowAdjustmentValue] = useState(true);
   
-  // Initialize tab from URL or default to shipping
+  // Initialize tab and search from URL
   const [activeTab, setActiveTab] = useState<"shipping" | "users">(() => {
     const tab = searchParams.get("tab");
     return tab === "users" ? "users" : "shipping";
   });
+  
+  const [citySearch, setCitySearch] = useState(() => {
+    return searchParams.get("search") || "";
+  });
+  
+  const [selectedAuction, setSelectedAuction] = useState<Auction>(() => {
+    const auctionParam = searchParams.get("auction");
+    if (auctionParam && Object.values(Auction).includes(auctionParam as Auction)) {
+      return auctionParam as Auction;
+    }
+    return Auction.COPART;
+  });
 
-  // Sync activeTab with URL on mount and when searchParams change
+  // Sync state with URL on mount and when searchParams change
   useEffect(() => {
     const tab = searchParams.get("tab");
+    const search = searchParams.get("search") || "";
+    const auctionParam = searchParams.get("auction");
+    
     if (tab === "users") {
       setActiveTab("users");
     } else {
       setActiveTab("shipping");
     }
+    
+    setCitySearch(search);
+    
+    if (auctionParam && Object.values(Auction).includes(auctionParam as Auction)) {
+      setSelectedAuction(auctionParam as Auction);
+    }
   }, [searchParams]);
+  
+  useEffect(() => {
+    if (globalAdjustment?.adjustmentAmount !== undefined) {
+      setDelta(String(globalAdjustment.adjustmentAmount));
+    } else {
+      setDelta("");
+    }
+  }, [globalAdjustment]);
+  
+  useEffect(() => {
+    if (selectedAuction) {
+      setAdjustmentAuction(selectedAuction);
+    }
+  }, [selectedAuction, setAdjustmentAuction]);
+
+  useEffect(() => {
+    const fetchPriceSummary = async () => {
+      try {
+        const response = await authenticatedFetch(
+          `${API_BASE_URL}/shippings/price-summary?category=${adjustmentAuction}`
+        );
+        
+        if (response.ok) {
+          const result = await response.json();
+          const adjustmentAmount = result.data?.base_adjustment_amount || result.data?.adjustment_amount || result.data?.user_adjustment_amount || 0;
+          
+          if (adjustmentAmount !== undefined) {
+            setDelta(String(adjustmentAmount));
+          } else {
+            setDelta("");
+          }
+        } else {
+          setDelta("");
+        }
+      } catch (error) {
+        console.error('Error fetching price summary:', error);
+        setDelta("");
+      }
+    };
+
+    fetchPriceSummary();
+  }, [adjustmentAuction]);
 
   const handleTabChange = (tab: "shipping" | "users") => {
     setActiveTab(tab);
@@ -91,12 +168,32 @@ export const SettingsView = ({
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
+  const handleCitySearchChange = (value: string) => {
+    setCitySearch(value);
+    
+    // Update URL with search parameter
+    const params = new URLSearchParams(searchParams.toString());
+    if (value.trim()) {
+      params.set("search", value);
+    } else {
+      params.delete("search");
+    }
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+
   const canApply = useMemo(() => {
     return delta.trim().length > 0 && Number.isFinite(Number(delta));
   }, [delta]);
 
-  // No need for client-side filtering since backend filters by auction
-  const filteredCities = cities;
+  // Filter cities by search query
+  const filteredCities = useMemo(() => {
+    if (!citySearch.trim()) return cities;
+    
+    const searchLower = citySearch.toLowerCase();
+    return cities.filter((city) => {
+      return city.city.toLowerCase().includes(searchLower);
+    });
+  }, [cities, citySearch]);
 
   const filteredUsers = useMemo(() => {
     if (!userSearch.trim()) return users;
@@ -138,7 +235,7 @@ export const SettingsView = ({
     
     setIsApplying(true);
     try {
-      await onApplyGlobalAdjustment({ delta: Number(delta) });
+      await onApplyGlobalAdjustment({ delta: Number(delta), auction: adjustmentAuction });
       setDelta("");
     } finally {
       setIsApplying(false);
@@ -156,8 +253,18 @@ export const SettingsView = ({
 
   const handleAuctionChange = async (auction: Auction) => {
     setSelectedAuction(auction);
+    
+    // Update URL with auction parameter
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("auction", auction);
+    router.push(`?${params.toString()}`, { scroll: false });
+    
+    // Load both cities and global adjustment for the selected auction
     if (onLoadCities) {
       await onLoadCities({ auction });
+    }
+    if (onLoadGlobalAdjustment) {
+      await onLoadGlobalAdjustment({ auction });
     }
   };
 
@@ -217,18 +324,58 @@ export const SettingsView = ({
                 </div>
               </div>
 
-              <div className="flex w-full gap-2 md:w-auto">
-                <Input
-                  value={delta}
-                  onChange={handleDeltaChange}
-                  inputMode="numeric"
-                  placeholder={tSettings("adjustmentPlaceholder")}
+              <div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
+                {/* Auction Category Selector */}
+                <Select
+                  value={adjustmentAuction}
+                  onValueChange={(value) => setAdjustmentAuction(value as Auction)}
                   disabled={isApplying}
-                  className="h-11 w-full rounded-xl border-[#429de6]/20 bg-white text-gray-900 shadow-none focus-visible:ring-[#429de6]/30 md:w-[140px] dark:border-[#429de6]/25 dark:bg-[#0a0a0a] dark:text-white"
-                />
+                >
+                  <SelectTrigger className="h-12 w-full sm:w-[180px] rounded-2xl border border-gray-200/60 dark:border-white/10 bg-white dark:bg-[#1a1f2e] text-gray-900 dark:text-white font-medium shadow-sm hover:border-gray-300 dark:hover:border-white/20 focus-visible:ring-2 focus-visible:ring-[#429de6]/20 transition-all px-4">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-[#1a1f2e] border-gray-200 dark:border-white/10 rounded-xl">
+                    <SelectItem value={Auction.COPART} className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 focus:bg-gray-100 dark:focus:bg-white/5">
+                      COPART
+                    </SelectItem>
+                    <SelectItem value={Auction.IAAI} className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 focus:bg-gray-100 dark:focus:bg-white/5">
+                      IAAI
+                    </SelectItem>
+                    <SelectItem value={Auction.MANHEIM} className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 focus:bg-gray-100 dark:focus:bg-white/5">
+                      MANHEIM
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Amount Input */}
+                <div className="relative w-full sm:w-[180px]">
+                  <Input
+                    type={showAdjustmentValue ? "text" : "password"}
+                    value={delta}
+                    onChange={handleDeltaChange}
+                    inputMode="numeric"
+                    placeholder={tSettings("adjustmentPlaceholder")}
+                    disabled={isApplying}
+                    className="h-12 w-full rounded-2xl border border-gray-200/60 dark:border-white/10 bg-white dark:bg-[#1a1f2e] text-gray-900 dark:text-white font-medium shadow-sm hover:border-gray-300 dark:hover:border-white/20 focus-visible:ring-2 focus-visible:ring-[#429de6]/20 transition-all px-4 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowAdjustmentValue(!showAdjustmentValue)}
+                    disabled={isApplying}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors disabled:opacity-50"
+                  >
+                    {showAdjustmentValue ? (
+                      <Eye className="h-4 w-4" />
+                    ) : (
+                      <EyeOff className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+
+                {/* Apply Button */}
                 <Button
                   type="button"
-                  className="h-11 rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc] disabled:opacity-60 min-w-[140px]"
+                  className="h-12 rounded-2xl bg-[#429de6] text-white hover:bg-[#3a8acc] disabled:opacity-50 min-w-[160px] sm:min-w-[180px] whitespace-nowrap font-semibold shadow-lg shadow-[#429de6]/20 hover:shadow-xl hover:shadow-[#429de6]/30 transition-all"
                   disabled={!canApply || isApplying}
                   onClick={apply}
                 >
@@ -252,12 +399,12 @@ export const SettingsView = ({
 
       {isAdmin && (
         <Surface className="overflow-hidden">
-          <div className="px-6 py-6 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="px-4 sm:px-6 py-5 sm:py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-200 dark:border-white/10">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                 {t("admin.settingsView.citiesTitle")}
               </h1>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              <p className="mt-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                 {t("admin.settingsView.showingCities", { 
                   count: filteredCities.length, 
                   auction: selectedAuction.toUpperCase() 
@@ -267,70 +414,80 @@ export const SettingsView = ({
             <Button
               type="button"
               onClick={() => setIsAddShippingModalOpen(true)}
-              className="h-9 rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc] flex items-center gap-2"
+              className="h-10 sm:h-11 px-4 rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc] flex items-center gap-2 text-sm font-semibold shadow-lg shadow-[#429de6]/20 transition-all hover:shadow-xl hover:shadow-[#429de6]/30 w-full sm:w-auto justify-center"
             >
               <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">{t("admin.settingsView.addCity")}</span>
+              <span>{t("admin.settingsView.addCity")}</span>
             </Button>
           </div>
 
-          {/* Auction Filter Buttons */}
-          <div className="px-6 pb-4 border-b border-gray-200 dark:border-white/10">
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => handleAuctionChange(Auction.COPART)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  selectedAuction === Auction.COPART
-                    ? "bg-[#429de6] text-white"
-                    : "bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10"
-                }`}
-              >
-                COPART
-              </button>
-              <button
-                type="button"
-                onClick={() => handleAuctionChange(Auction.IAAI)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  selectedAuction === Auction.IAAI
-                    ? "bg-[#429de6] text-white"
-                    : "bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10"
-                }`}
-              >
-                IAAI
-              </button>
-              <button
-                type="button"
-                onClick={() => handleAuctionChange(Auction.MANHEIM)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  selectedAuction === Auction.MANHEIM
-                    ? "bg-[#429de6] text-white"
-                    : "bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10"
-                }`}
-              >
-                MANHEIM
-              </button>
-              <button
-                type="button"
-                onClick={() => handleAuctionChange(Auction.OTHER)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  selectedAuction === Auction.OTHER
-                    ? "bg-[#429de6] text-white"
-                    : "bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10"
-                }`}
-              >
-                OTHER
-              </button>
+          {/* Search and Filter Section */}
+          <div className="px-4 sm:px-6 py-4 space-y-4 border-b border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02]">
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
+              <Input
+                type="text"
+                placeholder={tSettings("searchCityPlaceholder")}
+                value={citySearch}
+                onChange={(e) => handleCitySearchChange(e.target.value)}
+                className="pl-10 h-11 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10 focus-visible:ring-[#429de6] rounded-xl text-sm placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm"
+              />
+            </div>
+
+            {/* Auction Filter Tabs - Horizontal Scroll on Mobile */}
+            <div className="relative -mx-4 sm:mx-0">
+              <div className="overflow-x-auto scrollbar-hide px-4 sm:px-0">
+                <div className="flex gap-2 min-w-max sm:min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => handleAuctionChange(Auction.COPART)}
+                    className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                      selectedAuction === Auction.COPART
+                        ? "bg-[#429de6] text-white shadow-lg shadow-[#429de6]/25"
+                        : "bg-white dark:bg-[#0b0f14] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:border-[#429de6]/50 dark:hover:border-[#429de6]/30 hover:bg-gray-50 dark:hover:bg-white/5"
+                    }`}
+                  >
+                    COPART
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleAuctionChange(Auction.IAAI)}
+                    className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                      selectedAuction === Auction.IAAI
+                        ? "bg-[#429de6] text-white shadow-lg shadow-[#429de6]/25"
+                        : "bg-white dark:bg-[#0b0f14] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:border-[#429de6]/50 dark:hover:border-[#429de6]/30 hover:bg-gray-50 dark:hover:bg-white/5"
+                    }`}
+                  >
+                    IAAI
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleAuctionChange(Auction.MANHEIM)}
+                    className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                      selectedAuction === Auction.MANHEIM
+                        ? "bg-[#429de6] text-white shadow-lg shadow-[#429de6]/25"
+                        : "bg-white dark:bg-[#0b0f14] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:border-[#429de6]/50 dark:hover:border-[#429de6]/30 hover:bg-gray-50 dark:hover:bg-white/5"
+                    }`}
+                  >
+                    MANHEIM
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-              <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[200px]">{t("admin.settingsView.columns.city")}</TableHead>
-              <TableHead className="px-4 py-4 text-sm font-semibold min-w-[180px]">{t("admin.settingsView.columns.shipping")}</TableHead>
-              <TableHead className="px-4 py-4 text-right pr-6 sm:pr-8 text-sm font-semibold min-w-[200px]">
+            <TableRow className="bg-gray-50 hover:bg-gray-50 dark:bg-white/[0.03] border-b border-gray-200 dark:border-white/10">
+              <TableHead className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider min-w-[150px] sm:min-w-[200px]">
+                {t("admin.settingsView.columns.city")}
+              </TableHead>
+              <TableHead className="px-4 py-3 sm:py-4 text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider min-w-[140px] sm:min-w-[180px]">
+                {t("admin.settingsView.columns.shipping")}
+              </TableHead>
+              <TableHead className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-right text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider min-w-[160px] sm:min-w-[200px]">
                 {t("admin.settingsView.columns.actions")}
               </TableHead>
             </TableRow>
@@ -354,29 +511,32 @@ export const SettingsView = ({
               <TableRow>
                 <TableCell colSpan={3} className="py-12">
                   <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
-                    {t("admin.settingsView.noCitiesFound", { auction: selectedAuction.toUpperCase() })}
+                    {citySearch 
+                      ? t("admin.settingsView.noCitiesMatchSearch", { search: citySearch })
+                      : t("admin.settingsView.noCitiesFound", { auction: selectedAuction.toUpperCase() })
+                    }
                   </div>
                 </TableCell>
               </TableRow>
             ) : (
               filteredCities.map((c) => (
-                <TableRow key={c.id} className="hover:bg-gray-50/70 dark:hover:bg-white/5">
-                <TableCell className="px-6 py-6 sm:px-8 min-w-[200px]">
-                  <div className="text-base font-semibold text-gray-900 dark:text-white">
+                <TableRow key={c.id} className="border-b border-gray-200 dark:border-white/10 hover:bg-gray-50/80 dark:hover:bg-white/[0.03] transition-colors">
+                <TableCell className="px-4 sm:px-6 lg:px-8 py-4 sm:py-5 min-w-[150px] sm:min-w-[200px]">
+                  <div className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
                     {c.city}
                   </div>
                 </TableCell>
-                <TableCell className="px-4 py-6 min-w-[180px]">
-                  <div className="text-base font-semibold text-gray-900 dark:text-white">
+                <TableCell className="px-4 py-4 sm:py-5 min-w-[140px] sm:min-w-[180px]">
+                  <div className="text-sm sm:text-base font-semibold text-[#429de6] dark:text-[#429de6]">
                     {formatUsd({ value: c.shippingUsd })}
                   </div>
                 </TableCell>
-                <TableCell className="px-4 py-6 text-right pr-6 sm:pr-8 min-w-[200px]">
-                  <div className="inline-flex items-center gap-3">
+                <TableCell className="px-4 sm:px-6 lg:px-8 py-4 sm:py-5 text-right min-w-[160px] sm:min-w-[200px]">
+                  <div className="inline-flex items-center justify-end gap-2 sm:gap-3">
                     <Button
                       type="button"
                       variant="outline"
-                      className="h-10 px-4 rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5"
+                      className="h-9 sm:h-10 px-3 sm:px-4 rounded-lg sm:rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5 text-xs sm:text-sm font-medium transition-colors"
                       onClick={() => onUpdateCityClick({ cityId: c.id })}
                     >
                       {t("admin.settingsView.update")}
@@ -387,16 +547,16 @@ export const SettingsView = ({
                         <Button
                           type="button"
                           variant="outline"
-                          className="h-10 px-4 rounded-xl border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-800 dark:border-white/10 dark:bg-[#0b0f14] dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                          className="h-9 sm:h-10 px-3 sm:px-4 rounded-lg sm:rounded-xl border-red-200 bg-white text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300 dark:border-red-500/20 dark:bg-[#0b0f14] dark:text-red-400 dark:hover:bg-red-500/10 dark:hover:text-red-300 text-xs sm:text-sm font-medium transition-colors"
                           disabled={deletingCityId === c.id}
                         >
                           {deletingCityId === c.id ? (
-                            <div className="flex items-center gap-2">
-                              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                              <svg className="animate-spin h-3.5 w-3.5 sm:h-4 sm:w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                               </svg>
-                              <span>Deleting...</span>
+                              <span className="hidden sm:inline">Deleting...</span>
                             </div>
                           ) : (
                             t("admin.settingsView.delete")
@@ -483,12 +643,12 @@ export const SettingsView = ({
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Loading users...
+                  {t("admin.settingsView.loadingUsers")}
                 </span>
               </div>
             ) : filteredUsers.length === 0 ? (
               <div className="py-12 flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
-                {userSearch ? "No users match your search" : "No users found"}
+                {userSearch ? t("admin.settingsView.noUsersMatchSearch") : t("admin.settingsView.noUsersFound")}
               </div>
             ) : (
               <div className="space-y-2">

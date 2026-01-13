@@ -16,12 +16,17 @@ export function translateEngineType(engineType: string | undefined, t: Translati
   const normalized = engineType.toUpperCase().trim();
   
   // Try to find exact match in engineTypes translations
-  try {
-    return t(`engineTypes.${normalized}`);
-  } catch {
-    // If translation key doesn't exist, return capitalized version
+  const translationKey = `engineTypes.${normalized}`;
+  const result = t(translationKey);
+  
+  // If translation key doesn't exist, next-intl returns the key itself
+  // So we check if the result contains the full key path
+  if (result === translationKey || result.includes('engineTypes.')) {
+    // Fallback: return capitalized version
     return engineType.charAt(0).toUpperCase() + engineType.slice(1).toLowerCase();
   }
+  
+  return result;
 }
 
 /**
@@ -36,12 +41,17 @@ export function translateTransmission(transmission: string | undefined, t: Trans
   const normalized = transmission.toUpperCase().trim().replace(/[\s-]/g, "_");
   
   // Try to find exact match in transmissionTypes translations
-  try {
-    return t(`transmissionTypes.${normalized}`);
-  } catch {
-    // If translation key doesn't exist, return capitalized version
+  const translationKey = `transmissionTypes.${normalized}`;
+  const result = t(translationKey);
+  
+  // If translation key doesn't exist, next-intl returns the key itself
+  // So we check if the result contains the full key path
+  if (result === translationKey || result.includes('transmissionTypes.')) {
+    // Fallback: return capitalized version
     return transmission.charAt(0).toUpperCase() + transmission.slice(1).toLowerCase();
   }
+  
+  return result;
 }
 
 /**
@@ -56,10 +66,15 @@ export function translateFuelType(fuelType: string | undefined, t: TranslationFu
   const normalized = fuelType.toUpperCase().trim().replace(/[\s-]/g, "_");
   
   // Try to find exact match in fuelTypes translations
-  try {
-    return t(`fuelTypes.${normalized}`);
-  } catch {
-    // If translation key doesn't exist, return capitalized version
+  const translationKey = `fuelTypes.${normalized}`;
+  const result = t(translationKey);
+  
+  // If translation key doesn't exist, next-intl returns the key itself
+  // So we check if the result contains the full key path
+  if (result === translationKey || result.includes('fuelTypes.')) {
+    // Fallback: return capitalized version
     return fuelType.charAt(0).toUpperCase() + fuelType.slice(1).toLowerCase();
   }
+  
+  return result;
 }

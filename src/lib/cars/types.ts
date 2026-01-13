@@ -3,6 +3,14 @@ export type CarStatus = "available" | "reserved" | "sold" | "in_transit" | "avai
 // Backend enum values for car categories
 export type CarCategory = "AVAILABLE" | "ONROAD" | "TRANSIT";
 
+// Transmission types enum
+export enum Transmission {
+  AUTOMATIC = 'AUTOMATIC',
+  MECHANIC = 'MECHANIC',
+  VARIATOR = 'VARIATOR',
+  ROBOT = 'ROBOT',
+}
+
 // Backend response structure for available cars
 export type BackendAvailableCar = {
   id: string;

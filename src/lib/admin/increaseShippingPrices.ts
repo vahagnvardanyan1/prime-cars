@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "@/i18n/config";
 
 import { authenticatedFetch } from "@/lib/auth/token";
+import type { Auction } from "./types";
 
 type IncreaseShippingPricesResponse = {
   success: boolean;
@@ -9,16 +10,24 @@ type IncreaseShippingPricesResponse = {
 
 export const increaseShippingPrices = async ({
   amount,
+  auction,
+  isAdmin = false,
 }: {
   amount: number;
+  auction: Auction;
+  isAdmin?: boolean;
 }): Promise<IncreaseShippingPricesResponse> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/shippings/increase-prices`, {
-      method: "POST",
+    const endpoint = isAdmin
+      ? `${API_BASE_URL}/shippings/adjust-base-price`
+      : `${API_BASE_URL}/shippings/adjust-price`;
+    
+    const response = await authenticatedFetch(endpoint, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ amount }),
+      body: JSON.stringify({ adjustment_amount: amount, category: auction }),
     });
 
     if (!response.ok) {

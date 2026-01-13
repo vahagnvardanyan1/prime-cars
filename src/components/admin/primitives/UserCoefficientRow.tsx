@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,40 +25,78 @@ import {
 } from "@/components/ui/alert-dialog";
 import type { AdminUser } from "@/lib/admin/types";
 import { Auction } from "@/lib/admin/types";
+import { fetchUserAdjustment, type UserAdjustment } from "@/lib/admin/fetchUserPrices";
 
 type UserCoefficientRowProps = {
   user: AdminUser;
-  onUpdateCoefficient: ({ userId, coefficient, category }: { userId: string; coefficient: number; category?: Auction }) => Promise<void>;
+  onUpdateCoefficient: ({ userId, coefficient, category, adjustmentAmount }: { userId: string; coefficient: number; category?: Auction; adjustmentAmount?: number }) => Promise<void>;
 };
 
 export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficientRowProps) => {
   const t = useTranslations("admin.settingsView");
   const [coefficient, setCoefficient] = useState(user.coefficient?.toString() || "");
   const [auction, setAuction] = useState<Auction | "none">(user.category || "none");
+  const [adjustmentAmount, setAdjustmentAmount] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [userAdjustment, setUserAdjustment] = useState<UserAdjustment | undefined>(undefined);
+  const [isLoadingAdjustment, setIsLoadingAdjustment] = useState(false);
+  const [showCoefficient, setShowCoefficient] = useState(false);
+
+  // Fetch user adjustment when auction changes
+  useEffect(() => {
+    const loadUserAdjustment = async () => {
+      if (auction === "none") {
+        setUserAdjustment(undefined);
+        return;
+      }
+
+      setIsLoadingAdjustment(true);
+      try {
+        const result = await fetchUserAdjustment({ userId: user.id, category: auction });
+        if (result.success && result.adjustment) {
+          setUserAdjustment(result.adjustment);
+          // Always update coefficient field with fetched adjustment amount
+          setCoefficient(result.adjustment.adjustment_amount.toString());
+        } else {
+          setUserAdjustment(undefined);
+        }
+      } catch (error) {
+        console.error("Error fetching user adjustment:", error);
+        setUserAdjustment(undefined);
+      } finally {
+        setIsLoadingAdjustment(false);
+      }
+    };
+
+    loadUserAdjustment();
+  }, [auction, user.id]);
 
   const hasChanged = useMemo(() => {
     const currentCoefficientValue = user.coefficient?.toString() || "";
     const currentAuctionValue = user.category || "none";
-    return coefficient !== currentCoefficientValue || auction !== currentAuctionValue;
-  }, [coefficient, auction, user.coefficient, user.category]);
+    return coefficient !== currentCoefficientValue || auction !== currentAuctionValue || adjustmentAmount.trim() !== "";
+  }, [coefficient, auction, adjustmentAmount, user.coefficient, user.category]);
 
   const canApply = useMemo(() => {
     if (!hasChanged) return false;
+    
+    // Auction must be selected (not "none")
+    if (auction === "none") return false;
+    
     // Allow apply if auction changed (even if coefficient didn't)
     const auctionChanged = auction !== (user.category || "none");
-    if (auctionChanged && coefficient.trim() !== "") {
+    if (auctionChanged && coefficient.trim() !== "" && coefficient !== "-") {
       const num = Number(coefficient);
-      return Number.isFinite(num) && num >= 0;
+      return Number.isFinite(num);
     }
     if (auctionChanged && user.coefficient !== undefined) {
       return true; // Auction changed but coefficient exists from before
     }
     // Coefficient changed
-    if (coefficient.trim() === "") return false;
+    if (coefficient.trim() === "" || coefficient === "-") return false;
     const num = Number(coefficient);
-    return Number.isFinite(num) && num >= 0;
+    return Number.isFinite(num);
   }, [hasChanged, coefficient, auction, user.category, user.coefficient]);
 
   const handleCoefficientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,9 +107,33 @@ export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficien
       return;
     }
     
-    // Allow only whole numbers
-    if (/^\d*$/.test(value)) {
+    if (value === "-") {
+      setCoefficient("-");
+      return;
+    }
+    
+    // Allow negative and positive whole numbers
+    if (/^-?\d*$/.test(value)) {
       setCoefficient(value);
+    }
+  };
+
+  const handleAdjustmentAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    
+    if (value === "") {
+      setAdjustmentAmount("");
+      return;
+    }
+    
+    if (value === "-") {
+      setAdjustmentAmount("-");
+      return;
+    }
+    
+    // Allow negative and positive whole numbers
+    if (/^-?\d*$/.test(value)) {
+      setAdjustmentAmount(value);
     }
   };
 
@@ -84,11 +147,17 @@ export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficien
     setIsUpdating(true);
     try {
       const coefficientValue = coefficient.trim() ? Number(coefficient) : user.coefficient || 0;
+      const adjustmentValue = adjustmentAmount.trim() && adjustmentAmount !== "-" ? Number(adjustmentAmount) : undefined;
+      
       await onUpdateCoefficient({ 
         userId: user.id, 
         coefficient: coefficientValue,
-        category: auction === "none" ? undefined : auction
+        category: auction === "none" ? undefined : auction,
+        adjustmentAmount: adjustmentValue
       });
+      
+      // Clear adjustment amount after successful update
+      setAdjustmentAmount("");
     } finally {
       setIsUpdating(false);
     }
@@ -97,7 +166,19 @@ export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficien
   const handleCancel = () => {
     setCoefficient(user.coefficient?.toString() || "");
     setAuction(user.category || "none");
+    setAdjustmentAmount("");
   };
+
+  const handleToggleVisibility = () => {
+    setShowCoefficient(!showCoefficient);
+  };
+
+  const handleCoefficientFocus = () => {
+    // Always show the actual value when input is focused
+    setShowCoefficient(true);
+  };
+
+  const displayValue = showCoefficient ? coefficient : coefficient ? "•".repeat(coefficient.length) : "";
 
   return (
     <>
@@ -127,14 +208,35 @@ export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficien
 
         {/* Coefficient & Auction Inputs & Actions */}
         <div className="flex items-center gap-2 flex-wrap">
-          <Input
-            type="text"
-            value={coefficient}
-            onChange={handleCoefficientChange}
-            placeholder={t("coefficientPlaceholder")}
-            disabled={isUpdating}
-            className="w-24 h-9 text-center bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"
-          />
+          <div className="relative flex items-center">
+            <Input
+              type="text"
+              value={displayValue}
+              onChange={handleCoefficientChange}
+              onFocus={handleCoefficientFocus}
+              placeholder={t("coefficientPlaceholder")}
+              disabled={isUpdating}
+              className="w-32 h-9 text-center bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white pr-8"
+            />
+            
+            {/* Eye icon to toggle visibility */}
+            {auction !== "none" && userAdjustment && (
+              <button
+                type="button"
+                onClick={handleToggleVisibility}
+                disabled={isLoadingAdjustment}
+                className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer hover:opacity-70 transition-opacity"
+              >
+                {isLoadingAdjustment ? (
+                  <div className="animate-spin h-4 w-4 border-2 border-[#429de6] border-t-transparent rounded-full"></div>
+                ) : showCoefficient ? (
+                  <Eye className="h-4 w-4 text-[#429de6]" />
+                ) : (
+                  <EyeOff className="h-4 w-4 text-[#429de6]" />
+                )}
+              </button>
+            )}
+          </div>
 
           <Select value={auction} onValueChange={(value) => setAuction(value as Auction | "none")} disabled={isUpdating}>
             <SelectTrigger className="w-[120px] h-9 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white">
@@ -145,7 +247,6 @@ export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficien
               <SelectItem value={Auction.IAAI}>IAAI</SelectItem>
               <SelectItem value={Auction.COPART}>COPART</SelectItem>
               <SelectItem value={Auction.MANHEIM}>MANHEIM</SelectItem>
-              <SelectItem value={Auction.OTHER}>OTHER</SelectItem>
             </SelectContent>
           </Select>
 

@@ -138,7 +138,9 @@ export const AddCarModalFormik = ({ open, onOpenChange, onCarCreated }: AddCarMo
                       ))}
                     </Field>
                     {touched.userId && errors.userId && (
-                      <p className="text-sm text-red-500 dark:text-red-400">{errors.userId}</p>
+                      <p className="text-sm text-red-500 dark:text-red-400">
+                        {typeof errors.userId === 'string' ? errors.userId : String(errors.userId)}
+                      </p>
                     )}
                   </div>
 
@@ -157,7 +159,9 @@ export const AddCarModalFormik = ({ open, onOpenChange, onCarCreated }: AddCarMo
                       }`}
                     />
                     {touched.purchaseDate && errors.purchaseDate && (
-                      <p className="text-sm text-red-500 dark:text-red-400">{errors.purchaseDate}</p>
+                      <p className="text-sm text-red-500 dark:text-red-400">
+                        {typeof errors.purchaseDate === 'string' ? errors.purchaseDate : String(errors.purchaseDate)}
+                      </p>
                     )}
                   </div>
 
@@ -218,7 +222,9 @@ export const AddCarModalFormik = ({ open, onOpenChange, onCarCreated }: AddCarMo
                       }`}
                     />
                     {touched.year && errors.year && (
-                      <p className="text-sm text-red-500 dark:text-red-400">{errors.year}</p>
+                      <p className="text-sm text-red-500 dark:text-red-400">
+                        {typeof errors.year === 'string' ? errors.year : String(errors.year)}
+                      </p>
                     )}
                   </div>
 
@@ -271,7 +277,9 @@ export const AddCarModalFormik = ({ open, onOpenChange, onCarCreated }: AddCarMo
                       }`}
                     />
                     {touched.vin && errors.vin && (
-                      <p className="text-sm text-red-500 dark:text-red-400">{errors.vin}</p>
+                      <p className="text-sm text-red-500 dark:text-red-400">
+                        {typeof errors.vin === 'string' ? errors.vin : String(errors.vin)}
+                      </p>
                     )}
                   </div>
 
@@ -289,7 +297,9 @@ export const AddCarModalFormik = ({ open, onOpenChange, onCarCreated }: AddCarMo
                       }`}
                     />
                     {touched.priceUsd && errors.priceUsd && (
-                      <p className="text-sm text-red-500 dark:text-red-400">{errors.priceUsd}</p>
+                      <p className="text-sm text-red-500 dark:text-red-400">
+                        {typeof errors.priceUsd === 'string' ? errors.priceUsd : String(errors.priceUsd)}
+                      </p>
                     )}
                   </div>
 
@@ -436,15 +446,6 @@ export const AddCarModalFormik = ({ open, onOpenChange, onCarCreated }: AddCarMo
                   <PdfUploader
                     onFileSelect={setInvoiceFile}
                     disabled={isSubmitting}
-                    translations={{
-                      label: t("admin.modals.addCar.invoiceLabel"),
-                      dragDrop: t("admin.modals.addCar.dragDropInvoice"),
-                      dropHere: t("admin.modals.addCar.dropPdfHere"),
-                      clickToBrowse: t("admin.modals.addCar.clickToBrowse"),
-                      maxSize: t("admin.modals.addCar.pdfOnlyMaxSize"),
-                      onlyPdfAllowed: t("admin.modals.addCar.onlyPdfAllowed"),
-                      fileSizeLimit: t("admin.modals.addCar.fileSizeLimit")
-                    }}
                   />
                 </div>
               </div>

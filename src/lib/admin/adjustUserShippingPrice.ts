@@ -1,39 +1,36 @@
-import { Auction } from "./types";
-
 import { API_BASE_URL } from "@/i18n/config";
-
 import { authenticatedFetch } from "@/lib/auth/token";
 
-type UpdateUserCoefficientResponse = {
+type AdjustUserShippingPriceParams = {
+  userId: string;
+  category: string;
+  adjustmentAmount: number;
+};
+
+type AdjustUserShippingPriceResponse = {
   success: boolean;
   error?: string;
 };
 
-export const updateUserCoefficient = async ({
+export const adjustUserShippingPrice = async ({
   userId,
-  coefficient,
   category,
-}: {
-  userId: string;
-  coefficient: number;
-  category?: string;
-}): Promise<UpdateUserCoefficientResponse> => {
+  adjustmentAmount,
+}: AdjustUserShippingPriceParams): Promise<AdjustUserShippingPriceResponse> => {
   try {
-
-    const payload = {
-      userId,
-      category: category as Auction,
-      adjustment_amount: coefficient,
-    };
-    
+    debugger
     const response = await authenticatedFetch(
-      `${API_BASE_URL}/shippings/adjust-price?userId=${userId}`,
+      `${API_BASE_URL}/shippings/adjust-price`,
       {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          userId,
+          category,
+          adjustment_amount: adjustmentAmount,
+        }),
       }
     );
 
@@ -41,7 +38,7 @@ export const updateUserCoefficient = async ({
       const errorData = await response.json().catch(() => ({}));
       return {
         success: false,
-        error: errorData.message || `HTTP error! status: ${response.status}`,
+        error: errorData.message || errorData.error || `HTTP error! status: ${response.status}`,
       };
     }
 

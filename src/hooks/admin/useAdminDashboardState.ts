@@ -23,7 +23,11 @@ type UpdateCityPriceModalState =
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-export const useAdminDashboardState = () => {
+type UseAdminDashboardStateProps = {
+  isAdmin?: boolean;
+};
+
+export const useAdminDashboardState = ({ isAdmin = false }: UseAdminDashboardStateProps = {}) => {
   const [activeNav, setActiveNav] = useState<AdminNavKey>("cars");
   const [usersCache, setUsersCache] = useState<CacheEntry<AdminUser[]> | null>(null);
   const [carsCache, setCarsCache] = useState<CacheEntry<AdminCar[]> | null>(null);
@@ -91,9 +95,9 @@ export const useAdminDashboardState = () => {
     }
   };
 
-  const applyGlobalAdjustment = async ({ delta }: { delta: number }) => {
+  const applyGlobalAdjustment = async ({ delta, auction }: { delta: number; auction: string }) => {
     try {
-      const result = await increaseShippingPrices({ amount: delta });
+      const result = await increaseShippingPrices({ amount: delta, auction: auction as any, isAdmin });
       
       if (result.success) {
         toast.success("Shipping prices updated", {
@@ -130,6 +134,11 @@ export const useAdminDashboardState = () => {
   }, [citiesCache]);
 
   const loadUsers = async ({ forceRefresh = false }: { forceRefresh?: boolean } = {}) => {
+    // Only load users if user is admin
+    if (!isAdmin) {
+      return;
+    }
+
     if (!isAuthenticated()) {
       return;
     }

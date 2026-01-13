@@ -53,7 +53,6 @@ export enum Auction {
   COPART = 'copart',
   IAAI = 'iaai',
   MANHEIM = 'manheim',
-  OTHER = 'other',
 }
 
 export enum Country {

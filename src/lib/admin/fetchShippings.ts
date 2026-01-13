@@ -23,8 +23,8 @@ export const fetchShippings = async ({ auction }: { auction?: Auction } = {}): P
   try {
     // Build URL with query parameter if auction is provided
     const url = auction 
-      ? `${API_BASE_URL}/shippings?category=${auction}`
-      : `${API_BASE_URL}/shippings`;
+      ? `${API_BASE_URL}/shippings/prices?category=${auction}`
+      : `${API_BASE_URL}/shippings/prices`;
     
     const response = await authenticatedFetch(url, {
       method: "GET",

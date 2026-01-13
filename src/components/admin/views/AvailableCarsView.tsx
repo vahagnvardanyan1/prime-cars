@@ -55,6 +55,7 @@ export const AvailableCarsView = ({
   onPageSizeChange,
 }: AvailableCarsViewProps) => {
   const t = useTranslations("admin.availableCars");
+  const tModals = useTranslations("admin.modals.createAvailableCar");
   const [carouselOpen, setCarouselOpen] = useState(false);
   const [selectedCarPhotos, setSelectedCarPhotos] = useState<string[]>([]);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
@@ -120,6 +121,19 @@ export const AvailableCarsView = ({
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
+  };
+
+  const getCategoryLabel = (category: string): string => {
+    switch (category) {
+      case 'AVAILABLE':
+        return tModals("categoryAvailable");
+      case 'ONROAD':
+        return tModals("categoryOnRoad");
+      case 'TRANSIT':
+        return tModals("categoryTransit");
+      default:
+        return category;
+    }
   };
 
   return (
@@ -255,7 +269,7 @@ export const AvailableCarsView = ({
                         car.category === 'ONROAD' ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400' :
                         'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400'
                       }`}>
-                        {car.category}
+                        {getCategoryLabel(car.category)}
                       </span>
                     </TableCell>
                     

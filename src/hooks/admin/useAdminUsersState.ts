@@ -23,7 +23,11 @@ let usersCache: {
 
 export type { UserFiltersState };
 
-export const useAdminUsersState = () => {
+type UseAdminUsersStateProps = {
+  isAdmin?: boolean;
+};
+
+export const useAdminUsersState = ({ isAdmin = false }: UseAdminUsersStateProps = {}) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -89,6 +93,11 @@ export const useAdminUsersState = () => {
     page?: number;
     limit?: number;
   } = {}) => {
+    // Only load users if user is admin
+    if (!isAdmin) {
+      return;
+    }
+
     if (!isAuthenticated()) {
       return;
     }
@@ -98,7 +107,7 @@ export const useAdminUsersState = () => {
 
     const useCache = !forceRefresh && usersCache && isUsersCacheValid;
     
-    if (useCache) {
+    if (useCache && usersCache) {
       setAllUsers(usersCache.data);
     }
 
@@ -133,7 +142,7 @@ export const useAdminUsersState = () => {
     } finally {
       setIsLoadingUsers(false);
     }
-  }, [currentPage, pageSize, isUsersCacheValid]);
+  }, [isAdmin, currentPage, pageSize, isUsersCacheValid]);
 
   const changePage = useCallback((page: number) => {
     setCurrentPage(page);

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { EngineType } from "@/lib/admin/types";
+import { Transmission } from "@/lib/cars/types";
 
 // Constants to avoid hydration issues
 const CURRENT_YEAR = 2026;
@@ -70,8 +71,9 @@ export const availableCarSchema = z.object({
     .or(z.literal("")),
   
   transmission: z
-    .string()
-    .max(50, "Transmission must be less than 50 characters")
+    .enum([Transmission.AUTOMATIC, Transmission.MECHANIC, Transmission.VARIATOR, Transmission.ROBOT], {
+      message: "Invalid transmission type",
+    })
     .optional()
     .or(z.literal("")),
 });
@@ -144,8 +146,7 @@ export const updateAvailableCarSchema = z.object({
     .or(z.literal("")),
   
   transmission: z
-    .string()
-    .max(50, "Transmission must be less than 50 characters")
+    .enum([Transmission.AUTOMATIC, Transmission.MECHANIC, Transmission.VARIATOR, Transmission.ROBOT])
     .optional()
     .or(z.literal("")),
 });

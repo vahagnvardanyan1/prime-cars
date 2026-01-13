@@ -25,8 +25,8 @@ import { deleteUser } from "@/lib/admin/deleteUser";
 
 export const AdminUsersPage = () => {
   const t = useTranslations("admin.modals.deleteUser");
-  const state = useAdminUsersState();
   const { user, isAdmin } = useUser();
+  const state = useAdminUsersState({ isAdmin });
   const [selectedUserForUpdate, setSelectedUserForUpdate] = useState<AdminUser | null>(null);
   const [isUpdateUserModalOpen, setIsUpdateUserModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<AdminUser | null>(null);

@@ -40,6 +40,7 @@ export const AddShippingModal = ({
   const [shipping, setShipping] = useState("");
   const [auction, setAuction] = useState<Auction | "">("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{ city?: string; shipping?: string; auction?: string }>({});
 
   const isSubmitEnabled = useMemo(() => {
     return (
@@ -57,11 +58,40 @@ export const AddShippingModal = ({
     setCity("");
     setShipping("");
     setAuction("");
+    setErrors({});
     onClose();
+  };
+
+  const validateForm = () => {
+    const newErrors: { city?: string; shipping?: string; auction?: string } = {};
+
+    if (!city.trim()) {
+      newErrors.city = "City is required";
+    } else if (city.trim().length < 2) {
+      newErrors.city = "City must be at least 2 characters";
+    }
+
+    if (!shipping.trim()) {
+      newErrors.shipping = "Shipping price is required";
+    } else if (isNaN(Number(shipping)) || Number(shipping) <= 0) {
+      newErrors.shipping = "Shipping price must be greater than 0";
+    }
+
+    if (!auction) {
+      newErrors.auction = "Auction category is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     if (!isSubmitEnabled || auction === "") return;
 
     setIsSubmitting(true);
@@ -113,11 +143,23 @@ export const AddShippingModal = ({
               <Input
                 id="city"
                 value={city}
-                onChange={(e) => setCity(e.target.value)}
+                onChange={(e) => {
+                  setCity(e.target.value);
+                  if (errors.city) {
+                    setErrors({ ...errors, city: undefined });
+                  }
+                }}
                 placeholder={t("admin.modals.addShipping.cityPlaceholder")}
                 disabled={isSubmitting}
-                className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                  errors.city
+                    ? "border-red-500 dark:border-red-500 focus-visible:ring-red-500"
+                    : "border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]"
+                }`}
               />
+              {errors.city && (
+                <p className="text-sm text-red-500 dark:text-red-400">{errors.city}</p>
+              )}
             </div>
 
             {/* Auction Category */}
@@ -131,10 +173,19 @@ export const AddShippingModal = ({
               </Label>
               <Select
                 value={auction}
-                onValueChange={(value) => setAuction(value as Auction)}
+                onValueChange={(value) => {
+                  setAuction(value as Auction);
+                  if (errors.auction) {
+                    setErrors({ ...errors, auction: undefined });
+                  }
+                }}
                 disabled={isSubmitting}
               >
-                <SelectTrigger className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white">
+                <SelectTrigger className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                  errors.auction
+                    ? "border-red-500 dark:border-red-500 focus-visible:ring-red-500"
+                    : "border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]"
+                }`}>
                   <SelectValue placeholder={t("admin.modals.addShipping.selectAuction")} />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
@@ -149,6 +200,9 @@ export const AddShippingModal = ({
                   ))}
                 </SelectContent>
               </Select>
+              {errors.auction && (
+                <p className="text-sm text-red-500 dark:text-red-400">{errors.auction}</p>
+              )}
             </div>
 
             {/* Shipping Price */}
@@ -166,11 +220,23 @@ export const AddShippingModal = ({
                 step="0.01"
                 min="0"
                 value={shipping}
-                onChange={(e) => setShipping(e.target.value)}
+                onChange={(e) => {
+                  setShipping(e.target.value);
+                  if (errors.shipping) {
+                    setErrors({ ...errors, shipping: undefined });
+                  }
+                }}
                 placeholder={t("admin.modals.addShipping.shippingPlaceholder")}
                 disabled={isSubmitting}
-                className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                  errors.shipping
+                    ? "border-red-500 dark:border-red-500 focus-visible:ring-red-500"
+                    : "border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]"
+                }`}
               />
+              {errors.shipping && (
+                <p className="text-sm text-red-500 dark:text-red-400">{errors.shipping}</p>
+              )}
             </div>
           </div>
 

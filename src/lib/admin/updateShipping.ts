@@ -19,7 +19,7 @@ export const updateShipping = async ({
   category: Auction;
 }): Promise<UpdateShippingResponse> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/shippings/${city}/${category}`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/shippings/admin/city-prices?city=${city}&category=${category}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
