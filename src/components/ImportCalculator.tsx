@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Info, MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+
 import { copart_logo, iaai_logo, manheim_logo } from "@/data/images";
 import {
   Select,
@@ -13,6 +15,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  calculateVehicleTaxes,
+  formatDate,
+  mapEngineType,
+  type CalculatorResponse,
+} from "@/lib/import-calculator/calculateVehicleTaxes";
+import {
+  fetchShippingCities,
+  getUniqueCities,
+} from "@/lib/import-calculator/fetchShippingPrices";
+import { useUser } from "@/contexts/UserContext";
+import { CalculatorResults } from "@/components/calculator/CalculatorResults";
 
 interface ImportCalculatorProps {
   showNotice?: boolean;
@@ -20,6 +34,8 @@ interface ImportCalculatorProps {
 
 export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) => {
   const t = useTranslations();
+  const { user } = useUser();
+  const isLoggedIn = !!user;
 
   const [activeTab, setActiveTab] = useState<"iaai" | "copart" | "manheim" | "other">("iaai");
   const [importer, setImporter] = useState("legal");
@@ -35,10 +51,73 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
+  const [calculationResults, setCalculationResults] = useState<CalculatorResponse | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
+  const [isLoadingLocations, setIsLoadingLocations] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Fetch cities when activeTab changes (public endpoint, no auth required)
+  useEffect(() => {
+    const loadCities = async () => {
+      setIsLoadingLocations(true);
+      setAuctionLocation(""); // Reset selection when tab changes
+      
+      try {
+        const result = await fetchShippingCities({ category: activeTab });
+        
+        if (result.success) {
+          const sortedCities = getUniqueCities(result.data);
+          setAvailableCities(sortedCities);
+        } else {
+          setAvailableCities([]);
+        }
+      } catch (error) {
+        setAvailableCities([]);
+      } finally {
+        setIsLoadingLocations(false);
+      }
+    };
+
+    loadCities();
+  }, [activeTab]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setShowResults(true);
+    
+    // Validation
+    if (!vehiclePrice || !engineVolume || !engine || !day || !month || !year || !auctionLocation) {
+      toast.error(t("calculator.form.validationError") || "Please fill in all required fields");
+      return;
+    }
+
+    setIsCalculating(true);
+    
+    try {
+      const result = await calculateVehicleTaxes({
+        price: parseFloat(vehiclePrice),
+        volume: parseFloat(engineVolume),
+        engineType: mapEngineType(engine),
+        date: formatDate({ day, month, year }),
+        isLegal: importer === "legal" ? 1 : 0,
+        offRoad: highGroundClearance ? 1 : 0,
+        ICEpower: 0, // Default to 0 as per API spec
+      });
+
+      if (result.success) {
+        setCalculationResults(result.data);
+        setShowResults(true);
+      } else {
+        toast.error(t("calculator.form.calculationError") || "Calculation failed", {
+          description: result.error,
+        });
+      }
+    } catch (error) {
+      toast.error(t("calculator.form.calculationError") || "Calculation failed", {
+        description: error instanceof Error ? error.message : "Unknown error",
+      });
+    } finally {
+      setIsCalculating(false);
+    }
   };
 
   const getCurrentDateTime = () => {
@@ -143,7 +222,7 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
             </div>
 
             {/* Form */}
-            <div className="p-8">
+            <div className="p-4 sm:p-6 md:p-8">
           <form onSubmit={handleSubmit}>
             {/* Two Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative">
@@ -211,13 +290,22 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
                   <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                     {t("calculator.form.auctionLocation")} <span className="text-red-500">*</span>
                   </label>
-                  <Select value={auctionLocation} onValueChange={setAuctionLocation}>
+                  <Select value={auctionLocation} onValueChange={setAuctionLocation} disabled={isLoadingLocations}>
                     <SelectTrigger className="w-full h-12 bg-transparent border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white">
-                      <SelectValue placeholder={t("calculator.form.selectLocation")} />
+                      <SelectValue placeholder={isLoadingLocations ? t("calculator.form.loadingLocations") || "Loading..." : t("calculator.form.selectLocation")} />
                     </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
-                      <SelectItem value="location1">{t("calculator.form.location1")}</SelectItem>
-                      <SelectItem value="location2">{t("calculator.form.location2")}</SelectItem>
+                    <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px] overflow-y-auto">
+                      {availableCities.length > 0 ? (
+                        availableCities.map((city) => (
+                          <SelectItem key={city} value={city}>
+                            {city}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="no-locations" disabled>
+                          {t("calculator.form.noLocationsAvailable") || "No locations available"}
+                        </SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -294,8 +382,9 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
                       <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
                         <SelectItem value="gasoline">{t("calculator.form.gasoline")}</SelectItem>
                         <SelectItem value="diesel">{t("calculator.form.diesel")}</SelectItem>
+                        <SelectItem value="hybridPetrol">{t("calculator.form.hybridPetrol")}</SelectItem>
+                        <SelectItem value="hybridDiesel">{t("calculator.form.hybridDiesel")}</SelectItem>
                         <SelectItem value="electric">{t("calculator.form.electric")}</SelectItem>
-                        <SelectItem value="hybrid">{t("calculator.form.hybrid")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -344,9 +433,10 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
             <div className="mt-8 flex justify-center">
               <button
                 type="submit"
-                className="px-8 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-all hover:shadow-lg hover:shadow-blue-500/20 flex items-center gap-2"
+                disabled={isCalculating}
+                className="px-8 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-all hover:shadow-lg hover:shadow-blue-500/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {t("calculator.form.calculateCost")}
+                {isCalculating ? t("calculator.form.calculating") || "Calculating..." : t("calculator.form.calculateCost")}
                 <span>›</span>
               </button>
             </div>
@@ -355,14 +445,14 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
           </div>
 
           {showNotice && (
-            <div className="mt-6 bg-[#429de6]/10 border border-[#429de6]/20 rounded-2xl p-6">
+            <div className="mt-4 sm:mt-6 bg-[#429de6]/10 border border-[#429de6]/20 rounded-2xl p-4 sm:p-6">
               <div className="flex gap-3">
                 <Info className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-gray-900 dark:text-white mb-2">
+                  <h3 className="text-gray-900 dark:text-white mb-2 text-sm sm:text-base">
                     {t("calculator.form.noticeTitle")}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">
                     {t("calculator.form.noticeBody")}
                   </p>
                 </div>
@@ -371,134 +461,22 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
           )}
         </>
       ) : (
-        /* Results Section */
-        <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black rounded-2xl border border-gray-300 dark:border-gray-800 overflow-hidden shadow-xl">
-          {/* Exchange Rates */}
-          <div className="bg-gray-100 dark:bg-black/40 border-b border-gray-300 dark:border-gray-800 py-8 px-6">
-            <div className="flex justify-center items-center gap-6 md:gap-12 flex-wrap">
-              <div className="text-center">
-                <div className="text-gray-600 dark:text-white/70 text-xs md:text-sm mb-1.5">1 USD</div>
-                <div className="text-orange-600 dark:text-orange-500 font-bold text-lg md:text-xl">381.36 AMD</div>
-              </div>
-              <div className="text-orange-600/50 dark:text-orange-500/50 text-2xl">/</div>
-              <div className="text-center">
-                <div className="text-gray-600 dark:text-white/70 text-xs md:text-sm mb-1.5">1 EUR</div>
-                <div className="text-orange-600 dark:text-orange-500 font-bold text-lg md:text-xl">449.01 AMD</div>
-              </div>
-              <div className="text-orange-600/50 dark:text-orange-500/50 text-2xl">/</div>
-              <div className="text-center">
-                <div className="text-gray-600 dark:text-white/70 text-xs md:text-sm mb-1.5">EUR/USD</div>
-                <div className="text-orange-600 dark:text-orange-500 font-bold text-lg md:text-xl">1.1774</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Calculation Summary */}
-          <div className="bg-gradient-to-r from-orange-100 to-transparent dark:from-orange-500/10 dark:to-transparent border-b border-gray-300 dark:border-gray-800 py-6 px-6">
-            <div className="text-center max-w-4xl mx-auto">
-              <p className="text-orange-600 dark:text-orange-400 text-sm md:text-base mb-2">
-                <span className="font-bold">{importer === "legal" ? "Legal person (ACP)" : "Individual (SCDR)"}</span> 
-                <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
-                <span className="font-semibold">{vehicleType || "Passenger Car"}</span>
-              </p>
-              <p className="text-gray-700 dark:text-white/80 text-xs md:text-sm leading-relaxed">
-                <span className="text-orange-600 dark:text-orange-400 font-semibold">{getCurrentDateTime()}</span> 
-                <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
-                <span className="font-semibold text-orange-600 dark:text-orange-400">{activeTab.toUpperCase()}</span>
-                <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
-                Auction location: <span className="text-gray-900 dark:text-white font-medium">{auctionLocation || ""}</span>
-                <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
-                Choose year: <span className="text-orange-600 dark:text-orange-400 font-semibold">{year || new Date().getFullYear()}/{month || "--"}/{day || "--"}</span>
-                <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
-                Engine: <span className="text-orange-600 dark:text-orange-400 font-semibold">{engine || "Gasoline"}</span>
-                <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
-                Engine volume: <span className="text-orange-600 dark:text-orange-400 font-semibold">{engineVolume || "1"}</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Cost Breakdown Table */}
-          <div className="p-6">
-            <div className="border border-gray-300 dark:border-gray-800 rounded-xl overflow-hidden shadow-lg">
-              <table className="w-full">
-                <tbody className="divide-y divide-gray-300 dark:divide-gray-800">
-                  <tr className="bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-900/50 hover:from-gray-200 hover:to-gray-50 dark:hover:from-gray-800 dark:hover:to-gray-900/60 transition-colors">
-                    <td className="px-6 py-4 text-gray-900 dark:text-white font-medium">Vehicle price</td>
-                    <td className="px-6 py-4 text-center text-gray-400 dark:text-gray-600 text-lg">/</td>
-                    <td className="px-6 py-4 text-right text-gray-900 dark:text-white font-bold text-lg">${vehiclePrice || "1"}</td>
-                  </tr>
-                  <tr className="bg-gradient-to-r from-white to-gray-50 dark:from-black dark:to-gray-900/30 hover:from-gray-100 hover:to-white dark:hover:from-gray-900 dark:hover:to-gray-900/40 transition-colors">
-                    <td className="px-6 py-4 text-gray-900 dark:text-white font-medium">Customs duty</td>
-                    <td className="px-6 py-4 text-center text-gray-400 dark:text-gray-600 text-lg">/</td>
-                    <td className="px-6 py-4 text-right text-orange-600 font-semibold">$partner</td>
-                  </tr>
-                  <tr className="bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-900/50 hover:from-gray-200 hover:to-gray-50 dark:hover:from-gray-800 dark:hover:to-gray-900/60 transition-colors">
-                    <td className="px-6 py-4 text-gray-900 dark:text-white font-medium">Auction fee</td>
-                    <td className="px-6 py-4 text-center text-gray-400 dark:text-gray-600 text-lg">/</td>
-                    <td className="px-6 py-4 text-right text-gray-900 dark:text-white font-bold text-lg">${auctionFee || "146"}</td>
-                  </tr>
-                  <tr className="bg-gradient-to-r from-white to-gray-50 dark:from-black dark:to-gray-900/30 hover:from-gray-100 hover:to-white dark:hover:from-gray-900 dark:hover:to-gray-900/40 transition-colors">
-                    <td className="px-6 py-4 text-gray-900 dark:text-white font-medium">VAT</td>
-                    <td className="px-6 py-4 text-center text-gray-400 dark:text-gray-600 text-lg">/</td>
-                    <td className="px-6 py-4 text-right text-orange-600 font-semibold">$partner</td>
-                  </tr>
-                  <tr className="bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-900/50 hover:from-gray-200 hover:to-gray-50 dark:hover:from-gray-800 dark:hover:to-gray-900/60 transition-colors">
-                    <td className="px-6 py-4 text-gray-900 dark:text-white font-medium">Transportation Fee</td>
-                    <td className="px-6 py-4 text-center text-gray-400 dark:text-gray-600 text-lg">/</td>
-                    <td className="px-6 py-4 text-right text-orange-600 font-semibold">$partner</td>
-                  </tr>
-                  <tr className="bg-gradient-to-r from-white to-gray-50 dark:from-black dark:to-gray-900/30 hover:from-gray-100 hover:to-white dark:hover:from-gray-900 dark:hover:to-gray-900/40 transition-colors">
-                    <td className="px-6 py-4 text-gray-900 dark:text-white font-medium">Environmental tax</td>
-                    <td className="px-6 py-4 text-center text-gray-400 dark:text-gray-600 text-lg">/</td>
-                    <td className="px-6 py-4 text-right text-orange-600 font-semibold">$partner</td>
-                  </tr>
-                  <tr className="bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-900/50 hover:from-gray-200 hover:to-gray-50 dark:hover:from-gray-800 dark:hover:to-gray-900/60 transition-colors">
-                    <td className="px-6 py-4 text-gray-900 dark:text-white font-medium">Insurance</td>
-                    <td className="px-6 py-4 text-center text-gray-400 dark:text-gray-600 text-lg">/</td>
-                    <td className="px-6 py-4 text-right text-orange-600 font-semibold">$partner</td>
-                  </tr>
-                  <tr className="bg-gradient-to-r from-white to-gray-50 dark:from-black dark:to-gray-900/30 hover:from-gray-100 hover:to-white dark:hover:from-gray-900 dark:hover:to-gray-900/40 transition-colors">
-                    <td className="px-6 py-4 text-gray-900 dark:text-white font-medium">Taxes</td>
-                    <td className="px-6 py-4 text-center text-gray-400 dark:text-gray-600 text-lg">/</td>
-                    <td className="px-6 py-4 text-right text-orange-600 font-semibold">$partner</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            {/* Partner Message */}
-            <div className="mt-8 text-center py-6 bg-gradient-to-r from-orange-100 via-orange-50 to-orange-100 dark:from-orange-500/5 dark:via-orange-500/10 dark:to-orange-500/5 rounded-xl border border-orange-300 dark:border-orange-500/20 shadow-sm">
-              <p className="text-orange-600 dark:text-orange-400 text-lg md:text-xl font-bold">
-                <span className="underline decoration-orange-500/50 hover:decoration-orange-600 dark:hover:decoration-orange-500 transition-all cursor-pointer">
-                  To use calculator become a partner.
-                </span>
-              </p>
-            </div>
-
-            {/* Important Notice */}
-            <div className="mt-6 bg-gradient-to-br from-red-50 via-red-100/50 to-white dark:from-red-900/20 dark:via-red-800/10 dark:to-transparent border border-red-300 dark:border-red-800/50 rounded-xl p-6 shadow-md">
-              <h3 className="text-red-600 dark:text-red-400 font-bold mb-3 text-center text-lg md:text-xl flex items-center justify-center gap-2">
-                <span className="text-2xl">⚠</span>
-                Important
-              </h3>
-              <p className="text-gray-800 dark:text-white/90 text-sm md:text-base leading-relaxed text-center">
-                All Transactions with companies and citizens of the Republic of Armenia are made exclusively in Armenian currency (Dram / AMD). Note: customs fees are calculated at the exchange rate set by the Central Bank of Armenia as of the given day.
-              </p>
-            </div>
-
-            {/* Back to Calculator Button */}
-            <div className="flex justify-center mt-8 mb-2">
-              <button
-                onClick={() => setShowResults(false)}
-                className="px-8 py-4 bg-gradient-to-r from-[#429de6] to-[#3a8acc] text-white font-semibold rounded-xl hover:from-[#3a8acc] hover:to-[#2d7ab8] transition-all shadow-lg hover:shadow-2xl hover:shadow-blue-500/30 flex items-center gap-3 text-lg transform hover:scale-105 active:scale-95"
-                type="button"
-              >
-                <span className="text-2xl">←</span>
-                Back to Calculator
-              </button>
-            </div>
-          </div>
-        </div>
+        <CalculatorResults
+          importer={importer}
+          vehicleType={vehicleType}
+          vehiclePrice={vehiclePrice}
+          auctionFee={auctionFee}
+          auctionLocation={auctionLocation}
+          activeTab={activeTab}
+          day={day}
+          month={month}
+          year={year}
+          engine={engine}
+          engineVolume={engineVolume}
+          calculationResults={calculationResults}
+          isLoggedIn={isLoggedIn}
+          onBack={() => setShowResults(false)}
+        />
       )}
     </div>
   );
