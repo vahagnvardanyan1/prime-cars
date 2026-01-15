@@ -32,7 +32,7 @@ export const SiteShell = ({ children }: SiteShellProps) => {
     console.log("✅ Login successful from SiteShell! Fetching user from /auth/me");
     
     // Fetch user data from API - skip refresh mechanism since we just logged in with fresh token
-    await refreshUser(true);
+    await refreshUser();
     
     console.log("✅ User data fetched successfully!");
     

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, type UseQueryOptions } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { API_BASE_URL } from "@/i18n/config";
@@ -68,31 +68,34 @@ const fetchAdminCars = async (params?: FetchCarsParams): Promise<FetchCarsRespon
   const cars = Array.isArray(result) ? result : result.data || [];
 
   return {
-    cars: cars.map((car: Record<string, unknown>) => ({
-      id: car._id || car.id,
-      imageUrl: car.imageUrl || car.image || "",
-      model: car.model,
-      year: car.year,
-      priceUsd: car.priceUsd || car.price,
-      carPaid: car.carPaid || false,
-      shippingPaid: car.shippingPaid || false,
-      insurance: car.insurance || false,
-      status: car.status,
-      client: car.client || car.userId,
-      invoiceId: car.invoiceId,
-      createdAt: car.createdAt,
-      updatedAt: car.updatedAt,
-      details: {
-        purchaseDate: car.details?.purchaseDate || car.purchaseDate,
-        type: car.details?.type || car.type,
-        auction: car.details?.auction || car.auction,
-        city: car.details?.city || car.city,
-        lot: car.details?.lot || car.lot,
-        vin: car.details?.vin || car.vin,
-        customerNotes: car.details?.customerNotes || car.customerNotes,
-        invoice: car.details?.invoice || car.invoice,
-      },
-    })),
+    cars: cars.map((car: Record<string, unknown>) => {
+      const details = car.details as Record<string, unknown> | undefined;
+      return {
+        id: car._id || car.id,
+        imageUrl: car.imageUrl || car.image || "",
+        model: car.model,
+        year: car.year,
+        priceUsd: car.priceUsd || car.price,
+        carPaid: car.carPaid || false,
+        shippingPaid: car.shippingPaid || false,
+        insurance: car.insurance || false,
+        status: car.status,
+        client: car.client || car.userId,
+        invoiceId: car.invoiceId,
+        createdAt: car.createdAt,
+        updatedAt: car.updatedAt,
+        details: {
+          purchaseDate: details?.purchaseDate || car.purchaseDate,
+          type: details?.type || car.type,
+          auction: details?.auction || car.auction,
+          city: details?.city || car.city,
+          lot: details?.lot || car.lot,
+          vin: details?.vin || car.vin,
+          customerNotes: details?.customerNotes || car.customerNotes,
+          invoice: details?.invoice || car.invoice,
+        },
+      };
+    }),
     total: result.total || cars.length,
     page: result.page || 1,
     totalPages: result.totalPages || 1,
@@ -134,6 +137,7 @@ const createCar = async ({ data, images, invoiceFile }: CreateCarParams): Promis
 
   const result = await response.json();
   const car = result.data || result;
+  const carDetails = car.details as Record<string, unknown> | undefined;
 
   return {
     id: car._id || car.id,
@@ -150,14 +154,14 @@ const createCar = async ({ data, images, invoiceFile }: CreateCarParams): Promis
     createdAt: car.createdAt,
     updatedAt: car.updatedAt,
     details: {
-      purchaseDate: car.details?.purchaseDate || car.purchaseDate,
-      type: car.details?.type || car.type,
-      auction: car.details?.auction || car.auction,
-      city: car.details?.city || car.city,
-      lot: car.details?.lot || car.lot,
-      vin: car.details?.vin || car.vin,
-      customerNotes: car.details?.customerNotes || car.customerNotes,
-      invoice: car.details?.invoice || car.invoice,
+      purchaseDate: carDetails?.purchaseDate || car.purchaseDate,
+      type: carDetails?.type || car.type,
+      auction: carDetails?.auction || car.auction,
+      city: carDetails?.city || car.city,
+      lot: carDetails?.lot || car.lot,
+      vin: carDetails?.vin || car.vin,
+      customerNotes: carDetails?.customerNotes || car.customerNotes,
+      invoice: carDetails?.invoice || car.invoice,
     },
   };
 };
@@ -179,6 +183,7 @@ const updateCar = async ({ id, data }: { id: string; data: Partial<CreateCarData
 
   const result = await response.json();
   const car = result.data || result;
+  const carDetails = car.details as Record<string, unknown> | undefined;
 
   return {
     id: car._id || car.id,
@@ -195,14 +200,14 @@ const updateCar = async ({ id, data }: { id: string; data: Partial<CreateCarData
     createdAt: car.createdAt,
     updatedAt: car.updatedAt,
     details: {
-      purchaseDate: car.details?.purchaseDate || car.purchaseDate,
-      type: car.details?.type || car.type,
-      auction: car.details?.auction || car.auction,
-      city: car.details?.city || car.city,
-      lot: car.details?.lot || car.lot,
-      vin: car.details?.vin || car.vin,
-      customerNotes: car.details?.customerNotes || car.customerNotes,
-      invoice: car.details?.invoice || car.invoice,
+      purchaseDate: carDetails?.purchaseDate || car.purchaseDate,
+      type: carDetails?.type || car.type,
+      auction: carDetails?.auction || car.auction,
+      city: carDetails?.city || car.city,
+      lot: carDetails?.lot || car.lot,
+      vin: carDetails?.vin || car.vin,
+      customerNotes: carDetails?.customerNotes || car.customerNotes,
+      invoice: carDetails?.invoice || car.invoice,
     },
   };
 };
@@ -221,11 +226,12 @@ const deleteCar = async (id: string): Promise<void> => {
 
 // Hooks
 
-export const useAdminCars = (params?: FetchCarsParams) => {
+export const useAdminCars = (params?: FetchCarsParams, options?: Omit<UseQueryOptions<FetchCarsResponse>, 'queryKey' | 'queryFn'>) => {
   return useQuery({
     queryKey: queryKeys.cars.admin.list(params),
     queryFn: () => fetchAdminCars(params),
     staleTime: 1000 * 60, // 1 minute
+    ...options,
   });
 };
 

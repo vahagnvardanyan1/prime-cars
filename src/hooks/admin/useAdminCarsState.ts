@@ -114,7 +114,7 @@ export const useAdminCarsState = () => {
 
     const useCache = !forceRefresh && carsCache && isCarsCacheValid;
     
-    if (useCache) {
+    if (useCache && carsCache) {
       setAllCars(carsCache.data);
     }
 

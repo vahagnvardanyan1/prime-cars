@@ -45,16 +45,16 @@ export const fetchAllNotifications = async (): Promise<FetchAllNotificationsResp
     
     const notifications: Notification[] = Array.isArray(rawData) ? rawData.map((item: Record<string, unknown>) => {
       // Check if item has nested notification object or is direct
-      const notif = item.notification || item;
+      const notif = (item.notification || item) as Record<string, unknown>;
       return {
-        id: notif._id || notif.id || "", // notification._id - used for mark-as-read
-        recordId: item._id || "", // Outer _id (user-notification record)
-        message: notif.message || "",
-        description: notif.description || "",
-        reason: notif.reason || "",
-        createdAt: notif.createdAt || new Date().toISOString(),
-        isRead: item.is_read !== undefined ? item.is_read : (notif.isRead || false),
-        userId: notif.userId || item.userId || "",
+        id: (notif._id || notif.id || "") as string, // notification._id - used for mark-as-read
+        recordId: (item._id || "") as string, // Outer _id (user-notification record)
+        message: (notif.message || "") as string,
+        description: (notif.description || "") as string,
+        reason: (notif.reason || "") as string,
+        createdAt: (notif.createdAt || new Date().toISOString()) as string,
+        isRead: item.is_read !== undefined ? (item.is_read as boolean) : ((notif.isRead || false) as boolean),
+        userId: (notif.userId || item.userId || "") as string,
       };
     }) : [];
 

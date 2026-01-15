@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, type UseQueryOptions } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { API_BASE_URL } from "@/i18n/config";
@@ -43,22 +43,25 @@ const fetchUsers = async (params?: FetchUsersParams): Promise<FetchUsersResponse
   const users = Array.isArray(result) ? result : result.data || [];
 
   return {
-    users: users.map((user: Record<string, unknown>) => ({
-      id: user._id || user.id,
-      customerId: user.customerId,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      username: user.userName || user.username,
-      email: user.email,
-      passport: user.passportNumber || user.passport,
-      phone: user.phone,
-      location: user.location,
-      country: user.country,
-      companyName: user.companyName,
-      role: user.roles?.[0] || user.role || "user",
-      coefficient: user.coefficient,
-      category: user.category,
-    })),
+    users: users.map((user: Record<string, unknown>) => {
+      const roles = user.roles as unknown[] | undefined;
+      return {
+        id: user._id || user.id,
+        customerId: user.customerId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.userName || user.username,
+        email: user.email,
+        passport: user.passportNumber || user.passport,
+        phone: user.phone,
+        location: user.location,
+        country: user.country,
+        companyName: user.companyName,
+        role: (roles?.[0] || user.role || "user") as string,
+        coefficient: user.coefficient,
+        category: user.category,
+      };
+    }),
     total: result.total || users.length,
     page: result.page || 1,
     totalPages: result.totalPages || 1,
@@ -82,6 +85,7 @@ const createUser = async (data: CreateUserData): Promise<AdminUser> => {
 
   const result = await response.json();
   const user = result.data || result;
+  const userRoles = user.roles as unknown[] | undefined;
 
   return {
     id: user._id || user.id,
@@ -95,7 +99,7 @@ const createUser = async (data: CreateUserData): Promise<AdminUser> => {
     location: user.location,
     country: user.country,
     companyName: user.companyName,
-    role: user.roles?.[0] || user.role || "user",
+    role: (userRoles?.[0] || user.role || "user") as string,
     coefficient: user.coefficient,
     category: user.category,
   };
@@ -118,6 +122,7 @@ const updateUser = async ({ id, data }: { id: string; data: Partial<AdminUser> }
 
   const result = await response.json();
   const user = result.data || result;
+  const userRoles = user.roles as unknown[] | undefined;
 
   return {
     id: user._id || user.id,
@@ -131,7 +136,7 @@ const updateUser = async ({ id, data }: { id: string; data: Partial<AdminUser> }
     location: user.location,
     country: user.country,
     companyName: user.companyName,
-    role: user.roles?.[0] || user.role || "user",
+    role: (userRoles?.[0] || user.role || "user") as string,
     coefficient: user.coefficient,
     category: user.category,
   };
@@ -166,6 +171,7 @@ const updateUserCoefficient = async ({ id, coefficient }: { id: string; coeffici
 
   const result = await response.json();
   const user = result.data || result;
+  const userRoles = user.roles as unknown[] | undefined;
 
   return {
     id: user._id || user.id,
@@ -179,7 +185,7 @@ const updateUserCoefficient = async ({ id, coefficient }: { id: string; coeffici
     location: user.location,
     country: user.country,
     companyName: user.companyName,
-    role: user.roles?.[0] || user.role || "user",
+    role: (userRoles?.[0] || user.role || "user") as string,
     coefficient: user.coefficient,
     category: user.category,
   };
@@ -187,11 +193,12 @@ const updateUserCoefficient = async ({ id, coefficient }: { id: string; coeffici
 
 // Hooks
 
-export const useUsers = (params?: FetchUsersParams) => {
+export const useUsers = (params?: FetchUsersParams, options?: Omit<UseQueryOptions<FetchUsersResponse>, 'queryKey' | 'queryFn'>) => {
   return useQuery({
     queryKey: queryKeys.users.list(params),
     queryFn: () => fetchUsers(params),
     staleTime: 1000 * 60, // 1 minute
+    ...options,
   });
 };
 

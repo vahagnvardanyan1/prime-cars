@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { Plus, Search, Loader2 } from "lucide-react";
 
@@ -12,7 +13,9 @@ import { Permission } from "@/lib/rbac/permissions";
 import { useUsers, useDeleteUser } from "@/lib/react-query/hooks";
 
 export const AdminUsersPageRefactored = () => {
+  const t = useTranslations();
   const [search, setSearch] = useState("");
+  
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Use React Query hooks

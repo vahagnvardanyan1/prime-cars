@@ -47,16 +47,16 @@ const fetchNotifications = async (params?: FetchNotificationsParams): Promise<Fe
   const notifications = Array.isArray(result) ? result : result.data || [];
 
   const mapped = notifications.map((item: Record<string, unknown>) => {
-    const notif = item.notification || item;
+    const notif = (item.notification || item) as Record<string, unknown>;
     return {
-      id: notif._id || notif.id || "",
-      recordId: item._id || "",
-      message: notif.message || "",
-      description: notif.description || "",
-      reason: notif.reason || "",
-      createdAt: notif.createdAt || new Date().toISOString(),
-      isRead: item.is_read !== undefined ? item.is_read : (notif.isRead || false),
-      userId: notif.userId || item.userId || "",
+      id: (notif._id || notif.id || "") as string,
+      recordId: (item._id || "") as string,
+      message: (notif.message || "") as string,
+      description: (notif.description || "") as string,
+      reason: (notif.reason || "") as string,
+      createdAt: (notif.createdAt || new Date().toISOString()) as string,
+      isRead: item.is_read !== undefined ? (item.is_read as boolean) : ((notif.isRead || false) as boolean),
+      userId: (notif.userId || item.userId || "") as string,
     };
   });
 
@@ -83,17 +83,17 @@ const createNotification = async (data: CreateNotificationData): Promise<Notific
   }
 
   const result = await response.json();
-  const notif = result.data || result;
+  const notif = (result.data || result) as Record<string, unknown>;
 
   return {
-    id: notif._id || notif.id || "",
-    recordId: notif._id || "",
-    message: notif.message || "",
-    description: notif.description || "",
-    reason: notif.reason || "",
-    createdAt: notif.createdAt || new Date().toISOString(),
-    isRead: notif.isRead || false,
-    userId: notif.userId || "",
+    id: (notif._id || notif.id || "") as string,
+    recordId: (notif._id || "") as string,
+    message: (notif.message || "") as string,
+    description: (notif.description || "") as string,
+    reason: (notif.reason || "") as string,
+    createdAt: (notif.createdAt || new Date().toISOString()) as string,
+    isRead: (notif.isRead || false) as boolean,
+    userId: (notif.userId || "") as string,
   };
 };
 

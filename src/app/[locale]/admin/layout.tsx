@@ -45,7 +45,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const handleLoginSuccess = async () => {
     setLoginSuccessful(true);
     // Refresh user data after successful login
-    await refreshUser(true); // Skip refresh mechanism since we just logged in
+    await refreshUser(); // Skip refresh mechanism since we just logged in
     setShowLoginModal(false);
   };
 
