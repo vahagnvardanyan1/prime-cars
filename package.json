@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "type-check": "tsc --noEmit --project tsconfig.lint.json"
+    "type-check": "tsc --noEmit --project tsconfig.lint.json",
+    "lint-fix": "eslint 'src/**/*.{js,ts,tsx,jsx}' --quiet --fix"
+
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 
 import { toast } from "sonner";
 
-import type { AdminCar, AdminUser, ShippingCity } from "@/lib/admin/types";
+import type { AdminCar, AdminUser, ShippingCity, Auction } from "@/lib/admin/types";
 
 import { fetchUsers } from "@/lib/admin/fetchUsers";
 import { fetchCars } from "@/lib/admin/fetchCars";
@@ -95,9 +95,9 @@ export const useAdminDashboardState = ({ isAdmin = false }: UseAdminDashboardSta
     }
   };
 
-  const applyGlobalAdjustment = async ({ delta, auction }: { delta: number; auction: string }) => {
+  const applyGlobalAdjustment = async ({ delta, auction }: { delta: number; auction: Auction }) => {
     try {
-      const result = await increaseShippingPrices({ amount: delta, auction: auction as any, isAdmin });
+      const result = await increaseShippingPrices({ amount: delta, auction, isAdmin });
       
       if (result.success) {
         toast.success("Shipping prices updated", {

@@ -75,7 +75,7 @@ export const SettingsView = ({
   const [deletingCityId, setDeletingCityId] = useState<string | null>(null);
   const [userSearch, setUserSearch] = useState("");
   const [adjustmentAuction, setAdjustmentAuction] = useState<Auction>(Auction.COPART);
-  const [showAdjustmentValue, setShowAdjustmentValue] = useState(true);
+  const [showAdjustmentValue, setShowAdjustmentValue] = useState(false);
   
   // Initialize tab and search from URL
   const [activeTab, setActiveTab] = useState<"shipping" | "users">(() => {

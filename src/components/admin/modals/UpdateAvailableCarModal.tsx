@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
@@ -30,7 +30,7 @@ import { Transmission } from "@/lib/cars/types";
 import { EngineType } from "@/lib/admin/types";
 import { usePhotoUploads } from "@/hooks/admin/usePhotoUploads";
 import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
-import { updateAvailableCarSchema, type UpdateAvailableCarFormData } from "@/lib/admin/schemas/availableCar.schema";
+import type { UpdateAvailableCarFormData } from "@/lib/admin/schemas/availableCar.schema";
 import { useUpdateAvailableCar } from "@/hooks/admin/useAvailableCars";
 
 type UpdateAvailableCarModalProps = {

@@ -1,4 +1,4 @@
-import type { Notification, BackendNotificationResponse } from "./types";
+import type { Notification } from "./types";
 
 import { API_BASE_URL } from "@/i18n/config";
 
@@ -43,7 +43,7 @@ export const fetchAllNotifications = async (): Promise<FetchAllNotificationsResp
       rawData = result.data;
     }
     
-    const notifications: Notification[] = Array.isArray(rawData) ? rawData.map((item: any) => {
+    const notifications: Notification[] = Array.isArray(rawData) ? rawData.map((item: Record<string, unknown>) => {
       // Check if item has nested notification object or is direct
       const notif = item.notification || item;
       return {

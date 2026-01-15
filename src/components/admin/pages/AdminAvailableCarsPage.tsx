@@ -74,16 +74,6 @@ export const AdminAvailableCarsPage = () => {
   const [transitPage, setTransitPage] = useState(() => getInitialPageForTab("TRANSIT"));
   const [pageSize, setPageSize] = useState(getInitialPageSize);
 
-  // Get current page for active tab
-  const getCurrentPage = () => {
-    switch (activeTab) {
-      case "AVAILABLE": return availablePage;
-      case "ONROAD": return onroadPage;
-      case "TRANSIT": return transitPage;
-      default: return 1;
-    }
-  };
-
   // React Query hook with pagination for each category
   const { 
     data: availableData,
@@ -310,19 +300,6 @@ export const AdminAvailableCarsPage = () => {
         return transitData || { cars: [], total: 0, totalPages: 0, currentPage: 1, pageSize: 25 };
       default:
         return { cars: [], total: 0, totalPages: 0, currentPage: 1, pageSize: 25 };
-    }
-  };
-
-  const getCurrentLoading = () => {
-    switch (activeTab) {
-      case "AVAILABLE":
-        return isLoadingAvailable;
-      case "ONROAD":
-        return isLoadingOnroad;
-      case "TRANSIT":
-        return isLoadingTransit;
-      default:
-        return false;
     }
   };
 

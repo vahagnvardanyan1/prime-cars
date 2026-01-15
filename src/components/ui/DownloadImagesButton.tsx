@@ -31,7 +31,6 @@ export const DownloadImagesButton = ({
   compactText = false,
 }: DownloadImagesButtonProps) => {
   const t = useTranslations("downloadImages");
-  const tCommon = useTranslations("common");
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownload = async () => {

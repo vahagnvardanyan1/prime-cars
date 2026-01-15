@@ -71,7 +71,7 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
         } else {
           setAvailableCities([]);
         }
-      } catch (error) {
+      } catch {
         setAvailableCities([]);
       } finally {
         setIsLoadingLocations(false);
@@ -118,11 +118,6 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
     } finally {
       setIsCalculating(false);
     }
-  };
-
-  const getCurrentDateTime = () => {
-    const now = new Date();
-    return now.toISOString().slice(0, 19).replace("T", " ");
   };
 
   return (

@@ -126,25 +126,6 @@ export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficien
     }
   };
 
-  const handleAdjustmentAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    
-    if (value === "") {
-      setAdjustmentAmount("");
-      return;
-    }
-    
-    if (value === "-") {
-      setAdjustmentAmount("-");
-      return;
-    }
-    
-    // Allow negative and positive whole numbers
-    if (/^-?\d*$/.test(value)) {
-      setAdjustmentAmount(value);
-    }
-  };
-
   const handleApplyClick = () => {
     if (!canApply || isUpdating) return;
     setShowConfirmDialog(true);

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
-import { ChevronLeft, MapPin, Gauge, Fuel, Settings, Calendar, TrendingUp, X, ChevronRight, Download } from "lucide-react";
+import { ChevronLeft, MapPin, Gauge, Fuel, Settings, Calendar, TrendingUp, X, ChevronRight } from "lucide-react";
 import { useCarDetails } from "@/hooks/useCarDetails";
 import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
 import { translateEngineType, translateTransmission, translateFuelType } from "@/lib/utils/translateVehicleSpecs";
