@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import Link from "next/link";
 
 import type { CalculatorResponse } from "@/lib/import-calculator/calculateVehicleTaxes";
 import {
@@ -45,6 +46,7 @@ export const CalculatorResults = ({
   onBack,
 }: CalculatorResultsProps) => {
   const t = useTranslations();
+  const locale = useLocale();
   const [exchangeRates, setExchangeRates] = useState<ExchangeRates | null>(null);
   const [isLoadingRates, setIsLoadingRates] = useState(true);
 
@@ -195,9 +197,12 @@ export const CalculatorResults = ({
         {/* Partner Message */}
         <div className="mt-6 sm:mt-8 text-center py-4 sm:py-6 px-4 bg-gradient-to-r from-orange-100 via-orange-50 to-orange-100 dark:from-orange-500/5 dark:via-orange-500/10 dark:to-orange-500/5 rounded-xl border border-orange-300 dark:border-orange-500/20 shadow-sm">
           <p className="text-orange-600 dark:text-orange-400 text-base sm:text-lg md:text-xl font-bold">
-            <span className="underline decoration-orange-500/50 hover:decoration-orange-600 dark:hover:decoration-orange-500 transition-all cursor-pointer">
+            <Link 
+              href={`/${locale}/partners`}
+              className="underline decoration-orange-500/50 hover:decoration-orange-600 dark:hover:decoration-orange-500 transition-all cursor-pointer hover:text-orange-700 dark:hover:text-orange-300"
+            >
               {t("calculator.results.partnerMessage")}
-            </span>
+            </Link>
           </p>
         </div>
 

@@ -936,6 +936,11 @@
         "error": "Failed to delete notification",
         "errorDescription": "Could not delete the notification."
       },
+      "markAsRead": {
+        "success": "Notification marked as read",
+        "error": "Failed to mark as read",
+        "errorDescription": "An error occurred"
+      },
       "createAvailableCar": {
         "title": "Create Available Car",
         "subtitle": "Add a new car to the available inventory",

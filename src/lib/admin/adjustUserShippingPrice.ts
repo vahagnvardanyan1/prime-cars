@@ -18,7 +18,7 @@ export const adjustUserShippingPrice = async ({
   adjustmentAmount,
 }: AdjustUserShippingPriceParams): Promise<AdjustUserShippingPriceResponse> => {
   try {
-    debugger
+    
     const response = await authenticatedFetch(
       `${API_BASE_URL}/shippings/adjust-price`,
       {

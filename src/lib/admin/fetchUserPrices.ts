@@ -5,8 +5,8 @@ import { Auction } from "./types";
 export type UserAdjustment = {
   id: string;
   category: string;
-  adjustment_amount: number;
-  last_adjustment_amount?: number;
+  admin_adjustment_amount?: number;
+  user_adjustment_amount?: number;
   last_adjustment_date?: string;
 };
 

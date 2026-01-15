@@ -26,7 +26,6 @@ type FetchGlobalAdjustmentResult =
 
 export const fetchGlobalAdjustment = async (category?: Auction): Promise<FetchGlobalAdjustmentResult> => {
   try {
-    debugger
     // Add category as query parameter if provided
     let url = `${API_BASE_URL}/shippings/price-summary`;
     if (category) {
@@ -57,7 +56,6 @@ export const fetchGlobalAdjustment = async (category?: Auction): Promise<FetchGl
 
     const responseData = await response.json();
     const adjustmentData: ApiGlobalAdjustmentResponse = responseData.data || responseData;
-    debugger
     
     const mappedData: GlobalAdjustmentData = {
       adjustmentAmount: adjustmentData.base_adjustment_amount ?? adjustmentData.adjustment_amount ?? adjustmentData?.user_adjustment_amount ?? 0,
@@ -66,7 +64,6 @@ export const fetchGlobalAdjustment = async (category?: Auction): Promise<FetchGl
       lastAdjustmentAmount: adjustmentData.last_adjustment_amount ?? undefined,
       lastAdjustmentDate: adjustmentData.last_adjustment_date ?? undefined,
     };
-    debugger
     
     return {
       success: true,

@@ -106,11 +106,15 @@ export const NotificationsView = ({
                 </TableCell>
               </TableRow>
             ) : (
-              notifications.map((notification) => (
+              notifications.map((notification) => {
+                // Treat all notifications as read when user is admin
+                const shouldShowAsRead = isAdmin || notification.isRead;
+                
+                return (
                 <TableRow
                   key={notification.id}
                   className={`transition-all duration-200 cursor-pointer ${
-                    notification.isRead 
+                    shouldShowAsRead 
                       ? 'hover:bg-gray-50/50 dark:hover:bg-white/5 opacity-75' 
                       : 'hover:bg-[#429de6]/5 dark:hover:bg-[#429de6]/10 bg-white dark:bg-[#0b0f14]'
                   }`}
@@ -119,13 +123,13 @@ export const NotificationsView = ({
                   <TableCell className="px-6 py-4 sm:px-8">
                     <div className="flex items-center gap-3">
                       <div className={`flex-shrink-0 w-2 h-2 rounded-full ${
-                        notification.isRead 
+                        shouldShowAsRead 
                           ? 'bg-gray-300 dark:bg-gray-600' 
                           : 'bg-[#429de6] animate-pulse'
                       }`} />
                       <div>
                         <div className={`font-medium ${
-                          notification.isRead 
+                          shouldShowAsRead 
                             ? 'text-gray-600 dark:text-gray-400' 
                             : 'text-gray-900 dark:text-white'
                         }`}>
@@ -165,7 +169,7 @@ export const NotificationsView = ({
                     </div>
                   </TableCell>
                 </TableRow>
-              ))
+              )})
             )}
           </TableBody>
         </Table>

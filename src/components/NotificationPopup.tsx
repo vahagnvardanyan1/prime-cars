@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import type { Notification } from "@/lib/admin/notifications/types";
 import { markNotificationAsRead } from "@/lib/admin/notifications/markNotificationAsRead";
 import { fetchNotifications } from "@/lib/admin/notifications/fetchNotifications";
+import { clearNotificationsCache } from "@/hooks/admin/useAdminNotificationsState";
+import { notificationEvents } from "@/lib/admin/notifications/notificationEvents";
 
 type NotificationPopupProps = {
   userId?: string;
@@ -52,26 +54,38 @@ export const NotificationPopup = ({ userId }: NotificationPopupProps) => {
   const handleMarkAsRead = async () => {
     if (!currentNotification) return;
 
+    // Save current notification ID before state updates
+    const notificationId = currentNotification.id;
+    
+    // Optimistic update - immediately remove from UI
+    const remainingNotifications = unreadNotifications.filter(
+      (n) => n.id !== notificationId
+    );
+    
+    console.log('[NotificationPopup] Marking as read:', notificationId);
+    console.log('[NotificationPopup] Remaining:', remainingNotifications.length);
+    
+    if (remainingNotifications.length > 0) {
+      setUnreadNotifications(remainingNotifications);
+      setCurrentNotification(remainingNotifications[0]);
+    } else {
+      setUnreadNotifications([]);
+      setCurrentNotification(null);
+      setIsOpen(false);
+    }
+
+    // Make API call in background
     try {
-      // Use notification ID (notification._id) for mark-as-read
-      const idToUse = currentNotification.id;
-      await markNotificationAsRead({ notificationId: idToUse });
+      await markNotificationAsRead({ notificationId });
+      console.log('[NotificationPopup] Successfully marked as read');
       
-      // Remove current notification from unread list
-      const remainingNotifications = unreadNotifications.filter(
-        (n) => n.id !== currentNotification.id
-      );
+      // Clear the admin notifications cache so it refreshes when viewing the list
+      clearNotificationsCache();
       
-      if (remainingNotifications.length > 0) {
-        setUnreadNotifications(remainingNotifications);
-        setCurrentNotification(remainingNotifications[0]);
-      } else {
-        setUnreadNotifications([]);
-        setCurrentNotification(null);
-        setIsOpen(false);
-      }
+      // Notify other components to reload notifications
+      notificationEvents.emit();
     } catch (error) {
-      console.error("Error marking notification as read:", error);
+      console.error("[NotificationPopup] Error marking notification as read:", error);
     }
   };
 
@@ -108,7 +122,7 @@ export const NotificationPopup = ({ userId }: NotificationPopupProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogChange}>
-      <DialogContent className="w-[90vw] max-w-lg bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
+      <DialogContent key={currentNotification.id} className="w-[90vw] max-w-lg bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
         <DialogHeader>
           <div className="flex items-start gap-3 sm:gap-4">
             <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#429de6]/10 dark:bg-[#429de6]/20 flex items-center justify-center">

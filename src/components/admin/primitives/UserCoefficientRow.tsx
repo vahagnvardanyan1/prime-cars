@@ -26,6 +26,7 @@ import {
 import type { AdminUser } from "@/lib/admin/types";
 import { Auction } from "@/lib/admin/types";
 import { fetchUserAdjustment, type UserAdjustment } from "@/lib/admin/fetchUserPrices";
+import { useRole } from "@/lib/rbac/hooks";
 
 type UserCoefficientRowProps = {
   user: AdminUser;
@@ -34,6 +35,7 @@ type UserCoefficientRowProps = {
 
 export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficientRowProps) => {
   const t = useTranslations("admin.settingsView");
+  const { isAdmin: isCurrentUserAdmin } = useRole();
   const [coefficient, setCoefficient] = useState(user.coefficient?.toString() || "");
   const [auction, setAuction] = useState<Auction | "none">(user.category || "none");
   const [adjustmentAmount, setAdjustmentAmount] = useState("");
@@ -56,8 +58,14 @@ export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficien
         const result = await fetchUserAdjustment({ userId: user.id, category: auction });
         if (result.success && result.adjustment) {
           setUserAdjustment(result.adjustment);
-          // Always update coefficient field with fetched adjustment amount
-          setCoefficient(result.adjustment.adjustment_amount.toString());
+          // Show admin_adjustment_amount if current user is admin, otherwise show user_adjustment_amount
+          const displayAmount = isCurrentUserAdmin 
+            ? result.adjustment.admin_adjustment_amount
+            : result.adjustment.user_adjustment_amount;
+          
+          if (displayAmount !== undefined) {
+            setCoefficient(displayAmount.toString());
+          }
         } else {
           setUserAdjustment(undefined);
         }
@@ -70,7 +78,7 @@ export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficien
     };
 
     loadUserAdjustment();
-  }, [auction, user.id]);
+  }, [auction, user.id, isCurrentUserAdmin]);
 
   const hasChanged = useMemo(() => {
     const currentCoefficientValue = user.coefficient?.toString() || "";

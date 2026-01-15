@@ -23,9 +23,11 @@ import { useAdminNotificationsState } from "@/hooks/admin/useAdminNotificationsS
 import { useUser } from "@/contexts/UserContext";
 import { deleteNotification } from "@/lib/admin/notifications/deleteNotification";
 import { markNotificationAsRead } from "@/lib/admin/notifications/markNotificationAsRead";
+import { notificationEvents } from "@/lib/admin/notifications/notificationEvents";
 
 export const AdminNotificationsPage = () => {
-  const t = useTranslations("admin.modals.deleteNotification");
+  const tDelete = useTranslations("admin.modals.deleteNotification");
+  const tMarkAsRead = useTranslations("admin.modals.markAsRead");
   const state = useAdminNotificationsState();
   const { user, isAdmin } = useUser();
   const [notificationToView, setNotificationToView] = useState<Notification | null>(null);
@@ -41,6 +43,19 @@ export const AdminNotificationsPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isAdmin]);
 
+  // Listen for notification changes from popup
+  useEffect(() => {
+    const unsubscribe = notificationEvents.subscribe(() => {
+      console.log('[AdminNotificationsPage] Notification event received, reloading...');
+      if (user) {
+        state.loadNotifications({ forceRefresh: true, isAdmin });
+      }
+    });
+    
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, isAdmin]);
+
   const handleViewNotificationClick = (notification: Notification) => {
     setNotificationToView(notification);
     setIsViewNotificationModalOpen(true);
@@ -51,24 +66,39 @@ export const AdminNotificationsPage = () => {
     
     // Use notification ID (notification._id) for mark-as-read
     const idToUse = notification.id;
+    
+    // Optimistic update - immediately update the UI and modal
+    state.updateNotificationInState(notification.id, { isRead: true });
+    
+    // Update the modal view immediately so the button disappears
+    setNotificationToView({ ...notification, isRead: true });
+    
     try {
       const result = await markNotificationAsRead({ notificationId: idToUse });
       
       if (result.success) {
-        toast.success("Notification marked as read");
-        // Invalidate cache and reload
+        toast.success(tMarkAsRead("success"));
+        // Invalidate cache and reload to get server state
         state.invalidateCache();
         await state.loadNotifications({ forceRefresh: true, isAdmin });
+        
+        // Close modal after successful update
         setIsViewNotificationModalOpen(false);
       } else {
-        toast.error("Failed to mark as read", {
+        toast.error(tMarkAsRead("error"), {
           description: result.error,
         });
+        // Revert optimistic update on error
+        state.updateNotificationInState(notification.id, { isRead: false });
+        setNotificationToView({ ...notification, isRead: false });
       }
     } catch (error) {
-      toast.error("Failed to mark as read", {
-        description: error instanceof Error ? error.message : "An error occurred",
+      toast.error(tMarkAsRead("error"), {
+        description: error instanceof Error ? error.message : tMarkAsRead("errorDescription"),
       });
+      // Revert optimistic update on error
+      state.updateNotificationInState(notification.id, { isRead: false });
+      setNotificationToView({ ...notification, isRead: false });
     }
   };
 
@@ -85,8 +115,8 @@ export const AdminNotificationsPage = () => {
       const result = await deleteNotification({ id: notificationToDelete.id });
 
       if (result.success) {
-        toast.success(t("success"), {
-          description: t("successDescription"),
+        toast.success(tDelete("success"), {
+          description: tDelete("successDescription"),
         });
         // Invalidate cache and reload
         state.invalidateCache();
@@ -94,13 +124,13 @@ export const AdminNotificationsPage = () => {
         setIsDeleteNotificationDialogOpen(false);
         setNotificationToDelete(null);
       } else {
-        toast.error(t("error"), {
-          description: result.error || t("errorDescription"),
+        toast.error(tDelete("error"), {
+          description: result.error || tDelete("errorDescription"),
         });
       }
     } catch (error) {
-      toast.error(t("error"), {
-        description: error instanceof Error ? error.message : t("errorDescription"),
+      toast.error(tDelete("error"), {
+        description: error instanceof Error ? error.message : tDelete("errorDescription"),
       });
     } finally {
       setIsDeletingNotification(false);
@@ -144,10 +174,10 @@ export const AdminNotificationsPage = () => {
             <AlertDialogContent className="rounded-2xl bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">
-                  {t("title")}
+                  {tDelete("title")}
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  {t("description")}
+                  {tDelete("description")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter className="gap-2 sm:gap-2 mt-4">
@@ -155,7 +185,7 @@ export const AdminNotificationsPage = () => {
                   disabled={isDeletingNotification}
                   className="h-10 rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
                 >
-                  {t("cancel")}
+                  {tDelete("cancel")}
                 </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleConfirmDeleteNotification}
@@ -168,10 +198,10 @@ export const AdminNotificationsPage = () => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      <span>{t("deleting")}</span>
+                      <span>{tDelete("deleting")}</span>
                     </div>
                   ) : (
-                    t("confirm")
+                    tDelete("confirm")
                   )}
                 </AlertDialogAction>
               </AlertDialogFooter>

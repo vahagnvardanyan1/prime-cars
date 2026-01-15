@@ -29,6 +29,11 @@ const getCacheKey = ({ isAdmin, filters }: CacheKey): string => {
   return `${isAdmin ? "admin" : "user"}-${filterKey}`;
 };
 
+// Export function to clear cache from anywhere (e.g., NotificationPopup)
+export const clearNotificationsCache = () => {
+  notificationsCache.clear();
+};
+
 export const useAdminNotificationsState = () => {
   const [isCreateNotificationOpen, setIsCreateNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -56,6 +61,12 @@ export const useAdminNotificationsState = () => {
 
   const invalidateCache = useCallback(() => {
     notificationsCache.clear();
+  }, []);
+
+  const updateNotificationInState = useCallback((notificationId: string, updates: Partial<Notification>) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === notificationId ? { ...n, ...updates } : n))
+    );
   }, []);
 
   const loadNotifications = async ({ 
@@ -124,6 +135,7 @@ export const useAdminNotificationsState = () => {
     openCreateNotification,
     closeCreateNotification,
     loadNotifications,
+    updateNotificationInState,
     filters,
     updateFilters,
     clearFilters,
