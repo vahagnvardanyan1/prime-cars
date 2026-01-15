@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
-import type { AdminUser, CreateUserData } from "@/lib/admin/types";
+import type { AdminUser, AdminUserRole, CreateUserData } from "@/lib/admin/types";
 import { queryKeys } from "../keys";
 
 type FetchUsersParams = {
@@ -99,7 +99,7 @@ const createUser = async (data: CreateUserData): Promise<AdminUser> => {
     location: user.location,
     country: user.country,
     companyName: user.companyName,
-    role: (userRoles?.[0] || user.role || "user") as string,
+    role: (userRoles?.[0] || user.role || "user") as AdminUserRole,
     coefficient: user.coefficient,
     category: user.category,
   };
@@ -136,7 +136,7 @@ const updateUser = async ({ id, data }: { id: string; data: Partial<AdminUser> }
     location: user.location,
     country: user.country,
     companyName: user.companyName,
-    role: (userRoles?.[0] || user.role || "user") as string,
+    role: (userRoles?.[0] || user.role || "user") as AdminUserRole,
     coefficient: user.coefficient,
     category: user.category,
   };
@@ -185,7 +185,7 @@ const updateUserCoefficient = async ({ id, coefficient }: { id: string; coeffici
     location: user.location,
     country: user.country,
     companyName: user.companyName,
-    role: (userRoles?.[0] || user.role || "user") as string,
+    role: (userRoles?.[0] || user.role || "user") as AdminUserRole,
     coefficient: user.coefficient,
     category: user.category,
   };
