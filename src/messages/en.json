@@ -540,7 +540,11 @@
       "deleteDescription": "Are you sure you want to delete this notification? This action cannot be undone.",
       "cancel": "Cancel",
       "confirm": "Delete",
-      "deleting": "Deleting..."
+      "deleting": "Deleting...",
+      "justNow": "Just now",
+      "minutesAgo": "{minutes}m ago",
+      "hoursAgo": "{hours}h ago",
+      "daysAgo": "{days}d ago"
     },
     "headers": {
       "carsTitle": "Cars",

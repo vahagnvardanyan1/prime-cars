@@ -45,8 +45,8 @@ export const ViewNotificationModal = ({
 
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => onOpenChange({ open: nextOpen })}>
-      <DialogContent className="max-w-3xl bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-        <DialogHeader>
+      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
+        <DialogHeader className="flex-shrink-0">
           <div className="flex items-start gap-4">
             <div className={`flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center ${
               notification.isRead 
@@ -59,24 +59,24 @@ export const ViewNotificationModal = ({
                   : 'text-[#429de6]'
               }`} />
             </div>
-            <div className="flex-1 pt-1">
-              <DialogTitle className="text-2xl font-semibold text-gray-900 dark:text-white">
+            <div className="flex-1 pt-1 min-w-0">
+              <DialogTitle className="text-2xl font-semibold text-gray-900 dark:text-white break-words">
                 {notification.message}
               </DialogTitle>
               <div className="flex items-center gap-2 mt-2 text-sm text-gray-500 dark:text-gray-400">
-                <Calendar className="h-4 w-4" />
+                <Calendar className="h-4 w-4 flex-shrink-0" />
                 <time>{formatDate(notification.createdAt)}</time>
               </div>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="space-y-6 mt-6">
+        <div className="flex-1 overflow-y-auto min-h-0 space-y-6 mt-6 pr-2">
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3">
               {t("description")}
             </h3>
-            <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+            <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words overflow-wrap-anywhere">
               {notification.description}
             </p>
           </div>
@@ -86,14 +86,14 @@ export const ViewNotificationModal = ({
               <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3">
                 {t("reason")}
               </h3>
-              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words overflow-wrap-anywhere">
                 {notification.reason}
               </p>
             </div>
           )}
         </div>
 
-        <div className="flex justify-between items-center pt-6 mt-6 border-t border-gray-200 dark:border-white/10">
+        <div className="flex-shrink-0 flex justify-between items-center pt-6 mt-6 border-t border-gray-200 dark:border-white/10">
           <div>
             {canMarkAsRead && !notification.isRead && onMarkAsRead && (
               <Button

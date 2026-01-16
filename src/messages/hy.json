@@ -540,7 +540,11 @@
       "deleteDescription": "Վստա՞հ եք, որ ցանկանում եք ջնջել այս ծանուցումը։ Այս գործողությունը հնարավոր չէ հետ շրջել։",
       "cancel": "Չեղարկել",
       "confirm": "Ջնջել",
-      "deleting": "Ջնջվում է..."
+      "deleting": "Ջնջվում է...",
+      "justNow": "Հենց հիմա",
+      "minutesAgo": "{minutes}ր առաջ",
+      "hoursAgo": "{hours}ժ առաջ",
+      "daysAgo": "{days}օ առաջ"
     },
     "headers": {
       "carsTitle": "Ավտոմեքենաներ",

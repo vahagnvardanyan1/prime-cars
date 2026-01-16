@@ -540,7 +540,11 @@
       "deleteDescription": "Вы уверены, что хотите удалить это уведомление? Это действие нельзя отменить.",
       "cancel": "Отмена",
       "confirm": "Удалить",
-      "deleting": "Удаление..."
+      "deleting": "Удаление...",
+      "justNow": "Только что",
+      "minutesAgo": "{minutes}м назад",
+      "hoursAgo": "{hours}ч назад",
+      "daysAgo": "{days}д назад"
     },
     "headers": {
       "carsTitle": "Авто",

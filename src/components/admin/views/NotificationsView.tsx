@@ -26,7 +26,7 @@ type NotificationsViewProps = {
   isAdmin?: boolean;
 };
 
-const formatDate = (dateString: string) => {
+const formatDate = ({ dateString, t }: { dateString: string; t: (key: string, values?: Record<string, number>) => string }) => {
   const date = new Date(dateString);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
@@ -34,10 +34,10 @@ const formatDate = (dateString: string) => {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 1) return "Just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffMins < 1) return t("justNow");
+  if (diffMins < 60) return t("minutesAgo", { minutes: diffMins });
+  if (diffHours < 24) return t("hoursAgo", { hours: diffHours });
+  if (diffDays < 7) return t("daysAgo", { days: diffDays });
   
   return date.toLocaleDateString();
 };
@@ -85,11 +85,11 @@ export const NotificationsView = ({
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-              <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[200px]">{t("message")}</TableHead>
-              <TableHead className="px-4 py-4 text-sm font-semibold min-w-[250px]">{t("description")}</TableHead>
-              <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">{t("reason")}</TableHead>
-              <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{t("createdAt")}</TableHead>
-              <TableHead className="px-4 py-4 text-sm font-semibold w-[140px]">{t("actions")}</TableHead>
+              <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold w-[200px]">{t("message")}</TableHead>
+              <TableHead className="px-4 py-4 text-sm font-semibold w-[280px]">{t("description")}</TableHead>
+              <TableHead className="px-4 py-4 text-sm font-semibold w-[200px]">{t("reason")}</TableHead>
+              <TableHead className="px-4 py-4 text-sm font-semibold w-[120px]">{t("createdAt")}</TableHead>
+              <TableHead className="px-4 py-4 text-sm font-semibold w-[100px]">{t("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -121,14 +121,14 @@ export const NotificationsView = ({
                   onClick={() => onViewNotification?.(notification)}
                 >
                   <TableCell className="px-6 py-4 sm:px-8">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 max-w-[200px]">
                       <div className={`flex-shrink-0 w-2 h-2 rounded-full ${
                         shouldShowAsRead 
                           ? 'bg-gray-300 dark:bg-gray-600' 
                           : 'bg-[#429de6] animate-pulse'
                       }`} />
-                      <div>
-                        <div className={`font-medium ${
+                      <div className="min-w-0 flex-1">
+                        <div className={`font-medium line-clamp-2 break-words ${
                           shouldShowAsRead 
                             ? 'text-gray-600 dark:text-gray-400' 
                             : 'text-gray-900 dark:text-white'
@@ -139,17 +139,17 @@ export const NotificationsView = ({
                     </div>
                   </TableCell>
                   <TableCell className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
-                    <div className="line-clamp-2">
+                    <div className="line-clamp-2 break-words overflow-hidden max-w-[280px]">
                       {notification.description}
                     </div>
                   </TableCell>
                   <TableCell className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
-                    <div className="line-clamp-2">
+                    <div className="line-clamp-2 break-words overflow-hidden max-w-[200px]">
                       {notification.reason || '-'}
                     </div>
                   </TableCell>
                   <TableCell className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
-                    {formatDate(notification.createdAt)}
+                    {formatDate({ dateString: notification.createdAt, t })}
                   </TableCell>
                   <TableCell className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1">
