@@ -186,6 +186,7 @@
       "MECHANIC": "Manual",
       "ROBOT": "Robotic",
       "CVT": "CVT",
+      "VARIATOR": "Variator",
       "SEMI_AUTOMATIC": "Semi-Automatic",
       "DUAL_CLUTCH": "Dual Clutch"
     },
