@@ -141,7 +141,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 </SheetContent>
               </Sheet>
 
-              <div className="hidden sm:block text-lg font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-gray-300">
+              <div className="hidden sm:block text-xl font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-gray-300">
                 {user?.companyName || "Prime Cars"}
               </div>
             </div>
