@@ -127,7 +127,11 @@ export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) =
       const cached = citiesCache.get(auction);
       if (cached) {
         console.log(`✅ Using cached cities for ${auction}`);
-        setCities(cached.data);
+        // Ensure cached data is also sorted (in case cache was created before sorting was added)
+        const sortedCached = [...cached.data].sort((a, b) => {
+          return a.city.localeCompare(b.city, undefined, { sensitivity: 'base' });
+        });
+        setCities(sortedCached);
         setCurrentAuction(auction);
         return;
       }
@@ -139,16 +143,21 @@ export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) =
       const result = await fetchShippings({ auction });
       
       if (result.success && result.cities) {
-        setCities(result.cities);
+        // Sort cities alphabetically
+        const sortedCities = [...result.cities].sort((a, b) => {
+          return a.city.localeCompare(b.city, undefined, { sensitivity: 'base' });
+        });
+        
+        setCities(sortedCities);
         setCurrentAuction(auction || null);
         
-        // Cache the result per auction
+        // Cache the sorted result per auction
         if (auction) {
           citiesCache.set(auction, {
-            data: result.cities,
+            data: sortedCities,
             timestamp: Date.now(),
           });
-          console.log(`💾 Cached ${result.cities.length} cities for ${auction}`);
+          console.log(`💾 Cached ${sortedCities.length} cities for ${auction}`);
         }
       } else {
         if (!result.error?.includes('401') && !result.error?.includes('403') && !result.error?.includes('Unauthorized')) {

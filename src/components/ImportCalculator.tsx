@@ -30,9 +30,10 @@ import { CalculatorResults } from "@/components/calculator/CalculatorResults";
 
 interface ImportCalculatorProps {
   showNotice?: boolean;
+  showPartnerMessage?: boolean;
 }
 
-export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) => {
+export const ImportCalculator = ({ showNotice = true, showPartnerMessage = false }: ImportCalculatorProps) => {
   const t = useTranslations();
   const { user } = useUser();
   const isLoggedIn = !!user;
@@ -470,6 +471,7 @@ export const ImportCalculator = ({ showNotice = true }: ImportCalculatorProps) =
           engineVolume={engineVolume}
           calculationResults={calculationResults}
           isLoggedIn={isLoggedIn}
+          showPartnerMessage={showPartnerMessage}
           onBack={() => setShowResults(false)}
         />
       )}

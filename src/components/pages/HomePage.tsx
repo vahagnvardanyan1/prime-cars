@@ -75,7 +75,7 @@ export const HomePage = async () => {
             </p>
           </div>
 
-          <ImportCalculator />
+          <ImportCalculator showPartnerMessage={true} />
         </div>
       </section>
     </div>

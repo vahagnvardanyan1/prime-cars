@@ -122,26 +122,26 @@ export const NotificationPopup = ({ userId }: NotificationPopupProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogChange}>
-      <DialogContent key={currentNotification.id} className="w-[90vw] max-w-lg bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-        <DialogHeader>
+      <DialogContent key={currentNotification.id} className="w-[90vw] max-w-lg max-h-[90vh] flex flex-col bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
+        <DialogHeader className="flex-shrink-0">
           <div className="flex items-start gap-3 sm:gap-4">
             <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#429de6]/10 dark:bg-[#429de6]/20 flex items-center justify-center">
               <Bell className="h-5 w-5 sm:h-6 sm:w-6 text-[#429de6]" />
             </div>
             <div className="flex-1 pt-0.5 sm:pt-1">
-              <DialogTitle className="text-lg sm:text-2xl font-semibold text-gray-900 dark:text-white leading-tight">
+              <DialogTitle className="text-lg sm:text-2xl font-semibold text-gray-900 dark:text-white leading-tight break-words">
                 {currentNotification.message}
               </DialogTitle>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
+        <div className="flex-1 overflow-y-auto min-h-0 space-y-4 sm:space-y-6 mt-4 sm:mt-6 pr-2">
           <div>
             <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 sm:mb-3">
               {t("description")}
             </h3>
-            <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+            <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words">
               {currentNotification.description}
             </p>
           </div>
@@ -151,7 +151,7 @@ export const NotificationPopup = ({ userId }: NotificationPopupProps) => {
               <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2 sm:mb-3">
                 {t("reason")}
               </h3>
-              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words">
                 {currentNotification.reason}
               </p>
             </div>
@@ -169,7 +169,7 @@ export const NotificationPopup = ({ userId }: NotificationPopupProps) => {
           )}
         </div>
 
-        <div className="flex justify-end gap-2 sm:gap-3 pt-4 sm:pt-6 mt-4 sm:mt-6 border-t border-gray-200 dark:border-white/10">
+        <div className="flex-shrink-0 flex justify-end gap-2 sm:gap-3 pt-4 sm:pt-6 mt-4 sm:mt-6 border-t border-gray-200 dark:border-white/10">
           <Button
             type="button"
             variant="outline"

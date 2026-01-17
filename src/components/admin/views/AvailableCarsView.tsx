@@ -139,7 +139,7 @@ export const AvailableCarsView = ({
   return (
     <>
       <Surface>
-        <div className="px-6 py-6 flex items-center justify-between">
+        <div className="px-6 py-3 flex items-center justify-between">
           <div>
             <h1 className="text-sm font-bold text-gray-900 dark:text-white">
               Available Cars
@@ -203,27 +203,27 @@ export const AvailableCarsView = ({
                 </TableRow>
               ) : (
                 cars.map((car, index) => (
-                  <TableRow key={car.id} className="hover:bg-gray-50/70 dark:hover:bg-white/5">
+                  <TableRow key={car.id} className="transition-colors duration-150 hover:bg-amber-50 dark:hover:bg-blue-900/20">
                     {/* Row Number */}
-                    <TableCell className="px-4 py-6 text-center">
+                    <TableCell className="px-4 py-3 text-center">
                       <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                         {(currentPage - 1) * pageSize + index + 1}
                       </div>
                     </TableCell>
                     
                     {/* Photo (Clickable) */}
-                    <TableCell className="px-4 py-6">
+                    <TableCell className="px-4 py-3">
                       {car.imageUrl && (
                         <button
                           onClick={(e) => handlePhotoClick(car.photos, e)}
-                          className="relative h-16 w-20 overflow-hidden rounded-xl ring-1 ring-gray-200 dark:ring-white/10 flex-shrink-0 hover:ring-2 hover:ring-[#429de6] transition-all cursor-pointer"
+                          className="relative h-12 w-16 overflow-hidden rounded-xl ring-1 ring-gray-200 dark:ring-white/10 flex-shrink-0 hover:ring-2 hover:ring-[#429de6] transition-all cursor-pointer"
                         >
                           <Image
                             src={car.imageUrl}
                             alt={car.model}
                             fill
                             className="object-cover"
-                            sizes="80px"
+                            sizes="64px"
                           />
                           {car.photos && car.photos.length > 1 && (
                             <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded">
@@ -235,35 +235,35 @@ export const AvailableCarsView = ({
                     </TableCell>
 
                     {/* Model */}
-                    <TableCell className="px-4 py-6">
+                    <TableCell className="px-4 py-3">
                       <div className="text-sm font-semibold text-gray-900 dark:text-white">
                         {car.model}
                       </div>
                     </TableCell>
                     
                     {/* Year */}
-                    <TableCell className="px-4 py-6">
+                    <TableCell className="px-4 py-3">
                       <div className="text-sm text-gray-900 dark:text-white">
                         {car.year}
                       </div>
                     </TableCell>
                     
                     {/* VIN */}
-                    <TableCell className="px-4 py-6">
+                    <TableCell className="px-4 py-3">
                       <div className="text-sm text-gray-900 dark:text-white font-mono">
                         {car.vin || "-"}
                       </div>
                     </TableCell>
                     
                     {/* Price */}
-                    <TableCell className="px-4 py-6">
+                    <TableCell className="px-4 py-3">
                       <div className="text-sm font-semibold text-gray-900 dark:text-white">
                         {formatPrice(car.priceUsd)}
                       </div>
                     </TableCell>
                     
                     {/* Category */}
-                    <TableCell className="px-4 py-6">
+                    <TableCell className="px-4 py-3">
                       <span className={`inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold ${
                         car.category === 'AVAILABLE' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' :
                         car.category === 'ONROAD' ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400' :
@@ -274,35 +274,35 @@ export const AvailableCarsView = ({
                     </TableCell>
                     
                     {/* Location */}
-                    <TableCell className="px-4 py-6">
+                    <TableCell className="px-4 py-3">
                       <div className="text-sm text-gray-900 dark:text-white">
                         {car.location || "-"}
                       </div>
                     </TableCell>
                     
                     {/* Engine */}
-                    <TableCell className="px-4 py-6">
+                    <TableCell className="px-4 py-3">
                       <div className="text-sm text-gray-900 dark:text-white capitalize">
                         {car.engine?.toLowerCase() || "-"}
                       </div>
                     </TableCell>
                     
                     {/* Horsepower */}
-                    <TableCell className="px-4 py-6">
+                    <TableCell className="px-4 py-3">
                       <div className="text-sm text-gray-900 dark:text-white">
                         {car.horsepower ? `${car.horsepower} HP` : "-"}
                       </div>
                     </TableCell>
                     
                     {/* Transmission */}
-                    <TableCell className="px-4 py-6">
+                    <TableCell className="px-4 py-3">
                       <div className="text-sm text-gray-900 dark:text-white capitalize">
                         {car.transmission?.toLowerCase() || "-"}
                       </div>
                     </TableCell>
                     
                     {/* Description */}
-                    <TableCell className="px-4 py-6">
+                    <TableCell className="px-4 py-3">
                       <div className="text-sm text-gray-900 dark:text-white line-clamp-2" title={car.description || "-"}>
                         {car.description || "-"}
                       </div>
@@ -310,7 +310,7 @@ export const AvailableCarsView = ({
                     
                     {/* Actions */}
                     {isAdmin && (
-                      <TableCell className="px-4 py-6 text-center pr-6 sm:pr-8">
+                      <TableCell className="px-4 py-3 text-center pr-6 sm:pr-8">
                         <div className="flex items-center justify-center gap-2">
                           {car.photos && car.photos.length > 0 && (
                             <DownloadImagesButton

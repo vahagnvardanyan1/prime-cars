@@ -143,7 +143,7 @@ export const CarsView = ({
   return (
     <>
     <Surface>
-      <div className="px-6 py-6 flex items-center justify-between">
+      <div className="px-6 py-3 flex items-center justify-between">
         <div>
           <h1 className="text-sm font-bold text-gray-900 dark:text-white">
             {tTable("title")}
@@ -227,27 +227,27 @@ export const CarsView = ({
             </TableRow>
           ) : (
             cars.map((car, index) => (
-            <TableRow key={car.id} className="hover:bg-gray-50/70 dark:hover:bg-white/5">
+            <TableRow key={car.id} className="transition-colors duration-150 hover:bg-amber-50 dark:hover:bg-blue-900/20">
               {/* Row Number */}
-              <TableCell className="px-4 py-6 text-center">
+              <TableCell className="px-4 py-3 text-center">
                 <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                   {(currentPage - 1) * pageSize + index + 1}
                 </div>
               </TableCell>
 
               {/* Photo (Clickable) */}
-              <TableCell className="px-4 py-6">
+              <TableCell className="px-4 py-3">
                 {car.imageUrl && (
                   <button
                     onClick={(e) => handlePhotoClick(car.photos, e)}
-                    className="relative h-16 w-20 overflow-hidden rounded-xl ring-1 ring-gray-200 dark:ring-white/10 flex-shrink-0 hover:ring-2 hover:ring-[#429de6] transition-all cursor-pointer"
+                    className="relative h-12 w-16 overflow-hidden rounded-xl ring-1 ring-gray-200 dark:ring-white/10 flex-shrink-0 hover:ring-2 hover:ring-[#429de6] transition-all cursor-pointer"
                   >
                     <Image
                       src={car.imageUrl}
                       alt={car.model}
                       fill
                       className="object-cover"
-                      sizes="80px"
+                      sizes="64px"
                     />
                     {car.photos && car.photos.length > 1 && (
                       <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded">
@@ -259,14 +259,14 @@ export const CarsView = ({
               </TableCell>
               
               {/* Purchase Date */}
-              <TableCell className="px-4 py-6 min-w-[140px]">
+              <TableCell className="px-4 py-3 min-w-[140px]">
                 <div className="text-sm text-gray-900 dark:text-white whitespace-nowrap">
                   {formatDate(car.details?.purchaseDate)}
                 </div>
               </TableCell>
               
               {/* Car (Model + Year) */}
-              <TableCell className="px-6 py-6 sm:px-8 min-w-[200px]">
+              <TableCell className="px-6 py-3 sm:px-8 min-w-[200px]">
                 <div className="min-w-0">
                   <div className="truncate text-base font-semibold text-gray-900 dark:text-white">
                     {car.model}
@@ -278,63 +278,63 @@ export const CarsView = ({
               </TableCell>
               
               {/* Lot */}
-              <TableCell className="px-4 py-6 min-w-[140px]">
+              <TableCell className="px-4 py-3 min-w-[140px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {car.details?.lot || "-"}
                 </div>
               </TableCell>
               
               {/* VIN */}
-              <TableCell className="px-4 py-6 min-w-[160px]">
+              <TableCell className="px-4 py-3 min-w-[160px]">
                 <div className="text-sm text-gray-900 dark:text-white font-mono">
                   {car.details?.vin || "-"}
                 </div>
               </TableCell>
               
               {/* Auction */}
-              <TableCell className="px-4 py-6 min-w-[120px]">
+              <TableCell className="px-4 py-3 min-w-[120px]">
                 <div className="text-sm text-gray-900 dark:text-white capitalize">
                   {car.details?.auction || "-"}
                 </div>
               </TableCell>
               
               {/* Client */}
-              <TableCell className="px-4 py-6 min-w-[140px]">
+              <TableCell className="px-4 py-3 min-w-[140px]">
                 <div className="text-sm text-gray-900 dark:text-white font-medium">
                   {car.client || "-"}
                 </div>
               </TableCell>
               
               {/* Price */}
-              <TableCell className="px-4 py-6 min-w-[140px]">
+              <TableCell className="px-4 py-3 min-w-[140px]">
                 <div className="text-base font-semibold text-gray-900 dark:text-white whitespace-nowrap">
                   {formatUsd({ value: car.priceUsd })}
                 </div>
               </TableCell>
               
               {/* Type */}
-              <TableCell className="px-4 py-6 min-w-[120px]">
+              <TableCell className="px-4 py-3 min-w-[120px]">
                 <div className="text-sm text-gray-900 dark:text-white capitalize">
                   {car.details?.type || "-"}
                 </div>
               </TableCell>
               
               {/* City */}
-              <TableCell className="px-4 py-6 min-w-[140px]">
+              <TableCell className="px-4 py-3 min-w-[140px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {car.details?.city || "-"}
                 </div>
               </TableCell>
               
               {/* Notes */}
-              <TableCell className="px-4 py-6 min-w-[200px]">
+              <TableCell className="px-4 py-3 min-w-[200px]">
                 <div className="text-sm text-gray-900 dark:text-white truncate">
                   {car.details?.customerNotes || "-"}
                 </div>
               </TableCell>
               
               {/* Car Payment */}
-              <TableCell className="px-4 py-6 min-w-[140px]">
+              <TableCell className="px-4 py-3 min-w-[140px]">
                 <PaymentStatus 
                   paid={car.carPaid} 
                   label={car.carPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
@@ -343,7 +343,7 @@ export const CarsView = ({
               </TableCell>
               
               {/* Shipping Payment */}
-              <TableCell className="px-4 py-6 min-w-[140px]">
+              <TableCell className="px-4 py-3 min-w-[140px]">
                 <PaymentStatus 
                   paid={car.shippingPaid} 
                   label={car.shippingPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
@@ -352,7 +352,7 @@ export const CarsView = ({
               </TableCell>
               
               {/* Insurance */}
-              <TableCell className="px-4 py-6 min-w-[120px]">
+              <TableCell className="px-4 py-3 min-w-[120px]">
                 <PaymentStatus 
                   paid={car.insurance} 
                   label={car.insurance ? t("admin.modals.addCar.exists") : t("admin.modals.addCar.notExists")}
@@ -361,14 +361,14 @@ export const CarsView = ({
               </TableCell>
               
               {/* Created Date */}
-              <TableCell className="px-4 py-6 min-w-[140px]">
+              <TableCell className="px-4 py-3 min-w-[140px]">
                 <div className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
                   {formatDate(car.createdAt)}
                 </div>
               </TableCell>
               
               {/* Invoice */}
-              <TableCell className="px-4 py-6 text-center min-w-[120px]">
+              <TableCell className="px-4 py-3 text-center min-w-[120px]">
                 {car.invoiceId ? (
                   <a
                     href={car.invoiceId}
@@ -386,7 +386,7 @@ export const CarsView = ({
               </TableCell>
               
               {/* Actions */}
-              <TableCell className="px-4 py-6 text-center pr-6 sm:pr-8 min-w-[160px]">
+              <TableCell className="px-4 py-3 text-center pr-6 sm:pr-8 min-w-[160px]">
                 <div className="flex items-center justify-center gap-2">
                   {car.photos && car.photos.length > 0 && (
                     <DownloadImagesButton

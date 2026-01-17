@@ -66,9 +66,16 @@ export const useAdminCarsState = () => {
     return isCacheValid({ cache: carsCache, duration: CACHE_DURATION });
   }, []);
 
-  // Apply filters to get filtered cars
+  // Apply filters to get filtered cars and sort by purchase date (newest first)
   const filteredCars = useMemo(() => {
-    return filterCars({ cars: allCars, filters });
+    const filtered = filterCars({ cars: allCars, filters });
+    
+    // Sort by purchase date (newest first)
+    return filtered.sort((a, b) => {
+      const dateA = a.details?.purchaseDate ? new Date(a.details.purchaseDate).getTime() : 0;
+      const dateB = b.details?.purchaseDate ? new Date(b.details.purchaseDate).getTime() : 0;
+      return dateB - dateA; // Descending order (newest first)
+    });
   }, [allCars, filters]);
 
   // Update URL when filters change

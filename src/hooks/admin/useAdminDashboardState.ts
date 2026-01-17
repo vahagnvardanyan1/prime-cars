@@ -219,7 +219,11 @@ export const useAdminDashboardState = ({ isAdmin = false }: UseAdminDashboardSta
 
     // Check cache first
     if (!forceRefresh && citiesCache && isCitiesCacheValid) {
-      setCities(citiesCache.data);
+      // Ensure cached data is also sorted (in case cache was created before sorting was added)
+      const sortedCached = [...citiesCache.data].sort((a, b) => {
+        return a.city.localeCompare(b.city, undefined, { sensitivity: 'base' });
+      });
+      setCities(sortedCached);
       return;
     }
 
@@ -228,8 +232,13 @@ export const useAdminDashboardState = ({ isAdmin = false }: UseAdminDashboardSta
       const result = await fetchShippings();
       
       if (result.success && result.cities) {
-        setCities(result.cities);
-        setCitiesCache(createCacheEntry({ data: result.cities }));
+        // Sort cities alphabetically
+        const sortedCities = [...result.cities].sort((a, b) => {
+          return a.city.localeCompare(b.city, undefined, { sensitivity: 'base' });
+        });
+        
+        setCities(sortedCities);
+        setCitiesCache(createCacheEntry({ data: sortedCities }));
       } else {
         if (!isAuthError({ errorMessage: result.error })) {
           toast.error("Failed to load shipping cities", {

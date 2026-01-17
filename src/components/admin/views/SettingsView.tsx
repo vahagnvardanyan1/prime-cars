@@ -185,13 +185,21 @@ export const SettingsView = ({
     return delta.trim().length > 0 && Number.isFinite(Number(delta));
   }, [delta]);
 
-  // Filter cities by search query
+  // Filter cities by search query and sort alphabetically
   const filteredCities = useMemo(() => {
-    if (!citySearch.trim()) return cities;
+    let result = cities;
     
-    const searchLower = citySearch.toLowerCase();
-    return cities.filter((city) => {
-      return city.city.toLowerCase().includes(searchLower);
+    // Apply search filter
+    if (citySearch.trim()) {
+      const searchLower = citySearch.toLowerCase();
+      result = cities.filter((city) => {
+        return city.city.toLowerCase().includes(searchLower);
+      });
+    }
+    
+    // Sort alphabetically by city name
+    return result.sort((a, b) => {
+      return a.city.localeCompare(b.city, undefined, { sensitivity: 'base' });
     });
   }, [cities, citySearch]);
 
@@ -520,7 +528,7 @@ export const SettingsView = ({
               </TableRow>
             ) : (
               filteredCities.map((c) => (
-                <TableRow key={c.id} className="border-b border-gray-200 dark:border-white/10 hover:bg-gray-50/80 dark:hover:bg-white/[0.03] transition-colors">
+                <TableRow key={c.id} className="border-b border-gray-200 dark:border-white/10 transition-colors duration-150 hover:bg-amber-50 dark:hover:bg-blue-900/20">
                 <TableCell className="px-4 sm:px-6 lg:px-8 py-4 sm:py-5 min-w-[150px] sm:min-w-[200px]">
                   <div className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
                     {c.city}
