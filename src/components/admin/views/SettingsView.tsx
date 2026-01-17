@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-import { Plus, Search, Eye, EyeOff } from "lucide-react";
+import { Plus, Search, Eye, EyeOff, KeyRound } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -11,10 +11,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AddShippingModal } from "@/components/admin/modals/AddShippingModal";
+import { ChangePasswordModal } from "@/components/admin/modals/ChangePasswordModal";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { UserCoefficientRow } from "@/components/admin/primitives/UserCoefficientRow";
 import { formatUsd } from "@/lib/admin/format";
-import type { ShippingCity, AdminUser } from "@/lib/admin/types";
+import { type ShippingCity, AdminUser } from "@/lib/admin/types";
 import { Auction } from "@/lib/admin/types";
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
@@ -76,6 +77,7 @@ export const SettingsView = ({
   const [userSearch, setUserSearch] = useState("");
   const [adjustmentAuction, setAdjustmentAuction] = useState<Auction>(Auction.COPART);
   const [showAdjustmentValue, setShowAdjustmentValue] = useState(false);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   
   // Initialize tab and search from URL
   const [activeTab, setActiveTab] = useState<"shipping" | "users">(() => {
@@ -278,31 +280,45 @@ export const SettingsView = ({
 
   return (
     <div className="space-y-6">
-      {/* Tab Navigation - Only for admins */}
+      {/* Tab Navigation and Actions - Only for admins */}
       {isAdmin && (
-        <div className="flex gap-2 border-b border-gray-200 dark:border-white/10">
-          <button
-            type="button"
-            onClick={() => handleTabChange("shipping")}
-            className={`px-6 py-3 text-sm font-semibold transition-all ${
-              activeTab === "shipping"
-                ? "border-b-2 border-[#429de6] text-[#429de6] dark:text-[#429de6]"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-            }`}
-          >
-            {t("admin.settingsView.shippingTab")}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTabChange("users")}
-            className={`px-6 py-3 text-sm font-semibold transition-all ${
-              activeTab === "users"
-                ? "border-b-2 border-[#429de6] text-[#429de6] dark:text-[#429de6]"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-            }`}
-          >
-            {t("admin.settingsView.usersTab")}
-          </button>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 border-b border-gray-200 dark:border-white/10 pb-3 sm:pb-0">
+          <div className="flex gap-2 overflow-x-auto">
+            <button
+              type="button"
+              onClick={() => handleTabChange("shipping")}
+              className={`px-4 sm:px-6 py-3 text-xs sm:text-sm font-semibold whitespace-nowrap transition-all ${
+                activeTab === "shipping"
+                  ? "border-b-2 border-[#429de6] text-[#429de6] dark:text-[#429de6]"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+              }`}
+            >
+              {t("admin.settingsView.shippingTab")}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleTabChange("users")}
+              className={`px-4 sm:px-6 py-3 text-xs sm:text-sm font-semibold whitespace-nowrap transition-all ${
+                activeTab === "users"
+                  ? "border-b-2 border-[#429de6] text-[#429de6] dark:text-[#429de6]"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+              }`}
+            >
+              {t("admin.settingsView.usersTab")}
+            </button>
+          </div>
+          <div className="px-2 sm:pr-4">
+            <Button
+              type="button"
+              onClick={() => setIsChangePasswordModalOpen(true)}
+              variant="outline"
+              size="sm"
+              className="gap-2 w-full sm:w-auto border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
+            >
+              <KeyRound className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">{t("admin.settingsView.changePassword")}</span>
+            </Button>
+          </div>
         </div>
       )}
 
@@ -675,11 +691,17 @@ export const SettingsView = ({
       )}
 
       {isAdmin && (
-        <AddShippingModal
-          isOpen={isAddShippingModalOpen}
-          onClose={() => setIsAddShippingModalOpen(false)}
-          onShippingCreated={onShippingCreated}
-        />
+        <>
+          <AddShippingModal
+            isOpen={isAddShippingModalOpen}
+            onClose={() => setIsAddShippingModalOpen(false)}
+            onShippingCreated={onShippingCreated}
+          />
+          <ChangePasswordModal
+            open={isChangePasswordModalOpen}
+            onOpenChange={({ open }) => setIsChangePasswordModalOpen(open)}
+          />
+        </>
       )}
     </div>
   );

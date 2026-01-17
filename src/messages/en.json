@@ -398,6 +398,8 @@
       "usernameMinLength": "Username must be at least 3 characters",
       "passwordRequired": "Password is required",
       "passwordMinLength": "Password must be at least 6 characters",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "passwordsMustMatch": "Passwords must match",
       "emailRequired": "Email is required",
       "emailInvalid": "Please enter a valid email address",
       "firstNameRequired": "First name is required",
@@ -597,6 +599,7 @@
     "settingsView": {
       "shippingTab": "Shipping & Cities",
       "usersTab": "User Coefficients",
+      "changePassword": "Change Password",
       "shippingPricesTitle": "Shipping Prices",
       "shippingPricesSubtitle": "Manage city-specific shipping, with a safe global adjustment control.",
       "globalAdjustmentTitle": "Global Price Adjustment",
@@ -1050,6 +1053,25 @@
         "deleting": "Deleting...",
         "success": "Car deleted successfully",
         "error": "Failed to delete car"
+      },
+      "changePassword": {
+        "title": "Change Password",
+        "description": "Update your admin account password.",
+        "currentPassword": "Current Password",
+        "currentPasswordPlaceholder": "Enter your current password",
+        "newPassword": "New Password",
+        "newPasswordPlaceholder": "Enter new password (min. 8 characters)",
+        "confirmPassword": "Confirm New Password",
+        "confirmPasswordPlaceholder": "Re-enter new password",
+        "newPasswordMustBeDifferent": "New password must be different from current password",
+        "incorrectCurrentPassword": "Current password is incorrect",
+        "cancel": "Cancel",
+        "changePassword": "Change Password",
+        "changing": "Changing...",
+        "successTitle": "Password Changed",
+        "successDescription": "Your password has been updated successfully.",
+        "errorTitle": "Change Failed",
+        "errorDescription": "Could not change your password. Please try again."
       }
     },
     "actions": {

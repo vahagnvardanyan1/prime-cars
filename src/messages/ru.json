@@ -398,6 +398,8 @@
       "usernameMinLength": "Имя пользователя должно быть не менее 3 символов",
       "passwordRequired": "Пароль обязателен",
       "passwordMinLength": "Пароль должен быть не менее 6 символов",
+      "passwordTooShort": "Пароль должен быть не менее 8 символов",
+      "passwordsMustMatch": "Пароли должны совпадать",
       "emailRequired": "Email обязателен",
       "emailInvalid": "Пожалуйста, введите действительный email",
       "firstNameRequired": "Имя обязательно",
@@ -597,6 +599,7 @@
     "settingsView": {
       "shippingTab": "Доставка и города",
       "usersTab": "Коэффициенты пользователей",
+      "changePassword": "Изменить пароль",
       "shippingPricesTitle": "Цены доставки",
       "shippingPricesSubtitle": "Управляйте доставкой по городам и применяйте безопасную глобальную корректировку.",
       "globalAdjustmentTitle": "Глобальная корректировка",
@@ -1050,6 +1053,25 @@
         "deleting": "Удаление...",
         "success": "Автомобиль успешно удален",
         "error": "Не удалось удалить автомобиль"
+      },
+      "changePassword": {
+        "title": "Изменить пароль",
+        "description": "Обновите пароль вашей учётной записи администратора.",
+        "currentPassword": "Текущий пароль",
+        "currentPasswordPlaceholder": "Введите текущий пароль",
+        "newPassword": "Новый пароль",
+        "newPasswordPlaceholder": "Введите новый пароль (мин. 8 символов)",
+        "confirmPassword": "Подтвердите новый пароль",
+        "confirmPasswordPlaceholder": "Введите новый пароль еще раз",
+        "newPasswordMustBeDifferent": "Новый пароль должен отличаться от текущего",
+        "incorrectCurrentPassword": "Неверный текущий пароль",
+        "cancel": "Отмена",
+        "changePassword": "Изменить пароль",
+        "changing": "Изменение...",
+        "successTitle": "Пароль изменен",
+        "successDescription": "Ваш пароль успешно обновлён.",
+        "errorTitle": "Ошибка изменения",
+        "errorDescription": "Не удалось изменить пароль. Попробуйте еще раз."
       }
     },
     "actions": {

@@ -398,6 +398,8 @@
       "usernameMinLength": "Օգտանունը պետք է լինի առնվազն 3 նիշ",
       "passwordRequired": "Գաղտնաբառը պարտադիր է",
       "passwordMinLength": "Գաղտնաբառը պետք է լինի առնվազն 6 նիշ",
+      "passwordTooShort": "Գաղտնաբառը պետք է լինի առնվազն 8 նիշ",
+      "passwordsMustMatch": "Գաղտնաբառերը պետք է համընկնեն",
       "emailRequired": "Էլ. փոստը պարտադիր է",
       "emailInvalid": "Խնդրում ենք մուտքագրել վավեր էլ. փոստ",
       "firstNameRequired": "Անունը պարտադիր է",
@@ -597,6 +599,7 @@
     "settingsView": {
       "shippingTab": "Առաքում և քաղաքներ",
       "usersTab": "Օգտատերերի գործակիցներ",
+      "changePassword": "Փոխել գաղտնաբառը",
       "shippingPricesTitle": "Առաքման գներ",
       "shippingPricesSubtitle": "Կառավարեք առաքումը ըստ քաղաքների և կիրառեք անվտանգ գլոբալ ճշգրտում։",
       "globalAdjustmentTitle": "Գլոբալ ճշգրտում",
@@ -1052,6 +1055,25 @@
         "deleting": "Ջնջվում է...",
         "success": "Մեքենան հաջողությամբ ջնջվեց",
         "error": "Չհաջողվեց ջնջել մեքենան"
+      },
+      "changePassword": {
+        "title": "Փոխել գաղտնաբառը",
+        "description": "Թարմացրեք ձեր ադմինիստրատորի հաշվի գաղտնաբառը։",
+        "currentPassword": "Ընթացիկ գաղտնաբառ",
+        "currentPasswordPlaceholder": "Մուտքագրեք ձեր ընթացիկ գաղտնաբառը",
+        "newPassword": "Նոր գաղտնաբառ",
+        "newPasswordPlaceholder": "Մուտքագրեք նոր գաղտնաբառը (նվազագույնը 8 նիշ)",
+        "confirmPassword": "Հաստատել նոր գաղտնաբառը",
+        "confirmPasswordPlaceholder": "Կրկին մուտքագրեք նոր գաղտնաբառը",
+        "newPasswordMustBeDifferent": "Նոր գաղտնաբառը պետք է տարբերվի ընթացիկից",
+        "incorrectCurrentPassword": "Ընթացիկ գաղտնաբառը սխալ է",
+        "cancel": "Չեղարկել",
+        "changePassword": "Փոխել գաղտնաբառը",
+        "changing": "Փոխվում է...",
+        "successTitle": "Գաղտնաբառը փոխվեց",
+        "successDescription": "Ձեր գաղտնաբառը հաջողությամբ թարմացվել է։",
+        "errorTitle": "Փոփոխությունը ձախողվեց",
+        "errorDescription": "Չհաջողվեց փոխել ձեր գաղտնաբառը։ Փորձեք կրկին։"
       }
     },
     "actions": {
