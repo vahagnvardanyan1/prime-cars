@@ -30,8 +30,7 @@ export const mapEngineType = (engine: string): number => {
     gasoline: 1,
     diesel: 2,
     electric: 3,
-    hybridPetrol: 4,
-    hybridDiesel: 4, // Both hybrid types map to ID 4
+    hybrid: 4, // Generic hybrid
   };
   return engineMap[engine] || 1;
 };

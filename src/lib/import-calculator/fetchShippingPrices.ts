@@ -1,8 +1,13 @@
 import { API_BASE_URL } from "@/i18n/config";
+import { authenticatedFetch } from "../auth/token";
 
-export type CitiesResponse = {
-  cities: string[];
-  category: string;
+export type ShippingData = {
+  city: string;
+  shippingUsd: number;
+  base_price?: number;
+  auction?: string;
+  base_last_adjustment_amount?: number;
+  total_adjustment_amount?: number;
 };
 
 export type FetchCitiesParams = {
@@ -10,31 +15,25 @@ export type FetchCitiesParams = {
 };
 
 export type FetchCitiesResult =
-  | { success: true; data: string[] }
+  | { success: true; cities: string[]; priceMap: Record<string, number> }
   | { success: false; error: string };
 
 /**
- * Fetch cities from the public API endpoint
+ * Fetch cities and prices from the shippings API endpoint
+ * Returns both cities list and a map of city->price
  */
 export const fetchShippingCities = async (
   params: FetchCitiesParams
 ): Promise<FetchCitiesResult> => {
   try {
-    const queryParams = new URLSearchParams({
-      category: params.category,
-    });
-
-    const url = `${API_BASE_URL}/public/cities?${queryParams.toString()}`;
+    const url = `${API_BASE_URL}/shippings/prices?category=${params.category}`;
     
-    const response = await fetch(url, {
+    const response = await authenticatedFetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: "Failed to fetch cities" }));
+      const errorData = await response.json().catch(() => ({ error: "Failed to fetch shipping data" }));
       return {
         success: false,
         error: errorData.error || errorData.message || `HTTP error! status: ${response.status}`,
@@ -42,21 +41,30 @@ export const fetchShippingCities = async (
     }
 
     const result = await response.json();
-    
-    // Handle the API response structure: { status: "success", data: [{ cities: [...], category: "..." }] }
     const responseData = result.data || result;
     
-    if (Array.isArray(responseData) && responseData.length > 0) {
-      const categoryData = responseData[0] as CitiesResponse;
+    if (Array.isArray(responseData)) {
+      const cities: string[] = [];
+      const priceMap: Record<string, number> = {};
+      
+      responseData.forEach((item: ShippingData) => {
+        if (item.city) {
+          cities.push(item.city);
+          priceMap[item.city] = (item.base_price ?? 0) + (item?.base_last_adjustment_amount ?? 0)   + (item?.total_adjustment_amount ?? 0) 
+        }
+      });
+      
       return {
         success: true,
-        data: categoryData.cities || [],
+        cities,
+        priceMap,
       };
     }
     
     return {
       success: true,
-      data: [],
+      cities: [],
+      priceMap: {},
     };
   } catch (error) {
     return {

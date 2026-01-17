@@ -124,22 +124,22 @@ export const ChangePasswordModal = ({
 
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => onOpenChange({ open: nextOpen })}>
-      <DialogContent className="w-[calc(100%-2rem)] max-w-md bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
+      <DialogContent className="w-[calc(100%-2rem)] max-w-md bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">
+          <DialogTitle className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
             {t("title")}
           </DialogTitle>
-          <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
+          <DialogDescription className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
             {t("description")}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           {/* Current Password */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1.5 sm:gap-2">
             <Label
               htmlFor="currentPassword"
-              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               {t("currentPassword")}
             </Label>
@@ -153,7 +153,7 @@ export const ChangePasswordModal = ({
                   setErrors((prev) => ({ ...prev, currentPassword: undefined }));
                 }}
                 placeholder={t("currentPasswordPlaceholder")}
-                className="h-11 pr-10 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"
+                className="h-10 sm:h-11 pr-10 text-sm bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"
                 disabled={isSubmitting}
               />
               <button
@@ -161,19 +161,19 @@ export const ChangePasswordModal = ({
                 onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               >
-                {showCurrentPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showCurrentPassword ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
               </button>
             </div>
             {errors.currentPassword && (
-              <p className="text-sm text-red-600 dark:text-red-400">{errors.currentPassword}</p>
+              <p className="text-xs sm:text-sm text-red-600 dark:text-red-400">{errors.currentPassword}</p>
             )}
           </div>
 
           {/* New Password */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1.5 sm:gap-2">
             <Label
               htmlFor="newPassword"
-              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               {t("newPassword")}
             </Label>
@@ -187,7 +187,7 @@ export const ChangePasswordModal = ({
                   setErrors((prev) => ({ ...prev, newPassword: undefined }));
                 }}
                 placeholder={t("newPasswordPlaceholder")}
-                className="h-11 pr-10 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"
+                className="h-10 sm:h-11 pr-10 text-sm bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"
                 disabled={isSubmitting}
               />
               <button
@@ -195,19 +195,19 @@ export const ChangePasswordModal = ({
                 onClick={() => setShowNewPassword(!showNewPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               >
-                {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showNewPassword ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
               </button>
             </div>
             {errors.newPassword && (
-              <p className="text-sm text-red-600 dark:text-red-400">{errors.newPassword}</p>
+              <p className="text-xs sm:text-sm text-red-600 dark:text-red-400">{errors.newPassword}</p>
             )}
           </div>
 
           {/* Confirm Password */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1.5 sm:gap-2">
             <Label
               htmlFor="confirmPassword"
-              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               {t("confirmPassword")}
             </Label>
@@ -221,7 +221,7 @@ export const ChangePasswordModal = ({
                   setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
                 }}
                 placeholder={t("confirmPasswordPlaceholder")}
-                className="h-11 pr-10 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"
+                className="h-10 sm:h-11 pr-10 text-sm bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"
                 disabled={isSubmitting}
               />
               <button
@@ -229,28 +229,28 @@ export const ChangePasswordModal = ({
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               >
-                {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showConfirmPassword ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
               </button>
             </div>
             {errors.confirmPassword && (
-              <p className="text-sm text-red-600 dark:text-red-400">{errors.confirmPassword}</p>
+              <p className="text-xs sm:text-sm text-red-600 dark:text-red-400">{errors.confirmPassword}</p>
             )}
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-2">
             <Button
               type="button"
               variant="outline"
               onClick={handleClose}
               disabled={isSubmitting}
-              className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
+              className="w-full sm:w-auto border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
             >
               {t("cancel")}
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-[#429de6] text-white hover:bg-[#3a8dd6] dark:bg-[#429de6] dark:hover:bg-[#3a8dd6]"
+              className="w-full sm:w-auto bg-[#429de6] text-white hover:bg-[#3a8dd6] dark:bg-[#429de6] dark:hover:bg-[#3a8dd6]"
             >
               {isSubmitting ? t("changing") : t("changePassword")}
             </Button>

@@ -17,6 +17,9 @@ type CalculatorResultsProps = {
   vehicleType: string;
   vehiclePrice: string;
   auctionFee: string;
+  serviceFee: string;
+  insuranceFee: string;
+  shippingPrice: number;
   auctionLocation: string;
   activeTab: string;
   day: string;
@@ -27,6 +30,7 @@ type CalculatorResultsProps = {
   calculationResults: CalculatorResponse | null;
   isLoggedIn: boolean;
   showPartnerMessage?: boolean;
+  disablePartnerRestrictions?: boolean;
   onBack: () => void;
 };
 
@@ -35,6 +39,9 @@ export const CalculatorResults = ({
   vehicleType,
   vehiclePrice,
   auctionFee,
+  serviceFee,
+  insuranceFee,
+  shippingPrice,
   auctionLocation,
   activeTab,
   day,
@@ -45,11 +52,16 @@ export const CalculatorResults = ({
   calculationResults,
   isLoggedIn,
   showPartnerMessage = false,
+  disablePartnerRestrictions = false,
   onBack,
 }: CalculatorResultsProps) => {
   const t = useTranslations();
   const locale = useLocale();
   const [exchangeRates, setExchangeRates] = useState<ExchangeRates | null>(null);
+
+  // Vehicle price and auction fee are always visible
+  // Other values are only visible if logged in or in admin panel
+  const shouldShowRestrictedValues = isLoggedIn || disablePartnerRestrictions;
   const [isLoadingRates, setIsLoadingRates] = useState(true);
 
   useEffect(() => {
@@ -72,6 +84,30 @@ export const CalculatorResults = ({
   const usdRate = exchangeRates?.USD || "380.33";
   const eurRate = exchangeRates?.EUR || "443.24";
   const eurUsdRate = exchangeRates ? calculateEurUsdRate(exchangeRates) : "1.1774";
+
+  // Calculate total including all fees
+  const calculateTotal = () => {
+    const apiTotal = calculationResults?.sumPay ?? 0;
+    const auctionFeeUsd = parseFloat(auctionFee) || 0;
+    const serviceFeeUsd = parseFloat(serviceFee) || 0;
+    const insuranceFeeUsd = parseFloat(insuranceFee) || 0;
+    const shippingFeeUsd = shippingPrice || 0;
+    
+    // Convert USD fees to EUR
+    const eurUsdRateNum = parseFloat(eurUsdRate);
+    const auctionFeeEur = auctionFeeUsd * eurUsdRateNum;
+    const serviceFeeEur = serviceFeeUsd * eurUsdRateNum;
+    const insuranceFeeEur = insuranceFeeUsd * eurUsdRateNum;
+    const shippingFeeEur = shippingFeeUsd * eurUsdRateNum;
+    
+    // Total = API total + all our calculated fees in EUR
+    const total = apiTotal + auctionFeeEur + serviceFeeEur + insuranceFeeEur + shippingFeeEur;
+    
+    // Round to nearest whole number
+    return Math.round(total);
+  };
+
+  const totalAmount = calculateTotal();
 
   return (
     <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black rounded-2xl border border-gray-300 dark:border-gray-800 overflow-hidden shadow-xl">
@@ -100,14 +136,14 @@ export const CalculatorResults = ({
           <div className="text-center">
             <div className="text-gray-600 dark:text-white/70 text-xs md:text-sm mb-1.5">1 USD</div>
             <div className="text-[#429de6] dark:text-[#5db3f0] font-bold text-lg md:text-xl">
-              {isLoadingRates ? "..." : `${parseFloat(usdRate).toFixed(2)} AMD`}
+              {isLoadingRates ? "..." : `${Math.round(parseFloat(usdRate))} AMD`}
             </div>
           </div>
           <div className="text-[#429de6]/50 dark:text-[#5db3f0]/50 text-2xl">/</div>
           <div className="text-center">
             <div className="text-gray-600 dark:text-white/70 text-xs md:text-sm mb-1.5">1 EUR</div>
             <div className="text-[#429de6] dark:text-[#5db3f0] font-bold text-lg md:text-xl">
-              {isLoadingRates ? "..." : `${parseFloat(eurRate).toFixed(2)} AMD`}
+              {isLoadingRates ? "..." : `${Math.round(parseFloat(eurRate))} AMD`}
             </div>
           </div>
           <div className="text-[#429de6]/50 dark:text-[#5db3f0]/50 text-2xl">/</div>
@@ -158,12 +194,12 @@ export const CalculatorResults = ({
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base w-[30%]">{t("calculator.form.vehiclePrice")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg w-[5%]">/</td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base w-[15%]">
-                  {isLoggedIn ? `€${vehiclePrice || "0"}` : <span className="opacity-50 blur-[2px] select-none">$partner</span>}
+                  €{vehiclePrice || "0"}
                 </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base w-[30%]">{t("calculator.results.customsDuty")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg w-[5%]">/</td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base w-[15%]">
-                  {isLoggedIn ? `€${(calculationResults?.globTax ?? 0).toFixed(2)}` : <span className="opacity-50 blur-[2px] select-none">$partner</span>}
+                  {shouldShowRestrictedValues ? `€${Math.round(calculationResults?.globTax ?? 0)}` : <span className="opacity-70 blur-[4px] select-none pointer-events-none">€0</span>}
                 </td>
               </tr>
 
@@ -172,12 +208,12 @@ export const CalculatorResults = ({
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.auctionFee")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
-                  {isLoggedIn ? `$${auctionFee || "0"}` : <span className="opacity-50 blur-[2px] select-none">$partner</span>}
+                  ${auctionFee || "0"}
                 </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.results.vat")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
-                  {isLoggedIn ? `€${(calculationResults?.nds ?? 0).toFixed(2)}` : <span className="opacity-50 blur-[2px] select-none">$partner</span>}
+                  {shouldShowRestrictedValues ? `€${Math.round(calculationResults?.nds ?? 0)}` : <span className="opacity-70 blur-[4px] select-none pointer-events-none">€0</span>}
                 </td>
               </tr>
 
@@ -185,11 +221,13 @@ export const CalculatorResults = ({
               <tr className="bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-900/50 hover:from-gray-200 hover:to-gray-50 dark:hover:from-gray-800 dark:hover:to-gray-900/60 transition-colors">
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.transportationFee")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base"><span className="opacity-50 blur-[2px] select-none">$partner</span></td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
+                  {shouldShowRestrictedValues ? `$${shippingPrice || "0"}` : <span className="opacity-70 blur-[4px] select-none pointer-events-none">$0</span>}
+                </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.results.environmentalTax")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
-                  {isLoggedIn ? `€${(calculationResults?.envTaxPay ?? 0).toFixed(2)}` : <span className="opacity-50 blur-[2px] select-none">$partner</span>}
+                  {shouldShowRestrictedValues ? `€${Math.round(calculationResults?.envTaxPay ?? 0)}` : <span className="opacity-70 blur-[4px] select-none pointer-events-none">€0</span>}
                 </td>
               </tr>
 
@@ -197,10 +235,14 @@ export const CalculatorResults = ({
               <tr className="bg-gradient-to-r from-white to-gray-50 dark:from-black dark:to-gray-900/30 hover:from-gray-100 hover:to-white dark:hover:from-gray-900 dark:hover:to-gray-900/40 transition-colors">
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.insurance")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base"><span className="opacity-50 blur-[2px] select-none">$partner</span></td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
+                  {shouldShowRestrictedValues ? `$${insuranceFee || "0"}` : <span className="opacity-70 blur-[4px] select-none pointer-events-none">$0</span>}
+                </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.serviceFee")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base"><span className="opacity-50 blur-[2px] select-none">$partner</span></td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
+                  {shouldShowRestrictedValues ? `$${serviceFee || "0"}` : <span className="opacity-70 blur-[4px] select-none pointer-events-none">$0</span>}
+                </td>
               </tr>
 
               {/* Total row - full width */}
@@ -208,7 +250,7 @@ export const CalculatorResults = ({
                 <td colSpan={4} className="px-3 sm:px-6 py-4 sm:py-5 text-gray-900 dark:text-white font-bold text-base sm:text-lg">{t("calculator.results.totalAmount")}</td>
                 <td className="px-2 sm:px-4 py-4 sm:py-5 text-center text-[#429de6]/60 dark:text-[#5db3f0]/70 text-lg sm:text-xl font-bold">/</td>
                 <td className="px-3 sm:px-6 py-4 sm:py-5 text-right text-[#429de6] dark:text-[#5db3f0] font-bold text-xl sm:text-2xl">
-                  {isLoggedIn ? `€${(calculationResults?.sumPay ?? 0).toFixed(2)}` : <span className="opacity-40 blur-[4px] select-none">$partner</span>}
+                  {shouldShowRestrictedValues ? `€${totalAmount}` : <span className="opacity-60 blur-[5px] select-none pointer-events-none">€0</span>}
                 </td>
               </tr>
             </tbody>

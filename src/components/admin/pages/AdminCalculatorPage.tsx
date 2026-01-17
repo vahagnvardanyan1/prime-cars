@@ -17,7 +17,7 @@ export const AdminCalculatorPage = () => {
           {t("admin.headers.calculatorSubtitle")}
         </p>
       </div>
-      <ImportCalculator showNotice={false} />
+      <ImportCalculator showNotice={false} disablePartnerRestrictions={true} />
     </div>
   );
 };

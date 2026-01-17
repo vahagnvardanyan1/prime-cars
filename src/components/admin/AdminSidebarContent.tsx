@@ -64,7 +64,7 @@ export const AdminSidebarContent = ({
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-3 px-6 py-5">
         <div className="min-w-0 flex-1">
-          <div className="text-sm font-semibold tracking-[-0.01em] text-gray-900 dark:text-white">
+          <div className="text-lg font-semibold tracking-[-0.01em] text-gray-900 dark:text-white">
             {companyName}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">
