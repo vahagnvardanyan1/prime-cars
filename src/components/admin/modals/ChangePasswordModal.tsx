@@ -31,26 +31,26 @@ export const ChangePasswordModal = ({
   const t = useTranslations("admin.modals.changePassword");
   const tValidation = useTranslations("auth.validation");
   
-  const [currentPassword, setCurrentPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [generalError, setGeneralError] = useState("");
   const [errors, setErrors] = useState<{
-    currentPassword?: string;
+    username?: string;
     newPassword?: string;
     confirmPassword?: string;
   }>({});
 
   const handleClose = () => {
     if (!isSubmitting) {
-      setCurrentPassword("");
+      setUsername("");
       setNewPassword("");
       setConfirmPassword("");
       setErrors({});
-      setShowCurrentPassword(false);
+      setGeneralError("");
       setShowNewPassword(false);
       setShowConfirmPassword(false);
       onOpenChange({ open: false });
@@ -60,8 +60,8 @@ export const ChangePasswordModal = ({
   const validateForm = () => {
     const newErrors: typeof errors = {};
 
-    if (!currentPassword.trim()) {
-      newErrors.currentPassword = tValidation("passwordRequired");
+    if (!username.trim()) {
+      newErrors.username = tValidation("usernameRequired");
     }
 
     if (!newPassword.trim()) {
@@ -76,10 +76,6 @@ export const ChangePasswordModal = ({
       newErrors.confirmPassword = tValidation("passwordsMustMatch");
     }
 
-    if (newPassword && currentPassword && newPassword === currentPassword) {
-      newErrors.newPassword = t("newPasswordMustBeDifferent");
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -92,10 +88,11 @@ export const ChangePasswordModal = ({
     }
 
     setIsSubmitting(true);
+    setGeneralError(""); // Clear previous errors
 
     try {
       const result = await changePassword({
-        currentPassword,
+        username: username.trim(),
         newPassword,
       });
 
@@ -105,18 +102,12 @@ export const ChangePasswordModal = ({
         });
         handleClose();
       } else {
-        if (result.error === "Current password is incorrect") {
-          setErrors({ currentPassword: t("incorrectCurrentPassword") });
-        } else {
-          toast.error(t("errorTitle"), {
-            description: result.error || t("errorDescription"),
-          });
-        }
+        // Show error in modal
+        setGeneralError(result.error || t("errorDescription"));
       }
     } catch (error) {
-      toast.error(t("errorTitle"), {
-        description: error instanceof Error ? error.message : t("errorDescription"),
-      });
+      const errorMsg = error instanceof Error ? error.message : t("errorDescription");
+      setGeneralError(errorMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -134,38 +125,37 @@ export const ChangePasswordModal = ({
           </DialogDescription>
         </DialogHeader>
 
+        {/* General Error Display */}
+        {generalError && (
+          <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-3">
+            <p className="text-sm text-red-600 dark:text-red-400">{generalError}</p>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-          {/* Current Password */}
+          {/* Username */}
           <div className="flex flex-col gap-1.5 sm:gap-2">
             <Label
-              htmlFor="currentPassword"
+              htmlFor="username"
               className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-              {t("currentPassword")}
+              {t("username")}
             </Label>
-            <div className="relative">
-              <Input
-                id="currentPassword"
-                type={showCurrentPassword ? "text" : "password"}
-                value={currentPassword}
-                onChange={(e) => {
-                  setCurrentPassword(e.target.value);
-                  setErrors((prev) => ({ ...prev, currentPassword: undefined }));
-                }}
-                placeholder={t("currentPasswordPlaceholder")}
-                className="h-10 sm:h-11 pr-10 text-sm bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"
-                disabled={isSubmitting}
-              />
-              <button
-                type="button"
-                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-              >
-                {showCurrentPassword ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
-              </button>
-            </div>
-            {errors.currentPassword && (
-              <p className="text-xs sm:text-sm text-red-600 dark:text-red-400">{errors.currentPassword}</p>
+            <Input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setErrors((prev) => ({ ...prev, username: undefined }));
+                setGeneralError("");
+              }}
+              placeholder={t("usernamePlaceholder")}
+              className="h-10 sm:h-11 text-sm bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"
+              disabled={isSubmitting}
+            />
+            {errors.username && (
+              <p className="text-xs sm:text-sm text-red-600 dark:text-red-400">{errors.username}</p>
             )}
           </div>
 
@@ -185,6 +175,7 @@ export const ChangePasswordModal = ({
                 onChange={(e) => {
                   setNewPassword(e.target.value);
                   setErrors((prev) => ({ ...prev, newPassword: undefined }));
+                  setGeneralError("");
                 }}
                 placeholder={t("newPasswordPlaceholder")}
                 className="h-10 sm:h-11 pr-10 text-sm bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"
@@ -219,6 +210,7 @@ export const ChangePasswordModal = ({
                 onChange={(e) => {
                   setConfirmPassword(e.target.value);
                   setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+                  setGeneralError("");
                 }}
                 placeholder={t("confirmPasswordPlaceholder")}
                 className="h-10 sm:h-11 pr-10 text-sm bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"

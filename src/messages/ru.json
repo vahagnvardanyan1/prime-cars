@@ -557,7 +557,8 @@
       "justNow": "Только что",
       "minutesAgo": "{minutes}м назад",
       "hoursAgo": "{hours}ч назад",
-      "daysAgo": "{days}д назад"
+      "daysAgo": "{days}д назад",
+      "viewReadReceipts": "Посмотреть подтверждения прочтения"
     },
     "headers": {
       "carsTitle": "Авто",
@@ -1066,15 +1067,14 @@
       },
       "changePassword": {
         "title": "Изменить пароль",
-        "description": "Обновите пароль вашей учётной записи администратора.",
-        "currentPassword": "Текущий пароль",
-        "currentPasswordPlaceholder": "Введите текущий пароль",
+        "description": "Установите новый пароль для вашей учётной записи администратора.",
+        "username": "Имя пользователя",
+        "usernamePlaceholder": "Введите ваше имя пользователя",
+        "usernameNotFound": "Имя пользователя не найдено. Пожалуйста, проверьте и попробуйте снова.",
         "newPassword": "Новый пароль",
         "newPasswordPlaceholder": "Введите новый пароль (мин. 8 символов)",
         "confirmPassword": "Подтвердите новый пароль",
         "confirmPasswordPlaceholder": "Введите новый пароль еще раз",
-        "newPasswordMustBeDifferent": "Новый пароль должен отличаться от текущего",
-        "incorrectCurrentPassword": "Неверный текущий пароль",
         "cancel": "Отмена",
         "changePassword": "Изменить пароль",
         "changing": "Изменение...",
@@ -1082,6 +1082,17 @@
         "successDescription": "Ваш пароль успешно обновлён.",
         "errorTitle": "Ошибка изменения",
         "errorDescription": "Не удалось изменить пароль. Попробуйте еще раз."
+      },
+      "readUsers": {
+        "title": "Подтверждения прочтения",
+        "loading": "Загрузка...",
+        "noReads": "Никто еще не прочитал это уведомление",
+        "read": "Прочитано",
+        "totalReads": "{count} {count, plural, one {человек прочитал} few {человека прочитали} other {человек прочитали}} это уведомление",
+        "justNow": "Только что",
+        "minutesAgo": "{minutes}м назад",
+        "hoursAgo": "{hours}ч назад",
+        "daysAgo": "{days}д назад"
       }
     },
     "actions": {

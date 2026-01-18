@@ -557,7 +557,8 @@
       "justNow": "Just now",
       "minutesAgo": "{minutes}m ago",
       "hoursAgo": "{hours}h ago",
-      "daysAgo": "{days}d ago"
+      "daysAgo": "{days}d ago",
+      "viewReadReceipts": "View read receipts"
     },
     "headers": {
       "carsTitle": "Cars",
@@ -1066,15 +1067,14 @@
       },
       "changePassword": {
         "title": "Change Password",
-        "description": "Update your admin account password.",
-        "currentPassword": "Current Password",
-        "currentPasswordPlaceholder": "Enter your current password",
+        "description": "Set a new password for your admin account.",
+        "username": "Username",
+        "usernamePlaceholder": "Enter your username",
+        "usernameNotFound": "Username not found. Please check and try again.",
         "newPassword": "New Password",
         "newPasswordPlaceholder": "Enter new password (min. 8 characters)",
         "confirmPassword": "Confirm New Password",
         "confirmPasswordPlaceholder": "Re-enter new password",
-        "newPasswordMustBeDifferent": "New password must be different from current password",
-        "incorrectCurrentPassword": "Current password is incorrect",
         "cancel": "Cancel",
         "changePassword": "Change Password",
         "changing": "Changing...",
@@ -1082,6 +1082,17 @@
         "successDescription": "Your password has been updated successfully.",
         "errorTitle": "Change Failed",
         "errorDescription": "Could not change your password. Please try again."
+      },
+      "readUsers": {
+        "title": "Read Receipts",
+        "loading": "Loading...",
+        "noReads": "No one has read this notification yet",
+        "read": "Read",
+        "totalReads": "{count} {count, plural, one {person} other {people}} read this notification",
+        "justNow": "Just now",
+        "minutesAgo": "{minutes}m ago",
+        "hoursAgo": "{hours}h ago",
+        "daysAgo": "{days}d ago"
       }
     },
     "actions": {

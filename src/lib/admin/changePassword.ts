@@ -3,7 +3,7 @@ import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
 
 type ChangePasswordData = {
-  currentPassword: string;
+  username: string;
   newPassword: string;
 };
 
@@ -13,26 +13,39 @@ type ChangePasswordResponse = {
 };
 
 export const changePassword = async ({
-  currentPassword,
+  username,
   newPassword,
 }: ChangePasswordData): Promise<ChangePasswordResponse> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/auth/change-password`, {
+    const response = await authenticatedFetch(`${API_BASE_URL}/auth/forgot-password-change`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        currentPassword,
+        username,
         newPassword,
       }),
     });
 
     if (!response.ok) {
+      // Try to extract error message from response
       const errorData = await response.json().catch(() => ({}));
+      
+      // Try to get a meaningful message
+      let errorMessage = "Unable to change password. Please try again later.";
+      
+      if (errorData.message && typeof errorData.message === "string") {
+        errorMessage = errorData.message;
+      } else if (errorData.error && typeof errorData.error === "string") {
+        errorMessage = errorData.error;
+      } else if (errorData.msg && typeof errorData.msg === "string") {
+        errorMessage = errorData.msg;
+      }
+      
       return {
         success: false,
-        error: errorData.message || "Failed to change password",
+        error: errorMessage,
       };
     }
 
@@ -41,7 +54,7 @@ export const changePassword = async ({
     console.error("Error changing password:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Network error occurred",
+      error: "Unable to change password. Please try again later.",
     };
   }
 };

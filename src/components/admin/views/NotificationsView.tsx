@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { CheckCheck, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Surface } from "@/components/admin/primitives/Surface";
@@ -23,6 +23,7 @@ type NotificationsViewProps = {
   onCreateNotification?: () => void;
   onDeleteNotification?: (notification: Notification) => void;
   onViewNotification?: (notification: Notification) => void;
+  onViewReadUsers?: (notification: Notification) => void;
   isAdmin?: boolean;
 };
 
@@ -49,6 +50,7 @@ export const NotificationsView = ({
   onCreateNotification,
   onDeleteNotification,
   onViewNotification,
+  onViewReadUsers,
   isAdmin = false,
 }: NotificationsViewProps) => {
   const t = useTranslations("admin.notifications");
@@ -153,6 +155,20 @@ export const NotificationsView = ({
                   </TableCell>
                   <TableCell className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1">
+                      {isAdmin && onViewReadUsers && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onViewReadUsers(notification);
+                          }}
+                          className="h-8 w-8 text-[#429de6] hover:bg-[#429de6]/10 hover:text-[#3a8acc] dark:text-[#429de6] dark:hover:bg-[#429de6]/20 dark:hover:text-[#429de6]"
+                          title={t("viewReadReceipts")}
+                        >
+                          <CheckCheck className="h-4 w-4" />
+                        </Button>
+                      )}
                       {isAdmin && onDeleteNotification && (
                         <Button
                           variant="ghost"

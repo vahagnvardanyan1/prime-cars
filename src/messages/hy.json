@@ -557,7 +557,8 @@
       "justNow": "Հենց հիմա",
       "minutesAgo": "{minutes}ր առաջ",
       "hoursAgo": "{hours}ժ առաջ",
-      "daysAgo": "{days}օ առաջ"
+      "daysAgo": "{days}օ առաջ",
+      "viewReadReceipts": "Դիտել կարդացած օգտատերերը"
     },
     "headers": {
       "carsTitle": "Ավտոմեքենաներ",
@@ -1068,15 +1069,14 @@
       },
       "changePassword": {
         "title": "Փոխել գաղտնաբառը",
-        "description": "Թարմացրեք ձեր ադմինիստրատորի հաշվի գաղտնաբառը։",
-        "currentPassword": "Ընթացիկ գաղտնաբառ",
-        "currentPasswordPlaceholder": "Մուտքագրեք ձեր ընթացիկ գաղտնաբառը",
+        "description": "Սահմանեք նոր գաղտնաբառ ձեր ադմինիստրատորի հաշվի համար։",
+        "username": "Օգտանուն",
+        "usernamePlaceholder": "Մուտքագրեք ձեր օգտանունը",
+        "usernameNotFound": "Օգտանունը չի գտնվել։ Խնդրում ենք ստուգել և կրկին փորձել։",
         "newPassword": "Նոր գաղտնաբառ",
         "newPasswordPlaceholder": "Մուտքագրեք նոր գաղտնաբառը (նվազագույնը 8 նիշ)",
         "confirmPassword": "Հաստատել նոր գաղտնաբառը",
         "confirmPasswordPlaceholder": "Կրկին մուտքագրեք նոր գաղտնաբառը",
-        "newPasswordMustBeDifferent": "Նոր գաղտնաբառը պետք է տարբերվի ընթացիկից",
-        "incorrectCurrentPassword": "Ընթացիկ գաղտնաբառը սխալ է",
         "cancel": "Չեղարկել",
         "changePassword": "Փոխել գաղտնաբառը",
         "changing": "Փոխվում է...",
@@ -1084,6 +1084,17 @@
         "successDescription": "Ձեր գաղտնաբառը հաջողությամբ թարմացվել է։",
         "errorTitle": "Փոփոխությունը ձախողվեց",
         "errorDescription": "Չհաջողվեց փոխել ձեր գաղտնաբառը։ Փորձեք կրկին։"
+      },
+      "readUsers": {
+        "title": "Կարդացած օգտատերեր",
+        "loading": "Բեռնվում է...",
+        "noReads": "Ոչ ոք դեռ չի կարդացել այս ծանուցումը",
+        "read": "Կարդացած է",
+        "totalReads": "{count} {count, plural, one {օգտատեր} other {օգտատեր}} կարդացել է այս ծանուցումը",
+        "justNow": "Հենց նոր",
+        "minutesAgo": "{minutes}ր առաջ",
+        "hoursAgo": "{hours}ժ առաջ",
+        "daysAgo": "{days}օ առաջ"
       }
     },
     "actions": {

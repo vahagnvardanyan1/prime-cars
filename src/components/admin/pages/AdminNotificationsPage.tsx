@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { CreateNotificationModal } from "@/components/admin/modals/CreateNotificationModal";
+import { NotificationReadUsersModal } from "@/components/admin/modals/NotificationReadUsersModal";
 import { ViewNotificationModal } from "@/components/admin/modals/ViewNotificationModal";
 import { NotificationsView } from "@/components/admin/views/NotificationsView";
 import type { Notification } from "@/lib/admin/notifications/types";
@@ -35,6 +36,8 @@ export const AdminNotificationsPage = () => {
   const [notificationToDelete, setNotificationToDelete] = useState<Notification | null>(null);
   const [isDeleteNotificationDialogOpen, setIsDeleteNotificationDialogOpen] = useState(false);
   const [isDeletingNotification, setIsDeletingNotification] = useState(false);
+  const [notificationForReadUsers, setNotificationForReadUsers] = useState<Notification | null>(null);
+  const [isReadUsersModalOpen, setIsReadUsersModalOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -107,6 +110,11 @@ export const AdminNotificationsPage = () => {
     setIsDeleteNotificationDialogOpen(true);
   };
 
+  const handleViewReadUsersClick = (notification: Notification) => {
+    setNotificationForReadUsers(notification);
+    setIsReadUsersModalOpen(true);
+  };
+
   const handleConfirmDeleteNotification = async () => {
     if (!notificationToDelete) return;
 
@@ -146,6 +154,7 @@ export const AdminNotificationsPage = () => {
         onCreateNotification={isAdmin ? state.openCreateNotification : undefined}
         onViewNotification={handleViewNotificationClick}
         onDeleteNotification={isAdmin ? handleDeleteNotificationClick : undefined}
+        onViewReadUsers={isAdmin ? handleViewReadUsersClick : undefined}
         isAdmin={isAdmin}
       />
 
@@ -159,6 +168,13 @@ export const AdminNotificationsPage = () => {
 
       {isAdmin && (
         <>
+          <NotificationReadUsersModal
+            open={isReadUsersModalOpen}
+            onOpenChange={setIsReadUsersModalOpen}
+            notificationId={notificationForReadUsers?.id || null}
+            notificationMessage={notificationForReadUsers?.message}
+          />
+
           <CreateNotificationModal
             open={state.isCreateNotificationOpen}
             onOpenChange={({ open }) =>
