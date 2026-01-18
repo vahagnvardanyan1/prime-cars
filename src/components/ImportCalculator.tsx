@@ -91,7 +91,7 @@ export const ImportCalculator = ({
           setAvailableCities([]);
           setCityPriceMap({});
         }
-      } catch (error) {
+      } catch  {
         setAvailableCities([]);
         setCityPriceMap({});
       } finally {
