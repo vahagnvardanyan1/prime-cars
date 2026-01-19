@@ -90,7 +90,7 @@ export const PartnersPage = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white dark:bg-black rounded-2xl border border-gray-300 dark:border-white/10 p-8 hover:border-[#429de6]/50 transition-all">
+            <div className="bg-white dark:bg-black rounded-2xl border border-gray-300 dark:border-white/10 p-8 hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all">
               <div className="w-14 h-14 bg-gray-100 dark:bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-gray-300 dark:border-white/10">
                 <TrendingUp className="w-7 h-7 text-[#429de6]" />
               </div>
@@ -102,7 +102,7 @@ export const PartnersPage = () => {
               </p>
             </div>
 
-            <div className="bg-white dark:bg-black rounded-2xl border border-gray-300 dark:border-white/10 p-8 hover:border-[#429de6]/50 transition-all">
+            <div className="bg-white dark:bg-black rounded-2xl border border-gray-300 dark:border-white/10 p-8 hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all">
               <div className="w-14 h-14 bg-gray-100 dark:bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-gray-300 dark:border-white/10">
                 <Shield className="w-7 h-7 text-[#429de6]" />
               </div>
@@ -114,7 +114,7 @@ export const PartnersPage = () => {
               </p>
             </div>
 
-            <div className="bg-white dark:bg-black rounded-2xl border border-gray-300 dark:border-white/10 p-8 hover:border-[#429de6]/50 transition-all">
+            <div className="bg-white dark:bg-black rounded-2xl border border-gray-300 dark:border-white/10 p-8 hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all">
               <div className="w-14 h-14 bg-gray-100 dark:bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-gray-300 dark:border-white/10">
                 <Globe className="w-7 h-7 text-[#429de6]" />
               </div>

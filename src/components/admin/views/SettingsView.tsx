@@ -544,7 +544,7 @@ export const SettingsView = ({
               </TableRow>
             ) : (
               filteredCities.map((c) => (
-                <TableRow key={c.id} className="border-b border-gray-200 dark:border-white/10 transition-colors duration-150 hover:bg-amber-50 dark:hover:bg-blue-900/20">
+                <TableRow key={c.id} className="border-b border-gray-200 dark:border-white/10 transition-colors duration-150 hover:bg-yellow-100 dark:hover:bg-[#429de6]/20">
                 <TableCell className="px-4 sm:px-6 lg:px-8 py-4 sm:py-5 min-w-[150px] sm:min-w-[200px]">
                   <div className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
                     {c.city}

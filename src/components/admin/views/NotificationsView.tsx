@@ -117,8 +117,8 @@ export const NotificationsView = ({
                   key={notification.id}
                   className={`transition-all duration-200 cursor-pointer ${
                     shouldShowAsRead 
-                      ? 'hover:bg-amber-50 dark:hover:bg-blue-900/20 opacity-75' 
-                      : 'hover:bg-yellow-50 dark:hover:bg-[#429de6]/20 bg-white dark:bg-[#0b0f14]'
+                      ? 'hover:bg-yellow-100 dark:hover:bg-[#429de6]/20 opacity-75' 
+                      : 'hover:bg-yellow-100 dark:hover:bg-[#429de6]/20 bg-white dark:bg-[#0b0f14]'
                   }`}
                   onClick={() => onViewNotification?.(notification)}
                 >

@@ -227,7 +227,7 @@ export const CarsView = ({
             </TableRow>
           ) : (
             cars.map((car, index) => (
-            <TableRow key={car.id} className="transition-colors duration-150 hover:bg-amber-50 dark:hover:bg-blue-900/20">
+            <TableRow key={car.id} className="transition-colors duration-150 hover:bg-yellow-100 dark:hover:bg-[#429de6]/20">
               {/* Row Number */}
               <TableCell className="px-4 py-3 text-center">
                 <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">

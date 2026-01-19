@@ -110,7 +110,7 @@ const CarListItem = ({ car }: { car: Car }) => {
   return (
     <div 
       onClick={handleClick}
-      className="group bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded-xl hover:border-gray-300 dark:hover:border-white/20 transition-all duration-300 hover:shadow-lg overflow-hidden cursor-pointer"
+      className="group bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded-xl hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all duration-300 hover:shadow-lg overflow-hidden cursor-pointer"
     >
       <div className="flex gap-6 p-4">
         {/* Image */}

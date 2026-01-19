@@ -144,7 +144,7 @@ export const UsersView = ({
             </TableRow>
           ) : (
             users.map((u) => (
-            <TableRow key={u.id} className="transition-colors duration-150 hover:bg-amber-50 dark:hover:bg-blue-900/20">
+            <TableRow key={u.id} className="transition-colors duration-150 hover:bg-yellow-100 dark:hover:bg-[#429de6]/20">
               <TableCell className="px-2 py-3 min-w-[250px]">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-sm font-semibold text-gray-900 ring-1 ring-gray-200 dark:bg-white/5 dark:text-white dark:ring-white/10 flex-shrink-0">
