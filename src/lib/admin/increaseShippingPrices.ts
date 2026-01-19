@@ -27,7 +27,7 @@ export const increaseShippingPrices = async ({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ adjustment_amount: amount, category: auction }),
+      body: JSON.stringify({ adjustment_price: amount, category: auction }),
     });
 
     if (!response.ok) {
