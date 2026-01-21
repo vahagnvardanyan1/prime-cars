@@ -3,7 +3,8 @@ import { toast } from "sonner";
 
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
-import type { ShippingCity } from "@/lib/admin/types";
+import type { ShippingCity, Auction } from "@/lib/admin/types";
+import { fetchShippings } from "@/lib/admin/fetchShippings";
 import { queryKeys } from "../keys";
 
 type FetchShippingParams = {
@@ -202,5 +203,26 @@ export const useIncreaseShippingPrices = () => {
         description: error.message,
       });
     },
+  });
+};
+
+// Hook for fetching shipping prices by auction category (for modals)
+export const useShippingPrices = (
+  auction?: Auction,
+  options?: Omit<UseQueryOptions<ShippingCity[], Error>, 'queryKey' | 'queryFn'>
+) => {
+  return useQuery({
+    queryKey: queryKeys.shipping.prices(auction),
+    queryFn: async () => {
+      const result = await fetchShippings({ auction });
+      if (!result.success) {
+        throw new Error(result.error || "Failed to fetch shipping cities");
+      }
+      return result.cities || [];
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10, 
+    enabled: !!auction, 
+    ...options,
   });
 };

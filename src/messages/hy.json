@@ -231,6 +231,7 @@
     "horsepowerUnit": "ՁՈ"
   },
   "calculator": {
+    "loading": "Բեռնվում է...",
     "page": {
       "title": "Ներմուծման արժեքի հաշվիչ",
       "description": "Ստացեք ճշգրիտ գնահատում ներմուծման բոլոր ծախսերի համար։ Հաշվիչը ներառում է առաքում, մաքսային վճարներ, ստուգումներ և այլն։"
@@ -281,6 +282,8 @@
       "insurance": "Ապահովագրություն",
       "highGroundClearance": "Բարձր անցունակությամբ",
       "hasReverse": "Ունի ետընթաց",
+      "icePowerExceedsElectric": "ՆԱՇ-ի հզորությունն ավելի մեծ է, քան առավելագույն 30-րոպեանոց Էլեկտրական շարժիչի հզորությունը",
+      "outOfAuctionBorders": "Աճուրդի սահմաններից դուրս (Sublot)",
       "calculateCost": "Հաշվել արժեքը",
       "calculating": "Հաշվարկվում է...",
       "validationError": "Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը",
@@ -342,7 +345,7 @@
       }
     },
     "results": {
-      "customsDuty": "Մաքսային դրույքազրկ",
+      "customsDuty": "Մաքսատուրք",
       "vat": "ԱԱՀ",
       "environmentalTax": "Բնապահպանական հարկ",
       "totalAmount": "Ընդհանուր գումար",
@@ -670,6 +673,9 @@
         "user": "Օգտատեր",
         "selectUser": "Ընտրեք օգտատիրոջ",
         "loadingUsers": "Օգտատերերը բեռնվում են...",
+        "loadingCities": "Քաղաքներ բեռնվում են...",
+        "selectCity": "Ընտրեք քաղաքը",
+        "selectAuctionFirst": "Նախ ընտրեք աճուրդը",
         "purchaseDate": "Գնման ամսաթիվ",
         "type": "Տեսակ",
         "vehicleTypes": {
@@ -687,6 +693,7 @@
           "other": "Այլ"
         },
         "model": "Մոդել",
+        "modelPlaceholder": "օրինակ՝ BMW X5",
         "vehicleModels": {
           "bmw": "BMW",
           "mercedes": "Mercedes-Benz",
@@ -741,6 +748,7 @@
         "statusDraft": "Սևագիր",
         "customerNotes": "Հաճախորդի նշումներ",
         "customerNotesPlaceholder": "Լրացուցիչ նշումներ հաճախորդի կամ թիմի համար…",
+        "paymentsAndDocuments": "Վճարումներ և փաստաթղթեր",
         "carPaid": "Մեքենայի վճարում",
         "shippingPaid": "Առաքման վճարում",
         "insurance": "Ապահովագրություն",
@@ -750,6 +758,12 @@
         "notExists": "Առկա չէ",
         "invoiceLabel": "Ինվոյս (PDF)",
         "dragDropInvoice": "Քաշեք և գցեք ձեր ինվոյսը",
+        "vehiclePdfLabel": "Մեքենայի փաստաթուղթ (PDF)",
+        "dragDropVehiclePdf": "Քաշեք և գցեք մեքենայի փաստաթուղթը",
+        "insurancePdfLabel": "Ապահովագրության փաստաթուղթ (PDF)",
+        "dragDropInsurancePdf": "Քաշեք և գցեք ապահովագրության փաստաթուղթը",
+        "shippingPdfLabel": "Առաքման փաստաթուղթ (PDF)",
+        "dragDropShippingPdf": "Քաշեք և գցեք առաքման փաստաթուղթը",
         "dropPdfHere": "Գցեք PDF ֆայլը այստեղ",
         "clickToBrowse": "կամ սեղմեք ընտրելու համար",
         "pdfOnlyMaxSize": "Միայն PDF, մաքս. 10ՄԲ",
@@ -860,8 +874,17 @@
         "subtitle": "Խմբագրել տրանսպորտային միջոցի տեղեկատվությունը և մանրամասները",
         "existingPhotos": "Առկա լուսանկարներ",
         "addNewPhotos": "Ավելացնել նոր լուսանկարներ",
+        "loadingCities": "Քաղաքներ բեռնվում են...",
+        "selectCity": "Ընտրեք քաղաքը",
+        "selectAuctionFirst": "Նախ ընտրեք աճուրդը",
         "invoiceLabel": "Ինվոյս (PDF)",
         "dragDropInvoice": "Քաշեք և գցեք ձեր ինվոյսը",
+        "vehiclePdfLabel": "Մեքենայի փաստաթուղթ (PDF)",
+        "dragDropVehiclePdf": "Քաշեք և գցեք մեքենայի փաստաթուղթը",
+        "insurancePdfLabel": "Ապահովագրության փաստաթուղթ (PDF)",
+        "dragDropInsurancePdf": "Քաշեք և գցեք ապահովագրության փաստաթուղթը",
+        "shippingPdfLabel": "Առաքման փաստաթուղթ (PDF)",
+        "dragDropShippingPdf": "Քաշեք և գցեք առաքման փաստաթուղթը",
         "dropPdfHere": "Գցեք PDF ֆայլը այստեղ",
         "clickToBrowse": "կամ սեղմեք ընտրելու համար",
         "pdfOnlyMaxSize": "Միայն PDF, մաքս. 10ՄԲ",
@@ -887,6 +910,7 @@
         "client": "Հաճախորդ",
         "customerNotes": "Հաճախորդի նշումներ",
         "notesPlaceholder": "Ավելացրեք նշումներ կամ հրահանգներ...",
+        "paymentsAndDocuments": "Վճարումներ և փաստաթղթեր",
         "carPaid": "Մեքենայի վճարում",
         "shippingPaid": "Առաքման վճարում",
         "insurance": "Ապահովագրություն",
@@ -1015,8 +1039,6 @@
         "modelPlaceholder": "BMW X5",
         "enginePlaceholder": "օր.՝ 2.0",
         "fuelTypePlaceholder": "օր.՝ Բենզին, Դիզել",
-        "transmissionPlaceholder": "օր.՝ Ավտոմատ, Մեխանիկական",
-        "descriptionPlaceholder": "Մուտքագրեք մեքենայի մանրամասն նկարագրությունը...",
         "photosWillBeDeleted": "{count} {count, plural, one {լուսանկար} other {լուսանկար}} կջնջվի",
         "newPhotos": "Նոր լուսանկարներ",
         "addNewPhotos": "Ավելացնել նոր լուսանկարներ",
@@ -1042,13 +1064,11 @@
         "engineHp": "Շարժիչի ուժ (ՁՈ)",
         "engineSize": "Շարժիչի ծավալ (լ)",
         "transmission": "Փոխանցման տուփ",
-        "transmissionPlaceholder": "Ընտրեք փոխանցման տուփի տեսակը",
         "transmissionAutomatic": "Ավտոմատ",
         "transmissionMechanic": "Մեխանիկ",
         "transmissionVariator": "Վարիատոր",
         "transmissionRobot": "Ռոբոտ",
         "description": "Նկարագրություն",
-        "descriptionPlaceholder": "Լրացուցիչ տեղեկություններ մեքենայի մասին...",
         "cancel": "Չեղարկել",
         "updating": "Թարմացվում է...",
         "updateButton": "Թարմացնել մեքենան",
@@ -1122,8 +1142,11 @@
     "notes": "Նշումներ",
     "status": "Կարգավիճակ",
     "carPaid": "Մեքենայի վճարում",
+    "vehiclePdf": "Մեքենայի PDF",
     "shippingPaid": "Առաքման վճարում",
+    "shippingPdf": "Առաքման PDF",
     "insurance": "Ապահովագրություն",
+    "insurancePdf": "Ապահովագրության PDF",
     "created": "Ստեղծված",
     "invoice": "Հաշիվ",
     "download": "Ներբեռնել",
@@ -1151,7 +1174,3 @@
     "users": "օգտատերեր"
   }
 }
-
-
-
-

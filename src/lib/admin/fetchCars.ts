@@ -28,6 +28,9 @@ type BackendCar = {
   paid?: boolean;
   shippingPaid?: boolean;
   insurance?: boolean;
+  vehiclePdf?: string;
+  insurancePdf?: string;
+  shippingPdf?: string;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -122,6 +125,9 @@ export const fetchCars = async ({
           lot: car.lot,
           vin: car.vin,
           customerNotes: car.customerNotes,
+          vehiclePdf: car.vehiclePdf || "",
+          insurancePdf: car.insurancePdf || "",
+          shippingPdf: car.shippingPdf || "",
         },
       };
     }) || [];

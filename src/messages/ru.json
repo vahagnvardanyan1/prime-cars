@@ -231,6 +231,7 @@
     "horsepowerUnit": "л.с."
   },
   "calculator": {
+    "loading": "Загрузка...",
     "page": {
       "title": "Калькулятор стоимости импорта",
       "description": "Получите точную оценку всех расходов на импорт автомобиля. Калькулятор включает доставку, пошлины, инспекцию и другое."
@@ -281,6 +282,8 @@
       "insurance": "Страхование",
       "highGroundClearance": "Высокий клиренс",
       "hasReverse": "Имеет задний ход",
+      "icePowerExceedsElectric": "Мощность ДВС больше максимальной 30-минутной мощности ЭД",
+      "outOfAuctionBorders": "За пределами аукциона (Sublot)",
       "calculateCost": "Рассчитать стоимость",
       "calculating": "Расчёт...",
       "validationError": "Пожалуйста, заполните все обязательные поля",
@@ -356,7 +359,9 @@
       "partnerMessage": "Чтобы воспользоваться калькулятором, станьте партнёром.",
       "importantTitle": "Важно",
       "importantNotice": "Все сделки с компаниями и гражданами Республики Армения осуществляются исключительно в армянской валюте (драм / AMD). Примечание: таможенные сборы рассчитываются по обменному курсу, установленному Центральным банком Армении на данный день.",
-      "backToCalculator": "Вернуться к калькулятору"
+      "backToCalculator": "Вернуться к калькулятору",
+      "restrictedDataTitle": "Полная разбивка стоимости доступна для партнёров",
+      "becomePartner": "Станьте партнёром, чтобы увидеть все детали"
     }
   },
   "partners": {
@@ -670,6 +675,9 @@
         "user": "Пользователь",
         "selectUser": "Выберите пользователя",
         "loadingUsers": "Загрузка пользователей...",
+        "loadingCities": "Загрузка городов...",
+        "selectCity": "Выберите город",
+        "selectAuctionFirst": "Сначала выберите аукцион",
         "purchaseDate": "Дата покупки",
         "type": "Тип",
         "vehicleTypes": {
@@ -687,6 +695,7 @@
           "other": "Другое"
         },
         "model": "Модель",
+        "modelPlaceholder": "напр., BMW X5",
         "vehicleModels": {
           "bmw": "BMW",
           "mercedes": "Mercedes-Benz",
@@ -741,6 +750,7 @@
         "statusDraft": "Черновик",
         "customerNotes": "Заметки",
         "customerNotesPlaceholder": "Дополнительные заметки для клиента или команды…",
+        "paymentsAndDocuments": "Платежи и документы",
         "carPaid": "Оплата авто",
         "shippingPaid": "Оплата доставки",
         "insurance": "Страхование",
@@ -750,6 +760,12 @@
         "notExists": "Нет",
         "invoiceLabel": "Инвойс (PDF)",
         "dragDropInvoice": "Перетащите ваш инвойс",
+        "vehiclePdfLabel": "Документ автомобиля (PDF)",
+        "dragDropVehiclePdf": "Перетащите документ автомобиля",
+        "insurancePdfLabel": "Документ страхования (PDF)",
+        "dragDropInsurancePdf": "Перетащите документ страхования",
+        "shippingPdfLabel": "Документ доставки (PDF)",
+        "dragDropShippingPdf": "Перетащите документ доставки",
         "dropPdfHere": "Отпустите PDF файл здесь",
         "clickToBrowse": "или нажмите для выбора",
         "pdfOnlyMaxSize": "Только PDF, макс. 10МБ",
@@ -860,8 +876,17 @@
         "subtitle": "Редактировать информацию и детали автомобиля",
         "existingPhotos": "Существующие фото",
         "addNewPhotos": "Добавить новые фото",
+        "loadingCities": "Загрузка городов...",
+        "selectCity": "Выберите город",
+        "selectAuctionFirst": "Сначала выберите аукцион",
         "invoiceLabel": "Инвойс (PDF)",
         "dragDropInvoice": "Перетащите ваш инвойс",
+        "vehiclePdfLabel": "Документ автомобиля (PDF)",
+        "dragDropVehiclePdf": "Перетащите документ автомобиля",
+        "insurancePdfLabel": "Документ страхования (PDF)",
+        "dragDropInsurancePdf": "Перетащите документ страхования",
+        "shippingPdfLabel": "Документ доставки (PDF)",
+        "dragDropShippingPdf": "Перетащите документ доставки",
         "dropPdfHere": "Отпустите PDF файл здесь",
         "clickToBrowse": "или нажмите для выбора",
         "pdfOnlyMaxSize": "Только PDF, макс. 10МБ",
@@ -887,6 +912,7 @@
         "client": "Клиент",
         "customerNotes": "Примечания клиента",
         "notesPlaceholder": "Добавьте примечания или инструкции...",
+        "paymentsAndDocuments": "Платежи и документы",
         "carPaid": "Оплата авто",
         "shippingPaid": "Оплата доставки",
         "insurance": "Страхование",
@@ -1120,8 +1146,11 @@
     "notes": "Заметки",
     "status": "Статус",
     "carPaid": "Оплата авто",
+    "vehiclePdf": "PDF автомобиля",
     "shippingPaid": "Оплата доставки",
+    "shippingPdf": "PDF доставки",
     "insurance": "Страхование",
+    "insurancePdf": "PDF страхования",
     "created": "Создано",
     "invoice": "Счет",
     "download": "Скачать",

@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { CheckCircle2, XCircle } from "lucide-react";
 
 import type { AdminCar } from "@/lib/admin/types";
-import { VehicleType, VehicleModel, Auction } from "@/lib/admin/types";
+import { VehicleType, Auction } from "@/lib/admin/types";
 import { createAdminCar } from "@/lib/admin/createAdminCar";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -14,12 +14,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
 import { PdfUploader } from "@/components/admin/primitives/PdfUploader";
 import { useAddCarForm } from "@/hooks/admin/useAddCarForm";
 import { usePhotoUploads } from "@/hooks/admin/usePhotoUploads";
 import { fetchUsers } from "@/lib/admin/fetchUsers";
 import { createCar } from "@/lib/admin/createCar";
+import { useShippingPrices } from "@/lib/react-query/hooks/useShipping";
 import { toast } from "sonner";
 
 type AddCarModalProps = {
@@ -41,11 +49,18 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
   const t = useTranslations();
   const { files, previews, setFileAt, removeFileAt, clearAll, addMultipleFiles, reorderFiles } = usePhotoUploads({ initialSlots: 1 });
   const form = useAddCarForm();
-  const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
+  const [vehiclePdfFile, setVehiclePdfFile] = useState<File | null>(null);
+  const [insurancePdfFile, setInsurancePdfFile] = useState<File | null>(null);
+  const [shippingPdfFile, setShippingPdfFile] = useState<File | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch cities using React Query (cached automatically)
+  const { data: cities = [], isLoading: loadingCities } = useShippingPrices(
+    form.fields.auction as Auction | undefined
+  );
 
   // Fetch users from backend
   useEffect(() => {
@@ -131,7 +146,9 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
           customerNotes: parsed.details.customerNotes,
         },
         images: imageFiles,
-        invoiceFile: invoiceFile,
+        vehiclePdfFile: vehiclePdfFile,
+        insurancePdfFile: insurancePdfFile,
+        shippingPdfFile: shippingPdfFile,
       });
 
       if (result.success) {
@@ -160,7 +177,9 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
         
         close();
         clearAll();
-        setInvoiceFile(null);
+        setVehiclePdfFile(null);
+        setInsurancePdfFile(null);
+        setShippingPdfFile(null);
         setSelectedUserId("");
         form.actions.reset();
       } else {
@@ -281,18 +300,25 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.model")}</Label>
-                <select
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {t("admin.modals.addCar.model")} <span className="text-red-500 ml-1">*</span>
+                </Label>
+                <Input
                   value={form.fields.model}
-                  onChange={(e) => form.actions.setModel({ value: e.target.value })}
-                  className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white pl-4 pr-10 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6] dark:bg-black dark:text-white appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iI0Q1RDdEQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[length:16px_16px] bg-[center_right_0.75rem] bg-no-repeat"
-                >
-                  {Object.values(VehicleModel).map((model) => (
-                    <option key={model} value={model}>
-                      {model.toUpperCase()}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(e) => {
+                    form.actions.setModel({ value: e.target.value });
+                    form.actions.clearError({ field: "model" });
+                  }}
+                  placeholder={t("admin.modals.addCar.modelPlaceholder")}
+                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                    form.errors.model
+                      ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
+                      : 'border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]'
+                  }`}
+                />
+                {form.errors.model && (
+                  <p className="text-sm text-red-500 dark:text-red-400">{form.errors.model}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -334,12 +360,32 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.city")}</Label>
-                <Input
+                <Select
                   value={form.fields.city}
-                  onChange={(e) => form.actions.setCity({ value: e.target.value })}
-                  placeholder={t("admin.modals.addCar.cityPlaceholder")}
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
-                />
+                  onValueChange={(value) => form.actions.setCity({ value })}
+                  disabled={loadingCities || !form.fields.auction}
+                >
+                  <SelectTrigger className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white dark:bg-black text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-[#1c2128] focus:ring-2 focus:ring-[#429de6] focus:border-[#429de6] disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    <SelectValue placeholder={
+                      loadingCities 
+                        ? t("admin.modals.addCar.loadingCities") 
+                        : !form.fields.auction 
+                          ? t("admin.modals.addCar.selectAuctionFirst")
+                          : t("admin.modals.addCar.selectCity")
+                    } />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-[#1c2128] border border-gray-200 dark:border-white/10 rounded-lg shadow-lg max-h-[300px] overflow-auto">
+                    {cities.map((city) => (
+                      <SelectItem 
+                        key={city.id} 
+                        value={city.city}
+                        className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10 text-gray-900 dark:text-white px-3 py-2"
+                      >
+                        {city.city}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -393,129 +439,187 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                   <p className="text-sm text-red-500 dark:text-red-400">{form.errors.priceUsd}</p>
                 )}
               </div>
-              {/* Car Payment */}
-              <div 
-                className={`
-                  relative overflow-hidden p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer
+              {/* Payment & Documents Section - Better organized UI */}
+              <div className="sm:col-span-2 lg:col-span-3 space-y-6">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                  {t("admin.modals.addCar.paymentsAndDocuments")}
+                </h3>
+
+                {/* Car Payment Card */}
+                <div className={`
+                  relative overflow-hidden rounded-xl border-2 transition-all duration-300
                   ${form.fields.carPaid 
-                    ? 'bg-green-50/80 border-green-300 dark:bg-green-950/30 dark:border-green-800/50 hover:bg-green-50 dark:hover:bg-green-950/40' 
-                    : 'bg-orange-50/80 border-orange-300 dark:bg-orange-950/30 dark:border-orange-800/50 hover:bg-orange-50 dark:hover:bg-orange-950/40'
+                    ? 'bg-green-50/80 border-green-300 dark:bg-green-950/30 dark:border-green-800/50' 
+                    : 'bg-orange-50/80 border-orange-300 dark:bg-orange-950/30 dark:border-orange-800/50'
                   }
-                `}
-                onClick={() => form.actions.setCarPaid({ value: !form.fields.carPaid })}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      {form.fields.carPaid ? (
-                        <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
-                      ) : (
-                        <XCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
-                      )}
-                      <Label htmlFor="car-paid-add" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
-                        {t("admin.modals.addCar.carPaid")}
-                      </Label>
-                    </div>
-                    <div className={`
-                      inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
-                      ${form.fields.carPaid 
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' 
-                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
-                      }
-                    `}>
-                      {form.fields.carPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
+                `}>
+                  <div 
+                    className="p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                    onClick={() => form.actions.setCarPaid({ value: !form.fields.carPaid })}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 space-y-1.5">
+                        <div className="flex items-center gap-2">
+                          {form.fields.carPaid ? (
+                            <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                          ) : (
+                            <XCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+                          )}
+                          <Label htmlFor="car-paid-add" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
+                            {t("admin.modals.addCar.carPaid")}
+                          </Label>
+                        </div>
+                        <div className={`
+                          inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
+                          ${form.fields.carPaid 
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' 
+                            : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
+                          }
+                        `}>
+                          {form.fields.carPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
+                        </div>
+                      </div>
+                      <Switch
+                        id="car-paid-add"
+                        checked={form.fields.carPaid}
+                        onCheckedChange={(checked) => form.actions.setCarPaid({ value: checked })}
+                        onClick={(e) => e.stopPropagation()}
+                      />
                     </div>
                   </div>
-                  <Switch
-                    id="car-paid-add"
-                    checked={form.fields.carPaid}
-                    onCheckedChange={(checked) => form.actions.setCarPaid({ value: checked })}
-                    onClick={(e) => e.stopPropagation()}
-                  />
+                  <div className="px-4 pb-4 pt-2 border-t border-green-200/50 dark:border-green-800/30">
+                    <PdfUploader
+                      onFileSelect={setVehiclePdfFile}
+                      disabled={isSubmitting}
+                      translations={{
+                        label: t("admin.modals.addCar.vehiclePdfLabel"),
+                        dragDrop: t("admin.modals.addCar.dragDropVehiclePdf"),
+                        dropHere: t("admin.modals.addCar.dropPdfHere"),
+                        clickToBrowse: t("admin.modals.addCar.clickToBrowse"),
+                        maxSize: t("admin.modals.addCar.pdfOnlyMaxSize"),
+                        onlyPdfAllowed: t("admin.modals.addCar.onlyPdfAllowed"),
+                        fileSizeLimit: t("admin.modals.addCar.fileSizeLimit")
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* Shipping Payment */}
-              <div 
-                className={`
-                  relative overflow-hidden p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer
+                {/* Shipping Payment Card */}
+                <div className={`
+                  relative overflow-hidden rounded-xl border-2 transition-all duration-300
                   ${form.fields.shippingPaid 
-                    ? 'bg-green-50/80 border-green-300 dark:bg-green-950/30 dark:border-green-800/50 hover:bg-green-50 dark:hover:bg-green-950/40' 
-                    : 'bg-orange-50/80 border-orange-300 dark:bg-orange-950/30 dark:border-orange-800/50 hover:bg-orange-50 dark:hover:bg-orange-950/40'
+                    ? 'bg-green-50/80 border-green-300 dark:bg-green-950/30 dark:border-green-800/50' 
+                    : 'bg-orange-50/80 border-orange-300 dark:bg-orange-950/30 dark:border-orange-800/50'
                   }
-                `}
-                onClick={() => form.actions.setShippingPaid({ value: !form.fields.shippingPaid })}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      {form.fields.shippingPaid ? (
-                        <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
-                      ) : (
-                        <XCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
-                      )}
-                      <Label htmlFor="shipping-paid-add" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
-                        {t("admin.modals.addCar.shippingPaid")}
-                      </Label>
-                    </div>
-                    <div className={`
-                      inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
-                      ${form.fields.shippingPaid 
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' 
-                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
-                      }
-                    `}>
-                      {form.fields.shippingPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
+                `}>
+                  <div 
+                    className="p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                    onClick={() => form.actions.setShippingPaid({ value: !form.fields.shippingPaid })}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 space-y-1.5">
+                        <div className="flex items-center gap-2">
+                          {form.fields.shippingPaid ? (
+                            <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                          ) : (
+                            <XCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+                          )}
+                          <Label htmlFor="shipping-paid-add" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
+                            {t("admin.modals.addCar.shippingPaid")}
+                          </Label>
+                        </div>
+                        <div className={`
+                          inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
+                          ${form.fields.shippingPaid 
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' 
+                            : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
+                          }
+                        `}>
+                          {form.fields.shippingPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
+                        </div>
+                      </div>
+                      <Switch
+                        id="shipping-paid-add"
+                        checked={form.fields.shippingPaid}
+                        onCheckedChange={(checked) => form.actions.setShippingPaid({ value: checked })}
+                        onClick={(e) => e.stopPropagation()}
+                      />
                     </div>
                   </div>
-                  <Switch
-                    id="shipping-paid-add"
-                    checked={form.fields.shippingPaid}
-                    onCheckedChange={(checked) => form.actions.setShippingPaid({ value: checked })}
-                    onClick={(e) => e.stopPropagation()}
-                  />
+                  <div className="px-4 pb-4 pt-2 border-t border-green-200/50 dark:border-green-800/30">
+                    <PdfUploader
+                      onFileSelect={setShippingPdfFile}
+                      disabled={isSubmitting}
+                      translations={{
+                        label: t("admin.modals.addCar.shippingPdfLabel"),
+                        dragDrop: t("admin.modals.addCar.dragDropShippingPdf"),
+                        dropHere: t("admin.modals.addCar.dropPdfHere"),
+                        clickToBrowse: t("admin.modals.addCar.clickToBrowse"),
+                        maxSize: t("admin.modals.addCar.pdfOnlyMaxSize"),
+                        onlyPdfAllowed: t("admin.modals.addCar.onlyPdfAllowed"),
+                        fileSizeLimit: t("admin.modals.addCar.fileSizeLimit")
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* Insurance */}
-              <div 
-                className={`
-                  relative overflow-hidden p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer
+                {/* Insurance Card */}
+                <div className={`
+                  relative overflow-hidden rounded-xl border-2 transition-all duration-300
                   ${form.fields.insurance 
-                    ? 'bg-blue-50/80 border-blue-300 dark:bg-blue-950/30 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-blue-950/40' 
-                    : 'bg-gray-50/80 border-gray-300 dark:bg-gray-800/30 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/40'
+                    ? 'bg-blue-50/80 border-blue-300 dark:bg-blue-950/30 dark:border-blue-800/50' 
+                    : 'bg-gray-50/80 border-gray-300 dark:bg-gray-800/30 dark:border-gray-700/50'
                   }
-                `}
-                onClick={() => form.actions.setInsurance({ value: !form.fields.insurance })}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      {form.fields.insurance ? (
-                        <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                      ) : (
-                        <XCircle className="h-5 w-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
-                      )}
-                      <Label htmlFor="insurance-add" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
-                        {t("admin.modals.addCar.insurance")}
-                      </Label>
-                    </div>
-                    <div className={`
-                      inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
-                      ${form.fields.insurance 
-                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' 
-                        : 'bg-gray-100 text-gray-700 dark:bg-gray-800/50 dark:text-gray-300'
-                      }
-                    `}>
-                      {form.fields.insurance ? t("admin.modals.addCar.exists") : t("admin.modals.addCar.notExists")}
+                `}>
+                  <div 
+                    className="p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                    onClick={() => form.actions.setInsurance({ value: !form.fields.insurance })}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 space-y-1.5">
+                        <div className="flex items-center gap-2">
+                          {form.fields.insurance ? (
+                            <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                          ) : (
+                            <XCircle className="h-5 w-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+                          )}
+                          <Label htmlFor="insurance-add" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
+                            {t("admin.modals.addCar.insurance")}
+                          </Label>
+                        </div>
+                        <div className={`
+                          inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
+                          ${form.fields.insurance 
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' 
+                            : 'bg-gray-100 text-gray-700 dark:bg-gray-800/50 dark:text-gray-300'
+                          }
+                        `}>
+                          {form.fields.insurance ? t("admin.modals.addCar.exists") : t("admin.modals.addCar.notExists")}
+                        </div>
+                      </div>
+                      <Switch
+                        id="insurance-add"
+                        checked={form.fields.insurance}
+                        onCheckedChange={(checked) => form.actions.setInsurance({ value: checked })}
+                        onClick={(e) => e.stopPropagation()}
+                      />
                     </div>
                   </div>
-                  <Switch
-                    id="insurance-add"
-                    checked={form.fields.insurance}
-                    onCheckedChange={(checked) => form.actions.setInsurance({ value: checked })}
-                    onClick={(e) => e.stopPropagation()}
-                  />
+                  <div className="px-4 pb-4 pt-2 border-t border-blue-200/50 dark:border-blue-800/30">
+                    <PdfUploader
+                      onFileSelect={setInsurancePdfFile}
+                      disabled={isSubmitting}
+                      translations={{
+                        label: t("admin.modals.addCar.insurancePdfLabel"),
+                        dragDrop: t("admin.modals.addCar.dragDropInsurancePdf"),
+                        dropHere: t("admin.modals.addCar.dropPdfHere"),
+                        clickToBrowse: t("admin.modals.addCar.clickToBrowse"),
+                        maxSize: t("admin.modals.addCar.pdfOnlyMaxSize"),
+                        onlyPdfAllowed: t("admin.modals.addCar.onlyPdfAllowed"),
+                        fileSizeLimit: t("admin.modals.addCar.fileSizeLimit")
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -528,23 +632,6 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                   className="min-h-[100px] rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white resize-none"
                 />
               </div>
-            </div>
-
-            {/* Invoice Upload Section */}
-            <div className="pt-4 border-t border-gray-200 dark:border-white/10">
-              <PdfUploader
-                onFileSelect={setInvoiceFile}
-                disabled={isSubmitting}
-                translations={{
-                  label: t("admin.modals.addCar.invoiceLabel"),
-                  dragDrop: t("admin.modals.addCar.dragDropInvoice"),
-                  dropHere: t("admin.modals.addCar.dropPdfHere"),
-                  clickToBrowse: t("admin.modals.addCar.clickToBrowse"),
-                  maxSize: t("admin.modals.addCar.pdfOnlyMaxSize"),
-                  onlyPdfAllowed: t("admin.modals.addCar.onlyPdfAllowed"),
-                  fileSizeLimit: t("admin.modals.addCar.fileSizeLimit")
-                }}
-              />
             </div>
           </div>
 

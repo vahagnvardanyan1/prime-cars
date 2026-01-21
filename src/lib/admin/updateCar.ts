@@ -28,14 +28,18 @@ type UpdateCarResponse = {
 export const updateCar = async ({
   id,
   data,
-  invoiceFile,
+  vehiclePdfFile,
+  insurancePdfFile,
+  shippingPdfFile,
   existingPhotos,
   newPhotos,
   photosToDelete,
 }: {
   id: string;
   data: UpdateCarData;
-  invoiceFile?: File | null;
+  vehiclePdfFile?: File | null;
+  insurancePdfFile?: File | null;
+  shippingPdfFile?: File | null;
   existingPhotos?: string[];
   newPhotos?: File[];
   photosToDelete?: string[];
@@ -64,8 +68,15 @@ export const updateCar = async ({
     if (data.shippingPaid !== undefined) formData.append("shippingPaid", data.shippingPaid.toString());
     if (data.insurance !== undefined) formData.append("insurance", data.insurance.toString());
 
-    if (invoiceFile) {
-      formData.append("invoice", invoiceFile);
+    // Append new PDF files
+    if (vehiclePdfFile) {
+      formData.append("vehiclePdf", vehiclePdfFile);
+    }
+    if (insurancePdfFile) {
+      formData.append("insurancePdf", insurancePdfFile);
+    }
+    if (shippingPdfFile) {
+      formData.append("shippingPdf", shippingPdfFile);
     }
 
     // Append reordered existing photo URLs to maintain order

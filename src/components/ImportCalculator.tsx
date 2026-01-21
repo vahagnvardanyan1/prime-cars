@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Info, MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -59,6 +59,8 @@ export const ImportCalculator = ({
   const [insurance, setInsurance] = useState(false);
   const [highGroundClearance, setHighGroundClearance] = useState(false);
   const [hasReverse, setHasReverse] = useState(false);
+  const [icePowerExceedsElectric, setIcePowerExceedsElectric] = useState(false);
+  const [outOfAuctionBorders, setOutOfAuctionBorders] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
@@ -69,6 +71,34 @@ export const ImportCalculator = ({
   const [cityPriceMap, setCityPriceMap] = useState<Record<string, number>>({});
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
+
+  // Handle browser back button when showing results
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (event.state?.calculatorResults) {
+        setShowResults(true);
+      } else if (showResults) {
+        setShowResults(false);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [showResults]);
+
+  // Push history state when showing results
+  const handleShowResults = useCallback(() => {
+    window.history.pushState({ calculatorResults: true }, "");
+    setShowResults(true);
+  }, []);
+
+  // Handle back navigation from results
+  const handleBackFromResults = useCallback(() => {
+    window.history.back();
+  }, []);
 
   // Fetch cities and prices when activeTab changes
   useEffect(() => {
@@ -108,6 +138,22 @@ export const ImportCalculator = ({
       setEngine("gasoline");
     }
   }, [vehicleType]);
+
+  // Reset high ground clearance when electric engine is selected
+  useEffect(() => {
+    if (engine === "electric") {
+      setHighGroundClearance(false);
+    }
+  }, [engine]);
+
+  // Set ICE power checkbox to true by default when hybrid is selected
+  useEffect(() => {
+    if (engine === "hybrid") {
+      setIcePowerExceedsElectric(true);
+    } else {
+      setIcePowerExceedsElectric(false);
+    }
+  }, [engine]);
 
   // Helper function to get error styling
   const getErrorClass = (value: string | boolean, isRequired: boolean = true) => {
@@ -184,6 +230,11 @@ export const ImportCalculator = ({
         price = price + 500;
       }
       
+      // Apply out of auction borders adjustment (add 50%)
+      if (outOfAuctionBorders) {
+        price = price + 50 ;
+      }
+      
       setShippingPrice(price);
     } else if (auctionLocation && cityPriceMap[auctionLocation]) {
       let price = cityPriceMap[auctionLocation];
@@ -195,11 +246,16 @@ export const ImportCalculator = ({
         price = price + 500; // Add $500
       }
       
+      // Apply out of auction borders adjustment (add 50%)
+      if (outOfAuctionBorders) {
+        price = price + 50
+      }
+      
       setShippingPrice(price);
     } else {
       setShippingPrice(0);
     }
-  }, [auctionLocation, cityPriceMap, vehicleType, activeTab, manualShippingPrice]);
+  }, [auctionLocation, cityPriceMap, vehicleType, activeTab, manualShippingPrice, outOfAuctionBorders]);
 
   // Calculate insurance: (Shipping Price + Auction Fee) * 1%
   useEffect(() => {
@@ -241,8 +297,26 @@ export const ImportCalculator = ({
     
     
     try {
+      // Fetch exchange rates first
+      const { fetchExchangeRates, calculateEurUsdRate } = await import("@/lib/import-calculator/fetchExchangeRates");
+      const ratesResult = await fetchExchangeRates();
+      
+      let eurUsdRate: number;
+      if (!ratesResult.success) {
+        console.error("Failed to fetch exchange rates, using fallback");
+        // Use fallback rate: 443.24 / 380.33 = 1.1653
+        eurUsdRate = 1.1653;
+      } else {
+        eurUsdRate = parseFloat(calculateEurUsdRate(ratesResult.data));
+      }
+      
+      // Convert (carPrice + shippingPrice) from USD to EUR
+      const carPriceUsd = parseFloat(vehiclePrice);
+      const shippingPriceUsd = shippingPrice || 0;
+      const totalPriceEur = Math.round((carPriceUsd + shippingPriceUsd) * eurUsdRate);
+      
       const result = await calculateVehicleTaxes({
-        price: parseFloat(vehiclePrice),
+        price: totalPriceEur, // Send EUR price to backend as integer
         volume: engine === "electric" ? 0 : parseFloat(engineVolume), // Use 0 for electric
         engineType: mapEngineType(engine),
         date: formatDate({ day, month, year }),
@@ -253,7 +327,7 @@ export const ImportCalculator = ({
 
       if (result.success) {
         setCalculationResults(result.data);
-        setShowResults(true);
+        handleShowResults();
       } else {
         toast.error(t("calculator.form.calculationError") || "Calculation failed", {
           description: result.error,
@@ -435,37 +509,52 @@ export const ImportCalculator = ({
                   />
                 </div>
 
-                {/* Auction Location */}
-                <div>
-                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                    {t("calculator.form.auctionLocation")} <span className="text-red-500">*</span>
-                  </label>
-                  <Select value={auctionLocation} onValueChange={setAuctionLocation} disabled={isLoadingLocations}>
-                    <SelectTrigger className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
-                      getErrorClass(auctionLocation) || "border-gray-300 dark:border-gray-700"
-                    }`}>
-                      <SelectValue placeholder={isLoadingLocations ? t("calculator.form.loadingLocations") || "Loading..." : t("calculator.form.selectLocation")} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px] overflow-y-auto">
-                      {availableCities.length > 0 ? (
-                        availableCities.map((city) => (
-                          <SelectItem 
-                            key={city} 
-                            value={city}
-                            className={activeTab === "copart" 
-                              ? "text-gray-900 dark:text-white hover:bg-[#429de6]/20 hover:text-[#429de6] hover:font-medium dark:hover:bg-[#429de6]/30 dark:hover:text-[#429de6] focus:bg-[#429de6]/20 focus:text-[#429de6] focus:font-medium dark:focus:bg-[#429de6]/30 dark:focus:text-[#429de6] data-[state=checked]:bg-[#429de6]/20 data-[state=checked]:text-[#429de6] data-[state=checked]:font-medium dark:data-[state=checked]:bg-[#429de6]/30 dark:data-[state=checked]:text-[#429de6] transition-colors cursor-pointer" 
-                              : ""}
-                          >
-                            {city}
+                {/* Auction Location and Out of Borders Checkbox */}
+                <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 sm:gap-4 sm:items-end">
+                  <div>
+                    <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
+                      {t("calculator.form.auctionLocation")} <span className="text-red-500">*</span>
+                    </label>
+                    <Select value={auctionLocation} onValueChange={setAuctionLocation} disabled={isLoadingLocations}>
+                      <SelectTrigger className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
+                        getErrorClass(auctionLocation) || "border-gray-300 dark:border-gray-700"
+                      }`}>
+                        <SelectValue placeholder={isLoadingLocations ? t("calculator.form.loadingLocations") || "Loading..." : t("calculator.form.selectLocation")} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px] overflow-y-auto">
+                        {availableCities.length > 0 ? (
+                          availableCities.map((city) => (
+                            <SelectItem 
+                              key={city} 
+                              value={city}
+                              className={activeTab === "copart" 
+                                ? "text-gray-900 dark:text-white hover:bg-[#429de6]/20 hover:text-[#429de6] hover:font-medium dark:hover:bg-[#429de6]/30 dark:hover:text-[#429de6] focus:bg-[#429de6]/20 focus:text-[#429de6] focus:font-medium dark:focus:bg-[#429de6]/30 dark:focus:text-[#429de6] data-[state=checked]:bg-[#429de6]/20 data-[state=checked]:text-[#429de6] data-[state=checked]:font-medium dark:data-[state=checked]:bg-[#429de6]/30 dark:data-[state=checked]:text-[#429de6] transition-colors cursor-pointer" 
+                                : ""}
+                            >
+                              {city}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="no-locations" disabled>
+                            {t("calculator.form.noLocationsAvailable") || "No locations available"}
                           </SelectItem>
-                        ))
-                      ) : (
-                        <SelectItem value="no-locations" disabled>
-                          {t("calculator.form.noLocationsAvailable") || "No locations available"}
-                        </SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Out of Auction Borders Checkbox */}
+                  <div className="sm:pb-3">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={outOfAuctionBorders}
+                        onChange={(e) => setOutOfAuctionBorders(e.target.checked)}
+                        className="w-4 h-4 flex-shrink-0 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6]"
+                      />
+                      <span className="text-gray-600 dark:text-gray-400 text-xs leading-tight">{t("calculator.form.outOfAuctionBorders")}</span>
+                    </label>
+                  </div>
                 </div>
 
                 {/* Manual Shipping Price (Only for "Other" auction) */}
@@ -612,8 +701,8 @@ export const ImportCalculator = ({
                     <span className="text-gray-600 dark:text-gray-400">{t("calculator.form.insurance")}</span>
                   </label>
 
-                  {/* High ground clearance - Only show for Passenger vehicles */}
-                  {vehicleType === "passenger" && (
+                  {/* High ground clearance - Only show for Passenger vehicles and not electric */}
+                  {vehicleType === "passenger" && engine !== "electric" && (
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input
                         type="checkbox"
@@ -635,6 +724,19 @@ export const ImportCalculator = ({
                         className="w-4 h-4 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6]"
                       />
                       <span className="text-gray-600 dark:text-gray-400">{t("calculator.form.hasReverse")}</span>
+                    </label>
+                  )}
+
+                  {/* ICE Power Exceeds Electric - Only show for Hybrid */}
+                  {engine === "hybrid" && (
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={icePowerExceedsElectric}
+                        onChange={(e) => setIcePowerExceedsElectric(e.target.checked)}
+                        className="w-4 h-4 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6]"
+                      />
+                      <span className="text-gray-600 dark:text-gray-400">{t("calculator.form.icePowerExceedsElectric")}</span>
                     </label>
                   )}
                 </div>
@@ -678,9 +780,6 @@ export const ImportCalculator = ({
           vehicleType={vehicleType}
           vehiclePrice={vehiclePrice}
           auctionFee={auctionFee}
-          serviceFee={serviceFee}
-          insuranceFee={insuranceFee}
-          shippingPrice={shippingPrice}
           auctionLocation={auctionLocation}
           activeTab={activeTab}
           day={day}
@@ -688,11 +787,16 @@ export const ImportCalculator = ({
           year={year}
           engine={engine}
           engineVolume={engineVolume}
-          calculationResults={calculationResults}
-          isLoggedIn={isLoggedIn}
           showPartnerMessage={showPartnerMessage}
-          disablePartnerRestrictions={disablePartnerRestrictions}
-          onBack={() => setShowResults(false)}
+          onBack={handleBackFromResults}
+          // Restricted data - only pass when in admin panel
+          {...(disablePartnerRestrictions && {
+            serviceFee,
+            insuranceFee,
+            shippingPrice,
+            calculationResults,
+            hasInsurance: insurance,
+          })}
         />
       )}
     </div>

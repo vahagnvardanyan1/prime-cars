@@ -17,9 +17,6 @@ type CalculatorResultsProps = {
   vehicleType: string;
   vehiclePrice: string;
   auctionFee: string;
-  serviceFee: string;
-  insuranceFee: string;
-  shippingPrice: number;
   auctionLocation: string;
   activeTab: string;
   day: string;
@@ -27,11 +24,14 @@ type CalculatorResultsProps = {
   year: string;
   engine: string;
   engineVolume: string;
-  calculationResults: CalculatorResponse | null;
-  isLoggedIn: boolean;
   showPartnerMessage?: boolean;
-  disablePartnerRestrictions?: boolean;
   onBack: () => void;
+  // Restricted data - only provided in admin panel
+  serviceFee?: string;
+  insuranceFee?: string;
+  shippingPrice?: number;
+  calculationResults?: CalculatorResponse | null;
+  hasInsurance?: boolean;
 };
 
 export const CalculatorResults = ({
@@ -39,9 +39,6 @@ export const CalculatorResults = ({
   vehicleType,
   vehiclePrice,
   auctionFee,
-  serviceFee,
-  insuranceFee,
-  shippingPrice,
   auctionLocation,
   activeTab,
   day,
@@ -49,19 +46,21 @@ export const CalculatorResults = ({
   year,
   engine,
   engineVolume,
-  calculationResults,
-  isLoggedIn,
   showPartnerMessage = false,
-  disablePartnerRestrictions = false,
   onBack,
+  // Restricted data - only available in admin
+  serviceFee,
+  insuranceFee,
+  shippingPrice,
+  calculationResults,
+  hasInsurance = false,
 }: CalculatorResultsProps) => {
   const t = useTranslations();
   const locale = useLocale();
   const [exchangeRates, setExchangeRates] = useState<ExchangeRates | null>(null);
 
-  // Vehicle price and auction fee are always visible
-  // Other values are only visible if logged in or in admin panel
-  const shouldShowRestrictedValues = isLoggedIn || disablePartnerRestrictions;
+  // Check if restricted data is available (admin panel)
+  const hasRestrictedData = calculationResults !== undefined;
   const [isLoadingRates, setIsLoadingRates] = useState(true);
 
   useEffect(() => {
@@ -69,7 +68,14 @@ export const CalculatorResults = ({
       const result = await fetchExchangeRates();
       if (result.success) {
         setExchangeRates(result.data);
-      }
+        } else {
+          console.error("Failed to fetch exchange rates:", result.error);
+          // Use fallback rates - approximate rates for calculation
+          setExchangeRates({
+            USD: "380.33",
+            EUR: "443.24",
+          });
+        }
       setIsLoadingRates(false);
     };
 
@@ -85,26 +91,31 @@ export const CalculatorResults = ({
   const eurRate = exchangeRates?.EUR || "443.24";
   const eurUsdRate = exchangeRates ? calculateEurUsdRate(exchangeRates) : "1.1774";
 
-  // Calculate total including all fees
+  // Calculate total including all fees - ALL IN USD (only when restricted data is available)
   const calculateTotal = () => {
-    const apiTotal = calculationResults?.sumPay ?? 0;
-    const auctionFeeUsd = parseFloat(auctionFee) || 0;
-    const serviceFeeUsd = parseFloat(serviceFee) || 0;
-    const insuranceFeeUsd = parseFloat(insuranceFee) || 0;
-    const shippingFeeUsd = shippingPrice || 0;
+    if (!hasRestrictedData) return 0;
     
-    // Convert USD fees to EUR
     const eurUsdRateNum = parseFloat(eurUsdRate);
-    const auctionFeeEur = auctionFeeUsd * eurUsdRateNum;
-    const serviceFeeEur = serviceFeeUsd * eurUsdRateNum;
-    const insuranceFeeEur = insuranceFeeUsd * eurUsdRateNum;
-    const shippingFeeEur = shippingFeeUsd * eurUsdRateNum;
     
-    // Total = API total + all our calculated fees in EUR
-    const total = apiTotal + auctionFeeEur + serviceFeeEur + insuranceFeeEur + shippingFeeEur;
+    // Vehicle price and shipping in USD (already integers)
+    const vehiclePriceUsd = parseFloat(vehiclePrice) || 0;
+    const shippingPriceUsd = shippingPrice || 0;
     
-    // Round to nearest whole number
-    return Math.round(total);
+    // Backend taxes: convert each one individually and round, then sum
+    const customsUsd = Math.round((calculationResults?.globTax ?? 0) / eurUsdRateNum);
+    const vatUsd = Math.round((calculationResults?.nds ?? 0) / eurUsdRateNum);
+    const envTaxUsd = Math.round((calculationResults?.envTaxPay ?? 0) / eurUsdRateNum);
+    
+    // All other fees are already in USD
+    const auctionFeeUsd = parseFloat(auctionFee) || 0;
+    const serviceFeeUsd = parseFloat(serviceFee || "0") || 0;
+    // Only include insurance if hasInsurance is true
+    const insuranceFeeUsd = hasInsurance ? (parseFloat(insuranceFee || "0") || 0) : 0;
+    
+    // Total = sum of all rounded values
+    const totalUsd = vehiclePriceUsd + shippingPriceUsd + customsUsd + vatUsd + envTaxUsd + auctionFeeUsd + serviceFeeUsd + insuranceFeeUsd;
+    
+    return Math.round(totalUsd);
   };
 
   const totalAmount = calculateTotal();
@@ -164,7 +175,7 @@ export const CalculatorResults = ({
               {importer === "legal" ? t("calculator.results.legalPerson") : t("calculator.results.individual")}
             </span>
             <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
-            <span className="font-semibold">{vehicleType || t("calculator.results.passengerCar")}</span>
+            <span className="font-semibold">{vehicleType ? t(`calculator.form.${vehicleType}`) : t("calculator.results.passengerCar")}</span>
           </p>
           <p className="text-gray-700 dark:text-white/80 text-xs md:text-sm leading-relaxed">
             <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">{getCurrentDateTime()}</span>
@@ -194,12 +205,16 @@ export const CalculatorResults = ({
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base w-[30%]">{t("calculator.form.vehiclePrice")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg w-[5%]">/</td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base w-[15%]">
-                  €{vehiclePrice || "0"}
+                  ${vehiclePrice || "0"}
                 </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base w-[30%]">{t("calculator.results.customsDuty")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg w-[5%]">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base w-[15%]">
-                  {shouldShowRestrictedValues ? `€${Math.round(calculationResults?.globTax ?? 0)}` : <span className="opacity-70 blur-[4px] select-none pointer-events-none">€0</span>}
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base w-[15%]">
+                  {hasRestrictedData ? (
+                    <span className="text-[#429de6] dark:text-[#5db3f0]">${Math.round((calculationResults?.globTax ?? 0) / parseFloat(eurUsdRate))}</span>
+                  ) : (
+                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
+                  )}
                 </td>
               </tr>
 
@@ -212,8 +227,12 @@ export const CalculatorResults = ({
                 </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.results.vat")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
-                  {shouldShowRestrictedValues ? `€${Math.round(calculationResults?.nds ?? 0)}` : <span className="opacity-70 blur-[4px] select-none pointer-events-none">€0</span>}
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
+                  {hasRestrictedData ? (
+                    <span className="text-[#429de6] dark:text-[#5db3f0]">${Math.round((calculationResults?.nds ?? 0) / parseFloat(eurUsdRate))}</span>
+                  ) : (
+                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
+                  )}
                 </td>
               </tr>
 
@@ -221,13 +240,21 @@ export const CalculatorResults = ({
               <tr className="bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-900/50 hover:from-gray-200 hover:to-gray-50 dark:hover:from-gray-800 dark:hover:to-gray-900/60 transition-colors">
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.transportationFee")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
-                  {shouldShowRestrictedValues ? `$${shippingPrice || "0"}` : <span className="opacity-70 blur-[4px] select-none pointer-events-none">$0</span>}
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
+                  {hasRestrictedData ? (
+                    <span className="text-[#429de6] dark:text-[#5db3f0]">${shippingPrice || "0"}</span>
+                  ) : (
+                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
+                  )}
                 </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.results.environmentalTax")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
-                  {shouldShowRestrictedValues ? `€${Math.round(calculationResults?.envTaxPay ?? 0)}` : <span className="opacity-70 blur-[4px] select-none pointer-events-none">€0</span>}
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
+                  {hasRestrictedData ? (
+                    <span className="text-[#429de6] dark:text-[#5db3f0]">${Math.round((calculationResults?.envTaxPay ?? 0) / parseFloat(eurUsdRate))}</span>
+                  ) : (
+                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
+                  )}
                 </td>
               </tr>
 
@@ -235,13 +262,25 @@ export const CalculatorResults = ({
               <tr className="bg-gradient-to-r from-white to-gray-50 dark:from-black dark:to-gray-900/30 hover:from-gray-100 hover:to-white dark:hover:from-gray-900 dark:hover:to-gray-900/40 transition-colors">
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.insurance")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
-                  {shouldShowRestrictedValues ? `$${insuranceFee || "0"}` : <span className="opacity-70 blur-[4px] select-none pointer-events-none">$0</span>}
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
+                  {hasRestrictedData ? (
+                    hasInsurance ? (
+                      <span className="text-[#429de6] dark:text-[#5db3f0]">${insuranceFee || "0"}</span>
+                    ) : (
+                      <span className="text-gray-400 dark:text-gray-600">-</span>
+                    )
+                  ) : (
+                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
+                  )}
                 </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.serviceFee")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
-                  {shouldShowRestrictedValues ? `$${serviceFee || "0"}` : <span className="opacity-70 blur-[4px] select-none pointer-events-none">$0</span>}
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
+                  {hasRestrictedData ? (
+                    <span className="text-[#429de6] dark:text-[#5db3f0]">${serviceFee || "0"}</span>
+                  ) : (
+                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
+                  )}
                 </td>
               </tr>
 
@@ -249,8 +288,12 @@ export const CalculatorResults = ({
               <tr className="bg-gradient-to-r from-[#429de6]/10 to-[#429de6]/20 dark:from-[#429de6]/20 dark:to-[#429de6]/10 hover:from-[#429de6]/20 hover:to-[#429de6]/30 dark:hover:from-[#429de6]/30 dark:hover:to-[#429de6]/20 transition-colors border-t-2 border-[#429de6]/30 dark:border-[#429de6]/50">
                 <td colSpan={4} className="px-3 sm:px-6 py-4 sm:py-5 text-gray-900 dark:text-white font-bold text-base sm:text-lg">{t("calculator.results.totalAmount")}</td>
                 <td className="px-2 sm:px-4 py-4 sm:py-5 text-center text-[#429de6]/60 dark:text-[#5db3f0]/70 text-lg sm:text-xl font-bold">/</td>
-                <td className="px-3 sm:px-6 py-4 sm:py-5 text-right text-[#429de6] dark:text-[#5db3f0] font-bold text-xl sm:text-2xl">
-                  {shouldShowRestrictedValues ? `€${totalAmount}` : <span className="opacity-60 blur-[5px] select-none pointer-events-none">€0</span>}
+                <td className="px-3 sm:px-6 py-4 sm:py-5 text-right font-bold text-xl sm:text-2xl">
+                  {hasRestrictedData ? (
+                    <span className="text-[#429de6] dark:text-[#5db3f0]">${totalAmount}</span>
+                  ) : (
+                    <span className="text-gray-400 dark:text-gray-500 opacity-40 blur-[4px] select-none">$partner</span>
+                  )}
                 </td>
               </tr>
             </tbody>

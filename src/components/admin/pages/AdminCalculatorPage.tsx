@@ -9,7 +9,7 @@ export const AdminCalculatorPage = () => {
 
   return (
     <div>
-      <div className="mb-6">
+      <div className="mb-4">
         <h1 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
           {t("admin.headers.calculatorTitle")}
         </h1>

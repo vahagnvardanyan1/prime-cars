@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 
 import type { AdminCarDetails } from "@/lib/admin/types";
-import { VehicleType, VehicleModel, Auction } from "@/lib/admin/types";
+import { VehicleType, Auction } from "@/lib/admin/types";
 
 type FormErrors = {
   model?: string;
@@ -61,7 +61,7 @@ type UseAddCarFormReturn = {
 };
 
 export const useAddCarForm = (): UseAddCarFormReturn => {
-  const [model, setModel] = useState<string>(VehicleModel.BMW);
+  const [model, setModel] = useState<string>("");
   const [year, setYear] = useState("");
   const [priceUsd, setPriceUsd] = useState("");
   const [carPaid, setCarPaid] = useState(false);
@@ -174,7 +174,7 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
   };
 
   const reset = () => {
-    setModel(VehicleModel.BMW);
+    setModel("");
     setYear("");
     setPriceUsd("");
     setCarPaid(false);

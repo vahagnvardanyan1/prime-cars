@@ -195,17 +195,19 @@ export const CarsView = ({
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("city")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">{tTable("notes")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("carPaid")}</TableHead>
+            <TableHead className="px-4 py-4 text-center text-sm font-semibold min-w-[120px]">{tTable("vehiclePdf")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("shippingPaid")}</TableHead>
+            <TableHead className="px-4 py-4 text-center text-sm font-semibold min-w-[120px]">{tTable("shippingPdf")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("insurance")}</TableHead>
+            <TableHead className="px-4 py-4 text-center text-sm font-semibold min-w-[120px]">{tTable("insurancePdf")}</TableHead>
             <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("created")}</TableHead>
-            <TableHead className="px-4 py-4 text-center text-sm font-semibold min-w-[120px]">{tTable("invoice")}</TableHead>
             <TableHead className="px-4 py-4 text-center pr-6 sm:pr-8 text-sm font-semibold min-w-[160px]">{tTable("actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={18} className="py-12">
+              <TableCell colSpan={21} className="py-12">
                 <div className="flex flex-col items-center justify-center gap-3">
                   <svg className="animate-spin h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -219,7 +221,7 @@ export const CarsView = ({
             </TableRow>
           ) : !cars || cars.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={18} className="py-12">
+              <TableCell colSpan={21} className="py-12">
                 <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
                   {t("admin.carsView.noCarsFound")}
                 </div>
@@ -341,38 +343,12 @@ export const CarsView = ({
                   size="sm"
                 />
               </TableCell>
-              
-              {/* Shipping Payment */}
-              <TableCell className="px-4 py-3 min-w-[140px]">
-                <PaymentStatus 
-                  paid={car.shippingPaid} 
-                  label={car.shippingPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
-                  size="sm"
-                />
-              </TableCell>
-              
-              {/* Insurance */}
-              <TableCell className="px-4 py-3 min-w-[120px]">
-                <PaymentStatus 
-                  paid={car.insurance} 
-                  label={car.insurance ? t("admin.modals.addCar.exists") : t("admin.modals.addCar.notExists")}
-                  size="sm"
-                />
-              </TableCell>
-              
-              {/* Created Date */}
-              <TableCell className="px-4 py-3 min-w-[140px]">
-                <div className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
-                  {formatDate(car.createdAt)}
-                </div>
-              </TableCell>
-              
-              {/* Invoice */}
+
+              {/* Vehicle PDF */}
               <TableCell className="px-4 py-3 text-center min-w-[120px]">
-                {car.invoiceId ? (
+                {car.details?.vehiclePdf ? (
                   <a
-                    href={car.invoiceId}
-                    download
+                    href={car.details.vehiclePdf}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 h-9 px-3 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-gray-400 dark:border-white/10 dark:bg-[#161b22] dark:text-gray-300 dark:hover:bg-white/5 dark:hover:border-white/20 transition-all"
@@ -383,6 +359,65 @@ export const CarsView = ({
                 ) : (
                   <span className="text-sm text-gray-400 dark:text-gray-600">-</span>
                 )}
+              </TableCell>
+              
+              {/* Shipping Payment */}
+              <TableCell className="px-4 py-3 min-w-[140px]">
+                <PaymentStatus 
+                  paid={car.shippingPaid} 
+                  label={car.shippingPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
+                  size="sm"
+                />
+              </TableCell>
+
+              {/* Shipping PDF */}
+              <TableCell className="px-4 py-3 text-center min-w-[120px]">
+                {car.details?.shippingPdf ? (
+                  <a
+                    href={car.details.shippingPdf}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 h-9 px-3 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-gray-400 dark:border-white/10 dark:bg-[#161b22] dark:text-gray-300 dark:hover:bg-white/5 dark:hover:border-white/20 transition-all"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span className="hidden sm:inline">{tTable("download")}</span>
+                  </a>
+                ) : (
+                  <span className="text-sm text-gray-400 dark:text-gray-600">-</span>
+                )}
+              </TableCell>
+              
+              {/* Insurance */}
+              <TableCell className="px-4 py-3 min-w-[120px]">
+                <PaymentStatus 
+                  paid={car.insurance} 
+                  label={car.insurance ? t("admin.modals.addCar.exists") : t("admin.modals.addCar.notExists")}
+                  size="sm"
+                />
+              </TableCell>
+
+              {/* Insurance PDF */}
+              <TableCell className="px-4 py-3 text-center min-w-[120px]">
+                {car.details?.insurancePdf ? (
+                  <a
+                    href={car.details.insurancePdf}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 h-9 px-3 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-gray-400 dark:border-white/10 dark:bg-[#161b22] dark:text-gray-300 dark:hover:bg-white/5 dark:hover:border-white/20 transition-all"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span className="hidden sm:inline">{tTable("download")}</span>
+                  </a>
+                ) : (
+                  <span className="text-sm text-gray-400 dark:text-gray-600">-</span>
+                )}
+              </TableCell>
+              
+              {/* Created Date */}
+              <TableCell className="px-4 py-3 min-w-[140px]">
+                <div className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                  {formatDate(car.createdAt)}
+                </div>
               </TableCell>
               
               {/* Actions */}

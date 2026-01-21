@@ -231,6 +231,7 @@
     "horsepowerUnit": "HP"
   },
   "calculator": {
+    "loading": "Loading...",
     "page": {
       "title": "Import Cost Calculator",
       "description": "Get an accurate estimate of all costs involved in importing your vehicle. Our calculator includes shipping, customs duties, inspection fees, and more."
@@ -281,6 +282,8 @@
       "insurance": "Insurance",
       "highGroundClearance": "High ground clearance",
       "hasReverse": "Has Reverse",
+      "icePowerExceedsElectric": "ICE power exceeds the maximum 30-minute power of electric motor",
+      "outOfAuctionBorders": "Out of auction borders (Sublot)",
       "calculateCost": "Calculate cost",
       "calculating": "Calculating...",
       "validationError": "Please fill in all required fields",
@@ -356,7 +359,9 @@
       "partnerMessage": "To use calculator become a partner.",
       "importantTitle": "Important",
       "importantNotice": "All Transactions with companies and citizens of the Republic of Armenia are made exclusively in Armenian currency (Dram / AMD). Note: customs fees are calculated at the exchange rate set by the Central Bank of Armenia as of the given day.",
-      "backToCalculator": "Back to Calculator"
+      "backToCalculator": "Back to Calculator",
+      "restrictedDataTitle": "Full cost breakdown available for partners",
+      "becomePartner": "Become a Partner to see all details"
     }
   },
   "partners": {
@@ -671,6 +676,9 @@
         "user": "User",
         "selectUser": "Select a user",
         "loadingUsers": "Loading users...",
+        "loadingCities": "Loading cities...",
+        "selectCity": "Select a city",
+        "selectAuctionFirst": "Select auction first",
         "purchaseDate": "Purchase date",
         "type": "Type",
         "vehicleTypes": {
@@ -688,6 +696,7 @@
           "other": "Other"
         },
         "model": "Model",
+        "modelPlaceholder": "e.g. BMW X5",
         "vehicleModels": {
           "bmw": "BMW",
           "mercedes": "Mercedes-Benz",
@@ -742,6 +751,7 @@
         "statusDraft": "Draft",
         "customerNotes": "Customer notes",
         "customerNotesPlaceholder": "Optional notes for the customer or internal team…",
+        "paymentsAndDocuments": "Payments & Documents",
         "carPaid": "Car Payment",
         "shippingPaid": "Shipping Payment",
         "insurance": "Insurance",
@@ -751,6 +761,12 @@
         "notExists": "Not Exists",
         "invoiceLabel": "Invoice (PDF)",
         "dragDropInvoice": "Drag and drop your invoice",
+        "vehiclePdfLabel": "Vehicle Document (PDF)",
+        "dragDropVehiclePdf": "Drag and drop vehicle document",
+        "insurancePdfLabel": "Insurance Document (PDF)",
+        "dragDropInsurancePdf": "Drag and drop insurance document",
+        "shippingPdfLabel": "Shipping Document (PDF)",
+        "dragDropShippingPdf": "Drag and drop shipping document",
         "dropPdfHere": "Drop the PDF file here",
         "clickToBrowse": "or click to browse",
         "pdfOnlyMaxSize": "PDF only, max 10MB",
@@ -861,8 +877,17 @@
         "subtitle": "Edit vehicle information and details",
         "existingPhotos": "Existing Photos",
         "addNewPhotos": "Add New Photos",
+        "loadingCities": "Loading cities...",
+        "selectCity": "Select a city",
+        "selectAuctionFirst": "Select auction first",
         "invoiceLabel": "Invoice (PDF)",
         "dragDropInvoice": "Drag and drop your invoice",
+        "vehiclePdfLabel": "Vehicle Document (PDF)",
+        "dragDropVehiclePdf": "Drag and drop vehicle document",
+        "insurancePdfLabel": "Insurance Document (PDF)",
+        "dragDropInsurancePdf": "Drag and drop insurance document",
+        "shippingPdfLabel": "Shipping Document (PDF)",
+        "dragDropShippingPdf": "Drag and drop shipping document",
         "dropPdfHere": "Drop the PDF file here",
         "clickToBrowse": "or click to browse",
         "pdfOnlyMaxSize": "PDF only, max 10MB",
@@ -888,6 +913,7 @@
         "client": "Client",
         "customerNotes": "Customer Notes",
         "notesPlaceholder": "Add any special notes or instructions...",
+        "paymentsAndDocuments": "Payments & Documents",
         "carPaid": "Car Payment",
         "shippingPaid": "Shipping Payment",
         "insurance": "Insurance",
@@ -1120,8 +1146,11 @@
     "notes": "Notes",
     "status": "Status",
     "carPaid": "Car Payment",
+    "vehiclePdf": "Vehicle PDF",
     "shippingPaid": "Shipping Payment",
+    "shippingPdf": "Shipping PDF",
     "insurance": "Insurance",
+    "insurancePdf": "Insurance PDF",
     "created": "Created",
     "invoice": "Invoice",
     "download": "Download",
