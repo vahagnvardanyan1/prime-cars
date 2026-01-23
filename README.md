@@ -9,6 +9,7 @@ cd "/Users/vahagn/Documents/other/prime-cars"
 npm install
 
 # start dev server
+
 npm run dev
 ```
 
