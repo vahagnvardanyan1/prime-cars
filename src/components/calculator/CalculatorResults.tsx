@@ -63,6 +63,11 @@ export const CalculatorResults = ({
   const hasRestrictedData = calculationResults !== undefined;
   const [isLoadingRates, setIsLoadingRates] = useState(true);
 
+
+  useEffect(() => {
+    console.log(insuranceFee, 'insuranceFee');
+  }, [insuranceFee]);
+
   useEffect(() => {
     const loadExchangeRates = async () => {
       const result = await fetchExchangeRates();

@@ -256,10 +256,15 @@ export const ImportCalculator = ({
 
   // Calculate insurance: (Shipping Price + Auction Fee) * 1%
   useEffect(() => {
-    if (auctionFee && shippingPrice > 0) {
+    if (auctionFee && parseFloat(vehiclePrice) > 0) {
       const auction = parseFloat(auctionFee) || 0;
-      const shipping = shippingPrice || 0;
-      const insurance = (shipping + auction) * 0.01;
+      const vehiclePriceNum = parseFloat(vehiclePrice) || 0;
+
+      let insurance = (vehiclePriceNum + auction) * 0.01;
+      if (insurance < 65) {
+        insurance = 65
+      }
+
       setInsuranceFee(Math.round(insurance).toString());
     } else {
       setInsuranceFee("");
@@ -310,7 +315,11 @@ export const ImportCalculator = ({
       // Convert (carPrice + shippingPrice) from USD to EUR
       const carPriceUsd = parseFloat(vehiclePrice);
       const shippingPriceUsd = shippingPrice || 0;
-      const totalPriceEur = Math.round((carPriceUsd + shippingPriceUsd) * eurUsdRate);
+      const auctionUsd = parseFloat(auctionFee);
+      
+      const totalPriceEur = Math.round((carPriceUsd + shippingPriceUsd + auctionUsd) * eurUsdRate);
+
+
       
       const result = await calculateVehicleTaxes({
         price: totalPriceEur, // Send EUR price to backend as integer
