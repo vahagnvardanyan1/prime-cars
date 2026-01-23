@@ -937,7 +937,13 @@
         "deleteSuccess": "Մեքենան ջնջված է",
         "deleteSuccessDescription": "{model} հեռացվեց։",
         "deleteError": "Չհաջողվեց ջնջել մեքենան",
-        "deleteErrorDescription": "Չհաջողվեց ջնջել մեքենան։"
+        "deleteErrorDescription": "Չհաջողվեց ջնջել մեքենան։",
+        "currentInvoice": "Ընթացիկ հաշիվ-ապրանքագիր",
+        "viewInvoice": "Դիտել",
+        "updateInvoice": "Թարմացնել",
+        "newFile": "Նոր ֆայլ",
+        "willReplaceCurrent": "Կփոխարինի ընթացիկը",
+        "cancelUpdate": "Չեղարկել թարմացումը"
       },
       "deleteUser": {
         "title": "Ջնջել օգտատիրոջը",

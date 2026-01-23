@@ -41,7 +41,6 @@ export const ImportCalculator = ({
   disablePartnerRestrictions = false 
 }: ImportCalculatorProps) => {
   const t = useTranslations();
-  const { user } = useUser();
 
   const [activeTab, setActiveTab] = useState<"iaai" | "copart" | "manheim" | "other">("copart");
   const [importer, setImporter] = useState("legal");

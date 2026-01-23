@@ -623,7 +623,13 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                     clickToBrowse: t("clickToBrowse"),
                     maxSize: t("pdfOnlyMaxSize"),
                     onlyPdfAllowed: t("onlyPdfAllowed"),
-                    fileSizeLimit: t("fileSizeLimit")
+                    fileSizeLimit: t("fileSizeLimit"),
+                    currentInvoice: t("currentInvoice"),
+                    viewInvoice: t("viewInvoice"),
+                    updateInvoice: t("updateInvoice"),
+                    newFile: t("newFile"),
+                    willReplaceCurrent: t("willReplaceCurrent"),
+                    cancelUpdate: t("cancelUpdate")
                   }}
                 />
               </div>
@@ -684,7 +690,13 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                     clickToBrowse: t("clickToBrowse"),
                     maxSize: t("pdfOnlyMaxSize"),
                     onlyPdfAllowed: t("onlyPdfAllowed"),
-                    fileSizeLimit: t("fileSizeLimit")
+                    fileSizeLimit: t("fileSizeLimit"),
+                    currentInvoice: t("currentInvoice"),
+                    viewInvoice: t("viewInvoice"),
+                    updateInvoice: t("updateInvoice"),
+                    newFile: t("newFile"),
+                    willReplaceCurrent: t("willReplaceCurrent"),
+                    cancelUpdate: t("cancelUpdate")
                   }}
                 />
               </div>
@@ -745,7 +757,13 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                     clickToBrowse: t("clickToBrowse"),
                     maxSize: t("pdfOnlyMaxSize"),
                     onlyPdfAllowed: t("onlyPdfAllowed"),
-                    fileSizeLimit: t("fileSizeLimit")
+                    fileSizeLimit: t("fileSizeLimit"),
+                    currentInvoice: t("currentInvoice"),
+                    viewInvoice: t("viewInvoice"),
+                    updateInvoice: t("updateInvoice"),
+                    newFile: t("newFile"),
+                    willReplaceCurrent: t("willReplaceCurrent"),
+                    cancelUpdate: t("cancelUpdate")
                   }}
                 />
               </div>
