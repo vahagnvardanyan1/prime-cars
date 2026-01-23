@@ -26,7 +26,6 @@ import {
   getUniqueCities,
 } from "@/lib/import-calculator/fetchShippingPrices";
 import { calculateAuctionFees, calculateServiceFee } from "@/lib/import-calculator/auctionFees";
-import { useUser } from "@/contexts/UserContext";
 import { CalculatorResults } from "@/components/calculator/CalculatorResults";
 
 interface ImportCalculatorProps {
