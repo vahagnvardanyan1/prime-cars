@@ -29,17 +29,19 @@ export const Footer = () => {
                 href="https://www.facebook.com/share/17pXSbQMJT/?mibextid=wwXIfr"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Facebook"
                 className="w-10 h-10 bg-gray-200 dark:bg-white/10 hover:bg-[#429de6] dark:hover:bg-[#429de6] rounded-lg flex items-center justify-center transition-all"
               >
-                <Facebook className="w-5 h-5" />
+                <Facebook aria-hidden="true" className="w-5 h-5" />
               </a>
               <a
                 href="https://www.instagram.com/prime_cars_am?igsh=MWF1ZzkxZnlsaTN4eg=="
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Instagram"
                 className="w-10 h-10 bg-gray-200 dark:bg-white/10 hover:bg-[#429de6] dark:hover:bg-[#429de6] rounded-lg flex items-center justify-center transition-all"
               >
-                <Instagram className="w-5 h-5" />
+                <Instagram aria-hidden="true" className="w-5 h-5" />
               </a>
             </div>
           </div>
@@ -90,7 +92,7 @@ export const Footer = () => {
             </h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <Mail className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
+                <Mail aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
                 <a
                   href="mailto:primecarsarm@gmail.com"
                   className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -99,7 +101,7 @@ export const Footer = () => {
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
+                <Phone aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
                 <a
                   href="tel:+37444771130"
                   className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -108,7 +110,7 @@ export const Footer = () => {
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
+                <MapPin aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
                 <span className="text-gray-600 dark:text-gray-400">
                   {t("footer.address")}
                 </span>

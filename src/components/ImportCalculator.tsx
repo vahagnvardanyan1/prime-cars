@@ -434,7 +434,7 @@ export const ImportCalculator = ({
                       ? "bg-[#429de6]/20" 
                       : "bg-white/10"
                   }`}>
-                    <MoreHorizontal className={`w-5 h-5 transition-colors duration-300 ${
+                    <MoreHorizontal aria-hidden="true" className={`w-5 h-5 transition-colors duration-300 ${
                       activeTab === "other"
                         ? "text-[#429de6]"
                         : "text-white"
@@ -489,6 +489,7 @@ export const ImportCalculator = ({
                   </label>
                   <input
                     type="number"
+                    inputMode="decimal"
                     value={vehiclePrice}
                     onChange={(e) => setVehiclePrice(e.target.value)}
                     className={`w-full px-4 py-3 bg-transparent border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] text-gray-900 dark:text-white placeholder:text-gray-400 ${
@@ -767,7 +768,7 @@ export const ImportCalculator = ({
           {showNotice && (
             <div className="mt-4 sm:mt-6 bg-[#429de6]/10 border border-[#429de6]/20 rounded-2xl p-4 sm:p-6">
               <div className="flex gap-3">
-                <Info className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
+                <Info aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
                 <div>
                   <h3 className="text-gray-900 dark:text-white mb-2 text-sm sm:text-base">
                     {t("calculator.form.noticeTitle")}

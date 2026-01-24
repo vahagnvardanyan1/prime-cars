@@ -68,7 +68,7 @@ export const LanguageSwitcher = ({
           aria-label={t("header.changeLanguageAria")}
         >
           <span className="text-lg leading-none">{current.flag}</span>
-          <Globe className="h-5 w-5 opacity-70" />
+          <Globe aria-hidden="true" className="h-5 w-5 opacity-70" />
         </Button>
       </DropdownMenuTrigger>
 

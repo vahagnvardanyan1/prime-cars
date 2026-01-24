@@ -104,9 +104,9 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
                 type="button"
               >
                 {theme === "dark" ? (
-                  <Sun className="w-5 h-5" />
+                  <Sun aria-hidden="true" className="w-5 h-5" />
                 ) : (
-                  <Moon className="w-5 h-5" />
+                  <Moon aria-hidden="true" className="w-5 h-5" />
                 )}
               </button>
 
@@ -128,9 +128,9 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
                 type="button"
               >
                 {theme === "dark" ? (
-                  <Sun className="w-5 h-5" />
+                  <Sun aria-hidden="true" className="w-5 h-5" />
                 ) : (
-                  <Moon className="w-5 h-5" />
+                  <Moon aria-hidden="true" className="w-5 h-5" />
                 )}
               </button>
 
@@ -141,9 +141,9 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
                 type="button"
               >
                 {isMobileMenuOpen ? (
-                  <X className="w-6 h-6" />
+                  <X aria-hidden="true" className="w-6 h-6" />
                 ) : (
-                  <Menu className="w-6 h-6" />
+                  <Menu aria-hidden="true" className="w-6 h-6" />
                 )}
               </button>
             </div>
@@ -181,7 +181,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
             aria-label={t("header.closeMenuAria")}
             type="button"
           >
-            <X className="w-6 h-6" />
+            <X aria-hidden="true" className="w-6 h-6" />
           </button>
         </div>
 

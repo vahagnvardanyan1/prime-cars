@@ -57,13 +57,21 @@ export const CarsCarousel = ({ cars }: CarsCarouselProps) => {
             }).format(car.priceUsd);
 
             return (
-              <CarouselItem 
-                key={car.id} 
+              <CarouselItem
+                key={car.id}
                 className="pl-4 basis-[85%] sm:basis-[55%] md:basis-[42%] lg:basis-[31%] xl:basis-[28%]"
               >
-                <div 
+                <div
+                  role="button"
+                  tabIndex={0}
                   onClick={() => router.push(`/cars/${car.id}`)}
-                  className="bg-white dark:bg-[#111111] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-all group h-full cursor-pointer"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      router.push(`/cars/${car.id}`);
+                    }
+                  }}
+                  className="bg-white dark:bg-[#111111] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-all group h-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#1a1a1a]">
                     {/* Year Badge - Left */}
