@@ -15,9 +15,9 @@ interface EmptyStateProps {
  * Provides consistent styling across the application
  */
 export const EmptyState = ({ icon, title, description, action }: EmptyStateProps) => (
-  <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+  <div className="flex flex-col items-center justify-center py-20 px-4 text-center" role="status">
     {icon && (
-      <div className="w-20 h-20 rounded-2xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-4 text-gray-400 dark:text-gray-500">
+      <div aria-hidden="true" className="w-20 h-20 rounded-2xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-4 text-gray-400 dark:text-gray-500">
         {icon}
       </div>
     )}
@@ -30,7 +30,7 @@ export const EmptyState = ({ icon, title, description, action }: EmptyStateProps
     {action && (
       <button
         onClick={action.onClick}
-        className="mt-6 px-6 py-2.5 bg-[#429de6] hover:bg-[#3a8acc] text-white font-medium rounded-lg transition-all hover:shadow-lg"
+        className="mt-6 px-6 py-2.5 bg-[#429de6] hover:bg-[#3a8acc] text-white font-medium rounded-lg transition-colors hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
       >
         {action.label}
       </button>

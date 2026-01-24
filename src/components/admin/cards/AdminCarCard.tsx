@@ -59,7 +59,7 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
         className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#1a1a1a] cursor-pointer"
       >
         {/* Year Badge */}
-        <div className="absolute top-3 left-3 px-2.5 py-1 bg-white/95 dark:bg-black/70 backdrop-blur-md rounded-lg text-gray-900 dark:text-white text-xs font-semibold z-10">
+        <div className="absolute top-3 left-3 px-2.5 py-1 bg-white/95 dark:bg-black/70 backdrop-blur-md rounded-lg text-gray-900 dark:text-white text-xs font-semibold z-10 tabular-nums">
           {car.year}
         </div>
 
@@ -102,18 +102,18 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
             {car.engine && (
               <>
                 <span className="flex items-center gap-1">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                   {car.engine}
                 </span>
-                {(car.horsepower || car.fuelType) && <span className="text-gray-300 dark:text-gray-600">•</span>}
+                {(car.horsepower || car.fuelType) && <span aria-hidden="true" className="text-gray-300 dark:text-gray-600">•</span>}
               </>
             )}
             {car.horsepower && (
               <>
-                <span>{car.horsepower} {tCarDetails("horsepowerUnit")}</span>
-                {car.fuelType && <span className="text-gray-300 dark:text-gray-600">•</span>}
+                <span className="tabular-nums">{car.horsepower} {tCarDetails("horsepowerUnit")}</span>
+                {car.fuelType && <span aria-hidden="true" className="text-gray-300 dark:text-gray-600">•</span>}
               </>
             )}
             {car.fuelType && <span>{car.fuelType}</span>}
@@ -123,7 +123,7 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
         {/* Location for AVAILABLE Cars */}
         {car.category === "AVAILABLE" && car.location && (
           <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-3">
-            <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg aria-hidden="true" className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -137,7 +137,7 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
             <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">
               {car.category === "TRANSIT" ? t("startingFrom") : t("price")}
             </p>
-            <p className="text-lg font-bold text-gray-900 dark:text-white">
+            <p className="text-lg font-bold text-gray-900 dark:text-white tabular-nums">
               {formatPrice(car.priceUsd)}
             </p>
           </div>
@@ -146,17 +146,17 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
           <div className="flex items-center gap-2">
             <button
               onClick={handleUpdateClick}
-              className="p-2 bg-[#429de6] hover:bg-[#3a8acc] text-white rounded-lg transition-all duration-200 hover:shadow-md active:scale-95"
-              title="Update Car"
+              className="p-2 bg-[#429de6] hover:bg-[#3a8acc] text-white rounded-lg transition-colors duration-200 hover:shadow-md active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
+              aria-label={`Update ${car.brand} ${car.model}`}
             >
-              <Pencil className="w-4 h-4" />
+              <Pencil aria-hidden="true" className="w-4 h-4" />
             </button>
             <button
               onClick={handleDeleteClick}
-              className="p-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-all duration-200 hover:shadow-md active:scale-95"
-              title="Delete Car"
+              className="p-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors duration-200 hover:shadow-md active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+              aria-label={`Delete ${car.brand} ${car.model}`}
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 aria-hidden="true" className="w-4 h-4" />
             </button>
           </div>
         </div>
