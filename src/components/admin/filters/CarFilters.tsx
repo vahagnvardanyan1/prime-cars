@@ -114,7 +114,7 @@ export const CarFilters = memo(function CarFilters({ filters, onFiltersChange, o
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search Input */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               type="text"
               placeholder={t("searchCars")}
@@ -132,7 +132,7 @@ export const CarFilters = memo(function CarFilters({ filters, onFiltersChange, o
             disabled={!hasActiveFilters}
             className="h-10 px-4 whitespace-nowrap border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 hover:border-red-400 dark:hover:border-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
           >
-            <X className="h-4 w-4 mr-2" />
+            <X aria-hidden="true" className="h-4 w-4 mr-2" />
             {t("clearFilters")}
           </Button>
         </div>

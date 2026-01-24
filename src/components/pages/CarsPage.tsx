@@ -246,19 +246,19 @@ export const CarsPage = () => {
     if (!Array.isArray(cars)) {
       return [];
     }
-    
-    const sorted = [...cars];
+
+    // Use spread + sort for immutability (avoid mutating original array)
     switch (sortOption) {
       case "price-asc":
-        return sorted.sort((a, b) => a.priceUsd - b.priceUsd);
+        return [...cars].sort((a, b) => a.priceUsd - b.priceUsd);
       case "price-desc":
-        return sorted.sort((a, b) => b.priceUsd - a.priceUsd);
+        return [...cars].sort((a, b) => b.priceUsd - a.priceUsd);
       case "year-newest":
-        return sorted.sort((a, b) => b.year - a.year);
+        return [...cars].sort((a, b) => b.year - a.year);
       case "year-oldest":
-        return sorted.sort((a, b) => a.year - b.year);
+        return [...cars].sort((a, b) => a.year - b.year);
       default:
-        return sorted;
+        return cars;
     }
   };
 

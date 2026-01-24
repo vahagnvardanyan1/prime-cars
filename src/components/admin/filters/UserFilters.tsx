@@ -46,7 +46,7 @@ export const UserFilters = ({ filters, onFiltersChange, onClearFilters }: UserFi
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search Input */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               type="text"
               placeholder={t("searchUsers")}
@@ -79,7 +79,7 @@ export const UserFilters = ({ filters, onFiltersChange, onClearFilters }: UserFi
               onClick={onClearFilters}
               className="h-10 px-4 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5"
             >
-              <X className="h-4 w-4 mr-2" />
+              <X aria-hidden="true" className="h-4 w-4 mr-2" />
               {t("clearFilters")}
             </Button>
           )}

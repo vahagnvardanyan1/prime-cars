@@ -71,9 +71,10 @@ export const NotificationsView = ({
             <Button
               type="button"
               onClick={onCreateNotification}
+              aria-label={t("create")}
               className="h-9 rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc] flex items-center gap-2"
             >
-              <Plus className="h-4 w-4" />
+              <Plus aria-hidden="true" className="h-4 w-4" />
               <span className="hidden sm:inline">{t("create")}</span>
             </Button>
           )}
@@ -164,9 +165,9 @@ export const NotificationsView = ({
                             onViewReadUsers(notification);
                           }}
                           className="h-8 w-8 text-[#429de6] hover:bg-[#429de6]/10 hover:text-[#3a8acc] dark:text-[#429de6] dark:hover:bg-[#429de6]/20 dark:hover:text-[#429de6]"
-                          title={t("viewReadReceipts")}
+                          aria-label={t("viewReadReceipts")}
                         >
-                          <CheckCheck className="h-4 w-4" />
+                          <CheckCheck aria-hidden="true" className="h-4 w-4" />
                         </Button>
                       )}
                       {isAdmin && onDeleteNotification && (
@@ -178,8 +179,9 @@ export const NotificationsView = ({
                             onDeleteNotification(notification);
                           }}
                           className="h-8 w-8 text-gray-600 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800/30 dark:hover:text-gray-300"
+                          aria-label={t("delete")}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 aria-hidden="true" className="h-4 w-4" />
                         </Button>
                       )}
                     </div>
