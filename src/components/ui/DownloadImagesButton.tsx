@@ -111,14 +111,16 @@ export const DownloadImagesButton = ({
     >
       {isDownloading ? (
         <>
-          <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" />
+          <div aria-hidden="true" className="animate-spin">
+            <Loader2 className="w-4 h-4 sm:mr-2" />
+          </div>
           <span className={compactText ? "hidden sm:inline" : ""}>{t("downloading")}</span>
         </>
       ) : (
         <>
-          <Download className="w-4 h-4 sm:mr-2" />
+          <Download aria-hidden="true" className="w-4 h-4 sm:mr-2" />
           <span className={compactText ? "hidden sm:inline" : ""}>
-            {showCount 
+            {showCount
               ? t("downloadAll", { count: images?.length || 0 })
               : t("buttonShort")
             }

@@ -75,7 +75,7 @@ export const AdminPreferencesMenu = () => {
           className="h-10 w-10 rounded-xl border-gray-200 bg-white p-0 text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5"
           aria-label={t("admin.topbar.preferencesAria")}
         >
-          <SlidersHorizontal className="h-4 w-4" />
+          <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
 
@@ -119,7 +119,7 @@ export const AdminPreferencesMenu = () => {
           onSelect={() => setTheme({ theme: "light" })}
           className="cursor-pointer rounded-xl px-2 py-2 focus:bg-gray-50 dark:focus:bg-white/5"
         >
-          <Sun className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+          <Sun aria-hidden="true" className="h-4 w-4 text-gray-600 dark:text-gray-300" />
           <span className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
             {t("admin.topbar.lightMode")}
           </span>
@@ -134,7 +134,7 @@ export const AdminPreferencesMenu = () => {
           onSelect={() => setTheme({ theme: "dark" })}
           className="cursor-pointer rounded-xl px-2 py-2 focus:bg-gray-50 dark:focus:bg-white/5"
         >
-          <Moon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+          <Moon aria-hidden="true" className="h-4 w-4 text-gray-600 dark:text-gray-300" />
           <span className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
             {t("admin.topbar.darkMode")}
           </span>
@@ -152,7 +152,7 @@ export const AdminPreferencesMenu = () => {
           disabled={isLoggingOut}
           className="cursor-pointer rounded-xl px-2 py-2 text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-500/10 focus:text-red-700 dark:focus:text-red-300"
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut aria-hidden="true" className="h-4 w-4" />
           <span className="ml-2 text-sm font-medium">
             {isLoggingOut ? t("admin.topbar.loggingOut") : t("admin.topbar.logout")}
           </span>

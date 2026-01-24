@@ -58,9 +58,13 @@ export const useAdminCarsState = () => {
   const openAddCar = () => setIsAddCarOpen(true);
   const closeAddCar = () => setIsAddCarOpen(false);
 
-  const addCar = ({ car }: { car: AdminCar }) => {
+  const addCar = useCallback(({ car }: { car: AdminCar }) => {
     setAllCars((prev) => [car, ...prev]);
-  };
+    // Update cache as well
+    if (carsCache) {
+      carsCache = createCacheEntry({ data: [car, ...carsCache.data] });
+    }
+  }, []);
 
   const isCarsCacheValid = useMemo(() => {
     return isCacheValid({ cache: carsCache, duration: CACHE_DURATION });
@@ -69,9 +73,9 @@ export const useAdminCarsState = () => {
   // Apply filters to get filtered cars and sort by purchase date (newest first)
   const filteredCars = useMemo(() => {
     const filtered = filterCars({ cars: allCars, filters });
-    
-    // Sort by purchase date (newest first)
-    return filtered.sort((a, b) => {
+
+    // Sort by purchase date (newest first) - use spread + sort for immutability
+    return [...filtered].sort((a, b) => {
       const dateA = a.details?.purchaseDate ? new Date(a.details.purchaseDate).getTime() : 0;
       const dateB = b.details?.purchaseDate ? new Date(b.details.purchaseDate).getTime() : 0;
       return dateB - dateA; // Descending order (newest first)

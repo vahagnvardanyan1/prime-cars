@@ -102,7 +102,7 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
             {car.engine && (
               <>
                 <span className="flex items-center gap-1">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                   {car.engine}
@@ -123,7 +123,7 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
         {/* Location for AVAILABLE Cars */}
         {car.category === "AVAILABLE" && car.location && (
           <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-3">
-            <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg aria-hidden="true" className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -147,16 +147,16 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
             <button
               onClick={handleUpdateClick}
               className="p-2 bg-[#429de6] hover:bg-[#3a8acc] text-white rounded-lg transition-all duration-200 hover:shadow-md active:scale-95"
-              title="Update Car"
+              aria-label="Update car"
             >
-              <Pencil className="w-4 h-4" />
+              <Pencil aria-hidden="true" className="w-4 h-4" />
             </button>
             <button
               onClick={handleDeleteClick}
               className="p-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-all duration-200 hover:shadow-md active:scale-95"
-              title="Delete Car"
+              aria-label="Delete car"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 aria-hidden="true" className="w-4 h-4" />
             </button>
           </div>
         </div>

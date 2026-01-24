@@ -77,26 +77,26 @@ const CarListItem = memo(({ car }: { car: Car }) => {
 
             <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
               <div className="flex items-center gap-1.5">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 <span>{car.location}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
                 <span>{car.horsepower} {tCarDetails("horsepowerUnit")}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                 </svg>
                 <span>{translateFuelType(car.fuelType, tCarDetails)}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
                 <span>{translateTransmission(car.transmission, tCarDetails)}</span>
@@ -140,19 +140,19 @@ const EmptyState = memo(({ category }: { category: CarCategory }) => {
     switch (category) {
       case "AVAILABLE":
         return (
-          <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg aria-hidden="true" className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
           </svg>
         );
       case "ONROAD":
         return (
-          <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg aria-hidden="true" className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
           </svg>
         );
       case "TRANSIT":
         return (
-          <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg aria-hidden="true" className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
         );
@@ -246,19 +246,19 @@ export const CarsPage = () => {
     if (!Array.isArray(cars)) {
       return [];
     }
-    
-    const sorted = [...cars];
+
+    // Use spread + sort for immutability (avoid mutating original array)
     switch (sortOption) {
       case "price-asc":
-        return sorted.sort((a, b) => a.priceUsd - b.priceUsd);
+        return [...cars].sort((a, b) => a.priceUsd - b.priceUsd);
       case "price-desc":
-        return sorted.sort((a, b) => b.priceUsd - a.priceUsd);
+        return [...cars].sort((a, b) => b.priceUsd - a.priceUsd);
       case "year-newest":
-        return sorted.sort((a, b) => b.year - a.year);
+        return [...cars].sort((a, b) => b.year - a.year);
       case "year-oldest":
-        return sorted.sort((a, b) => a.year - b.year);
+        return [...cars].sort((a, b) => a.year - b.year);
       default:
-        return sorted;
+        return cars;
     }
   };
 
@@ -301,74 +301,74 @@ export const CarsPage = () => {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-64 p-1.5 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10 shadow-xl">
-                <DropdownMenuItem 
-                  onClick={() => handleSortChange("price-asc")} 
+                <DropdownMenuItem
+                  onClick={() => handleSortChange("price-asc")}
                   className="cursor-pointer rounded-md px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10"
                 >
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg aria-hidden="true" className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
                       </svg>
                       <span className="text-sm font-medium">{t("sortOptions.priceAsc")}</span>
                     </div>
                     {sortOption === "price-asc" && (
-                      <svg className="w-4 h-4 text-[#429de6]" fill="currentColor" viewBox="0 0 20 20">
+                      <svg aria-hidden="true" className="w-4 h-4 text-[#429de6]" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     )}
                   </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => handleSortChange("price-desc")} 
+                <DropdownMenuItem
+                  onClick={() => handleSortChange("price-desc")}
                   className="cursor-pointer rounded-md px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10"
                 >
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg aria-hidden="true" className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
                       </svg>
                       <span className="text-sm font-medium">{t("sortOptions.priceDesc")}</span>
                     </div>
                     {sortOption === "price-desc" && (
-                      <svg className="w-4 h-4 text-[#429de6]" fill="currentColor" viewBox="0 0 20 20">
+                      <svg aria-hidden="true" className="w-4 h-4 text-[#429de6]" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     )}
                   </div>
                 </DropdownMenuItem>
                 <div className="h-px bg-gray-200 dark:bg-white/10 my-1.5" />
-                <DropdownMenuItem 
-                  onClick={() => handleSortChange("year-newest")} 
+                <DropdownMenuItem
+                  onClick={() => handleSortChange("year-newest")}
                   className="cursor-pointer rounded-md px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10"
                 >
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg aria-hidden="true" className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span className="text-sm font-medium">{t("sortOptions.yearNewest")}</span>
                     </div>
                     {sortOption === "year-newest" && (
-                      <svg className="w-4 h-4 text-[#429de6]" fill="currentColor" viewBox="0 0 20 20">
+                      <svg aria-hidden="true" className="w-4 h-4 text-[#429de6]" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     )}
                   </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => handleSortChange("year-oldest")} 
+                <DropdownMenuItem
+                  onClick={() => handleSortChange("year-oldest")}
                   className="cursor-pointer rounded-md px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10"
                 >
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg aria-hidden="true" className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span className="text-sm font-medium">{t("sortOptions.yearOldest")}</span>
                     </div>
                     {sortOption === "year-oldest" && (
-                      <svg className="w-4 h-4 text-[#429de6]" fill="currentColor" viewBox="0 0 20 20">
+                      <svg aria-hidden="true" className="w-4 h-4 text-[#429de6]" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     )}
@@ -388,8 +388,9 @@ export const CarsPage = () => {
                       : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                   }`}
                   aria-label="Grid view"
+                  aria-pressed={viewMode === "grid"}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                   </svg>
                 </button>
@@ -401,8 +402,9 @@ export const CarsPage = () => {
                       : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                   }`}
                   aria-label="List view"
+                  aria-pressed={viewMode === "list"}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>

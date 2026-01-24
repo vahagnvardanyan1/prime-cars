@@ -82,9 +82,10 @@ export const UsersView = ({
             <Button
               type="button"
               onClick={onCreateUser}
+              aria-label={tTable("createUser")}
               className="h-9 rounded-xl bg-[#429de6] text-white hover:bg-[#3a8acc] flex items-center gap-2"
             >
-              <Plus className="h-4 w-4" />
+              <Plus aria-hidden="true" className="h-4 w-4" />
               <span className="hidden sm:inline">{tTable("createUser")}</span>
             </Button>
           )}
@@ -124,10 +125,12 @@ export const UsersView = ({
             <TableRow>
               <TableCell colSpan={isAdmin ? 8 : 7} className="py-12">
                 <div className="flex flex-col items-center justify-center gap-3">
-                  <svg className="animate-spin h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
+                  <div aria-hidden="true" className="animate-spin">
+                    <svg className="h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </div>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     {tTable("loadingUsers")}
                   </span>
@@ -200,9 +203,10 @@ export const UsersView = ({
                         onClick={() => onUpdateUser(u)}
                         variant="outline"
                         size="sm"
+                        aria-label={`${t("admin.actions.update")} ${u.firstName} ${u.lastName}`}
                         className="h-9 px-3 gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 dark:border-blue-900/50 dark:text-blue-400 dark:hover:bg-blue-950/50 dark:hover:border-blue-800 dark:hover:text-blue-300 transition-all"
                       >
-                        <Pencil className="h-4 w-4" />
+                        <Pencil aria-hidden="true" className="h-4 w-4" />
                         <span className="hidden sm:inline">{t("admin.actions.update")}</span>
                       </Button>
                     )}
@@ -211,9 +215,10 @@ export const UsersView = ({
                         onClick={() => onDeleteUser(u)}
                         variant="outline"
                         size="sm"
+                        aria-label={`${t("admin.actions.delete")} ${u.firstName} ${u.lastName}`}
                         className="h-9 px-3 gap-2 border-gray-300 bg-gray-50 text-gray-700 hover:bg-gray-100 hover:border-gray-400 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-900/30 dark:text-gray-400 dark:hover:bg-gray-900/50 dark:hover:border-gray-600 dark:hover:text-gray-300 transition-all"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 aria-hidden="true" className="h-4 w-4" />
                         <span className="hidden sm:inline">{t("admin.actions.delete")}</span>
                       </Button>
                     )}

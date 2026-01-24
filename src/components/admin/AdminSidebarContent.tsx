@@ -71,12 +71,12 @@ export const AdminSidebarContent = ({
             {t("admin.sidebar.consoleLabel")}
           </div>
         </div>
-        <Link 
+        <Link
           href="/"
           className="hidden md:flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 transition-all duration-200 group shrink-0"
-          title="Go to Home"
+          aria-label={t("admin.sidebar.goToHome")}
         >
-          <Home className="h-4 w-4 text-gray-700 dark:text-gray-300 group-hover:text-[#429de6] dark:group-hover:text-[#429de6] transition-colors" />
+          <Home aria-hidden="true" className="h-4 w-4 text-gray-700 dark:text-gray-300 group-hover:text-[#429de6] dark:group-hover:text-[#429de6] transition-colors" />
         </Link>
       </div>
 
@@ -102,6 +102,7 @@ export const AdminSidebarContent = ({
                 )}
               >
                 <span
+                  aria-hidden="true"
                   className={cn(
                     "flex h-9 w-9 items-center justify-center rounded-lg ring-1 ring-inset transition-colors",
                     isActive

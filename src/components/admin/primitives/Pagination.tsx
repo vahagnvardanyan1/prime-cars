@@ -77,9 +77,10 @@ export const Pagination = ({
           size="icon"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={!canGoPrevious}
+          aria-label={t("previousPage")}
           className="h-8 w-8 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft aria-hidden="true" className="h-4 w-4" />
         </Button>
         
         <div className="flex items-center gap-1">
@@ -175,9 +176,10 @@ export const Pagination = ({
           size="icon"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={!canGoNext}
+          aria-label={t("nextPage")}
           className="h-8 w-8 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight aria-hidden="true" className="h-4 w-4" />
         </Button>
       </div>
     </div>
