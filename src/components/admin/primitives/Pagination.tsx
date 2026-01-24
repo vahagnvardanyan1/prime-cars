@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useCallback, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -22,22 +23,32 @@ type PaginationProps = {
   pageSizeOptions?: number[];
 };
 
-export const Pagination = ({
+// Extract default value to prevent broken memoization (rule 5.3)
+const DEFAULT_PAGE_SIZE_OPTIONS = [25, 50, 100];
+
+export const Pagination = memo(function Pagination({
   currentPage,
   totalPages,
   pageSize,
   totalItems,
   onPageChange,
   onPageSizeChange,
-  pageSizeOptions = [25, 50, 100],
-}: PaginationProps) => {
+  pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
+}: PaginationProps) {
   const t = useTranslations("admin.pagination");
 
-  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  const endItem = Math.min(currentPage * pageSize, totalItems);
+  // Memoize derived values
+  const { startItem, endItem, canGoPrevious, canGoNext } = useMemo(() => ({
+    startItem: totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1,
+    endItem: Math.min(currentPage * pageSize, totalItems),
+    canGoPrevious: currentPage > 1,
+    canGoNext: currentPage < totalPages,
+  }), [currentPage, pageSize, totalItems, totalPages]);
 
-  const canGoPrevious = currentPage > 1;
-  const canGoNext = currentPage < totalPages;
+  // Stable callbacks
+  const handlePrevPage = useCallback(() => onPageChange(currentPage - 1), [onPageChange, currentPage]);
+  const handleNextPage = useCallback(() => onPageChange(currentPage + 1), [onPageChange, currentPage]);
+  const handlePageSizeChange = useCallback((value: string) => onPageSizeChange(parseInt(value, 10)), [onPageSizeChange]);
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-gray-200 dark:border-white/10">
@@ -50,7 +61,7 @@ export const Pagination = ({
           <span>{t("itemsPerPage")}:</span>
           <Select
             value={pageSize.toString()}
-            onValueChange={(value) => onPageSizeChange(parseInt(value, 10))}
+            onValueChange={handlePageSizeChange}
           >
             <SelectTrigger className="h-8 w-[80px] bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10">
               <SelectValue />
@@ -75,7 +86,7 @@ export const Pagination = ({
         <Button
           variant="outline"
           size="icon"
-          onClick={() => onPageChange(currentPage - 1)}
+          onClick={handlePrevPage}
           disabled={!canGoPrevious}
           aria-label={t("previousPage")}
           className="h-8 w-8 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
@@ -174,7 +185,7 @@ export const Pagination = ({
         <Button
           variant="outline"
           size="icon"
-          onClick={() => onPageChange(currentPage + 1)}
+          onClick={handleNextPage}
           disabled={!canGoNext}
           aria-label={t("nextPage")}
           className="h-8 w-8 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
@@ -184,4 +195,4 @@ export const Pagination = ({
       </nav>
     </div>
   );
-};
+});

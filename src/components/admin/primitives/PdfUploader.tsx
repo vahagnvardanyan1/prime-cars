@@ -70,7 +70,7 @@ export const PdfUploader = ({
   const [error, setError] = useState<string>("");
   const [showUploadNew, setShowUploadNew] = useState(false);
 
-  const validateFile = (file: File): boolean => {
+  const validateFile = useCallback((file: File): boolean => {
     setError("");
 
     if (file.type !== "application/pdf") {
@@ -85,14 +85,14 @@ export const PdfUploader = ({
     }
 
     return true;
-  };
+  }, [translations.onlyPdfAllowed, translations.fileSizeLimit]);
 
   const handleFile = useCallback((file: File) => {
     if (validateFile(file)) {
       setSelectedFile(file);
       onFileSelect(file);
     }
-  }, [onFileSelect]);
+  }, [onFileSelect, validateFile]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
