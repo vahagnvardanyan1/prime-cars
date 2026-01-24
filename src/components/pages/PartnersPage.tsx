@@ -17,7 +17,7 @@ export const PartnersPage = () => {
             {/* Left Content */}
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-full text-[#429de6] mb-6 transition-colors duration-300">
-                <Users className="w-4 h-4" />
+                <Users aria-hidden="true" className="w-4 h-4" />
                 <span>{t("partners.badge")}</span>
               </div>
               <h1 className="text-gray-900 dark:text-white mb-6">
@@ -33,32 +33,37 @@ export const PartnersPage = () => {
                   {t("partners.getInTouch")}
                 </h3>
                 
-                <a 
+                <a
                   href="tel:+37444771130"
                   className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-[#429de6] dark:hover:text-[#429de6] transition-colors group"
                 >
                   <div className="w-10 h-10 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center border border-gray-300 dark:border-white/10 group-hover:border-[#429de6]/50 transition-colors">
-                    <Phone className="w-5 h-5" />
+                    <Phone aria-hidden="true" className="w-5 h-5" />
                   </div>
                   <span>+374 44 771130</span>
                 </a>
                 
-                <a 
+                <a
                   href="mailto:primecarsarm@gmail.com"
                   className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-[#429de6] dark:hover:text-[#429de6] transition-colors group"
                 >
                   <div className="w-10 h-10 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center border border-gray-300 dark:border-white/10 group-hover:border-[#429de6]/50 transition-colors">
-                    <Mail className="w-5 h-5" />
+                    <Mail aria-hidden="true" className="w-5 h-5" />
                   </div>
                   <span>primecarsarm@gmail.com</span>
                 </a>
                 
-                <div className="flex items-start gap-3 text-gray-600 dark:text-gray-400">
-                  <div className="w-10 h-10 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center border border-gray-300 dark:border-white/10 flex-shrink-0">
-                    <MapPin className="w-5 h-5" />
+                <a
+                  href="https://maps.google.com/?q=Arshakunyats+26+Yerevan"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 text-gray-600 dark:text-gray-400 hover:text-[#429de6] dark:hover:text-[#429de6] transition-colors group"
+                >
+                  <div className="w-10 h-10 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center border border-gray-300 dark:border-white/10 flex-shrink-0 group-hover:border-[#429de6]/50 transition-colors">
+                    <MapPin aria-hidden="true" className="w-5 h-5" />
                   </div>
                   <span>{t("footer.address")}</span>
-                </div>
+                </a>
               </div>
             </div>
 
@@ -94,7 +99,7 @@ export const PartnersPage = () => {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white dark:bg-black rounded-2xl border border-gray-300 dark:border-white/10 p-8 hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all">
               <div className="w-14 h-14 bg-gray-100 dark:bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-gray-300 dark:border-white/10">
-                <TrendingUp className="w-7 h-7 text-[#429de6]" />
+                <TrendingUp aria-hidden="true" className="w-7 h-7 text-[#429de6]" />
               </div>
               <h3 className="text-gray-900 dark:text-white mb-3">
                 {t("partners.benefits.growth.title")}
@@ -106,7 +111,7 @@ export const PartnersPage = () => {
 
             <div className="bg-white dark:bg-black rounded-2xl border border-gray-300 dark:border-white/10 p-8 hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all">
               <div className="w-14 h-14 bg-gray-100 dark:bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-gray-300 dark:border-white/10">
-                <Shield className="w-7 h-7 text-[#429de6]" />
+                <Shield aria-hidden="true" className="w-7 h-7 text-[#429de6]" />
               </div>
               <h3 className="text-gray-900 dark:text-white mb-3">
                 {t("partners.benefits.trusted.title")}
@@ -118,7 +123,7 @@ export const PartnersPage = () => {
 
             <div className="bg-white dark:bg-black rounded-2xl border border-gray-300 dark:border-white/10 p-8 hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all">
               <div className="w-14 h-14 bg-gray-100 dark:bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-gray-300 dark:border-white/10">
-                <Globe className="w-7 h-7 text-[#429de6]" />
+                <Globe aria-hidden="true" className="w-7 h-7 text-[#429de6]" />
               </div>
               <h3 className="text-gray-900 dark:text-white mb-3">
                 {t("partners.benefits.global.title")}
