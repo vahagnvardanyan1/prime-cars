@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useState } from "react";
+import Image from "next/image";
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
@@ -9,6 +10,7 @@ import { translateFuelType, translateTransmission } from "@/lib/utils/translateV
 
 import { Container } from "@/components/layouts";
 import { CarCard } from "@/components/pages/cars/CarCard";
+import { CategoryBadge } from "@/components/ui/badges";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,29 +42,6 @@ const CarListItem = memo(({ car }: { car: Car }) => {
     }
   };
 
-  const getCategoryBadge = () => {
-    switch (car.category) {
-      case "AVAILABLE":
-        return (
-          <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400">
-            {tCarDetails("badges.available")}
-          </span>
-        );
-      case "ONROAD":
-        return (
-          <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400">
-            {tCarDetails("badges.arriving")}
-          </span>
-        );
-      case "TRANSIT":
-        return (
-          <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-[#429de6]/20 text-blue-700 dark:text-[#429de6]">
-            {tCarDetails("badges.order")}
-          </span>
-        );
-    }
-  };
-
   return (
     <div
       role="button"
@@ -73,11 +52,13 @@ const CarListItem = memo(({ car }: { car: Car }) => {
     >
       <div className="flex gap-6 p-4">
         {/* Image */}
-        <div className="flex-shrink-0 w-48 h-32 bg-gray-100 dark:bg-white/5 rounded-lg overflow-hidden">
-          <img
+        <div className="relative flex-shrink-0 w-48 h-32 bg-gray-100 dark:bg-white/5 rounded-lg overflow-hidden">
+          <Image
             src={car.imageUrl}
             alt={`${car.brand} ${car.model}`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="192px"
           />
         </div>
 
@@ -91,7 +72,7 @@ const CarListItem = memo(({ car }: { car: Car }) => {
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{car.year}</p>
               </div>
-              {getCategoryBadge()}
+              <CategoryBadge category={car.category} />
             </div>
 
             <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
