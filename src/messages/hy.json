@@ -137,6 +137,10 @@
     "viewCta": "Դիտել մանրամասները",
     "requestCta": "Պատվիրել հիմա",
     "sort": "Դասավորել",
+    "viewToggleAriaLabel": "Փոխել դիտման ռեժիմը",
+    "gridViewAriaLabel": "Ցանցային դիտում",
+    "listViewAriaLabel": "Ցանկի դիտում",
+    "sortAriaLabel": "Դասավորել",
     "sortOptions": {
       "priceAsc": "Գին: Ցածրից բարձր",
       "priceDesc": "Գին: Բարձրից ցածր",
