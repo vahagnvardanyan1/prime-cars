@@ -84,11 +84,12 @@ export const LanguageSwitcher = ({
               key={option.locale}
               onSelect={() => onSelect({ nextLocale: option.locale })}
               className={cn(
-                "cursor-pointer rounded-lg px-2.5 py-2 focus:bg-gray-50 dark:focus:bg-white/5",
+                "cursor-pointer rounded-lg px-2.5 py-2 focus:bg-gray-50 dark:focus:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-inset",
                 isActive ? "bg-[#429de6]/10" : "",
               )}
+              aria-current={isActive ? "true" : undefined}
             >
-              <span className="text-base leading-none">{option.flag}</span>
+              <span aria-hidden="true" className="text-base leading-none">{option.flag}</span>
               <div className="min-w-0">
                 <div className="text-sm font-medium text-gray-900 dark:text-white">
                   {option.label}

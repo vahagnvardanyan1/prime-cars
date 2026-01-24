@@ -31,7 +31,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
-                className="w-10 h-10 bg-gray-200 dark:bg-white/10 hover:bg-[#429de6] dark:hover:bg-[#429de6] rounded-lg flex items-center justify-center transition-all"
+                className="w-10 h-10 bg-gray-200 dark:bg-white/10 hover:bg-[#429de6] dark:hover:bg-[#429de6] rounded-lg flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
               >
                 <Facebook aria-hidden="true" className="w-5 h-5" />
               </a>
@@ -40,14 +40,14 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="w-10 h-10 bg-gray-200 dark:bg-white/10 hover:bg-[#429de6] dark:hover:bg-[#429de6] rounded-lg flex items-center justify-center transition-all"
+                className="w-10 h-10 bg-gray-200 dark:bg-white/10 hover:bg-[#429de6] dark:hover:bg-[#429de6] rounded-lg flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
               >
                 <Instagram aria-hidden="true" className="w-5 h-5" />
               </a>
             </div>
           </div>
 
-          <div>
+          <nav aria-label={t("footer.quickLinks")}>
             <h3 className="text-gray-900 dark:text-white mb-4">
               {t("footer.quickLinks")}
             </h3>
@@ -55,7 +55,7 @@ export const Footer = () => {
               <li>
                 <Link
                   href="/"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
                 >
                   {t("footer.links.home")}
                 </Link>
@@ -63,7 +63,7 @@ export const Footer = () => {
               <li>
                 <Link
                   href="/cars"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
                 >
                   {t("footer.links.browseCars")}
                 </Link>
@@ -71,7 +71,7 @@ export const Footer = () => {
               <li>
                 <Link
                   href="/calculator"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
                 >
                   {t("footer.links.costCalculator")}
                 </Link>
@@ -79,44 +79,46 @@ export const Footer = () => {
               <li>
                 <Link
                   href="/partners"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
                 >
                   {t("footer.links.partners")}
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
 
           <div>
             <h3 className="text-gray-900 dark:text-white mb-4">
               {t("footer.contact")}
             </h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <Mail aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
-                <a
-                  href="mailto:primecarsarm@gmail.com"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                >
-                  primecarsarm@gmail.com
-                </a>
-              </li>
-              <li className="flex items-start gap-3">
-                <Phone aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
-                <a
-                  href="tel:+37444771130"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                >
-                  +374 44 771130
-                </a>
-              </li>
-              <li className="flex items-start gap-3">
-                <MapPin aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
-                <span className="text-gray-600 dark:text-gray-400">
-                  {t("footer.address")}
-                </span>
-              </li>
-            </ul>
+            <address className="not-italic">
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <Mail aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
+                  <a
+                    href="mailto:primecarsarm@gmail.com"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
+                  >
+                    primecarsarm@gmail.com
+                  </a>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Phone aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
+                  <a
+                    href="tel:+37444771130"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
+                  >
+                    +374 44 771130
+                  </a>
+                </li>
+                <li className="flex items-start gap-3">
+                  <MapPin aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-600 dark:text-gray-400">
+                    {t("footer.address")}
+                  </span>
+                </li>
+              </ul>
+            </address>
           </div>
         </div>
 
