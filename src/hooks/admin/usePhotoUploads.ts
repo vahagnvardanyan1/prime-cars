@@ -8,13 +8,14 @@ type UsePhotoUploadsArgs = {
 };
 
 export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsArgs) => {
-  const [files, setFiles] = useState<(File | null)[]>(
-    Array.from({ length: initialSlots }).map(() => null),
+  // Use lazy state initialization to avoid creating arrays on every render
+  const [files, setFiles] = useState<(File | null)[]>(() =>
+    Array.from({ length: initialSlots }, () => null)
   );
-  
+
   // Store preview URLs separately with a ref to track which files they belong to
-  const [previews, setPreviews] = useState<(string | null)[]>(
-    Array.from({ length: initialSlots }).map(() => null)
+  const [previews, setPreviews] = useState<(string | null)[]>(() =>
+    Array.from({ length: initialSlots }, () => null)
   );
   const fileToUrlMap = useRef<Map<File, string>>(new Map());
 
@@ -48,11 +49,13 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
 
   // Cleanup all URLs on unmount
   useEffect(() => {
+    // Capture ref value in effect to avoid stale ref in cleanup
+    const urlMap = fileToUrlMap.current;
     return () => {
-      for (const url of fileToUrlMap.current.values()) {
+      for (const url of urlMap.values()) {
         URL.revokeObjectURL(url);
       }
-      fileToUrlMap.current.clear();
+      urlMap.clear();
     };
   }, []);
 
@@ -90,7 +93,7 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
   }, []);
 
   const clearAll = useCallback(() => {
-    setFiles(Array.from({ length: initialSlots }).map(() => null));
+    setFiles(Array.from({ length: initialSlots }, () => null));
   }, [initialSlots]);
 
   const addMultipleFiles = useCallback((newFiles: File[]) => {

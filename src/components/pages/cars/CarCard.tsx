@@ -43,6 +43,7 @@ export const CarCard = ({ car }: CarCardProps) => {
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       className="group relative bg-white dark:bg-[#111111] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all duration-300 hover:shadow-lg cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
+      aria-label={`${car.brand} ${car.model} - ${formatPrice(car.priceUsd)}`}
     >
       {/* Image Container */}
       <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#1a1a1a]">
@@ -90,13 +91,13 @@ export const CarCard = ({ car }: CarCardProps) => {
                   </svg>
                   {translateEngineType(car.engine, tCarDetails)}
                 </span>
-                {(car.horsepower || car.fuelType) && <span className="text-gray-300 dark:text-gray-600">•</span>}
+                {(car.horsepower || car.fuelType) && <span aria-hidden="true" className="text-gray-300 dark:text-gray-600">•</span>}
               </>
             )}
             {car.horsepower && (
               <>
-                <span>{car.horsepower} {tCarDetails("horsepowerUnit")}</span>
-                {car.fuelType && <span className="text-gray-300 dark:text-gray-600">•</span>}
+                <span className="tabular-nums">{car.horsepower} {tCarDetails("horsepowerUnit")}</span>
+                {car.fuelType && <span aria-hidden="true" className="text-gray-300 dark:text-gray-600">•</span>}
               </>
             )}
             {car.fuelType && <span>{translateFuelType(car.fuelType, tCarDetails)}</span>}
@@ -110,7 +111,7 @@ export const CarCard = ({ car }: CarCardProps) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            <span>{car.location}</span>
+            <span className="truncate">{car.location}</span>
           </div>
         )}
 
@@ -120,17 +121,17 @@ export const CarCard = ({ car }: CarCardProps) => {
             <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">
               {car.category === "TRANSIT" ? t("startingFrom") : t("price")}
             </p>
-            <p className="text-lg font-bold text-gray-900 dark:text-white">
+            <p className="text-lg font-bold text-gray-900 dark:text-white tabular-nums">
               {formatPrice(car.priceUsd)}
             </p>
           </div>
 
-          <button 
+          <button
             onClick={(e) => {
               e.stopPropagation();
               handleClick();
             }}
-            className="px-4 py-2 bg-[#429de6] hover:bg-[#3a8acc] text-white text-sm font-medium rounded-lg transition-all duration-200 hover:shadow-md active:scale-95"
+            className="px-4 py-2 bg-[#429de6] hover:bg-[#3a8acc] text-white text-sm font-medium rounded-lg transition-colors duration-200 hover:shadow-md active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
           >
             {car.category === "TRANSIT" ? t("requestCta") : t("viewCta")}
           </button>

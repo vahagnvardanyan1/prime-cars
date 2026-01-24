@@ -81,13 +81,13 @@ const CarListItem = memo(({ car }: { car: Car }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span>{car.location}</span>
+                <span className="truncate">{car.location}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                <span>{car.horsepower} {tCarDetails("horsepowerUnit")}</span>
+                <span className="tabular-nums">{car.horsepower} {tCarDetails("horsepowerUnit")}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,11 +107,11 @@ const CarListItem = memo(({ car }: { car: Car }) => {
           {/* Price and CTA */}
           <div className="flex items-center justify-between mt-3">
             <div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-2xl font-bold text-gray-900 dark:text-white tabular-nums">
                 ${car.priceUsd.toLocaleString()}
               </p>
             </div>
-            <button className="px-6 py-2 bg-[#429de6] hover:bg-[#3a8acc] text-white text-sm font-semibold rounded-lg transition-all duration-200 hover:shadow-lg active:scale-95">
+            <button className="px-6 py-2 bg-[#429de6] hover:bg-[#3a8acc] text-white text-sm font-semibold rounded-lg transition-colors duration-200 hover:shadow-lg active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2">
               {t("viewCta")}
             </button>
           </div>
@@ -337,7 +337,7 @@ export const CarsPage = () => {
                     )}
                   </div>
                 </DropdownMenuItem>
-                <div className="h-px bg-gray-200 dark:bg-white/10 my-1.5" />
+                <div aria-hidden="true" className="h-px bg-gray-200 dark:bg-white/10 my-1.5" />
                 <DropdownMenuItem
                   onClick={() => handleSortChange("year-newest")}
                   className="cursor-pointer rounded-md px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10"
@@ -379,15 +379,15 @@ export const CarsPage = () => {
 
             {/* View Toggle - Hidden on mobile */}
             {!isMobile && (
-              <div className="flex items-center gap-1 p-1 bg-gray-100 dark:bg-white/5 rounded-lg">
+              <div className="flex items-center gap-1 p-1 bg-gray-100 dark:bg-white/5 rounded-lg" role="group" aria-label={t("viewToggleAriaLabel")}>
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`p-2 rounded-md transition-all ${
+                  className={`p-2 rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] ${
                     viewMode === "grid"
                       ? "text-gray-900 dark:text-white bg-white dark:bg-white/10 shadow-sm"
                       : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                   }`}
-                  aria-label="Grid view"
+                  aria-label={t("gridViewAriaLabel")}
                   aria-pressed={viewMode === "grid"}
                 >
                   <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -396,12 +396,12 @@ export const CarsPage = () => {
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`p-2 rounded-md transition-all ${
+                  className={`p-2 rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] ${
                     viewMode === "list"
                       ? "text-gray-900 dark:text-white bg-white dark:bg-white/10 shadow-sm"
                       : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                   }`}
-                  aria-label="List view"
+                  aria-label={t("listViewAriaLabel")}
                   aria-pressed={viewMode === "list"}
                 >
                   <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

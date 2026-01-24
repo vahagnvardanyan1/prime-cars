@@ -55,18 +55,15 @@ export const useAdminCarsState = () => {
     purchaseDateTo: searchParams.get("purchaseDateTo") || "",
   }));
 
-  const openAddCar = () => setIsAddCarOpen(true);
-  const closeAddCar = () => setIsAddCarOpen(false);
+  const openAddCar = useCallback(() => setIsAddCarOpen(true), []);
+  const closeAddCar = useCallback(() => setIsAddCarOpen(false), []);
 
   const addCar = useCallback(({ car }: { car: AdminCar }) => {
     setAllCars((prev) => [car, ...prev]);
-    // Update cache as well
-    if (carsCache) {
-      carsCache = createCacheEntry({ data: [car, ...carsCache.data] });
-    }
   }, []);
 
-  const isCarsCacheValid = useMemo(() => {
+  // Check cache validity at call time (not memoized since cache timestamp changes)
+  const checkCacheValid = useCallback(() => {
     return isCacheValid({ cache: carsCache, duration: CACHE_DURATION });
   }, []);
 
@@ -74,7 +71,7 @@ export const useAdminCarsState = () => {
   const filteredCars = useMemo(() => {
     const filtered = filterCars({ cars: allCars, filters });
 
-    // Sort by purchase date (newest first) - use spread + sort for immutability
+    // Sort by purchase date (newest first) - spread for immutability
     return [...filtered].sort((a, b) => {
       const dateA = a.details?.purchaseDate ? new Date(a.details.purchaseDate).getTime() : 0;
       const dateB = b.details?.purchaseDate ? new Date(b.details.purchaseDate).getTime() : 0;
@@ -123,7 +120,7 @@ export const useAdminCarsState = () => {
     const pageToFetch = page !== undefined ? page : currentPage;
     const limitToFetch = limit !== undefined ? limit : pageSize;
 
-    const useCache = !forceRefresh && carsCache && isCarsCacheValid;
+    const useCache = !forceRefresh && carsCache && checkCacheValid();
     
     if (useCache && carsCache) {
       setAllCars(carsCache.data);
@@ -160,7 +157,7 @@ export const useAdminCarsState = () => {
     } finally {
       setIsLoadingCars(false);
     }
-  }, [currentPage, pageSize, isCarsCacheValid]);
+  }, [currentPage, pageSize, checkCacheValid]);
 
   const changePage = useCallback((page: number) => {
     setCurrentPage(page);
@@ -228,7 +225,7 @@ export const useAdminCarsState = () => {
     closeAddCar,
     addCar,
     loadCars,
-    isCarsCacheValid,
+    checkCacheValid,
     filters,
     updateFilters,
     clearFilters,

@@ -72,7 +72,8 @@ export const CarsCarousel = ({ cars }: CarsCarouselProps) => {
                       router.push(`/cars/${car.id}`);
                     }
                   }}
-                  className="bg-white dark:bg-[#111111] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-all group h-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
+                  aria-label={`${carName} - ${carPrice}`}
+                  className="bg-white dark:bg-[#111111] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-colors group h-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#1a1a1a]">
                     {/* Year Badge - Left */}
@@ -99,16 +100,16 @@ export const CarsCarousel = ({ cars }: CarsCarouselProps) => {
                     <h3 className="mb-2 line-clamp-2">{carName}</h3>
                     <p className="text-sm mb-4 text-gray-600 dark:text-gray-400">
                       {car.transmission && translateTransmission(car.transmission, tCarDetails)}
-                      {car.transmission && car.fuelType && " • "}
+                      {car.transmission && car.fuelType && <span aria-hidden="true"> • </span>}
                       {car.fuelType && translateFuelType(car.fuelType, tCarDetails)}
-                      {(car.transmission || car.fuelType) && car.engine && " • "}
+                      {(car.transmission || car.fuelType) && car.engine && <span aria-hidden="true"> • </span>}
                       {car.engine && translateEngineType(car.engine, tCarDetails)}
                     </p>
                     <div className="border-t border-gray-200 dark:border-white/10 pt-4">
                       <div className="text-gray-500 dark:text-gray-400 text-xs mb-1">
                         {t("home.popularDeals.priceLabel")}
                       </div>
-                      <div className="text-gray-900 dark:text-white text-lg font-semibold">
+                      <div className="text-gray-900 dark:text-white text-lg font-semibold tabular-nums">
                         {carPrice}
                       </div>
                     </div>

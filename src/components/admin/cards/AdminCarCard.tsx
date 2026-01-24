@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -13,41 +14,45 @@ type AdminCarCardProps = {
   onDelete: (car: Car) => void;
 };
 
-const getCategoryStyles = (category: CarCategory): string => {
-  const styles: Record<CarCategory, string> = {
-    AVAILABLE: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-    ONROAD: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
-    TRANSIT: "bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20",
-  };
-  return styles[category];
+// Hoist static style map outside component to avoid recreation
+const CATEGORY_STYLES: Record<CarCategory, string> = {
+  AVAILABLE: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+  ONROAD: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+  TRANSIT: "bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20",
 };
 
-const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(price);
-};
+// Create price formatter once at module level
+const priceFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
 
-export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => {
+const formatPrice = (price: number): string => priceFormatter.format(price);
+
+// Use memo for optimized re-rendering
+export const AdminCarCard = memo(function AdminCarCard({ car, onUpdate, onDelete }: AdminCarCardProps) {
   const t = useTranslations("carsPage");
   const tCarDetails = useTranslations("carDetails");
   const router = useRouter();
 
-  const handleCardClick = () => {
+  const handleCardClick = useCallback(() => {
     router.push(`/cars/${car.id}`);
-  };
+  }, [router, car.id]);
 
-  const handleUpdateClick = (e: React.MouseEvent) => {
+  const handleUpdateClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     onUpdate(car);
-  };
+  }, [onUpdate, car]);
 
-  const handleDeleteClick = (e: React.MouseEvent) => {
+  const handleDeleteClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     onDelete(car);
-  };
+  }, [onDelete, car]);
+
+  // Memoize derived values
+  const categoryStyles = CATEGORY_STYLES[car.category];
+  const formattedPrice = useMemo(() => formatPrice(car.priceUsd), [car.priceUsd]);
 
   return (
     <div 
@@ -59,13 +64,13 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
         className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#1a1a1a] cursor-pointer"
       >
         {/* Year Badge */}
-        <div className="absolute top-3 left-3 px-2.5 py-1 bg-white/95 dark:bg-black/70 backdrop-blur-md rounded-lg text-gray-900 dark:text-white text-xs font-semibold z-10">
+        <div className="absolute top-3 left-3 px-2.5 py-1 bg-white/95 dark:bg-black/70 backdrop-blur-md rounded-lg text-gray-900 dark:text-white text-xs font-semibold z-10 tabular-nums">
           {car.year}
         </div>
 
         {/* Category Badge */}
         <div
-          className={`absolute top-3 right-3 px-2.5 py-1 backdrop-blur-md rounded-lg text-xs font-semibold z-10 ${getCategoryStyles(car.category)}`}
+          className={`absolute top-3 right-3 px-2.5 py-1 backdrop-blur-md rounded-lg text-xs font-semibold z-10 ${categoryStyles}`}
         >
           {car.category === "AVAILABLE" && tCarDetails("badges.available")}
           {car.category === "ONROAD" && tCarDetails("badges.arriving")}
@@ -107,13 +112,13 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
                   </svg>
                   {car.engine}
                 </span>
-                {(car.horsepower || car.fuelType) && <span className="text-gray-300 dark:text-gray-600">•</span>}
+                {(car.horsepower || car.fuelType) && <span aria-hidden="true" className="text-gray-300 dark:text-gray-600">•</span>}
               </>
             )}
             {car.horsepower && (
               <>
-                <span>{car.horsepower} {tCarDetails("horsepowerUnit")}</span>
-                {car.fuelType && <span className="text-gray-300 dark:text-gray-600">•</span>}
+                <span className="tabular-nums">{car.horsepower} {tCarDetails("horsepowerUnit")}</span>
+                {car.fuelType && <span aria-hidden="true" className="text-gray-300 dark:text-gray-600">•</span>}
               </>
             )}
             {car.fuelType && <span>{car.fuelType}</span>}
@@ -138,7 +143,7 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
               {car.category === "TRANSIT" ? t("startingFrom") : t("price")}
             </p>
             <p className="text-lg font-bold text-gray-900 dark:text-white">
-              {formatPrice(car.priceUsd)}
+              {formattedPrice}
             </p>
           </div>
 
@@ -146,15 +151,15 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
           <div className="flex items-center gap-2">
             <button
               onClick={handleUpdateClick}
-              className="p-2 bg-[#429de6] hover:bg-[#3a8acc] text-white rounded-lg transition-all duration-200 hover:shadow-md active:scale-95"
-              aria-label="Update car"
+              className="p-2 bg-[#429de6] hover:bg-[#3a8acc] text-white rounded-lg transition-colors duration-200 hover:shadow-md active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
+              aria-label={`Update ${car.brand} ${car.model}`}
             >
               <Pencil aria-hidden="true" className="w-4 h-4" />
             </button>
             <button
               onClick={handleDeleteClick}
-              className="p-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-all duration-200 hover:shadow-md active:scale-95"
-              aria-label="Delete car"
+              className="p-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors duration-200 hover:shadow-md active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+              aria-label={`Delete ${car.brand} ${car.model}`}
             >
               <Trash2 aria-hidden="true" className="w-4 h-4" />
             </button>
@@ -163,4 +168,4 @@ export const AdminCarCard = ({ car, onUpdate, onDelete }: AdminCarCardProps) => 
       </div>
     </div>
   );
-};
+});
