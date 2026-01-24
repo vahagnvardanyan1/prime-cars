@@ -34,7 +34,7 @@ export const HomePage = async () => {
 
               <Link
                 href="/calculator"
-                className="px-8 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-all hover:shadow-lg hover:shadow-blue-500/20 mx-auto lg:mx-0 block lg:inline-block"
+                className="px-8 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-colors hover:shadow-lg hover:shadow-blue-500/20 mx-auto lg:mx-0 block lg:inline-block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
               >
                 {t("home.hero.primaryCta")}
               </Link>

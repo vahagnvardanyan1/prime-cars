@@ -131,13 +131,14 @@ export const CalculatorResults = ({
       <div className="bg-gray-100 dark:bg-black/40 border-b border-gray-300 dark:border-gray-800 px-4 sm:px-6 py-3">
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-2 text-[#429de6] dark:text-[#5db3f0] hover:text-[#3a8acc] dark:hover:text-[#6fc0f5] transition-colors group"
+          className="inline-flex items-center gap-2 text-[#429de6] dark:text-[#5db3f0] hover:text-[#3a8acc] dark:hover:text-[#6fc0f5] transition-colors group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2 rounded-md"
           type="button"
         >
-          <svg 
-            className="w-5 h-5 transition-transform group-hover:-translate-x-1" 
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            aria-hidden="true"
+            className="w-5 h-5 transition-transform group-hover:-translate-x-1"
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -148,25 +149,25 @@ export const CalculatorResults = ({
 
       {/* Exchange Rates */}
       <div className="bg-gray-100 dark:bg-black/40 border-b border-gray-300 dark:border-gray-800 py-4 sm:py-6 md:py-8 px-4 sm:px-6">
-        <div className="flex justify-center items-center gap-6 md:gap-12 flex-wrap">
+        <div className="flex justify-center items-center gap-6 md:gap-12 flex-wrap" role="region" aria-label="Exchange rates">
           <div className="text-center">
             <div className="text-gray-600 dark:text-white/70 text-xs md:text-sm mb-1.5">1 USD</div>
-            <div className="text-[#429de6] dark:text-[#5db3f0] font-bold text-lg md:text-xl">
-              {isLoadingRates ? "..." : `${Math.round(parseFloat(usdRate))} AMD`}
+            <div className="text-[#429de6] dark:text-[#5db3f0] font-bold text-lg md:text-xl tabular-nums">
+              {isLoadingRates ? "…" : `${Math.round(parseFloat(usdRate))} AMD`}
             </div>
           </div>
-          <div className="text-[#429de6]/50 dark:text-[#5db3f0]/50 text-2xl">/</div>
+          <div aria-hidden="true" className="text-[#429de6]/50 dark:text-[#5db3f0]/50 text-2xl">/</div>
           <div className="text-center">
             <div className="text-gray-600 dark:text-white/70 text-xs md:text-sm mb-1.5">1 EUR</div>
-            <div className="text-[#429de6] dark:text-[#5db3f0] font-bold text-lg md:text-xl">
-              {isLoadingRates ? "..." : `${Math.round(parseFloat(eurRate))} AMD`}
+            <div className="text-[#429de6] dark:text-[#5db3f0] font-bold text-lg md:text-xl tabular-nums">
+              {isLoadingRates ? "…" : `${Math.round(parseFloat(eurRate))} AMD`}
             </div>
           </div>
-          <div className="text-[#429de6]/50 dark:text-[#5db3f0]/50 text-2xl">/</div>
+          <div aria-hidden="true" className="text-[#429de6]/50 dark:text-[#5db3f0]/50 text-2xl">/</div>
           <div className="text-center">
             <div className="text-gray-600 dark:text-white/70 text-xs md:text-sm mb-1.5">EUR/USD</div>
-            <div className="text-[#429de6] dark:text-[#5db3f0] font-bold text-lg md:text-xl">
-              {isLoadingRates ? "..." : eurUsdRate}
+            <div className="text-[#429de6] dark:text-[#5db3f0] font-bold text-lg md:text-xl tabular-nums">
+              {isLoadingRates ? "…" : eurUsdRate}
             </div>
           </div>
         </div>
@@ -179,23 +180,23 @@ export const CalculatorResults = ({
             <span className="font-bold">
               {importer === "legal" ? t("calculator.results.legalPerson") : t("calculator.results.individual")}
             </span>
-            <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
+            <span aria-hidden="true" className="text-gray-400 dark:text-white/50 mx-2">/</span>
             <span className="font-semibold">{vehicleType ? t(`calculator.form.${vehicleType}`) : t("calculator.results.passengerCar")}</span>
           </p>
           <p className="text-gray-700 dark:text-white/80 text-xs md:text-sm leading-relaxed">
-            <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">{getCurrentDateTime()}</span>
-            <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
+            <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold tabular-nums">{getCurrentDateTime()}</span>
+            <span aria-hidden="true" className="text-gray-400 dark:text-white/50 mx-2">/</span>
             <span className="font-semibold text-[#429de6] dark:text-[#5db3f0]">{activeTab.toUpperCase()}</span>
-            <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
+            <span aria-hidden="true" className="text-gray-400 dark:text-white/50 mx-2">/</span>
             {t("calculator.results.auctionLocationLabel")}: <span className="text-gray-900 dark:text-white font-medium">{auctionLocation || ""}</span>
-            <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
-            {t("calculator.results.chooseYearLabel")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">{year || new Date().getFullYear()}/{month || "--"}/{day || "--"}</span>
-            <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
+            <span aria-hidden="true" className="text-gray-400 dark:text-white/50 mx-2">/</span>
+            {t("calculator.results.chooseYearLabel")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold tabular-nums">{year || new Date().getFullYear()}/{month || "--"}/{day || "--"}</span>
+            <span aria-hidden="true" className="text-gray-400 dark:text-white/50 mx-2">/</span>
             {t("calculator.results.engineLabel")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">
               {engine ? t(`calculator.form.${engine}`) : t("calculator.form.gasoline")}
             </span>
-            <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
-            {t("calculator.results.engineVolumeLabel")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">{engineVolume || "1"}</span>
+            <span aria-hidden="true" className="text-gray-400 dark:text-white/50 mx-2">/</span>
+            {t("calculator.results.engineVolumeLabel")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold tabular-nums">{engineVolume || "1"}</span>
           </p>
         </div>
       </div>
@@ -203,22 +204,22 @@ export const CalculatorResults = ({
       {/* Cost Breakdown Table */}
       <div className="p-4 sm:p-6">
         <div className="border border-gray-300 dark:border-gray-800 rounded-xl overflow-x-auto shadow-lg">
-          <table className="w-full min-w-[300px]">
+          <table className="w-full min-w-[300px]" role="table" aria-label="Cost breakdown">
             <tbody className="divide-y divide-gray-300 dark:divide-gray-800">
               {/* Row 1: Vehicle price | Customs duty */}
               <tr className="bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-900/50 hover:from-gray-200 hover:to-gray-50 dark:hover:from-gray-800 dark:hover:to-gray-900/60 transition-colors">
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base w-[30%]">{t("calculator.form.vehiclePrice")}</td>
-                <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg w-[5%]">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base w-[15%]">
+                <td aria-hidden="true" className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg w-[5%]">/</td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base w-[15%] tabular-nums">
                   ${vehiclePrice || "0"}
                 </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base w-[30%]">{t("calculator.results.customsDuty")}</td>
-                <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg w-[5%]">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base w-[15%]">
+                <td aria-hidden="true" className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg w-[5%]">/</td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base w-[15%] tabular-nums">
                   {hasRestrictedData ? (
                     <span className="text-[#429de6] dark:text-[#5db3f0]">${Math.round((calculationResults?.globTax ?? 0) / parseFloat(eurUsdRate))}</span>
                   ) : (
-                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
+                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none" aria-label="Hidden for non-partners">$000</span>
                   )}
                 </td>
               </tr>
@@ -226,17 +227,17 @@ export const CalculatorResults = ({
               {/* Row 2: Auction fee | VAT */}
               <tr className="bg-gradient-to-r from-white to-gray-50 dark:from-black dark:to-gray-900/30 hover:from-gray-100 hover:to-white dark:hover:from-gray-900 dark:hover:to-gray-900/40 transition-colors">
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.auctionFee")}</td>
-                <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
+                <td aria-hidden="true" className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base tabular-nums">
                   ${auctionFee || "0"}
                 </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.results.vat")}</td>
-                <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
+                <td aria-hidden="true" className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base tabular-nums">
                   {hasRestrictedData ? (
                     <span className="text-[#429de6] dark:text-[#5db3f0]">${Math.round((calculationResults?.nds ?? 0) / parseFloat(eurUsdRate))}</span>
                   ) : (
-                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
+                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none" aria-label="Hidden for non-partners">$000</span>
                   )}
                 </td>
               </tr>
@@ -244,21 +245,21 @@ export const CalculatorResults = ({
               {/* Row 3: Transportation fee | Environmental tax */}
               <tr className="bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-900/50 hover:from-gray-200 hover:to-gray-50 dark:hover:from-gray-800 dark:hover:to-gray-900/60 transition-colors">
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.transportationFee")}</td>
-                <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
+                <td aria-hidden="true" className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base tabular-nums">
                   {hasRestrictedData ? (
                     <span className="text-[#429de6] dark:text-[#5db3f0]">${shippingPrice || "0"}</span>
                   ) : (
-                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
+                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none" aria-label="Hidden for non-partners">$000</span>
                   )}
                 </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.results.environmentalTax")}</td>
-                <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
+                <td aria-hidden="true" className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base tabular-nums">
                   {hasRestrictedData ? (
                     <span className="text-[#429de6] dark:text-[#5db3f0]">${Math.round((calculationResults?.envTaxPay ?? 0) / parseFloat(eurUsdRate))}</span>
                   ) : (
-                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
+                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none" aria-label="Hidden for non-partners">$000</span>
                   )}
                 </td>
               </tr>
@@ -266,8 +267,8 @@ export const CalculatorResults = ({
               {/* Row 4: Insurance | Service fee */}
               <tr className="bg-gradient-to-r from-white to-gray-50 dark:from-black dark:to-gray-900/30 hover:from-gray-100 hover:to-white dark:hover:from-gray-900 dark:hover:to-gray-900/40 transition-colors">
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.insurance")}</td>
-                <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
+                <td aria-hidden="true" className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base tabular-nums">
                   {hasRestrictedData ? (
                     hasInsurance ? (
                       <span className="text-[#429de6] dark:text-[#5db3f0]">${insuranceFee || "0"}</span>
@@ -275,16 +276,16 @@ export const CalculatorResults = ({
                       <span className="text-gray-400 dark:text-gray-600">-</span>
                     )
                   ) : (
-                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
+                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none" aria-label="Hidden for non-partners">$000</span>
                   )}
                 </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.serviceFee")}</td>
-                <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
+                <td aria-hidden="true" className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base tabular-nums">
                   {hasRestrictedData ? (
                     <span className="text-[#429de6] dark:text-[#5db3f0]">${serviceFee || "0"}</span>
                   ) : (
-                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
+                    <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none" aria-label="Hidden for non-partners">$000</span>
                   )}
                 </td>
               </tr>
@@ -292,12 +293,12 @@ export const CalculatorResults = ({
               {/* Total row - full width */}
               <tr className="bg-gradient-to-r from-[#429de6]/10 to-[#429de6]/20 dark:from-[#429de6]/20 dark:to-[#429de6]/10 hover:from-[#429de6]/20 hover:to-[#429de6]/30 dark:hover:from-[#429de6]/30 dark:hover:to-[#429de6]/20 transition-colors border-t-2 border-[#429de6]/30 dark:border-[#429de6]/50">
                 <td colSpan={4} className="px-3 sm:px-6 py-4 sm:py-5 text-gray-900 dark:text-white font-bold text-base sm:text-lg">{t("calculator.results.totalAmount")}</td>
-                <td className="px-2 sm:px-4 py-4 sm:py-5 text-center text-[#429de6]/60 dark:text-[#5db3f0]/70 text-lg sm:text-xl font-bold">/</td>
-                <td className="px-3 sm:px-6 py-4 sm:py-5 text-right font-bold text-xl sm:text-2xl">
+                <td aria-hidden="true" className="px-2 sm:px-4 py-4 sm:py-5 text-center text-[#429de6]/60 dark:text-[#5db3f0]/70 text-lg sm:text-xl font-bold">/</td>
+                <td className="px-3 sm:px-6 py-4 sm:py-5 text-right font-bold text-xl sm:text-2xl tabular-nums">
                   {hasRestrictedData ? (
                     <span className="text-[#429de6] dark:text-[#5db3f0]">${totalAmount}</span>
                   ) : (
-                    <span className="text-gray-400 dark:text-gray-500 opacity-40 blur-[4px] select-none">$partner</span>
+                    <span className="text-gray-400 dark:text-gray-500 opacity-40 blur-[4px] select-none" aria-label="Available for partners only">$partner</span>
                   )}
                 </td>
               </tr>
@@ -309,9 +310,9 @@ export const CalculatorResults = ({
         {showPartnerMessage && (
           <div className="mt-6 sm:mt-8 text-center py-4 sm:py-6 px-4 bg-gradient-to-r from-[#429de6]/10 via-[#429de6]/5 to-[#429de6]/10 dark:from-[#429de6]/10 dark:via-[#429de6]/15 dark:to-[#429de6]/10 rounded-xl border border-[#429de6]/30 dark:border-[#429de6]/30 shadow-sm">
             <p className="text-[#429de6] dark:text-[#5db3f0] text-base sm:text-lg md:text-xl font-bold">
-              <Link 
+              <Link
                 href={`/${locale}/partners`}
-                className="underline decoration-[#429de6]/50 hover:decoration-[#429de6] dark:hover:decoration-[#5db3f0] transition-all cursor-pointer hover:text-[#3a8acc] dark:hover:text-[#6fc0f5]"
+                className="underline decoration-[#429de6]/50 hover:decoration-[#429de6] dark:hover:decoration-[#5db3f0] transition-colors cursor-pointer hover:text-[#3a8acc] dark:hover:text-[#6fc0f5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2 rounded-sm"
               >
                 {t("calculator.results.partnerMessage")}
               </Link>

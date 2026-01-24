@@ -17,19 +17,21 @@ export const GridSkeleton = ({ viewMode = "grid", count = 6 }: GridSkeletonProps
 
   if (viewMode === "list") {
     return (
-      <div className="flex flex-col gap-4">
+      <div role="status" aria-label="Loading content" className="flex flex-col gap-4">
         {items.map((i) => (
           <ListItemSkeleton key={i} />
         ))}
+        <span className="sr-only">Loading…</span>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div role="status" aria-label="Loading content" className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {items.map((i) => (
         <CardSkeleton key={i} />
       ))}
+      <span className="sr-only">Loading…</span>
     </div>
   );
 };

@@ -148,11 +148,19 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="login-modal-title"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+    >
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/90 backdrop-blur-md"
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/90 backdrop-blur-md cursor-default"
         onClick={onClose}
+        aria-label={t("auth.closeAria")}
+        tabIndex={-1}
       />
 
       {/* Modal */}
@@ -167,7 +175,7 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
           >
             <X aria-hidden="true" className="w-6 h-6 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300" />
           </button>
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white text-center uppercase tracking-wider mb-2">
+          <h2 id="login-modal-title" className="text-4xl font-bold text-gray-900 dark:text-white text-center uppercase tracking-wider mb-2">
             {t("auth.signIn")}
           </h2>
         </div>
@@ -177,10 +185,12 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
           {/* Form */}
           <form className="space-y-8" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wider">
+              <label htmlFor="login-username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wider">
                 {t("auth.username")}
               </label>
               <input
+                id="login-username"
+                name="username"
                 type="text"
                 placeholder={t("auth.usernamePlaceholder")}
                 value={username}
@@ -192,14 +202,17 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
                 }}
                 disabled={isSubmitting}
                 autoComplete="username"
-                className={`w-full px-6 py-4 bg-transparent border-2 rounded-xl focus:outline-none transition-all text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-lg disabled:opacity-50 disabled:cursor-not-allowed ${
+                aria-required="true"
+                aria-invalid={!!errors.username}
+                aria-describedby={errors.username ? "username-error" : undefined}
+                className={`w-full px-6 py-4 bg-transparent border-2 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2 transition-colors text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 text-lg disabled:opacity-50 disabled:cursor-not-allowed ${
                   errors.username
                     ? 'border-red-500 dark:border-red-500 focus:border-red-500 dark:focus:border-red-500'
                     : 'border-gray-300 dark:border-white/20 focus:border-[#429de6] dark:focus:border-[#429de6]'
                 }`}
               />
               {errors.username && (
-                <p className="text-sm text-red-500 dark:text-red-400 mt-1">
+                <p id="username-error" role="alert" className="text-sm text-red-500 dark:text-red-400 mt-1">
                   {errors.username}
                 </p>
               )}

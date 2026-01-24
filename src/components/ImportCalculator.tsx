@@ -354,14 +354,17 @@ export const ImportCalculator = ({
         <>
           <div className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 overflow-hidden transition-colors duration-300">
             {/* Tabs */}
-            <div className="flex border-b border-gray-300 dark:border-white/10 overflow-x-auto scrollbar-hide">
+            <div role="tablist" aria-label={t("calculator.form.auctionTabsAriaLabel")} className="flex border-b border-gray-300 dark:border-white/10 overflow-x-auto scrollbar-hide">
               <button
                 type="button"
+                role="tab"
+                aria-selected={activeTab === "copart"}
+                aria-controls="calculator-form"
                 onClick={() => setActiveTab("copart")}
-                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap ${
+                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-inset ${
                   activeTab === "copart"
                     ? "border-b-2 border-[#429de6]"
-                    : "opacity-60"
+                    : "opacity-60 hover:opacity-80"
                 }`}
               >
                 <div className="flex items-center justify-center gap-3">
@@ -376,11 +379,14 @@ export const ImportCalculator = ({
               </button>
               <button
                 type="button"
+                role="tab"
+                aria-selected={activeTab === "iaai"}
+                aria-controls="calculator-form"
                 onClick={() => setActiveTab("iaai")}
-                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap ${
+                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-inset ${
                   activeTab === "iaai"
                     ? "border-b-2 border-[#429de6]"
-                    : "opacity-60"
+                    : "opacity-60 hover:opacity-80"
                 }`}
               >
                 <div className="flex items-center justify-center gap-3">
@@ -395,11 +401,14 @@ export const ImportCalculator = ({
               </button>
               <button
                 type="button"
+                role="tab"
+                aria-selected={activeTab === "manheim"}
+                aria-controls="calculator-form"
                 onClick={() => setActiveTab("manheim")}
-                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap ${
+                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-inset ${
                   activeTab === "manheim"
                     ? "border-b-2 border-[#429de6]"
-                    : "opacity-60"
+                    : "opacity-60 hover:opacity-80"
                 }`}
               >
                 <div className="flex items-center justify-center gap-3">
@@ -414,8 +423,11 @@ export const ImportCalculator = ({
               </button>
               <button
                 type="button"
+                role="tab"
+                aria-selected={activeTab === "other"}
+                aria-controls="calculator-form"
                 onClick={() => setActiveTab("other")}
-                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-all duration-300 bg-black whitespace-nowrap ${
+                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-inset ${
                   activeTab === "other"
                     ? "border-b-2 border-[#429de6]"
                     : "opacity-60 hover:opacity-80"
@@ -429,9 +441,9 @@ export const ImportCalculator = ({
                   }`}>
                     {t("calculator.form.other")}
                   </span>
-                  <div className={`p-2 rounded-lg transition-all duration-300 ${
-                    activeTab === "other" 
-                      ? "bg-[#429de6]/20" 
+                  <div className={`p-2 rounded-lg transition-colors duration-300 ${
+                    activeTab === "other"
+                      ? "bg-[#429de6]/20"
                       : "bg-white/10"
                   }`}>
                     <MoreHorizontal aria-hidden="true" className={`w-5 h-5 transition-colors duration-300 ${
@@ -445,22 +457,24 @@ export const ImportCalculator = ({
             </div>
 
             {/* Form */}
-            <div className="p-4 sm:p-6 md:p-8">
+            <div id="calculator-form" role="tabpanel" className="p-4 sm:p-6 md:p-8">
           <form onSubmit={handleSubmit}>
             {/* Two Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative">
               {/* Left Column */}
               <div className="space-y-6">
                 {/* Importer */}
-                <div>
-                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-3">
-                    {t("calculator.form.importer")} <span className="text-red-500">*</span>
-                  </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <fieldset>
+                  <legend className="block text-gray-600 dark:text-gray-400 text-sm mb-3">
+                    {t("calculator.form.importer")} <span className="text-red-500" aria-hidden="true">*</span>
+                  </legend>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" role="radiogroup" aria-required="true">
                     <button
                       type="button"
+                      role="radio"
+                      aria-checked={importer === "legal"}
                       onClick={() => setImporter("legal")}
-                      className={`py-3 px-4 rounded-lg border transition-all text-sm sm:text-base ${
+                      className={`py-3 px-4 rounded-lg border transition-colors text-sm sm:text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2 ${
                         importer === "legal"
                           ? "border-orange-500 bg-transparent text-gray-900 dark:text-white"
                           : "border-gray-300 dark:border-gray-700 bg-transparent text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-600"
@@ -470,8 +484,10 @@ export const ImportCalculator = ({
                     </button>
                     <button
                       type="button"
+                      role="radio"
+                      aria-checked={importer === "individual"}
                       onClick={() => setImporter("individual")}
-                      className={`py-3 px-4 rounded-lg border transition-all text-sm sm:text-base ${
+                      className={`py-3 px-4 rounded-lg border transition-colors text-sm sm:text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2 ${
                         importer === "individual"
                           ? "border-orange-500 bg-transparent text-gray-900 dark:text-white"
                           : "border-gray-300 dark:border-gray-700 bg-transparent text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-600"
@@ -480,19 +496,25 @@ export const ImportCalculator = ({
                       {t("calculator.form.individual")}
                     </button>
                   </div>
-                </div>
+                </fieldset>
 
                 {/* Vehicle Price */}
                 <div>
-                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                    {t("calculator.form.vehiclePrice")} <span className="text-red-500">*</span>
+                  <label htmlFor="vehicle-price" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
+                    {t("calculator.form.vehiclePrice")} <span className="text-red-500" aria-hidden="true">*</span>
+                    <span className="sr-only">({t("calculator.form.required")})</span>
                   </label>
                   <input
+                    id="vehicle-price"
+                    name="vehiclePrice"
                     type="number"
                     inputMode="decimal"
+                    autoComplete="off"
                     value={vehiclePrice}
                     onChange={(e) => setVehiclePrice(e.target.value)}
-                    className={`w-full px-4 py-3 bg-transparent border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] text-gray-900 dark:text-white placeholder:text-gray-400 ${
+                    aria-required="true"
+                    aria-invalid={showValidation && !vehiclePrice}
+                    className={`w-full px-4 py-3 bg-transparent border rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] text-gray-900 dark:text-white placeholder:text-gray-400 tabular-nums ${
                       getErrorClass(vehiclePrice) || "border-gray-300 dark:border-gray-700 focus:border-[#429de6]"
                     }`}
                   />
@@ -500,18 +522,22 @@ export const ImportCalculator = ({
 
                 {/* Auction Fee */}
                 <div>
-                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
+                  <label htmlFor="auction-fee" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                     {t("calculator.form.auctionFee")}
                   </label>
                   <input
+                    id="auction-fee"
+                    name="auctionFee"
                     type="number"
+                    autoComplete="off"
                     value={auctionFee}
                     onChange={(e) => setAuctionFee(e.target.value)}
                     readOnly={activeTab === "copart" || activeTab === "iaai"}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-gray-900 dark:text-white placeholder:text-gray-400 ${
+                    aria-readonly={activeTab === "copart" || activeTab === "iaai"}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-gray-900 dark:text-white placeholder:text-gray-400 tabular-nums ${
                       activeTab === "copart" || activeTab === "iaai"
                         ? "bg-gray-50 dark:bg-gray-900/50 border-gray-300 dark:border-gray-700 cursor-not-allowed"
-                        : "bg-transparent border-gray-300 dark:border-gray-700 focus:ring-1 focus:ring-[#429de6] focus:border-[#429de6]"
+                        : "bg-transparent border-gray-300 dark:border-gray-700 focus-visible:ring-2 focus-visible:ring-[#429de6] focus:border-[#429de6]"
                     }`}
                   />
                 </div>
@@ -519,24 +545,27 @@ export const ImportCalculator = ({
                 {/* Auction Location and Out of Borders Checkbox */}
                 <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 sm:gap-4 sm:items-end">
                   <div>
-                    <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                      {t("calculator.form.auctionLocation")} <span className="text-red-500">*</span>
+                    <label id="auction-location-label" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
+                      {t("calculator.form.auctionLocation")} <span className="text-red-500" aria-hidden="true">*</span>
                     </label>
                     <Select value={auctionLocation} onValueChange={setAuctionLocation} disabled={isLoadingLocations}>
-                      <SelectTrigger className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
-                        getErrorClass(auctionLocation) || "border-gray-300 dark:border-gray-700"
-                      }`}>
-                        <SelectValue placeholder={isLoadingLocations ? t("calculator.form.loadingLocations") || "Loading..." : t("calculator.form.selectLocation")} />
+                      <SelectTrigger
+                        aria-labelledby="auction-location-label"
+                        aria-required="true"
+                        aria-invalid={showValidation && !auctionLocation}
+                        className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
+                          getErrorClass(auctionLocation) || "border-gray-300 dark:border-gray-700"
+                        }`}
+                      >
+                        <SelectValue placeholder={isLoadingLocations ? `${t("calculator.form.loadingLocations") || "Loading"}…` : t("calculator.form.selectLocation")} />
                       </SelectTrigger>
                       <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px] overflow-y-auto">
                         {availableCities.length > 0 ? (
                           availableCities.map((city) => (
-                            <SelectItem 
-                              key={city} 
+                            <SelectItem
+                              key={city}
                               value={city}
-                              className={activeTab === "copart" 
-                                ? "text-gray-900 dark:text-white hover:bg-[#429de6]/20 hover:text-[#429de6] hover:font-medium dark:hover:bg-[#429de6]/30 dark:hover:text-[#429de6] focus:bg-[#429de6]/20 focus:text-[#429de6] focus:font-medium dark:focus:bg-[#429de6]/30 dark:focus:text-[#429de6] data-[state=checked]:bg-[#429de6]/20 data-[state=checked]:text-[#429de6] data-[state=checked]:font-medium dark:data-[state=checked]:bg-[#429de6]/30 dark:data-[state=checked]:text-[#429de6] transition-colors cursor-pointer" 
-                                : ""}
+                              className="text-gray-900 dark:text-white hover:bg-[#429de6]/20 hover:text-[#429de6] hover:font-medium dark:hover:bg-[#429de6]/30 dark:hover:text-[#429de6] focus:bg-[#429de6]/20 focus:text-[#429de6] focus:font-medium dark:focus:bg-[#429de6]/30 dark:focus:text-[#429de6] data-[state=checked]:bg-[#429de6]/20 data-[state=checked]:text-[#429de6] data-[state=checked]:font-medium dark:data-[state=checked]:bg-[#429de6]/30 dark:data-[state=checked]:text-[#429de6] transition-colors cursor-pointer"
                             >
                               {city}
                             </SelectItem>
@@ -554,10 +583,12 @@ export const ImportCalculator = ({
                   <div className="sm:pb-3">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
+                        id="out-of-borders"
+                        name="outOfAuctionBorders"
                         type="checkbox"
                         checked={outOfAuctionBorders}
                         onChange={(e) => setOutOfAuctionBorders(e.target.checked)}
-                        className="w-4 h-4 flex-shrink-0 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6]"
+                        className="w-4 h-4 flex-shrink-0 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6] focus:ring-offset-0"
                       />
                       <span className="text-gray-600 dark:text-gray-400 text-xs leading-tight">{t("calculator.form.outOfAuctionBorders")}</span>
                     </label>
@@ -567,17 +598,23 @@ export const ImportCalculator = ({
                 {/* Manual Shipping Price (Only for "Other" auction) */}
                 {activeTab === "other" && (
                   <div>
-                    <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                      {t("calculator.form.shippingPrice")} <span className="text-red-500">*</span>
+                    <label htmlFor="manual-shipping-price" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
+                      {t("calculator.form.shippingPrice")} <span className="text-red-500" aria-hidden="true">*</span>
                     </label>
                     <input
+                      id="manual-shipping-price"
+                      name="manualShippingPrice"
                       type="number"
+                      inputMode="decimal"
+                      autoComplete="off"
                       value={manualShippingPrice}
                       onChange={(e) => setManualShippingPrice(e.target.value)}
                       placeholder={t("calculator.form.enterShippingPrice") || "Enter shipping price"}
+                      aria-required="true"
+                      aria-invalid={showValidation && !manualShippingPrice}
                       className={`w-full h-12 px-4 rounded-lg bg-transparent border ${
                         getErrorClass(manualShippingPrice) || "border-gray-300 dark:border-gray-700"
-                      } text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#429de6] focus:border-transparent transition-all`}
+                      } text-gray-900 dark:text-white placeholder-gray-400 tabular-nums focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus:border-transparent transition-colors`}
                     />
                   </div>
                 )}
@@ -589,54 +626,86 @@ export const ImportCalculator = ({
               {/* Right Column */}
               <div className="space-y-6 lg:pl-8">
                 {/* Date Selection: Day, Month, Year */}
-                <div className="grid grid-cols-3 gap-4">
-                  <Select value={day} onValueChange={setDay}>
-                    <SelectTrigger className={`h-12 bg-transparent text-gray-900 dark:text-white ${
-                      getErrorClass(day) || "border-gray-300 dark:border-gray-700"
-                    }`}>
-                      <SelectValue placeholder={t("calculator.form.day")} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px]">
-                      {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                        <SelectItem key={d} value={String(d)}>{d}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={month} onValueChange={setMonth}>
-                    <SelectTrigger className={`h-12 bg-transparent text-gray-900 dark:text-white ${
-                      getErrorClass(month) || "border-gray-300 dark:border-gray-700"
-                    }`}>
-                      <SelectValue placeholder={t("calculator.form.month")} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px]">
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                        <SelectItem key={m} value={String(m)}>{m}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={year} onValueChange={setYear}>
-                    <SelectTrigger className={`h-12 bg-transparent text-gray-900 dark:text-white ${
-                      getErrorClass(year) || "border-gray-300 dark:border-gray-700"
-                    }`}>
-                      <SelectValue placeholder={t("calculator.form.year")} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px]">
-                      {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                        <SelectItem key={y} value={String(y)}>{y}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <fieldset>
+                  <legend className="sr-only">{t("calculator.form.vehicleYear")} <span className="text-red-500" aria-hidden="true">*</span></legend>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label id="day-label" className="sr-only">{t("calculator.form.day")}</label>
+                      <Select value={day} onValueChange={setDay}>
+                        <SelectTrigger
+                          aria-labelledby="day-label"
+                          aria-required="true"
+                          aria-invalid={showValidation && !day}
+                          className={`h-12 bg-transparent text-gray-900 dark:text-white tabular-nums ${
+                            getErrorClass(day) || "border-gray-300 dark:border-gray-700"
+                          }`}
+                        >
+                          <SelectValue placeholder={t("calculator.form.day")} />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px]">
+                          {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                            <SelectItem key={d} value={String(d)} className="tabular-nums">{d}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label id="month-label" className="sr-only">{t("calculator.form.month")}</label>
+                      <Select value={month} onValueChange={setMonth}>
+                        <SelectTrigger
+                          aria-labelledby="month-label"
+                          aria-required="true"
+                          aria-invalid={showValidation && !month}
+                          className={`h-12 bg-transparent text-gray-900 dark:text-white tabular-nums ${
+                            getErrorClass(month) || "border-gray-300 dark:border-gray-700"
+                          }`}
+                        >
+                          <SelectValue placeholder={t("calculator.form.month")} />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px]">
+                          {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                            <SelectItem key={m} value={String(m)} className="tabular-nums">{m}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label id="year-label" className="sr-only">{t("calculator.form.year")}</label>
+                      <Select value={year} onValueChange={setYear}>
+                        <SelectTrigger
+                          aria-labelledby="year-label"
+                          aria-required="true"
+                          aria-invalid={showValidation && !year}
+                          className={`h-12 bg-transparent text-gray-900 dark:text-white tabular-nums ${
+                            getErrorClass(year) || "border-gray-300 dark:border-gray-700"
+                          }`}
+                        >
+                          <SelectValue placeholder={t("calculator.form.year")} />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px]">
+                          {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                            <SelectItem key={y} value={String(y)} className="tabular-nums">{y}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </fieldset>
 
                 {/* Vehicle Type */}
                 <div>
-                  <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                    {t("calculator.form.vehicleType")} <span className="text-red-500">*</span>
+                  <label id="vehicle-type-label" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
+                    {t("calculator.form.vehicleType")} <span className="text-red-500" aria-hidden="true">*</span>
                   </label>
                   <Select value={vehicleType} onValueChange={setVehicleType}>
-                    <SelectTrigger className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
-                      getErrorClass(vehicleType) || "border-gray-300 dark:border-gray-700"
-                    }`}>
+                    <SelectTrigger
+                      aria-labelledby="vehicle-type-label"
+                      aria-required="true"
+                      aria-invalid={showValidation && !vehicleType}
+                      className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
+                        getErrorClass(vehicleType) || "border-gray-300 dark:border-gray-700"
+                      }`}
+                    >
                       <SelectValue placeholder={t("calculator.form.selectType")} />
                     </SelectTrigger>
                     <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
@@ -653,19 +722,24 @@ export const ImportCalculator = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Engine */}
                   <div className={engine === "electric" ? "sm:col-span-2" : ""}>
-                    <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                      {t("calculator.form.engine")} <span className="text-red-500">*</span>
+                    <label id="engine-type-label" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
+                      {t("calculator.form.engine")} <span className="text-red-500" aria-hidden="true">*</span>
                     </label>
-                    <Select 
-                      value={engine} 
+                    <Select
+                      value={engine}
                       onValueChange={setEngine}
                       disabled={vehicleType === "quadricycle"}
                     >
-                      <SelectTrigger className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
-                        vehicleType === "quadricycle" 
-                          ? "cursor-not-allowed opacity-60 border-gray-300 dark:border-gray-700" 
-                          : getErrorClass(engine) || "border-gray-300 dark:border-gray-700"
-                      }`}>
+                      <SelectTrigger
+                        aria-labelledby="engine-type-label"
+                        aria-required="true"
+                        aria-invalid={showValidation && !engine}
+                        className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
+                          vehicleType === "quadricycle"
+                            ? "cursor-not-allowed opacity-60 border-gray-300 dark:border-gray-700"
+                            : getErrorClass(engine) || "border-gray-300 dark:border-gray-700"
+                        }`}
+                      >
                         <SelectValue placeholder={t("calculator.form.selectEngine")} />
                       </SelectTrigger>
                       <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
@@ -680,15 +754,21 @@ export const ImportCalculator = ({
                   {/* Engine Volume - Hidden for electric */}
                   {engine !== "electric" && (
                     <div>
-                      <label className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                        {t("calculator.form.engineVolume")} <span className="text-red-500">*</span>
+                      <label htmlFor="engine-volume" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
+                        {t("calculator.form.engineVolume")} <span className="text-red-500" aria-hidden="true">*</span>
                       </label>
                       <input
+                        id="engine-volume"
+                        name="engineVolume"
                         type="number"
+                        inputMode="decimal"
+                        autoComplete="off"
                         step="0.1"
                         value={engineVolume}
                         onChange={(e) => setEngineVolume(e.target.value)}
-                        className={`w-full px-4 py-3 bg-transparent border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#429de6] text-gray-900 dark:text-white placeholder:text-gray-400 text-sm sm:text-base ${
+                        aria-required="true"
+                        aria-invalid={showValidation && !engineVolume}
+                        className={`w-full px-4 py-3 bg-transparent border rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] text-gray-900 dark:text-white placeholder:text-gray-400 text-sm sm:text-base tabular-nums ${
                           getErrorClass(engineVolume) || "border-gray-300 dark:border-gray-700 focus:border-[#429de6]"
                         }`}
                       />
@@ -697,25 +777,29 @@ export const ImportCalculator = ({
                 </div>
 
                 {/* Checkboxes */}
-                <div className="space-y-3 pt-4">
-                  <label className="flex items-center gap-3 cursor-pointer">
+                <fieldset className="space-y-3 pt-4">
+                  <label htmlFor="insurance-checkbox" className="flex items-center gap-3 cursor-pointer">
                     <input
+                      id="insurance-checkbox"
+                      name="insurance"
                       type="checkbox"
                       checked={insurance}
                       onChange={(e) => setInsurance(e.target.checked)}
-                      className="w-4 h-4 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6]"
+                      className="w-4 h-4 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6] focus:ring-offset-0"
                     />
                     <span className="text-gray-600 dark:text-gray-400">{t("calculator.form.insurance")}</span>
                   </label>
 
                   {/* High ground clearance - Only show for Passenger vehicles and not electric */}
                   {vehicleType === "passenger" && engine !== "electric" && (
-                    <label className="flex items-center gap-3 cursor-pointer">
+                    <label htmlFor="high-ground-clearance" className="flex items-center gap-3 cursor-pointer">
                       <input
+                        id="high-ground-clearance"
+                        name="highGroundClearance"
                         type="checkbox"
                         checked={highGroundClearance}
                         onChange={(e) => setHighGroundClearance(e.target.checked)}
-                        className="w-4 h-4 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6]"
+                        className="w-4 h-4 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6] focus:ring-offset-0"
                       />
                       <span className="text-gray-600 dark:text-gray-400">{t("calculator.form.highGroundClearance")}</span>
                     </label>
@@ -723,12 +807,14 @@ export const ImportCalculator = ({
 
                   {/* Has Reverse - Only show for Quadricycle */}
                   {vehicleType === "quadricycle" && (
-                    <label className="flex items-center gap-3 cursor-pointer">
+                    <label htmlFor="has-reverse" className="flex items-center gap-3 cursor-pointer">
                       <input
+                        id="has-reverse"
+                        name="hasReverse"
                         type="checkbox"
                         checked={hasReverse}
                         onChange={(e) => setHasReverse(e.target.checked)}
-                        className="w-4 h-4 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6]"
+                        className="w-4 h-4 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6] focus:ring-offset-0"
                       />
                       <span className="text-gray-600 dark:text-gray-400">{t("calculator.form.hasReverse")}</span>
                     </label>
@@ -736,17 +822,19 @@ export const ImportCalculator = ({
 
                   {/* ICE Power Exceeds Electric - Only show for Hybrid */}
                   {engine === "hybrid" && (
-                    <label className="flex items-center gap-3 cursor-pointer">
+                    <label htmlFor="ice-power-exceeds" className="flex items-center gap-3 cursor-pointer">
                       <input
+                        id="ice-power-exceeds"
+                        name="icePowerExceedsElectric"
                         type="checkbox"
                         checked={icePowerExceedsElectric}
                         onChange={(e) => setIcePowerExceedsElectric(e.target.checked)}
-                        className="w-4 h-4 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6]"
+                        className="w-4 h-4 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6] focus:ring-offset-0"
                       />
                       <span className="text-gray-600 dark:text-gray-400">{t("calculator.form.icePowerExceedsElectric")}</span>
                     </label>
                   )}
-                </div>
+                </fieldset>
               </div>
             </div>
 
@@ -755,10 +843,11 @@ export const ImportCalculator = ({
               <button
                 type="submit"
                 disabled={isCalculating}
-                className="px-8 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-all hover:shadow-lg hover:shadow-blue-500/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-busy={isCalculating}
+                className="px-8 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-colors hover:shadow-lg hover:shadow-blue-500/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
               >
-                {isCalculating ? t("calculator.form.calculating") || "Calculating..." : t("calculator.form.calculateCost")}
-                <span>›</span>
+                {isCalculating ? `${t("calculator.form.calculating") || "Calculating"}…` : t("calculator.form.calculateCost")}
+                <span aria-hidden="true">›</span>
               </button>
             </div>
           </form>
