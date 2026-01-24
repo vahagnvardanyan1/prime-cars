@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 
 import type { AdminCarDetails } from "@/lib/admin/types";
 import { VehicleType, Auction } from "@/lib/admin/types";
@@ -165,15 +165,15 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const clearError = ({ field }: { field: keyof FormErrors }) => {
+  const clearError = useCallback(({ field }: { field: keyof FormErrors }) => {
     setErrors((prev) => {
       const next = { ...prev };
       delete next[field];
       return next;
     });
-  };
+  }, []);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setModel("");
     setYear("");
     setPriceUsd("");
@@ -188,7 +188,7 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
     setVin("");
     setCustomerNotes("");
     setErrors({});
-  };
+  }, []);
 
   return {
     fields: {
