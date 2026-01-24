@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 import { ImportCalculator } from "@/components/ImportCalculator";
+import { Container, SectionHeader } from "@/components/layouts";
 import { Link } from "@/i18n/routing";
 import { fetchAllAvailableCars } from "@/lib/cars/fetchCars";
 import { CarsCarousel } from "@/components/pages/home/CarsCarousel";
@@ -20,7 +21,7 @@ export const HomePage = async () => {
           <div className="glow-effect"></div>
         </div>
 
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12 w-full relative z-10">
+        <Container className="w-full relative z-10">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
             <div className="text-center lg:text-left">
               <h1 className="mb-6 text-gray-900 dark:text-white">
@@ -50,33 +51,29 @@ export const HomePage = async () => {
               />
             </div>
           </div>
-        </div>
+        </Container>
       </section>
 
       <section className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          <div className="text-center mb-12">
-            <h2 className="mb-4">{t("home.popularDeals.title")}</h2>
-            <p className="max-w-3xl mx-auto">
-              {t("home.popularDeals.description")}
-            </p>
-          </div>
+        <Container>
+          <SectionHeader
+            title={t("home.popularDeals.title")}
+            description={t("home.popularDeals.description")}
+          />
 
           <CarsCarousel cars={cars} />
-        </div>
+        </Container>
       </section>
 
       <section className="py-20 lg:py-28 bg-white dark:bg-black border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          <div className="text-center mb-12">
-            <h2 className="mb-4">{t("home.importCosts.title")}</h2>
-            <p className="max-w-3xl mx-auto">
-              {t("home.importCosts.description")}
-            </p>
-          </div>
+        <Container>
+          <SectionHeader
+            title={t("home.importCosts.title")}
+            description={t("home.importCosts.description")}
+          />
 
           <ImportCalculator showPartnerMessage={true} />
-        </div>
+        </Container>
       </section>
     </div>
   );
