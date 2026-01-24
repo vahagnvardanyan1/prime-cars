@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
@@ -22,7 +22,7 @@ import type { Car, CarCategory } from "@/lib/cars/types";
 type SortOption = "price-asc" | "price-desc" | "year-newest" | "year-oldest";
 type ViewMode = "grid" | "list";
 
-const LoadingSkeleton = ({ viewMode }: { viewMode: ViewMode }) => {
+const LoadingSkeleton = memo(({ viewMode }: { viewMode: ViewMode }) => {
   if (viewMode === "list") {
     return (
       <div className="flex flex-col gap-4">
@@ -74,15 +74,23 @@ const LoadingSkeleton = ({ viewMode }: { viewMode: ViewMode }) => {
       ))}
     </div>
   );
-};
+});
+LoadingSkeleton.displayName = "LoadingSkeleton";
 
-const CarListItem = ({ car }: { car: Car }) => {
+const CarListItem = memo(({ car }: { car: Car }) => {
   const t = useTranslations("carsPage");
   const tCarDetails = useTranslations("carDetails");
   const router = useRouter();
 
   const handleClick = () => {
     router.push(`/cars/${car.id}`);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleClick();
+    }
   };
 
   const getCategoryBadge = () => {
@@ -109,9 +117,12 @@ const CarListItem = ({ car }: { car: Car }) => {
   };
 
   return (
-    <div 
+    <div
+      role="button"
+      tabIndex={0}
       onClick={handleClick}
-      className="group bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded-xl hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all duration-300 hover:shadow-lg overflow-hidden cursor-pointer"
+      onKeyDown={handleKeyDown}
+      className="group bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded-xl hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all duration-300 hover:shadow-lg overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
     >
       <div className="flex gap-6 p-4">
         {/* Image */}
@@ -180,9 +191,10 @@ const CarListItem = ({ car }: { car: Car }) => {
       </div>
     </div>
   );
-};
+});
+CarListItem.displayName = "CarListItem";
 
-const EmptyState = ({ category }: { category: CarCategory }) => {
+const EmptyState = memo(({ category }: { category: CarCategory }) => {
   const t = useTranslations("carsPage.empty");
 
   const getTranslationKey = () => {
@@ -234,9 +246,10 @@ const EmptyState = ({ category }: { category: CarCategory }) => {
       </p>
     </div>
   );
-};
+});
+EmptyState.displayName = "EmptyState";
 
-const CarsGrid = ({ cars, isLoading, category, sortFn, viewMode }: { cars: Car[]; isLoading: boolean; category: CarCategory; sortFn: (cars: Car[]) => Car[]; viewMode: ViewMode }) => {
+const CarsGrid = memo(({ cars, isLoading, category, sortFn, viewMode }: { cars: Car[]; isLoading: boolean; category: CarCategory; sortFn: (cars: Car[]) => Car[]; viewMode: ViewMode }) => {
   if (isLoading) {
     return <LoadingSkeleton viewMode={viewMode} />;
   }
@@ -267,7 +280,8 @@ const CarsGrid = ({ cars, isLoading, category, sortFn, viewMode }: { cars: Car[]
       ))}
     </div>
   );
-};
+});
+CarsGrid.displayName = "CarsGrid";
 
 export const CarsPage = () => {
   const t = useTranslations("carsPage");
@@ -355,13 +369,16 @@ export const CarsPage = () => {
             {/* Sort Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg hover:bg-gray-50 dark:hover:bg-white/10 hover:border-gray-300 dark:hover:border-white/20 transition-all whitespace-nowrap">
-                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button
+                  aria-label={t("sortAriaLabel")}
+                  className="flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg hover:bg-gray-50 dark:hover:bg-white/10 hover:border-gray-300 dark:hover:border-white/20 transition-all whitespace-nowrap"
+                >
+                  <svg aria-hidden="true" className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
                   </svg>
                   <span className="hidden sm:inline">{getSortLabel()}</span>
                   <span className="sm:hidden">{t("sort")}</span>
-                  <svg className="w-3.5 h-3.5 opacity-50 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" className="w-3.5 h-3.5 opacity-50 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
@@ -477,8 +494,10 @@ export const CarsPage = () => {
           </div>
 
           {/* Category Tabs */}
-          <div className="flex items-center gap-2 mb-6 sm:mb-8 overflow-x-auto">
+          <div role="tablist" className="flex items-center gap-2 mb-6 sm:mb-8 overflow-x-auto">
               <button
+                role="tab"
+                aria-selected={activeTab === "AVAILABLE"}
                 onClick={() => handleTabChange("AVAILABLE")}
                 className={`relative px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap rounded-lg ${
                   activeTab === "AVAILABLE"
@@ -491,8 +510,8 @@ export const CarsPage = () => {
                   <span className="sm:hidden">{t("tabs.currentShort")}</span>
                   {!isLoading("AVAILABLE") && currentCars.length > 0 && (
                     <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
-                      activeTab === "AVAILABLE" 
-                        ? "bg-white/20 text-white" 
+                      activeTab === "AVAILABLE"
+                        ? "bg-white/20 text-white"
                         : "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400"
                     }`}>
                       {currentCars.length}
@@ -502,6 +521,8 @@ export const CarsPage = () => {
               </button>
 
               <button
+                role="tab"
+                aria-selected={activeTab === "ONROAD"}
                 onClick={() => handleTabChange("ONROAD")}
                 className={`relative px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap rounded-lg ${
                   activeTab === "ONROAD"
@@ -514,8 +535,8 @@ export const CarsPage = () => {
                   <span className="sm:hidden">{t("tabs.arrivingShort")}</span>
                   {!isLoading("ONROAD") && arrivingCars.length > 0 && (
                     <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
-                      activeTab === "ONROAD" 
-                        ? "bg-white/20 text-white" 
+                      activeTab === "ONROAD"
+                        ? "bg-white/20 text-white"
                         : "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400"
                     }`}>
                       {arrivingCars.length}
@@ -525,6 +546,8 @@ export const CarsPage = () => {
               </button>
 
               <button
+                role="tab"
+                aria-selected={activeTab === "TRANSIT"}
                 onClick={() => handleTabChange("TRANSIT")}
                 className={`relative px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap rounded-lg ${
                   activeTab === "TRANSIT"

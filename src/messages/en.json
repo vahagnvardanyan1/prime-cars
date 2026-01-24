@@ -137,6 +137,7 @@
     "viewCta": "View Details",
     "requestCta": "Order Now",
     "sort": "Sort",
+    "sortAriaLabel": "Sort vehicles",
     "sortOptions": {
       "priceAsc": "Price: Low to High",
       "priceDesc": "Price: High to Low",
