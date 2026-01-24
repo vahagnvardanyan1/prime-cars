@@ -3,6 +3,8 @@ import Image from "next/image";
 import { Globe, Mail, MapPin, Phone, Shield, TrendingUp, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { Container } from "@/components/layouts";
+
 export const PartnersPage = () => {
   const t = useTranslations();
 
@@ -10,7 +12,7 @@ export const PartnersPage = () => {
     <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
       {/* Hero Section */}
       <section className="relative overflow-hidden transition-colors duration-300">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-20">
+        <Container className="py-20">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div>
@@ -74,12 +76,12 @@ export const PartnersPage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* Benefits Section */}
       <section className="py-20 bg-gray-100 dark:bg-[#111111] border-y border-gray-300 dark:border-white/10 transition-colors duration-300">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+        <Container>
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-gray-900 dark:text-white mb-4">
               {t("partners.benefits.title")}
@@ -126,7 +128,7 @@ export const PartnersPage = () => {
               </p>
             </div>
           </div>
-        </div>
+        </Container>
       </section>
     </div>
   );

@@ -7,6 +7,7 @@ import { Menu, Moon, Sun, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Container } from "@/components/layouts";
 import { useTheme } from "@/components/ThemeContext";
 import { Link, usePathname } from "@/i18n/routing";
 import { siteNavItems } from "@/lib/site-nav";
@@ -63,7 +64,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
             : "bg-white/50 dark:bg-black/50 backdrop-blur-sm"
         }`}
       >
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+        <Container>
           <div className="flex items-center justify-between h-20">
             <Link href="/" className="flex items-center gap-3 group">
               <Image
@@ -148,7 +149,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
               </button>
             </div>
           </div>
-        </div>
+        </Container>
       </header>
 
       {isMobileMenuOpen && (

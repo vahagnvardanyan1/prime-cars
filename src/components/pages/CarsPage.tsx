@@ -7,6 +7,7 @@ import { useRouter } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { translateFuelType, translateTransmission } from "@/lib/utils/translateVehicleSpecs";
 
+import { Container } from "@/components/layouts";
 import { CarCard } from "@/components/pages/cars/CarCard";
 import {
   DropdownMenu,
@@ -347,7 +348,7 @@ export const CarsPage = () => {
     <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
 
       {/* Tabs Section */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 pt-6 sm:pt-8 lg:pt-10 pb-6 sm:pb-8">
+      <Container className="pt-6 sm:pt-8 lg:pt-10 pb-6 sm:pb-8">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as CarCategory)} className="w-full">
           {/* Sort and View Toggle - Above Tabs */}
           <div className="flex items-center gap-3 mb-4">
@@ -560,7 +561,7 @@ export const CarsPage = () => {
             <CarsGrid cars={orderCars} isLoading={isLoading("TRANSIT")} category="TRANSIT" sortFn={sortCars} viewMode={isMobile ? "grid" : viewMode} />
           </TabsContent>
         </Tabs>
-      </div>
+      </Container>
     </div>
   );
 };

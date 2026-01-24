@@ -8,6 +8,7 @@ import {
   Phone,
 } from "lucide-react";
 
+import { Container } from "@/components/layouts";
 import { Link } from "@/i18n/routing";
 
 export const Footer = () => {
@@ -15,7 +16,7 @@ export const Footer = () => {
 
   return (
     <footer className="bg-gray-100 dark:bg-black border-t border-gray-300 dark:border-white/10 text-gray-900 dark:text-white pt-16 pb-8 transition-colors duration-300">
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+      <Container>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
           <div>
             <div className="text-xl font-bold text-gray-900 dark:text-white mb-4">
@@ -126,7 +127,7 @@ export const Footer = () => {
             </p>
           </div>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 };
