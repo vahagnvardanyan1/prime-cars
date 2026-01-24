@@ -125,7 +125,7 @@ export const NotificationPopup = ({ userId }: NotificationPopupProps) => {
       <DialogContent key={currentNotification.id} className="w-[90vw] max-w-lg max-h-[90vh] flex flex-col bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
         <DialogHeader className="flex-shrink-0">
           <div className="flex items-start gap-3 sm:gap-4">
-            <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#429de6]/10 dark:bg-[#429de6]/20 flex items-center justify-center">
+            <div aria-hidden="true" className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#429de6]/10 dark:bg-[#429de6]/20 flex items-center justify-center">
               <Bell className="h-5 w-5 sm:h-6 sm:w-6 text-[#429de6]" />
             </div>
             <div className="flex-1 pt-0.5 sm:pt-1">
@@ -160,8 +160,8 @@ export const NotificationPopup = ({ userId }: NotificationPopupProps) => {
           {unreadNotifications.length > 1 && (
             <div className="pt-3 sm:pt-4 border-t border-gray-200 dark:border-white/10">
               <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                <Bell className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span>
+                <Bell aria-hidden="true" className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="tabular-nums">
                   {unreadNotifications.length - 1} more notification{unreadNotifications.length - 1 !== 1 ? 's' : ''} waiting
                 </span>
               </p>
@@ -174,14 +174,14 @@ export const NotificationPopup = ({ userId }: NotificationPopupProps) => {
             type="button"
             variant="outline"
             onClick={handleLater}
-            className="text-sm sm:text-base border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
+            className="text-sm sm:text-base border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
           >
             {t("later")}
           </Button>
           <Button
             type="button"
             onClick={handleMarkAsRead}
-            className="text-sm sm:text-base bg-[#429de6] text-white hover:bg-[#3a8dd6] dark:bg-[#429de6] dark:hover:bg-[#3a8dd6]"
+            className="text-sm sm:text-base bg-[#429de6] text-white hover:bg-[#3a8dd6] dark:bg-[#429de6] dark:hover:bg-[#3a8dd6] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
           >
             {t("markAsRead")}
           </Button>

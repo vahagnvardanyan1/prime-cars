@@ -38,7 +38,7 @@ export const HomeCarCard = ({ car, category }: HomeCarCardProps) => {
       {/* Image Container */}
       <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#1a1a1a]">
         {/* Year Badge */}
-        <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/95 dark:bg-black/60 backdrop-blur-md rounded-full text-gray-900 dark:text-white text-xs font-medium border border-gray-200/50 dark:border-white/10 z-10">
+        <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/95 dark:bg-black/60 backdrop-blur-md rounded-full text-gray-900 dark:text-white text-xs font-medium border border-gray-200/50 dark:border-white/10 z-10 tabular-nums">
           {car.year}
         </div>
 
@@ -88,18 +88,18 @@ export const HomeCarCard = ({ car, category }: HomeCarCardProps) => {
           {car.engine && (
             <>
               <span className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg aria-hidden="true" className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
                 {car.engine}
               </span>
-              <span className="text-gray-300 dark:text-gray-600">•</span>
+              <span aria-hidden="true" className="text-gray-300 dark:text-gray-600">•</span>
             </>
           )}
           {car.horsepower && (
             <>
-              <span>{car.horsepower} HP</span>
-              <span className="text-gray-300 dark:text-gray-600">•</span>
+              <span className="tabular-nums">{car.horsepower} HP</span>
+              <span aria-hidden="true" className="text-gray-300 dark:text-gray-600">•</span>
             </>
           )}
           {car.fuelType && <span>{car.fuelType}</span>}
@@ -108,7 +108,7 @@ export const HomeCarCard = ({ car, category }: HomeCarCardProps) => {
         {/* ETA for Coming Cars */}
         {category === "coming" && car.estimatedArrival && (
           <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 mb-4 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 rounded-lg">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span className="font-medium">
@@ -120,7 +120,7 @@ export const HomeCarCard = ({ car, category }: HomeCarCardProps) => {
         {/* Location for Current Cars */}
         {category === "current" && car.location && (
           <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-4">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -134,12 +134,12 @@ export const HomeCarCard = ({ car, category }: HomeCarCardProps) => {
             <p className="text-xs text-gray-400 dark:text-gray-500 mb-0.5">
               {category === "order" ? t("startingFrom") : t("price")}
             </p>
-            <p className="text-xl font-bold text-gray-900 dark:text-white">
+            <p className="text-xl font-bold text-gray-900 dark:text-white tabular-nums">
               {formatPrice(car.priceUsd)}
             </p>
           </div>
 
-          <button className="px-4 py-2 bg-[#429de6] hover:bg-[#3a8acc] text-white text-sm font-medium rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-[#429de6]/25 active:scale-95">
+          <button className="px-4 py-2 bg-[#429de6] hover:bg-[#3a8acc] text-white text-sm font-medium rounded-lg transition-colors duration-200 hover:shadow-lg hover:shadow-[#429de6]/25 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2">
             {category === "order" ? t("requestCta") : t("viewCta")}
           </button>
         </div>

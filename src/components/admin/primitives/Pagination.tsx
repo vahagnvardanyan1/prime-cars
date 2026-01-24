@@ -43,7 +43,7 @@ export const Pagination = ({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-gray-200 dark:border-white/10">
       {/* Items info and page size selector */}
       <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-        <span>
+        <span className="tabular-nums">
           {t("showing")} {startItem}-{endItem} {t("of")} {totalItems}
         </span>
         <div className="flex items-center gap-2">
@@ -71,15 +71,16 @@ export const Pagination = ({
       </div>
 
       {/* Page navigation */}
-      <div className="flex items-center gap-2">
+      <nav aria-label={t("pageNavigation")} className="flex items-center gap-2">
         <Button
           variant="outline"
           size="icon"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={!canGoPrevious}
-          className="h-8 w-8 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40"
+          aria-label={t("previousPage")}
+          className="h-8 w-8 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft aria-hidden="true" className="h-4 w-4" />
         </Button>
         
         <div className="flex items-center gap-1">
@@ -117,7 +118,7 @@ export const Pagination = ({
                 1
               </Button>
               
-              {currentPage > 3 && <span className="px-2 text-gray-400">...</span>}
+              {currentPage > 3 && <span aria-hidden="true" className="px-2 text-gray-400">...</span>}
               
               {currentPage > 2 && currentPage < totalPages - 1 && (
                 <>
@@ -152,7 +153,7 @@ export const Pagination = ({
                 </>
               )}
               
-              {currentPage < totalPages - 2 && <span className="px-2 text-gray-400">...</span>}
+              {currentPage < totalPages - 2 && <span aria-hidden="true" className="px-2 text-gray-400">...</span>}
               
               <Button
                 variant="outline"
@@ -175,11 +176,12 @@ export const Pagination = ({
           size="icon"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={!canGoNext}
-          className="h-8 w-8 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40"
+          aria-label={t("nextPage")}
+          className="h-8 w-8 border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight aria-hidden="true" className="h-4 w-4" />
         </Button>
-      </div>
+      </nav>
     </div>
   );
 };
