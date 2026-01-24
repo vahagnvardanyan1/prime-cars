@@ -4,20 +4,12 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 
-import type { Car, CarCategory } from "@/lib/cars/types";
+import type { Car } from "@/lib/cars/types";
 import { translateEngineType, translateFuelType } from "@/lib/utils/translateVehicleSpecs";
+import { CategoryBadge } from "@/components/ui/badges";
 
 type CarCardProps = {
   car: Car;
-};
-
-const getCategoryStyles = (category: CarCategory): string => {
-  const styles: Record<CarCategory, string> = {
-    AVAILABLE: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-    ONROAD: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
-    TRANSIT: "bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20",
-  };
-  return styles[category];
 };
 
 const formatPrice = (price: number): string => {
@@ -50,13 +42,11 @@ export const CarCard = ({ car }: CarCardProps) => {
         </div>
 
         {/* Category Badge */}
-        <div
-          className={`absolute top-3 right-3 px-2.5 py-1 backdrop-blur-md rounded-lg text-xs font-semibold z-10 ${getCategoryStyles(car.category)}`}
-        >
-          {car.category === "AVAILABLE" && tCarDetails("badges.available")}
-          {car.category === "ONROAD" && tCarDetails("badges.arriving")}
-          {car.category === "TRANSIT" && tCarDetails("badges.order")}
-        </div>
+        <CategoryBadge
+          category={car.category}
+          variant="tag"
+          className="absolute top-3 right-3 z-10"
+        />
 
         <Image
           src={car.imageUrl}

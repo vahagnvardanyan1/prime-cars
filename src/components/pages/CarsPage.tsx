@@ -1,81 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useState } from "react";
+import Image from "next/image";
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { translateFuelType, translateTransmission } from "@/lib/utils/translateVehicleSpecs";
 
+import { Container } from "@/components/layouts";
 import { CarCard } from "@/components/pages/cars/CarCard";
+import { CategoryBadge } from "@/components/ui/badges";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { GridSkeleton } from "@/components/ui/skeletons";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useCarsPage } from "@/hooks/useCarsPage";
+import { useIsMobile } from "@/hooks/useMediaQuery";
+import type { SortOption } from "@/hooks/useSortedCars";
 import type { Car, CarCategory } from "@/lib/cars/types";
 
-type SortOption = "price-asc" | "price-desc" | "year-newest" | "year-oldest";
 type ViewMode = "grid" | "list";
 
-const LoadingSkeleton = ({ viewMode }: { viewMode: ViewMode }) => {
-  if (viewMode === "list") {
-    return (
-      <div className="flex flex-col gap-4">
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div
-            key={i}
-            className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded-xl p-4 animate-pulse"
-          >
-            <div className="flex gap-6">
-              <div className="flex-shrink-0 w-48 h-32 bg-gray-200 dark:bg-gray-800 rounded-lg" />
-              <div className="flex-1 space-y-3">
-                <div className="h-5 bg-gray-200 dark:bg-gray-800 rounded w-1/3" />
-                <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-1/4" />
-                <div className="flex gap-4">
-                  <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-20" />
-                  <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-20" />
-                  <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-20" />
-                </div>
-                <div className="flex justify-between items-center pt-2">
-                  <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded w-24" />
-                  <div className="h-9 bg-gray-200 dark:bg-gray-800 rounded w-28" />
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {[1, 2, 3, 4, 5, 6].map((i) => (
-        <div
-          key={i}
-          className="bg-white dark:bg-[#111111] rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 animate-pulse"
-        >
-          <div className="aspect-[16/10] bg-gray-200 dark:bg-gray-800" />
-          <div className="p-6 space-y-3">
-            <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-16" />
-            <div className="h-5 bg-gray-200 dark:bg-gray-800 rounded w-3/4" />
-            <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-1/2" />
-            <div className="pt-4 border-t border-gray-100 dark:border-white/5 flex justify-between">
-              <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded w-20" />
-              <div className="h-9 bg-gray-200 dark:bg-gray-800 rounded w-24" />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const CarListItem = ({ car }: { car: Car }) => {
+const CarListItem = memo(({ car }: { car: Car }) => {
   const t = useTranslations("carsPage");
   const tCarDetails = useTranslations("carDetails");
   const router = useRouter();
@@ -84,41 +35,30 @@ const CarListItem = ({ car }: { car: Car }) => {
     router.push(`/cars/${car.id}`);
   };
 
-  const getCategoryBadge = () => {
-    switch (car.category) {
-      case "AVAILABLE":
-        return (
-          <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400">
-            {tCarDetails("badges.available")}
-          </span>
-        );
-      case "ONROAD":
-        return (
-          <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400">
-            {tCarDetails("badges.arriving")}
-          </span>
-        );
-      case "TRANSIT":
-        return (
-          <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-[#429de6]/20 text-blue-700 dark:text-[#429de6]">
-            {tCarDetails("badges.order")}
-          </span>
-        );
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleClick();
     }
   };
 
   return (
-    <div 
+    <div
+      role="button"
+      tabIndex={0}
       onClick={handleClick}
-      className="group bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded-xl hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all duration-300 hover:shadow-lg overflow-hidden cursor-pointer"
+      onKeyDown={handleKeyDown}
+      className="group bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded-xl hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all duration-300 hover:shadow-lg overflow-hidden cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
     >
       <div className="flex gap-6 p-4">
         {/* Image */}
-        <div className="flex-shrink-0 w-48 h-32 bg-gray-100 dark:bg-white/5 rounded-lg overflow-hidden">
-          <img
+        <div className="relative flex-shrink-0 w-48 h-32 bg-gray-100 dark:bg-white/5 rounded-lg overflow-hidden">
+          <Image
             src={car.imageUrl}
             alt={`${car.brand} ${car.model}`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="192px"
           />
         </div>
 
@@ -132,7 +72,7 @@ const CarListItem = ({ car }: { car: Car }) => {
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{car.year}</p>
               </div>
-              {getCategoryBadge()}
+              <CategoryBadge category={car.category} />
             </div>
 
             <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
@@ -179,9 +119,10 @@ const CarListItem = ({ car }: { car: Car }) => {
       </div>
     </div>
   );
-};
+});
+CarListItem.displayName = "CarListItem";
 
-const EmptyState = ({ category }: { category: CarCategory }) => {
+const EmptyState = memo(({ category }: { category: CarCategory }) => {
   const t = useTranslations("carsPage.empty");
 
   const getTranslationKey = () => {
@@ -233,11 +174,12 @@ const EmptyState = ({ category }: { category: CarCategory }) => {
       </p>
     </div>
   );
-};
+});
+EmptyState.displayName = "EmptyState";
 
-const CarsGrid = ({ cars, isLoading, category, sortFn, viewMode }: { cars: Car[]; isLoading: boolean; category: CarCategory; sortFn: (cars: Car[]) => Car[]; viewMode: ViewMode }) => {
+const CarsGrid = memo(({ cars, isLoading, category, sortFn, viewMode }: { cars: Car[]; isLoading: boolean; category: CarCategory; sortFn: (cars: Car[]) => Car[]; viewMode: ViewMode }) => {
   if (isLoading) {
-    return <LoadingSkeleton viewMode={viewMode} />;
+    return <GridSkeleton viewMode={viewMode} />;
   }
 
   // Ensure cars is always an array
@@ -266,14 +208,16 @@ const CarsGrid = ({ cars, isLoading, category, sortFn, viewMode }: { cars: Car[]
       ))}
     </div>
   );
-};
+});
+CarsGrid.displayName = "CarsGrid";
 
 export const CarsPage = () => {
   const t = useTranslations("carsPage");
   const router = useRouter();
   const searchParams = useSearchParams();
   const { currentCars, arrivingCars, orderCars, isLoading, loadCarsForCategory } = useCarsPage();
-  
+  const isMobile = useIsMobile();
+
   // Initialize sort from URL or default to year-newest
   const [activeTab, setActiveTab] = useState<CarCategory>("AVAILABLE");
   const [sortOption, setSortOption] = useState<SortOption>(() => {
@@ -283,18 +227,6 @@ export const CarsPage = () => {
       : "year-newest";
   });
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   const handleTabChange = (category: CarCategory) => {
     setActiveTab(category);
@@ -347,20 +279,23 @@ export const CarsPage = () => {
     <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
 
       {/* Tabs Section */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 pt-6 sm:pt-8 lg:pt-10 pb-6 sm:pb-8">
+      <Container className="pt-6 sm:pt-8 lg:pt-10 pb-6 sm:pb-8">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as CarCategory)} className="w-full">
           {/* Sort and View Toggle - Above Tabs */}
           <div className="flex items-center gap-3 mb-4">
             {/* Sort Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg hover:bg-gray-50 dark:hover:bg-white/10 hover:border-gray-300 dark:hover:border-white/20 transition-all whitespace-nowrap">
-                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button
+                  aria-label={t("sortAriaLabel")}
+                  className="flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg hover:bg-gray-50 dark:hover:bg-white/10 hover:border-gray-300 dark:hover:border-white/20 transition-all whitespace-nowrap"
+                >
+                  <svg aria-hidden="true" className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
                   </svg>
                   <span className="hidden sm:inline">{getSortLabel()}</span>
                   <span className="sm:hidden">{t("sort")}</span>
-                  <svg className="w-3.5 h-3.5 opacity-50 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg aria-hidden="true" className="w-3.5 h-3.5 opacity-50 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
@@ -476,8 +411,10 @@ export const CarsPage = () => {
           </div>
 
           {/* Category Tabs */}
-          <div className="flex items-center gap-2 mb-6 sm:mb-8 overflow-x-auto">
+          <div role="tablist" className="flex items-center gap-2 mb-6 sm:mb-8 overflow-x-auto">
               <button
+                role="tab"
+                aria-selected={activeTab === "AVAILABLE"}
                 onClick={() => handleTabChange("AVAILABLE")}
                 className={`relative px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap rounded-lg ${
                   activeTab === "AVAILABLE"
@@ -490,8 +427,8 @@ export const CarsPage = () => {
                   <span className="sm:hidden">{t("tabs.currentShort")}</span>
                   {!isLoading("AVAILABLE") && currentCars.length > 0 && (
                     <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
-                      activeTab === "AVAILABLE" 
-                        ? "bg-white/20 text-white" 
+                      activeTab === "AVAILABLE"
+                        ? "bg-white/20 text-white"
                         : "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400"
                     }`}>
                       {currentCars.length}
@@ -501,6 +438,8 @@ export const CarsPage = () => {
               </button>
 
               <button
+                role="tab"
+                aria-selected={activeTab === "ONROAD"}
                 onClick={() => handleTabChange("ONROAD")}
                 className={`relative px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap rounded-lg ${
                   activeTab === "ONROAD"
@@ -513,8 +452,8 @@ export const CarsPage = () => {
                   <span className="sm:hidden">{t("tabs.arrivingShort")}</span>
                   {!isLoading("ONROAD") && arrivingCars.length > 0 && (
                     <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
-                      activeTab === "ONROAD" 
-                        ? "bg-white/20 text-white" 
+                      activeTab === "ONROAD"
+                        ? "bg-white/20 text-white"
                         : "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400"
                     }`}>
                       {arrivingCars.length}
@@ -524,6 +463,8 @@ export const CarsPage = () => {
               </button>
 
               <button
+                role="tab"
+                aria-selected={activeTab === "TRANSIT"}
                 onClick={() => handleTabChange("TRANSIT")}
                 className={`relative px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap rounded-lg ${
                   activeTab === "TRANSIT"
@@ -560,7 +501,7 @@ export const CarsPage = () => {
             <CarsGrid cars={orderCars} isLoading={isLoading("TRANSIT")} category="TRANSIT" sortFn={sortCars} viewMode={isMobile ? "grid" : viewMode} />
           </TabsContent>
         </Tabs>
-      </div>
+      </Container>
     </div>
   );
 };

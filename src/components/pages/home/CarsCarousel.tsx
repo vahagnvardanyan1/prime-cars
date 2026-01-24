@@ -13,6 +13,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { CategoryBadge } from "@/components/ui/badges";
 
 interface CarsCarouselProps {
   cars: Car[];
@@ -80,17 +81,11 @@ export const CarsCarousel = ({ cars }: CarsCarouselProps) => {
                     </div>
                     
                     {/* Category Badge - Right */}
-                    <div className={`absolute top-4 right-4 px-3 py-1 backdrop-blur-sm rounded-full text-xs font-semibold border z-10 ${
-                      car.category === "AVAILABLE" 
-                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" 
-                        : car.category === "ONROAD" 
-                        ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" 
-                        : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
-                    }`}>
-                      {car.category === "AVAILABLE" && t("carDetails.badges.available")}
-                      {car.category === "ONROAD" && t("carDetails.badges.arriving")}
-                      {car.category === "TRANSIT" && t("carDetails.badges.order")}
-                    </div>
+                    <CategoryBadge
+                      category={car.category}
+                      variant="pill"
+                      className="absolute top-4 right-4 z-10"
+                    />
                     
                     <Image
                       src={carImage}
