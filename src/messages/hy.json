@@ -260,6 +260,8 @@
       "shippingPrice": "Տեղափոխման գինը",
       "enterShippingPrice": "Մուտքագրել տեղափոխման գինը (USD)",
       "other": "Այլ",
+      "required": "Պարտադիր է",
+      "auctionTabsAriaLabel": "Աճուրդի տեսակի ընտրություն",
       "selectType": "Ընտրել տեսակը",
       "passenger": "Մարդատար",
       "truck": "Բեռնատար",
