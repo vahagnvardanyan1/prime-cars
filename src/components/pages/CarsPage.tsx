@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, memo } from "react";
+import { memo, useState } from "react";
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
@@ -15,67 +15,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { GridSkeleton } from "@/components/ui/skeletons";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useCarsPage } from "@/hooks/useCarsPage";
+import { useIsMobile } from "@/hooks/useMediaQuery";
+import type { SortOption } from "@/hooks/useSortedCars";
 import type { Car, CarCategory } from "@/lib/cars/types";
 
-type SortOption = "price-asc" | "price-desc" | "year-newest" | "year-oldest";
 type ViewMode = "grid" | "list";
-
-const LoadingSkeleton = memo(({ viewMode }: { viewMode: ViewMode }) => {
-  if (viewMode === "list") {
-    return (
-      <div className="flex flex-col gap-4">
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div
-            key={i}
-            className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded-xl p-4 animate-pulse"
-          >
-            <div className="flex gap-6">
-              <div className="flex-shrink-0 w-48 h-32 bg-gray-200 dark:bg-gray-800 rounded-lg" />
-              <div className="flex-1 space-y-3">
-                <div className="h-5 bg-gray-200 dark:bg-gray-800 rounded w-1/3" />
-                <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-1/4" />
-                <div className="flex gap-4">
-                  <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-20" />
-                  <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-20" />
-                  <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-20" />
-                </div>
-                <div className="flex justify-between items-center pt-2">
-                  <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded w-24" />
-                  <div className="h-9 bg-gray-200 dark:bg-gray-800 rounded w-28" />
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {[1, 2, 3, 4, 5, 6].map((i) => (
-        <div
-          key={i}
-          className="bg-white dark:bg-[#111111] rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 animate-pulse"
-        >
-          <div className="aspect-[16/10] bg-gray-200 dark:bg-gray-800" />
-          <div className="p-6 space-y-3">
-            <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-16" />
-            <div className="h-5 bg-gray-200 dark:bg-gray-800 rounded w-3/4" />
-            <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-1/2" />
-            <div className="pt-4 border-t border-gray-100 dark:border-white/5 flex justify-between">
-              <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded w-20" />
-              <div className="h-9 bg-gray-200 dark:bg-gray-800 rounded w-24" />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-});
-LoadingSkeleton.displayName = "LoadingSkeleton";
 
 const CarListItem = memo(({ car }: { car: Car }) => {
   const t = useTranslations("carsPage");
@@ -251,7 +198,7 @@ EmptyState.displayName = "EmptyState";
 
 const CarsGrid = memo(({ cars, isLoading, category, sortFn, viewMode }: { cars: Car[]; isLoading: boolean; category: CarCategory; sortFn: (cars: Car[]) => Car[]; viewMode: ViewMode }) => {
   if (isLoading) {
-    return <LoadingSkeleton viewMode={viewMode} />;
+    return <GridSkeleton viewMode={viewMode} />;
   }
 
   // Ensure cars is always an array
@@ -288,7 +235,8 @@ export const CarsPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { currentCars, arrivingCars, orderCars, isLoading, loadCarsForCategory } = useCarsPage();
-  
+  const isMobile = useIsMobile();
+
   // Initialize sort from URL or default to year-newest
   const [activeTab, setActiveTab] = useState<CarCategory>("AVAILABLE");
   const [sortOption, setSortOption] = useState<SortOption>(() => {
@@ -298,18 +246,6 @@ export const CarsPage = () => {
       : "year-newest";
   });
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   const handleTabChange = (category: CarCategory) => {
     setActiveTab(category);
