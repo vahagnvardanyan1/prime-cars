@@ -57,9 +57,8 @@ export const ENVIRONMENTAL_TAX_RATES: Record<TruckAgeCategory, number> = {
 export const VAT_RATE = 0.2; // 20%
 
 // Specific customs duty rate for trucks 7+ years old (same for petrol and diesel)
-export const OLD_TRUCK_CUSTOMS_RATE_PER_CM3 = 1.0; // €1.00 per cm³ of engine volume
+export const OLD_TRUCK_CUSTOMS_RATE_PER_LITER = 1.0; // €1.00 per liter of engine volume
 
 // Legacy export for backwards compatibility
 export const CUSTOMS_DUTY_RATES = PETROL_CUSTOMS_DUTY_RATES;
 export const ENGINE_VOLUME_THRESHOLD = PETROL_ENGINE_VOLUME_THRESHOLD;
-export const OLD_TRUCK_CUSTOMS_RATE_PER_LITER = OLD_TRUCK_CUSTOMS_RATE_PER_CM3;

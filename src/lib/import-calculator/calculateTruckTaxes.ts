@@ -9,7 +9,7 @@ import {
   DIESEL_5_7_YEAR_CM3_RATES,
   ENVIRONMENTAL_TAX_RATES,
   VAT_RATE,
-  OLD_TRUCK_CUSTOMS_RATE_PER_CM3,
+  OLD_TRUCK_CUSTOMS_RATE_PER_LITER,
 } from "./truckTaxConstants";
 
 export type TruckWeightClass = TruckWeightClassType;
@@ -77,9 +77,8 @@ function calculatePetrolCustomsDuty(
   const ageBracket = getAgeBracket(vehicleYear);
 
   if (ageBracket === "7+") {
-    // For trucks 7+ years old: Customs = (engineVolume in cm³ × €1.00) + baseValue
-    const volumeBasedDuty = engineVolumeLiters * 1000 * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
-    return volumeBasedDuty + baseValue;
+    // For trucks 7+ years old: Customs = engineVolumeLiters × €1.00
+    return engineVolumeLiters * OLD_TRUCK_CUSTOMS_RATE_PER_LITER;
   }
 
   // For 0-3, 3-5, 5-7 years: Customs = baseValue × rate%
@@ -125,9 +124,8 @@ function calculateDieselCustomsDuty(
     }
 
     case "7+": {
-      // Same as petrol: engineVolume in cm³ × €1.00 + baseValue
-      const volumeBasedDuty = engineVolumeCm3 * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
-      return volumeBasedDuty + baseValue;
+      // Same as petrol: engineVolumeLiters × €1.00
+      return engineVolumeLiters * OLD_TRUCK_CUSTOMS_RATE_PER_LITER;
     }
   }
 }
@@ -138,7 +136,7 @@ function calculateDieselCustomsDuty(
  * Formula documentation:
  * PETROL:
  * - For trucks under 7 years: Customs = (price + auctionFee) × rate%
- * - For trucks 7+ years: Customs = engineVolume × €1.00 + baseValue
+ * - For trucks 7+ years: Customs = engineVolumeLiters × €1.00
  *
  * DIESEL:
  * - 0-3 years: Different rates by weight class (10%, 15%, 5%)
@@ -161,6 +159,7 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
 
   // Base value for percentage calculations (price + auction fee)
   const baseValue = vehiclePriceEur + auctionFeeEur;
+  debugger
 
   // Calculate customs duty based on engine type
   const customsDuty =

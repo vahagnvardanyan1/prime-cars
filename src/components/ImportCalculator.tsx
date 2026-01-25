@@ -587,11 +587,12 @@ export const ImportCalculator = ({
                   <input
                     id="vehicle-price"
                     name="vehiclePrice"
-                    type="number"
-                    inputMode="decimal"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     autoComplete="off"
                     value={vehiclePrice}
-                    onChange={(e) => setVehiclePrice(e.target.value)}
+                    onChange={(e) => setVehiclePrice(e.target.value.replace(/[^0-9]/g, ''))}
                     aria-required="true"
                     aria-invalid={showValidation && !vehiclePrice}
                     className={`w-full px-4 py-3 bg-transparent border rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] text-gray-900 dark:text-white placeholder:text-gray-400 tabular-nums ${
