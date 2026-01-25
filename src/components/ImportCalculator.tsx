@@ -25,7 +25,13 @@ import {
   fetchShippingCities,
   getUniqueCities,
 } from "@/lib/import-calculator/fetchShippingPrices";
+import {
+  getCopartCityList,
+  buildCopartPriceMap,
+} from "@/lib/import-calculator/copartShippingData";
 import { calculateAuctionFees, calculateServiceFee } from "@/lib/import-calculator/auctionFees";
+import { calculateTruckTaxes, type TruckWeightClass } from "@/lib/import-calculator/calculateTruckTaxes";
+import { calculateQuadricycleTaxes } from "@/lib/import-calculator/calculateQuadricycleTaxes";
 import { CalculatorResults } from "@/components/calculator/CalculatorResults";
 
 interface ImportCalculatorProps {
@@ -51,6 +57,7 @@ export const ImportCalculator = ({
   const [manualShippingPrice, setManualShippingPrice] = useState("");
   const [auctionLocation, setAuctionLocation] = useState("");
   const [vehicleType, setVehicleType] = useState("");
+  const [weightClass, setWeightClass] = useState<TruckWeightClass | "">("");
   const [engine, setEngine] = useState("");
   const [engineVolume, setEngineVolume] = useState("");
   const [insurance, setInsurance] = useState(false);
@@ -135,6 +142,19 @@ export const ImportCalculator = ({
       setEngine("gasoline");
     }
   }, [vehicleType]);
+
+  // Reset weight class when switching away from truck
+  // Reset engine to gasoline if truck is selected with invalid engine type
+  useEffect(() => {
+    if (vehicleType !== "truck") {
+      setWeightClass("");
+    } else {
+      // Trucks only support gasoline and diesel
+      if (engine === "electric" || engine === "hybrid") {
+        setEngine("gasoline");
+      }
+    }
+  }, [vehicleType, engine]);
 
   // Reset high ground clearance when electric engine is selected
   useEffect(() => {
@@ -273,22 +293,28 @@ export const ImportCalculator = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Show validation errors
     setShowValidation(true);
-    
+
     // Validation - engine volume not required for electric vehicles
     const isEngineVolumeRequired = engine !== "electric";
     if (!vehiclePrice || !engine || !day || !month || !year || !auctionLocation || !vehicleType) {
       toast.error(t("calculator.form.validationError") || "Please fill in all required fields");
       return;
     }
-    
+
     if (isEngineVolumeRequired && !engineVolume) {
       toast.error(t("calculator.form.validationError") || "Please fill in all required fields");
       return;
     }
-    
+
+    // Validation for weight class when truck is selected
+    if (vehicleType === "truck" && !weightClass) {
+      toast.error(t("calculator.form.validationError") || "Please fill in all required fields");
+      return;
+    }
+
     // Validation for manual shipping price when "Other" is selected
     if (activeTab === "other" && !manualShippingPrice) {
       toast.error(t("calculator.form.validationError") || "Please fill in all required fields");
@@ -296,13 +322,13 @@ export const ImportCalculator = ({
     }
 
     setIsCalculating(true);
-    
-    
+
+
     try {
       // Fetch exchange rates first
       const { fetchExchangeRates, calculateEurUsdRate } = await import("@/lib/import-calculator/fetchExchangeRates");
       const ratesResult = await fetchExchangeRates();
-      
+
       let eurUsdRate: number;
       if (!ratesResult.success) {
         console.error("Failed to fetch exchange rates, using fallback");
@@ -311,33 +337,90 @@ export const ImportCalculator = ({
       } else {
         eurUsdRate = parseFloat(calculateEurUsdRate(ratesResult.data));
       }
-      
+
       // Convert (carPrice + shippingPrice) from USD to EUR
       const carPriceUsd = parseFloat(vehiclePrice);
       const shippingPriceUsd = shippingPrice || 0;
       const auctionUsd = parseFloat(auctionFee);
-      
-      const totalPriceEur = Math.round((carPriceUsd + shippingPriceUsd + auctionUsd) * eurUsdRate);
 
+      // Handle truck calculation differently (client-side)
+      if (vehicleType === "truck" && weightClass) {
+        // Convert USD to EUR for truck calculation (divide by eurUsdRate since 1 EUR = eurUsdRate USD)
+        const vehiclePriceEur = carPriceUsd / eurUsdRate;
+        const auctionFeeEur = auctionUsd / eurUsdRate;
 
-      
-      const result = await calculateVehicleTaxes({
-        price: totalPriceEur, // Send EUR price to backend as integer
-        volume: engine === "electric" ? 0 : parseFloat(engineVolume), // Use 0 for electric
-        engineType: mapEngineType(engine),
-        date: formatDate({ day, month, year }),
-        isLegal: importer === "legal" ? 1 : 0,
-        offRoad: highGroundClearance ? 1 : 0,
-        ICEpower: 0, // Default to 0 as per API spec
-      });
+        // Map engine type: "gasoline" -> "petrol", "diesel" -> "diesel"
+        const truckEngineType = engine === "diesel" ? "diesel" : "petrol";
 
-      if (result.success) {
-        setCalculationResults(result.data);
+        const truckResult = calculateTruckTaxes({
+          vehiclePriceEur,
+          auctionFeeEur,
+          engineVolumeLiters: parseFloat(engineVolume),
+          weightClass: weightClass as TruckWeightClass,
+          vehicleYear: parseInt(year),
+          engineType: truckEngineType,
+        });
+
+        // Map truck result to CalculatorResponse format
+        // Note: CalculatorResults divides by eurUsdRate to convert EUR→USD, but it should multiply.
+        // To compensate, we multiply by eurUsdRate² here so the final displayed USD values are correct.
+        const rateSquared = eurUsdRate * eurUsdRate;
+        const calculatorResponse: CalculatorResponse = {
+          globTax: Math.round(truckResult.customsDuty * rateSquared),
+          nds: Math.round(truckResult.vat * rateSquared),
+          envTaxPay: Math.round(truckResult.environmentalTax * rateSquared),
+          sumPay: Math.round(truckResult.total * rateSquared),
+          type: "truck",
+        };
+
+        setCalculationResults(calculatorResponse);
+        handleShowResults();
+      } else if (vehicleType === "quadricycle" || vehicleType === "snowmobile") {
+        // Quadricycle/Snowmobile calculation (client-side)
+        const vehiclePriceEur = carPriceUsd / eurUsdRate;
+        const auctionFeeEur = auctionUsd / eurUsdRate;
+
+        const quadResult = calculateQuadricycleTaxes({
+          vehiclePriceEur,
+          auctionFeeEur,
+          engineVolumeLiters: parseFloat(engineVolume),
+          vehicleYear: parseInt(year),
+        });
+
+        // Apply rate² compensation (same as trucks)
+        const rateSquared = eurUsdRate * eurUsdRate;
+        const calculatorResponse: CalculatorResponse = {
+          globTax: Math.round(quadResult.customsDuty * rateSquared),
+          nds: Math.round(quadResult.vat * rateSquared),
+          envTaxPay: Math.round(quadResult.environmentalTax * rateSquared),
+          sumPay: Math.round(quadResult.total * rateSquared),
+          type: vehicleType,
+        };
+
+        setCalculationResults(calculatorResponse);
         handleShowResults();
       } else {
-        toast.error(t("calculator.form.calculationError") || "Calculation failed", {
-          description: result.error,
+        // Standard vehicle calculation via API
+        const totalPriceEur = Math.round((carPriceUsd + shippingPriceUsd + auctionUsd) * eurUsdRate);
+
+        const result = await calculateVehicleTaxes({
+          price: totalPriceEur, // Send EUR price to backend as integer
+          volume: engine === "electric" ? 0 : parseFloat(engineVolume), // Use 0 for electric
+          engineType: mapEngineType(engine),
+          date: formatDate({ day, month, year }),
+          isLegal: importer === "legal" ? 1 : 0,
+          offRoad: highGroundClearance ? 1 : 0,
+          ICEpower: 0, // Default to 0 as per API spec
         });
+
+        if (result.success) {
+          setCalculationResults(result.data);
+          handleShowResults();
+        } else {
+          toast.error(t("calculator.form.calculationError") || "Calculation failed", {
+            description: result.error,
+          });
+        }
       }
     } catch (error) {
       toast.error(t("calculator.form.calculationError") || "Calculation failed", {
@@ -718,6 +801,32 @@ export const ImportCalculator = ({
                   </Select>
                 </div>
 
+                {/* Weight Class - Only for Trucks */}
+                {vehicleType === "truck" && (
+                  <div>
+                    <label id="weight-class-label" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
+                      {t("calculator.form.weightClass")} <span className="text-red-500" aria-hidden="true">*</span>
+                    </label>
+                    <Select value={weightClass} onValueChange={(value) => setWeightClass(value as TruckWeightClass)}>
+                      <SelectTrigger
+                        aria-labelledby="weight-class-label"
+                        aria-required="true"
+                        aria-invalid={showValidation && vehicleType === "truck" && !weightClass}
+                        className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
+                          (showValidation && vehicleType === "truck" && !weightClass) ? "border-red-500 dark:border-red-500" : "border-gray-300 dark:border-gray-700"
+                        }`}
+                      >
+                        <SelectValue placeholder={t("calculator.form.selectWeightClass")} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
+                        <SelectItem value="under5">{t("calculator.form.weightClassUnder5")}</SelectItem>
+                        <SelectItem value="5to20">{t("calculator.form.weightClass5to20")}</SelectItem>
+                        <SelectItem value="above20">{t("calculator.form.weightClassAbove20")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
                 {/* Engine and Engine Volume Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Engine */}
@@ -745,8 +854,12 @@ export const ImportCalculator = ({
                       <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
                         <SelectItem value="gasoline">{t("calculator.form.gasoline")}</SelectItem>
                         <SelectItem value="diesel">{t("calculator.form.diesel")}</SelectItem>
-                        <SelectItem value="electric">{t("calculator.form.electric")}</SelectItem>
-                        <SelectItem value="hybrid">{t("calculator.form.hybrid")}</SelectItem>
+                        {vehicleType !== "truck" && (
+                          <>
+                            <SelectItem value="electric">{t("calculator.form.electric")}</SelectItem>
+                            <SelectItem value="hybrid">{t("calculator.form.hybrid")}</SelectItem>
+                          </>
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
@@ -763,7 +876,7 @@ export const ImportCalculator = ({
                         type="number"
                         inputMode="decimal"
                         autoComplete="off"
-                        step="0.1"
+                        step="any"
                         value={engineVolume}
                         onChange={(e) => setEngineVolume(e.target.value)}
                         aria-required="true"
