@@ -159,7 +159,6 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
 
   // Base value for percentage calculations (price + auction fee)
   const baseValue = vehiclePriceEur + auctionFeeEur;
-  debugger
 
   // Calculate customs duty based on engine type
   const customsDuty =
