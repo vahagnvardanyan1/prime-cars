@@ -25,10 +25,7 @@ import {
   fetchShippingCities,
   getUniqueCities,
 } from "@/lib/import-calculator/fetchShippingPrices";
-import {
-  getCopartCityList,
-  buildCopartPriceMap,
-} from "@/lib/import-calculator/copartShippingData";
+
 import { calculateAuctionFees, calculateServiceFee } from "@/lib/import-calculator/auctionFees";
 import { calculateTruckTaxes, type TruckWeightClass } from "@/lib/import-calculator/calculateTruckTaxes";
 import { calculateQuadricycleTaxes } from "@/lib/import-calculator/calculateQuadricycleTaxes";
