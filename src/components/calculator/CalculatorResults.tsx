@@ -11,6 +11,7 @@ import {
   calculateEurUsdRate,
   type ExchangeRates,
 } from "@/lib/import-calculator/fetchExchangeRates";
+import { calculateServiceFee } from "@/lib/import-calculator/auctionFees";
 
 // Fallback rates hoisted outside component to avoid recreation (React best practice 7.9)
 const FALLBACK_RATES: ExchangeRates = {
@@ -118,6 +119,30 @@ export const CalculatorResults = ({
     };
   }, [hasRestrictedData, calculationResults, eurUsdRateNum]);
 
+  // Calculate service fee based on total of all costs (Vehicle price + Auction fee + Transportation + Insurance + Customs + VAT + Env tax)
+  const calculatedServiceFee = useMemo(() => {
+    if (!hasRestrictedData) return 0;
+
+    const vehiclePriceUsd = parseFloat(vehiclePrice) || 0;
+    const shippingPriceUsd = shippingPrice ?? 0;
+    const auctionFeeUsd = parseFloat(auctionFee) || 0;
+    const insuranceFeeUsd = hasInsurance ? (parseFloat(insuranceFee ?? "0") || 0) : 0;
+    const { customsUsd, vatUsd, envTaxUsd } = taxCalculations;
+
+    // Calculate subtotal before service fee
+    const subtotal = vehiclePriceUsd + auctionFeeUsd + shippingPriceUsd + insuranceFeeUsd + customsUsd + vatUsd + envTaxUsd;
+
+    return Math.round(calculateServiceFee(subtotal));
+  }, [
+    hasRestrictedData,
+    vehiclePrice,
+    shippingPrice,
+    auctionFee,
+    insuranceFee,
+    hasInsurance,
+    taxCalculations,
+  ]);
+
   // Memoize total calculation (React best practice 5.2 - extract expensive work)
   const totalAmount = useMemo(() => {
     if (!hasRestrictedData) return 0;
@@ -126,23 +151,22 @@ export const CalculatorResults = ({
     const vehiclePriceUsd = parseFloat(vehiclePrice) || 0;
     const shippingPriceUsd = shippingPrice ?? 0;
     const auctionFeeUsd = parseFloat(auctionFee) || 0;
-    const serviceFeeUsd = parseFloat(serviceFee ?? "0") || 0;
     const insuranceFeeUsd = hasInsurance ? (parseFloat(insuranceFee ?? "0") || 0) : 0;
 
     const { customsUsd, vatUsd, envTaxUsd } = taxCalculations;
 
     return Math.round(
-      vehiclePriceUsd + shippingPriceUsd + customsUsd + vatUsd + envTaxUsd + auctionFeeUsd + serviceFeeUsd + insuranceFeeUsd
+      vehiclePriceUsd + shippingPriceUsd + customsUsd + vatUsd + envTaxUsd + auctionFeeUsd + calculatedServiceFee + insuranceFeeUsd
     );
   }, [
     hasRestrictedData,
     vehiclePrice,
     shippingPrice,
     auctionFee,
-    serviceFee,
     insuranceFee,
     hasInsurance,
     taxCalculations,
+    calculatedServiceFee,
   ]);
 
   // Memoize current date/time - only compute once per render, not on every call
@@ -328,7 +352,7 @@ export const CalculatorResults = ({
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
                   {hasRestrictedData ? (
-                    <span className="text-[#429de6] dark:text-[#5db3f0]">${serviceFee ?? "0"}</span>
+                    <span className="text-[#429de6] dark:text-[#5db3f0]">${calculatedServiceFee}</span>
                   ) : (
                     <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
                   )}
