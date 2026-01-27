@@ -26,7 +26,7 @@ import {
   getUniqueCities,
 } from "@/lib/import-calculator/fetchShippingPrices";
 
-import { calculateAuctionFees, calculateServiceFee } from "@/lib/import-calculator/auctionFees";
+import { calculateAuctionFees } from "@/lib/import-calculator/auctionFees";
 import { calculateTruckTaxes, type TruckWeightClass } from "@/lib/import-calculator/calculateTruckTaxes";
 import { calculateQuadricycleTaxes } from "@/lib/import-calculator/calculateQuadricycleTaxes";
 import { CalculatorResults } from "@/components/calculator/CalculatorResults";
@@ -48,7 +48,6 @@ export const ImportCalculator = ({
   const [importer, setImporter] = useState("legal");
   const [vehiclePrice, setVehiclePrice] = useState("");
   const [auctionFee, setAuctionFee] = useState("");
-  const [serviceFee, setServiceFee] = useState("");
   const [insuranceFee, setInsuranceFee] = useState("");
   const [shippingPrice, setShippingPrice] = useState(0);
   const [manualShippingPrice, setManualShippingPrice] = useState("");
@@ -176,15 +175,6 @@ export const ImportCalculator = ({
   };
 
   useEffect(() => {
-    // Calculate service fee for all auction types
-    if (vehiclePrice && !isNaN(parseFloat(vehiclePrice))) {
-      const price = parseFloat(vehiclePrice);
-      const calculatedServiceFee = calculateServiceFee(price);
-      setServiceFee(Math.round(calculatedServiceFee).toString());
-    } else {
-      setServiceFee("");
-    }
-
     // Calculate auction-specific fees
     if (activeTab === "copart") {
       if (vehiclePrice && !isNaN(parseFloat(vehiclePrice))) {
@@ -998,7 +988,6 @@ export const ImportCalculator = ({
           onBack={handleBackFromResults}
           // Restricted data - only pass when in admin panel
           {...(disablePartnerRestrictions && {
-            serviceFee,
             insuranceFee,
             shippingPrice,
             calculationResults,

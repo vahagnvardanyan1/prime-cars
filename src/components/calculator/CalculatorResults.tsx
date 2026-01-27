@@ -36,7 +36,6 @@ type CalculatorResultsProps = {
   showPartnerMessage?: boolean;
   onBack: () => void;
   // Restricted data - only provided in admin panel
-  serviceFee?: string;
   insuranceFee?: string;
   shippingPrice?: number;
   calculationResults?: CalculatorResponse | null;
@@ -58,7 +57,6 @@ export const CalculatorResults = ({
   showPartnerMessage = false,
   onBack,
   // Restricted data - only available in admin
-  serviceFee,
   insuranceFee,
   shippingPrice,
   calculationResults,
