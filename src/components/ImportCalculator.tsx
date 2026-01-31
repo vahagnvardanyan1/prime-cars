@@ -388,7 +388,9 @@ export const ImportCalculator = ({
         handleShowResults();
       } else {
         // Standard vehicle calculation via API
-        const totalPriceEur = Math.round((carPriceUsd + shippingPriceUsd + auctionUsd) * eurUsdRate);
+        // Individual importers don't include shipping in the taxable base
+        const shippingForTax = importer === "individual" ? 0 : shippingPriceUsd;
+        const totalPriceEur = Math.round((carPriceUsd + shippingForTax + auctionUsd) / eurUsdRate);
 
         const result = await calculateVehicleTaxes({
           price: totalPriceEur, // Send EUR price to backend as integer
@@ -633,7 +635,7 @@ export const ImportCalculator = ({
                       <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px] overflow-y-auto">
                         {availableCities.length > 0 ? (
                           availableCities.map((city) => (
-                            <SelectItem
+                            <SelectItem 
                               key={city}
                               value={city}
                               className="text-gray-900 dark:text-white hover:bg-[#429de6]/20 hover:text-[#429de6] hover:font-medium dark:hover:bg-[#429de6]/30 dark:hover:text-[#429de6] focus:bg-[#429de6]/20 focus:text-[#429de6] focus:font-medium dark:focus:bg-[#429de6]/30 dark:focus:text-[#429de6] data-[state=checked]:bg-[#429de6]/20 data-[state=checked]:text-[#429de6] data-[state=checked]:font-medium dark:data-[state=checked]:bg-[#429de6]/30 dark:data-[state=checked]:text-[#429de6] transition-colors cursor-pointer"

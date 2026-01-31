@@ -111,9 +111,9 @@ export const CalculatorResults = ({
     }
 
     return {
-      customsUsd: Math.round((calculationResults.globTax ?? 0) / eurUsdRateNum),
-      vatUsd: Math.round((calculationResults.nds ?? 0) / eurUsdRateNum),
-      envTaxUsd: Math.round((calculationResults.envTaxPay ?? 0) / eurUsdRateNum),
+      customsUsd: Math.round((calculationResults.globTax ?? 0) * eurUsdRateNum),
+      vatUsd: Math.round((calculationResults.nds ?? 0) * eurUsdRateNum),
+      envTaxUsd: Math.round((calculationResults.envTaxPay ?? 0) * eurUsdRateNum),
     };
   }, [hasRestrictedData, calculationResults, eurUsdRateNum]);
 
