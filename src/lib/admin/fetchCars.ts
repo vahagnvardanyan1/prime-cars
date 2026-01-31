@@ -24,6 +24,9 @@ type BackendCar = {
   vin?: string;
   purchaseDate?: string;
   customerNotes?: string;
+  containerNumberBooking?: string;
+  promisedPickUpDate?: string;
+  deliveredWarehouse?: string;
   invoiceId?: string;
   paid?: boolean;
   shippingPaid?: boolean;
@@ -125,6 +128,9 @@ export const fetchCars = async ({
           lot: car.lot,
           vin: car.vin,
           customerNotes: car.customerNotes,
+          containerNumberBooking: car.containerNumberBooking,
+          promisedPickUpDate: car.promisedPickUpDate,
+          deliveredWarehouse: car.deliveredWarehouse,
           vehiclePdf: car.vehiclePdf || "",
           insurancePdf: car.insurancePdf || "",
           shippingPdf: car.shippingPdf || "",

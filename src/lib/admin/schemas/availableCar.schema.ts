@@ -31,6 +31,7 @@ export const availableCarSchema = z.object({
   
   carPrice: z
     .number({ message: "Price must be a number" })
+    .int("Price must be a whole number")
     .positive("Price must be greater than 0")
     .max(10000000, "Price seems unrealistic"),
   
@@ -60,6 +61,7 @@ export const availableCarSchema = z.object({
   
   engineSize: z
     .number()
+    .int("Engine size must be a whole number")
     .min(0, "Engine size cannot be negative")
     .max(20, "Engine size seems unrealistic")
     .catch(0),
@@ -103,6 +105,7 @@ export const updateAvailableCarSchema = z.object({
   
   carPrice: z
     .number({ message: "Price must be a number" })
+    .int("Price must be a whole number")
     .positive("Price must be greater than 0")
     .max(10000000, "Price seems unrealistic")
     .optional(),
@@ -132,7 +135,7 @@ export const updateAvailableCarSchema = z.object({
   
   engineSize: z
     .union([
-      z.number().min(0, "Engine size cannot be negative").max(20, "Engine size seems unrealistic"),
+      z.number().int("Engine size must be a whole number").min(0, "Engine size cannot be negative").max(20, "Engine size seems unrealistic"),
       z.literal(0),
       z.nan().transform(() => 0),
     ])
