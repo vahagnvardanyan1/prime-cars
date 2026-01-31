@@ -18,6 +18,9 @@ type UpdateCarData = {
   carPaid?: boolean;
   shippingPaid?: boolean;
   insurance?: boolean;
+  containerNumberBooking?: string;
+  promisedPickUpDate?: string;
+  deliveredWarehouse?: string;
 };
 
 type UpdateCarResponse = {
@@ -67,6 +70,15 @@ export const updateCar = async ({
     if (data.carPaid !== undefined) formData.append("paid", data.carPaid.toString());
     if (data.shippingPaid !== undefined) formData.append("shippingPaid", data.shippingPaid.toString());
     if (data.insurance !== undefined) formData.append("insurance", data.insurance.toString());
+    if (data.containerNumberBooking) formData.append("containerNumberBooking", data.containerNumberBooking);
+    if (data.promisedPickUpDate) {
+      const isoDate = new Date(data.promisedPickUpDate).toISOString();
+      formData.append("promisedPickUpDate", isoDate);
+    }
+    if (data.deliveredWarehouse) {
+      const isoDate = new Date(data.deliveredWarehouse).toISOString();
+      formData.append("deliveredWarehouse", isoDate);
+    }
 
     // Append new PDF files
     if (vehiclePdfFile) {

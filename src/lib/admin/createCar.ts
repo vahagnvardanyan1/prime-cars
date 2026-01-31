@@ -19,6 +19,9 @@ type CreateCarData = {
   lot?: string;
   vin?: string;
   customerNotes?: string;
+  containerNumberBooking?: string;
+  promisedPickUpDate?: string;
+  deliveredWarehouse?: string;
 };
 
 type CreateCarResponse = {
@@ -66,8 +69,15 @@ export const createCar = async ({
     if (data.lot) formData.append("lot", data.lot);
     if (data.vin) formData.append("vin", data.vin);
     if (data.customerNotes) formData.append("customerNotes", data.customerNotes);
-
-
+    if (data.containerNumberBooking) formData.append("containerNumberBooking", data.containerNumberBooking);
+    if (data.promisedPickUpDate) {
+      const isoDate = new Date(data.promisedPickUpDate).toISOString();
+      formData.append("promisedPickUpDate", isoDate);
+    }
+    if (data.deliveredWarehouse) {
+      const isoDate = new Date(data.deliveredWarehouse).toISOString();
+      formData.append("deliveredWarehouse", isoDate);
+    }
 
     // Append image files
     if (images && images.length > 0) {

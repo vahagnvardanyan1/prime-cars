@@ -9,6 +9,9 @@ export type AdminCarDetails = {
   vehiclePdf?: string;
   insurancePdf?: string;
   shippingPdf?: string;
+  containerNumberBooking?: string;
+  promisedPickUpDate?: string;
+  deliveredWarehouse?: string;
 };
 
 export type AdminCar = {

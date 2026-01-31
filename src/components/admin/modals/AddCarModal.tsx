@@ -144,6 +144,9 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
           lot: parsed.details.lot,
           vin: parsed.details.vin,
           customerNotes: parsed.details.customerNotes,
+          containerNumberBooking: parsed.details.containerNumberBooking,
+          promisedPickUpDate: parsed.details.promisedPickUpDate,
+          deliveredWarehouse: parsed.details.deliveredWarehouse,
         },
         images: imageFiles,
         vehiclePdfFile: vehiclePdfFile,
@@ -417,6 +420,36 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                 {form.errors.vin && (
                   <p className="text-sm text-red-500 dark:text-red-400">{form.errors.vin}</p>
                 )}
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.containerNumberBooking")}</Label>
+                <Input
+                  value={form.fields.containerNumberBooking}
+                  onChange={(e) => form.actions.setContainerNumberBooking({ value: e.target.value })}
+                  placeholder={t("admin.modals.addCar.containerNumberBookingPlaceholder")}
+                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.promisedPickUpDate")}</Label>
+                <Input
+                  value={form.fields.promisedPickUpDate}
+                  onChange={(e) => form.actions.setPromisedPickUpDate({ value: e.target.value })}
+                  type="date"
+                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.deliveredWarehouse")}</Label>
+                <Input
+                  value={form.fields.deliveredWarehouse}
+                  onChange={(e) => form.actions.setDeliveredWarehouse({ value: e.target.value })}
+                  type="date"
+                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                />
               </div>
 
               <div className="space-y-2">

@@ -74,6 +74,9 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
   const [lot, setLot] = useState("");
   const [vin, setVin] = useState("");
   const [customerNotes, setCustomerNotes] = useState("");
+  const [containerNumberBooking, setContainerNumberBooking] = useState("");
+  const [promisedPickUpDate, setPromisedPickUpDate] = useState("");
+  const [deliveredWarehouse, setDeliveredWarehouse] = useState("");
   const [vehiclePdfFile, setVehiclePdfFile] = useState<File | null>(null);
   const [currentVehiclePdf, setCurrentVehiclePdf] = useState<string>("");
   const [insurancePdfFile, setInsurancePdfFile] = useState<File | null>(null);
@@ -97,6 +100,9 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
       setLot(car.details?.lot || "");
       setVin(car.details?.vin || "");
       setCustomerNotes(car.details?.customerNotes || "");
+      setContainerNumberBooking(car.details?.containerNumberBooking || "");
+      setPromisedPickUpDate(car.details?.promisedPickUpDate ? car.details.promisedPickUpDate.split('T')[0] : "");
+      setDeliveredWarehouse(car.details?.deliveredWarehouse ? car.details.deliveredWarehouse.split('T')[0] : "");
       setCurrentVehiclePdf(car.details?.vehiclePdf || "");
       setVehiclePdfFile(null);
       setCurrentInsurancePdf(car.details?.insurancePdf || "");
@@ -250,6 +256,9 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
           ...(lot.trim() && { lot: lot.trim() }),
           ...(vin.trim() && { vin: vin.trim() }),
           ...(customerNotes.trim() && { customerNotes: customerNotes.trim() }),
+          ...(containerNumberBooking.trim() && { containerNumberBooking: containerNumberBooking.trim() }),
+          ...(promisedPickUpDate.trim() && { promisedPickUpDate: promisedPickUpDate.trim() }),
+          ...(deliveredWarehouse.trim() && { deliveredWarehouse: deliveredWarehouse.trim() }),
         },
         vehiclePdfFile,
         insurancePdfFile,
@@ -562,7 +571,49 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
             </div>
           </div>
 
-          {/* Row 3: Payment Status & Insurance - Better organized UI */}
+          {/* Row 3: Shipping & Logistics Information */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            <div className="space-y-2">
+              <Label htmlFor="containerNumberBooking" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+                {t("containerNumberBooking")}
+              </Label>
+              <Input
+                id="containerNumberBooking"
+                value={containerNumberBooking}
+                onChange={(e) => setContainerNumberBooking(e.target.value)}
+                placeholder={t("containerNumberBookingPlaceholder")}
+                className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="promisedPickUpDate" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+                {t("promisedPickUpDate")}
+              </Label>
+              <Input
+                id="promisedPickUpDate"
+                type="date"
+                value={promisedPickUpDate}
+                onChange={(e) => setPromisedPickUpDate(e.target.value)}
+                className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="deliveredWarehouse" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+                {t("deliveredWarehouse")}
+              </Label>
+              <Input
+                id="deliveredWarehouse"
+                type="date"
+                value={deliveredWarehouse}
+                onChange={(e) => setDeliveredWarehouse(e.target.value)}
+                className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
+              />
+            </div>
+          </div>
+
+          {/* Row 4: Payment Status & Insurance - Better organized UI */}
           <div className="pt-1 sm:pt-2 space-y-6">
             <h3 className="text-lg font-bold text-gray-900 dark:text-white">
               {t("paymentsAndDocuments")}

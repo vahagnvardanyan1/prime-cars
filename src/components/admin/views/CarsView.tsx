@@ -198,6 +198,27 @@ const CarTableRow = memo(function CarTableRow({
         </div>
       </TableCell>
 
+      {/* Container Number Booking */}
+      <TableCell className="px-4 py-3 min-w-[140px] text-center">
+        <div className="text-sm text-gray-900 dark:text-white font-mono">
+          {car.details?.containerNumberBooking || "-"}
+        </div>
+      </TableCell>
+
+      {/* Promised Pick Up Date */}
+      <TableCell className="px-4 py-3 min-w-[140px] text-center">
+        <div className="text-sm text-gray-900 dark:text-white whitespace-nowrap">
+          {formatDate(car.details?.promisedPickUpDate)}
+        </div>
+      </TableCell>
+
+      {/* Delivered to Warehouse */}
+      <TableCell className="px-4 py-3 min-w-[140px] text-center">
+        <div className="text-sm text-gray-900 dark:text-white whitespace-nowrap">
+          {formatDate(car.details?.deliveredWarehouse)}
+        </div>
+      </TableCell>
+
       {/* Notes */}
       <TableCell className="px-4 py-3 min-w-[200px]">
         <div className="text-sm text-gray-900 dark:text-white truncate">
@@ -494,6 +515,9 @@ export const CarsView = memo(function CarsView({
                 <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("price")}</TableHead>
                 <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("type")}</TableHead>
                 <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("city")}</TableHead>
+                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px] text-center">{tTable("containerNumberBooking")}</TableHead>
+                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px] text-center">{tTable("promisedPickUpDate")}</TableHead>
+                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px] text-center">{tTable("deliveredWarehouse")}</TableHead>
                 <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">{tTable("notes")}</TableHead>
                 <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("carPaid")}</TableHead>
                 <TableHead className="px-4 py-4 text-center text-sm font-semibold min-w-[120px]">{tTable("vehiclePdf")}</TableHead>
@@ -508,7 +532,7 @@ export const CarsView = memo(function CarsView({
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={21} className="py-12">
+                  <TableCell colSpan={24} className="py-12">
                     <div className="flex flex-col items-center justify-center gap-3">
                       {loadingSpinner}
                       <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -519,7 +543,7 @@ export const CarsView = memo(function CarsView({
                 </TableRow>
               ) : !cars || cars.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={21} className="py-12">
+                  <TableCell colSpan={24} className="py-12">
                     <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
                       {t("admin.carsView.noCarsFound")}
                     </div>

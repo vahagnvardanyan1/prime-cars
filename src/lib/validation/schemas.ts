@@ -192,6 +192,20 @@ export const createCarSchema = z.object({
     .string()
     .optional()
     .or(z.literal("")),
+  containerNumberBooking: z
+    .string()
+    .optional()
+    .or(z.literal("")),
+  promisedPickUpDate: z
+    .string()
+    .optional()
+    .or(z.literal(""))
+    .refine((val) => !val || /^\d{4}-\d{2}-\d{2}$/.test(val), "Invalid date format (YYYY-MM-DD)"),
+  deliveredWarehouse: z
+    .string()
+    .optional()
+    .or(z.literal(""))
+    .refine((val) => !val || /^\d{4}-\d{2}-\d{2}$/.test(val), "Invalid date format (YYYY-MM-DD)"),
 });
 
 export type CreateCarFormValues = z.infer<typeof createCarSchema>;
