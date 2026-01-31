@@ -1,11 +1,20 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+
+// Helper to sanitize numeric input (removes leading zeros, non-numeric chars)
+const sanitizeNumericInput = (value: string): string => {
+  // Remove non-numeric characters except for empty string
+  const numericOnly = value.replace(/[^0-9]/g, "");
+  // Remove leading zeros (but keep "0" if that's all there is)
+  if (numericOnly === "") return "";
+  return String(parseInt(numericOnly, 10));
+};
 
 // Constants to avoid hydration issues
 const CURRENT_YEAR = 2026;
@@ -51,6 +60,7 @@ export const CreateAvailableCarModal = ({
   onSuccess,
 }: CreateAvailableCarModalProps) => {
   const t = useTranslations("admin.modals.createAvailableCar");
+  const [photoError, setPhotoError] = useState(false);
   const { files, previews, setFileAt, removeFileAt, clearAll, addMultipleFiles, reorderFiles } = usePhotoUploads({ 
     maxFiles: 50, 
     initialSlots: 1 
@@ -127,6 +137,7 @@ export const CreateAvailableCarModal = ({
         }
       );
       clearAll();
+      setPhotoError(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
@@ -156,6 +167,7 @@ export const CreateAvailableCarModal = ({
       }
     );
     clearAll();
+    setPhotoError(false);
     onClose();
   };
 
@@ -164,11 +176,14 @@ export const CreateAvailableCarModal = ({
     const photoFiles = files.filter((file): file is File => file !== null);
     
     if (photoFiles.length === 0) {
+      setPhotoError(true);
       toast.error(t("errorTitle"), {
         description: t("photoRequired"),
       });
       return;
     }
+    
+    setPhotoError(false);
 
     // The Zod schema validation happens automatically via zodResolver
     // If we reach here, form validation has passed
@@ -213,23 +228,36 @@ export const CreateAvailableCarModal = ({
           <div className="px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-8 space-y-4 sm:space-y-5 lg:space-y-6 bg-gray-50/50 dark:bg-[#0b0f14]">
             {/* Car Photos */}
             <div className="space-y-3">
-              <Label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+              <Label className={`block text-xs sm:text-sm font-semibold uppercase tracking-wide ${photoError ? 'text-red-500 dark:text-red-400' : 'text-gray-700 dark:text-white/90'}`}>
                 {t("carPhotos")} <span className="text-red-500">*</span>
               </Label>
-              <PhotoUploadGrid
-                label=""
-                previews={previews}
-                onPickFile={setFileAt}
-                onRemoveFile={removeFileAt}
-                onPickMultipleFiles={addMultipleFiles}
-                onReorder={reorderFiles}
-                tileClassName="h-[140px] sm:h-[160px]"
-              />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <div className={`rounded-xl transition-all duration-200 ${photoError ? 'ring-2 ring-red-500 dark:ring-red-400 p-3 bg-red-50/50 dark:bg-red-950/20' : ''}`}>
+                <PhotoUploadGrid
+                  label=""
+                  previews={previews}
+                  onPickFile={(args) => {
+                    setFileAt(args);
+                    if (args.file) setPhotoError(false);
+                  }}
+                  onRemoveFile={removeFileAt}
+                  onPickMultipleFiles={(files) => {
+                    addMultipleFiles(files);
+                    if (files.length > 0) setPhotoError(false);
+                  }}
+                  onReorder={reorderFiles}
+                  tileClassName="h-[140px] sm:h-[160px]"
+                />
+              </div>
+              <p className={`text-xs ${photoError ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'}`}>
                 {t("uploadHelp")}
               </p>
-              {isSubmitted && files.filter((file): file is File => file !== null).length === 0 && (
-                <p className="text-xs text-red-500">{t("photoRequired")}</p>
+              {photoError && (
+                <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 rounded-lg">
+                  <svg className="h-4 w-4 text-red-500 dark:text-red-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <p className="text-sm font-medium text-red-600 dark:text-red-400">{t("photoRequired")}</p>
+                </div>
               )}
             </div>
 
@@ -256,10 +284,15 @@ export const CreateAvailableCarModal = ({
                 </Label>
                 <Input
                   id="year"
-                  type="number"
-                  {...register("carYear", { valueAsNumber: true })}
+                  type="text"
+                  inputMode="numeric"
+                  value={formValues.carYear === 0 ? "" : formValues.carYear?.toString() || ""}
+                  onChange={(e) => {
+                    const sanitized = sanitizeNumericInput(e.target.value);
+                    setValue("carYear", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
+                  }}
                   placeholder={t("yearPlaceholder")}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.carYear && (
                   <p className="text-xs text-red-500 mt-1">{errors.carYear.message}</p>
@@ -288,12 +321,15 @@ export const CreateAvailableCarModal = ({
                 </Label>
                 <Input
                   id="price"
-                  type="number"
-                  step="1"
-                  min="0"
-                  {...register("carPrice", { valueAsNumber: true })}
+                  type="text"
+                  inputMode="numeric"
+                  value={formValues.carPrice === 0 ? "" : formValues.carPrice?.toString() || ""}
+                  onChange={(e) => {
+                    const sanitized = sanitizeNumericInput(e.target.value);
+                    setValue("carPrice", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
+                  }}
                   placeholder={t("pricePlaceholder")}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.carPrice && (
                   <p className="text-xs text-red-500 mt-1">{errors.carPrice.message}</p>
@@ -363,12 +399,15 @@ export const CreateAvailableCarModal = ({
                 </Label>
                 <Input
                   id="engineHp"
-                  type="number"
-                  step="1"
-                  min="0"
-                  {...register("engineHp", { valueAsNumber: true })}
+                  type="text"
+                  inputMode="numeric"
+                  value={formValues.engineHp === 0 ? "" : formValues.engineHp?.toString() || ""}
+                  onChange={(e) => {
+                    const sanitized = sanitizeNumericInput(e.target.value);
+                    setValue("engineHp", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
+                  }}
                   placeholder={t("hpPlaceholder")}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.engineHp && (
                   <p className="text-xs text-red-500 mt-1">{errors.engineHp.message}</p>
@@ -381,12 +420,15 @@ export const CreateAvailableCarModal = ({
                 </Label>
                 <Input
                   id="engineSize"
-                  type="number"
-                  step="1"
-                  min="0"
-                  {...register("engineSize", { valueAsNumber: true })}
+                  type="text"
+                  inputMode="numeric"
+                  value={formValues.engineSize === 0 ? "" : formValues.engineSize?.toString() || ""}
+                  onChange={(e) => {
+                    const sanitized = sanitizeNumericInput(e.target.value);
+                    setValue("engineSize", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
+                  }}
                   placeholder={t("enginePlaceholder")}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.engineSize && (
                   <p className="text-xs text-red-500 mt-1">{errors.engineSize.message}</p>

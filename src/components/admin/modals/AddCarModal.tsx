@@ -5,6 +5,15 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { CheckCircle2, XCircle } from "lucide-react";
 
+// Helper to sanitize numeric input (removes leading zeros, non-numeric chars)
+const sanitizeNumericInput = (value: string): string => {
+  // Remove non-numeric characters except for empty string
+  const numericOnly = value.replace(/[^0-9]/g, "");
+  // Remove leading zeros (but keep "0" if that's all there is)
+  if (numericOnly === "") return "";
+  return String(parseInt(numericOnly, 10));
+};
+
 import type { AdminCar } from "@/lib/admin/types";
 import { VehicleType, Auction } from "@/lib/admin/types";
 import { createAdminCar } from "@/lib/admin/createAdminCar";
@@ -330,7 +339,8 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                 <Input
                   value={form.fields.year}
                   onChange={(e) => {
-                    form.actions.setYear({ value: e.target.value });
+                    const sanitized = sanitizeNumericInput(e.target.value);
+                    form.actions.setYear({ value: sanitized });
                     form.actions.clearError({ field: "year" });
                   }}
                   inputMode="numeric"
@@ -457,7 +467,8 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                 <Input
                   value={form.fields.priceUsd}
                   onChange={(e) => {
-                    form.actions.setPriceUsd({ value: e.target.value });
+                    const sanitized = sanitizeNumericInput(e.target.value);
+                    form.actions.setPriceUsd({ value: sanitized });
                     form.actions.clearError({ field: "priceUsd" });
                   }}
                   inputMode="numeric"

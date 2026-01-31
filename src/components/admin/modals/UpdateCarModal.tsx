@@ -6,6 +6,15 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { CheckCircle2, XCircle } from "lucide-react";
 
+// Helper to sanitize numeric input (removes leading zeros, non-numeric chars)
+const sanitizeNumericInput = (value: string): string => {
+  // Remove non-numeric characters except for empty string
+  const numericOnly = value.replace(/[^0-9]/g, "");
+  // Remove leading zeros (but keep "0" if that's all there is)
+  if (numericOnly === "") return "";
+  return String(parseInt(numericOnly, 10));
+};
+
 import type { AdminCar } from "@/lib/admin/types";
 import { VehicleType, Auction } from "@/lib/admin/types";
 import { updateCar } from "@/lib/admin/updateCar";
@@ -410,14 +419,13 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
               </Label>
               <Input
                 id="year"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={year}
-                onChange={(e) => setYear(e.target.value)}
+                onChange={(e) => setYear(sanitizeNumericInput(e.target.value))}
                 placeholder={t("yearPlaceholder")}
-                min="1900"
-                max={new Date().getFullYear() + 1}
                 required
-                className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
             </div>
 
@@ -427,14 +435,13 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
               </Label>
               <Input
                 id="price"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={priceUsd}
-                onChange={(e) => setPriceUsd(e.target.value)}
+                onChange={(e) => setPriceUsd(sanitizeNumericInput(e.target.value))}
                 placeholder={t("pricePlaceholder")}
-                min="0"
-                step="1"
                 required
-                className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
             </div>
 

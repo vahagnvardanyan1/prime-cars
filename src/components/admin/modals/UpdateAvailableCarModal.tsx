@@ -8,6 +8,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { z } from "zod";
 
+// Helper to sanitize numeric input (removes leading zeros, non-numeric chars)
+const sanitizeNumericInput = (value: string): string => {
+  // Remove non-numeric characters except for empty string
+  const numericOnly = value.replace(/[^0-9]/g, "");
+  // Remove leading zeros (but keep "0" if that's all there is)
+  if (numericOnly === "") return "";
+  return String(parseInt(numericOnly, 10));
+};
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -106,6 +115,9 @@ export const UpdateAvailableCarModal = ({
   const category = watch("category");
   const transmission = watch("transmission");
   const fuelType = watch("fuelType");
+  const yearValue = watch("year");
+  const priceUsdValue = watch("priceUsd");
+  const horsepowerValue = watch("horsepower");
 
   useEffect(() => {
     if (isOpen) {
@@ -343,9 +355,14 @@ export const UpdateAvailableCarModal = ({
                 </Label>
                 <Input
                   id="year"
-                  type="number"
-                  {...register("year", { valueAsNumber: true })}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  type="text"
+                  inputMode="numeric"
+                  value={yearValue === 0 ? "" : yearValue?.toString() || ""}
+                  onChange={(e) => {
+                    const sanitized = sanitizeNumericInput(e.target.value);
+                    setValue("year", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
+                  }}
+                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.year && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
@@ -360,9 +377,14 @@ export const UpdateAvailableCarModal = ({
                 </Label>
                 <Input
                   id="priceUsd"
-                  type="number"
-                  {...register("priceUsd", { valueAsNumber: true })}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  type="text"
+                  inputMode="numeric"
+                  value={priceUsdValue === 0 ? "" : priceUsdValue?.toString() || ""}
+                  onChange={(e) => {
+                    const sanitized = sanitizeNumericInput(e.target.value);
+                    setValue("priceUsd", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
+                  }}
+                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.priceUsd && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
@@ -444,9 +466,14 @@ export const UpdateAvailableCarModal = ({
                 </Label>
                 <Input
                   id="horsepower"
-                  type="number"
-                  {...register("horsepower", { valueAsNumber: true })}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  type="text"
+                  inputMode="numeric"
+                  value={horsepowerValue === 0 ? "" : horsepowerValue?.toString() || ""}
+                  onChange={(e) => {
+                    const sanitized = sanitizeNumericInput(e.target.value);
+                    setValue("horsepower", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
+                  }}
+                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.horsepower && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
