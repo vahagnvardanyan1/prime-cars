@@ -50,7 +50,8 @@ export const CarsCarousel = ({ cars }: CarsCarouselProps) => {
         <CarouselContent className="-ml-4">
           {cars.map((car) => {
             const carImage = car.photos?.[0] || car.imageUrl;
-            const carName = `${car.brand} ${car.model}`;
+            // const carName = `${car.brand} ${car.model};
+            const carName = car?.model;
             const carPrice = new Intl.NumberFormat("en-US", {
               style: "currency",
               currency: "USD",

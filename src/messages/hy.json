@@ -370,7 +370,9 @@
       "partnerMessage": "Հաշվիչից օգտվելու համար դարձեք գործընկեր։",
       "importantTitle": "Կարևոր",
       "importantNotice": "Հայաստանի Հանրապետության ընկերությունների և քաղաքացիների հետ բոլոր գործարքները իրականացվում են բացառապես հայկական արժույթով (Դրամ / ՀՀԴ)։ Նշում՝ մաքսային վճարները հաշվարկվում են Հայաստանի Կենտրոնական Բանկի կողմից սահմանված փոխարժեքով՝ տվյալ օրվա դրությամբ։",
-      "backToCalculator": "Վերադառնալ հաշվիչ"
+      "backToCalculator": "Վերադառնալ հաշվիչ",
+      "restrictedDataTitle": "Delays amboxjakan cakhseri bazhanumэ hasaneli э gorцэnkernerin",
+      "becomePartner": "Darцek gorцэnker՝ bolorэ tesnelu hamar"
     }
   },
   "partners": {
@@ -1089,11 +1091,13 @@
         "engineHp": "Շարժիչի ուժ (ՁՈ)",
         "engineSize": "Շարժիչի ծավալ (լ)",
         "transmission": "Փոխանցման տուփ",
+        "transmissionPlaceholder": "օdelays r.՝ Avtomat, Mexanikakan",
         "transmissionAutomatic": "Ավտոմատ",
         "transmissionMechanic": "Մեխանիկ",
         "transmissionVariator": "Վարիատոր",
         "transmissionRobot": "Ռոբոտ",
         "description": "Նկարագրություն",
+        "descriptionPlaceholder": "Մdelays utqagreк meqenayi manramas nkaragrutюnэ...",
         "cancel": "Չեղարկել",
         "updating": "Թարմացվում է...",
         "updateButton": "Թարմացնել մեքենան",
