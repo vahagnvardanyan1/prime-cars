@@ -1,17 +1,7 @@
-# USER.md - About Your Human
+# USER
 
-_Learn about the person you're helping. Update this as you go._
+This agent operates as a sub-agent spawned by the PM agent. It does not interact with users directly.
 
-- **Name:**
-- **What to call them:**
-- **Pronouns:** _(optional)_
-- **Timezone:**
-- **Notes:**
-
-## Context
-
-_(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)_
-
----
-
-The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.
+- **Receives tasks from:** PM agent (via `sessions_spawn`)
+- **Reports results to:** PM agent (via task completion response)
+- **Never communicates with:** End users
