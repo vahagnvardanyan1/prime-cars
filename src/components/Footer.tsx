@@ -15,7 +15,7 @@ export const Footer = () => {
   const t = useTranslations();
 
   return (
-    <footer className="bg-gray-100 dark:bg-black border-t border-gray-300 dark:border-white/10 text-gray-900 dark:text-white pt-16 pb-8 transition-colors duration-300">
+    <footer className="bg-red-500 border-t border-gray-300 dark:border-white/10 text-gray-900 dark:text-white pt-16 pb-8 transition-colors duration-300">
       <Container>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
           <div>
