@@ -1,0 +1,55 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.not-found-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.not-found-title {
+  font-size: 10rem;
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: 10px;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+}
+
+.not-found-message {
+  font-size: 1.5rem;
+  margin: 10px 0;
+}
+
+.not-found-suggestion {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: #dcdcdc;
+}
+
+.not-found-links a {
+  display: inline-block;
+  margin: 0 15px;
+  padding: 10px 25px;
+  background: #fff;
+  color: #764ba2;
+  font-weight: bold;
+  border-radius: 25px;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(118,75,162,0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.not-found-links a:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(118,75,162,0.6);
+}
