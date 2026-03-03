@@ -1,0 +1,6 @@
+# Task Manager Notes
+
+Dashboard tasks are managed via the `task-manager` plugin tools.
+Task keys auto-increment: OC-1, OC-2, OC-3...
+
+This file is for PM reference only. The actual task data lives in the SQLite database.

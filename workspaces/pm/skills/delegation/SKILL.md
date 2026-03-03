@@ -1,32 +1,80 @@
+---
+name: delegation
+slug: delegation
+version: "5.0.0"
+description: "Simple delegation: create dashboard ticket, then send to FE and QA."
+metadata: {"openclaw":{"emoji":"\ud83d\udccb","requires":{"bins":[]}}}
+---
+
 # Delegation Skill
 
-## How to Delegate
-Use `sessions_spawn` to delegate tasks to sub-agents.
+## The Flow
 
-## Two-Step Delegation (MANDATORY)
+1. Create ticket on dashboard via `task-manager:create-task`
+2. Send to FE via `sessions_spawn(agentId: "fe")`
+3. When FE returns with PR, update ticket and send to QA via `sessions_spawn(agentId: "qa")`
+4. When QA passes, mark ticket complete via `task-manager:complete-task`
 
-Every implementation task requires TWO delegations:
+## FE Task Format
 
-### Step 1: Delegate to FE
 ```
-sessions_spawn(agentId: "fe", task: "...", label: "...")
-```
-- Include: clear requirements, acceptance criteria, output directory
-- Always tell FE: "Write all files to {{PROJECT_ROOT}}/output/"
+sessions_spawn(agentId: "fe", task: "
+[TASK_KEY]: OC-5
+[REPO]: https://github.com/picsart/prime-cars
+[TITLE]: Add dark mode toggle to settings page
+[DESCRIPTION]:
+<clear technical description of what to build>
 
-### Step 2: Delegate to QA (after FE completes)
+[ACCEPTANCE_CRITERIA]:
+- <testable criterion 1>
+- <testable criterion 2>
+- <testable criterion 3>
+", label: "fe-OC-5")
 ```
-sessions_spawn(agentId: "qa", task: "...", label: "...")
+
+**`[REPO]` is MANDATORY.** Must be a real GitHub URL, never a placeholder.
+
+## FE Skills
+
+| Skill | When |
+|-------|------|
+| `implement` | New features (default) |
+| `debug` | Bug fixes |
+| `review` | PR review (add `[PR]: N`) |
+| `test-writer` | Write tests |
+| `refactor` | Improve code quality |
+| `ci-fixer` | Fix CI (add `[BRANCH]: name`) |
+| `pr-iteration` | Address PR feedback (add `[PR]: N`) |
+
+Add `[SKILL]: debug` etc. to the task if needed. Default is `implement`.
+
+## QA Task Format
+
+Only send to QA after FE returns SUCCESS with a PR URL.
+
 ```
-- Include: what FE built, full file paths, what to verify
-- Wait for QA's PASS/FAIL report
+sessions_spawn(agentId: "qa", task: "
+Verify PR for task OC-5:
 
-## Follow-up Protocol
-1. After delegating to FE, wait for FE's response
-2. When FE responds, IMMEDIATELY delegate to QA — do NOT report to user yet
-3. Wait for QA's PASS/FAIL report
-4. If QA reports FAIL: re-delegate to FE with QA's feedback, then re-test with QA
-5. If QA reports PASS: report combined results to user
-6. Maximum 3 revision rounds before escalating to user
+PR: <URL>
+Branch: <branch>
+Repository: <repo URL>
 
-**NEVER skip QA. NEVER report to user before QA verification.**
+FE Validation:
+- TypeScript: PASS/FAIL
+- Lint: PASS/FAIL
+- Tests: PASS/FAIL
+- Build: PASS/FAIL
+
+Files Changed:
+<file list>
+
+Acceptance Criteria to Verify:
+<paste from dashboard ticket>
+", label: "qa-OC-5")
+```
+
+## What to Strip from Task Strings
+
+Never include: user names, business context, timeline pressure, Slack messages, your reasoning.
+Only include: technical requirements, GitHub URLs, acceptance criteria, file paths.

@@ -1,40 +1,24 @@
-# TOOLS.md - Local Notes
+# Tools Reference
 
-Skills define _how_ tools work. This file is for _your_ specifics — the stuff that's unique to your setup.
+## Dashboard Tools
 
-## What Goes Here
+| Tool | Purpose |
+|------|---------|
+| `task-manager:create-task` | Create a new JIRA-style ticket on the dashboard |
+| `task-manager:update-task` | Update task status, PR URL, GitHub fields |
+| `task-manager:list-tasks` | List tasks with optional filters |
+| `task-manager:complete-task` | Mark a task as completed with summary |
 
-Things like:
+## Delegation Tools
 
-- Camera names and locations
-- SSH hosts and aliases
-- Preferred voices for TTS
-- Speaker/room names
-- Device nicknames
-- Anything environment-specific
+| Tool | Purpose |
+|------|---------|
+| `sessions_spawn(agentId: "fe")` | Delegate implementation work to Frontend Engineer |
+| `sessions_spawn(agentId: "qa")` | Delegate verification to QA Engineer |
 
-## Examples
+## Usage Notes
 
-```markdown
-### Cameras
-
-- living-room → Main area, 180° wide angle
-- front-door → Entrance, motion-triggered
-
-### SSH
-
-- home-server → 192.168.1.100, user: admin
-
-### TTS
-
-- Preferred voice: "Nova" (warm, slightly British)
-- Default speaker: Kitchen HomePod
-```
-
-## Why Separate?
-
-Skills are shared. Your setup is yours. Keeping them apart means you can update skills without losing your notes, and share skills without leaking your infrastructure.
-
----
-
-Add whatever helps you do your job. This is your cheat sheet.
+- Always create a dashboard ticket BEFORE using `sessions_spawn`
+- Always include `label: "fe-OC-X"` or `label: "qa-OC-X"` in spawn calls
+- `[REPO]` tag is mandatory in every FE delegation — never use placeholder URLs
+- Update the dashboard at every status transition

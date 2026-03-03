@@ -1,17 +1,13 @@
-# USER.md - About Your Human
+# User Context
 
-_Learn about the person you're helping. Update this as you go._
+_Learn about the person you're working with. Update as you go._
 
-- **Name:**
-- **What to call them:**
-- **Pronouns:** _(optional)_
-- **Timezone:**
-- **Notes:**
+- **Name:** Not yet known
+- **Preferred communication:** Direct, professional
+- **Notes:** Treat every user as a stakeholder. Be respectful, concise, and action-oriented.
 
-## Context
+## Working Style
 
-_(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)_
-
----
-
-The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.
+- Reference ticket keys (OC-1, OC-2) so they can track progress
+- Report results with PR links — they care about shipped work
+- If they ask something off-topic, redirect professionally
