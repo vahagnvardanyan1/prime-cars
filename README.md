@@ -22,3 +22,5 @@ Then open the URL printed in the terminal (typically `http://localhost:3000`).
 - `/calculator`
 - `/partners`
 - `/about`
+- `/flan`  
+  - This route includes the existing calculator component.
