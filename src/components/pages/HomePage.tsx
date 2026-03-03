@@ -15,66 +15,87 @@ export const HomePage = async () => {
   const cars = result.success ? result.cars || [] : [];
 
   return (
-    <div className="pt-20">
-      <section className="relative overflow-hidden bg-gray-50 dark:bg-black min-h-[90vh] flex items-center transition-colors duration-300">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] dark:opacity-100 opacity-0 transition-opacity duration-300">
-          <div className="glow-effect"></div>
-        </div>
+    <div className="flex flex-col min-h-screen">
+      {/* Header */}
+      <header className="bg-[#429de6] text-white py-4 shadow-md">
+        <Container className="flex justify-between items-center">
+          <Link href="/" className="text-2xl font-bold">Prime Cars</Link>
+          <nav className="space-x-4">
+            <Link href="/about" className="hover:underline">About</Link>
+            <Link href="/contact" className="hover:underline">Contact</Link>
+          </nav>
+        </Container>
+      </header>
 
-        <Container className="w-full relative z-10">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
-            <div className="text-center lg:text-left">
-              <h1 className="mb-6 text-gray-900 dark:text-white">
-                {t("home.hero.title")}
-              </h1>
-
-              <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
-                {t("home.hero.description")}
-              </p>
-
-              <Link
-                href="/calculator"
-                className="px-8 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-colors hover:shadow-lg hover:shadow-blue-500/20 mx-auto lg:mx-0 block lg:inline-block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
-              >
-                {t("home.hero.primaryCta")}
-              </Link>
-            </div>
-
-            <div className="relative">
-              <Image
-                src="/logo.png"
-                alt={t("home.hero.heroImageAlt")}
-                className="w-full h-auto relative z-10"
-                width={1000}
-                height={600}
-                priority
-              />
-            </div>
+      {/* Main Content */}
+      <main className="flex-grow pt-20">
+        <section className="relative overflow-hidden bg-gray-50 dark:bg-black min-h-[90vh] flex items-center transition-colors duration-300">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] dark:opacity-100 opacity-0 transition-opacity duration-300">
+            <div className="glow-effect"></div>
           </div>
+
+          <Container className="w-full relative z-10">
+            <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+              <div className="text-center lg:text-left">
+                <h1 className="mb-6 text-gray-900 dark:text-white">
+                  {t("home.hero.title")}
+                </h1>
+
+                <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
+                  {t("home.hero.description")}
+                </p>
+
+                <Link
+                  href="/calculator"
+                  className="px-8 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-colors hover:shadow-lg hover:shadow-blue-500/20 mx-auto lg:mx-0 block lg:inline-block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
+                >
+                  {t("home.hero.primaryCta")}
+                </Link>
+              </div>
+
+              <div className="relative">
+                <Image
+                  src="/logo.png"
+                  alt={t("home.hero.heroImageAlt")}
+                  className="w-full h-auto relative z-10"
+                  width={1000}
+                  height={600}
+                  priority
+                />
+              </div>
+            </div>
+          </Container>
+        </section>
+
+        <section className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
+          <Container>
+            <SectionHeader
+              title={t("home.popularDeals.title")}
+              description={t("home.popularDeals.description")}
+            />
+
+            <CarsCarousel cars={cars} />
+          </Container>
+        </section>
+
+        <section className="py-20 lg:py-28 bg-white dark:bg-black border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
+          <Container>
+            <SectionHeader
+              title={t("home.importCosts.title")}
+              description={t("home.importCosts.description")}
+            />
+
+            <ImportCalculator showPartnerMessage={true} />
+          </Container>
+        </section>
+      </main>
+      
+      {/* Footer */}
+      <footer className="bg-[#429de6] text-white py-4 mt-10">
+        <Container className="text-center">
+          <p>&copy; {new Date().getFullYear()} Prime Cars. All rights reserved.</p>
         </Container>
-      </section>
-
-      <section className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
-        <Container>
-          <SectionHeader
-            title={t("home.popularDeals.title")}
-            description={t("home.popularDeals.description")}
-          />
-
-          <CarsCarousel cars={cars} />
-        </Container>
-      </section>
-
-      <section className="py-20 lg:py-28 bg-white dark:bg-black border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
-        <Container>
-          <SectionHeader
-            title={t("home.importCosts.title")}
-            description={t("home.importCosts.description")}
-          />
-
-          <ImportCalculator showPartnerMessage={true} />
-        </Container>
-      </section>
+      </footer>
     </div>
   );
 };
