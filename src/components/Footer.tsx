@@ -15,7 +15,7 @@ export const Footer = () => {
   const t = useTranslations();
 
   return (
-    <footer className="bg-gray-100 dark:bg-black border-t border-gray-300 dark:border-white/10 text-gray-900 dark:text-white pt-16 pb-8 transition-colors duration-300">
+    <footer className="bg-blue-900 dark:bg-blue-800 border-t border-gray-300 dark:border-white/10 text-gray-900 dark:text-white pt-16 pb-8 transition-colors duration-300">
       <Container>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
           <div>
@@ -47,7 +47,7 @@ export const Footer = () => {
             </div>
           </div>
 
-          <nav aria-label={t("footer.quickLinks")}>
+          <nav aria-label={t("footer.quickLinks")}> 
             <h3 className="text-gray-900 dark:text-white mb-4">
               {t("footer.quickLinks")}
             </h3>
@@ -68,66 +68,8 @@ export const Footer = () => {
                   {t("footer.links.browseCars")}
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/calculator"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
-                >
-                  {t("footer.links.costCalculator")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/partners"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
-                >
-                  {t("footer.links.partners")}
-                </Link>
-              </li>
             </ul>
           </nav>
-
-          <div>
-            <h3 className="text-gray-900 dark:text-white mb-4">
-              {t("footer.contact")}
-            </h3>
-            <address className="not-italic">
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <Mail aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
-                  <a
-                    href="mailto:primecarsarm@gmail.com"
-                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
-                  >
-                    primecarsarm@gmail.com
-                  </a>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Phone aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
-                  <a
-                    href="tel:+37444771130"
-                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
-                  >
-                    +374 44 771130
-                  </a>
-                </li>
-                <li className="flex items-start gap-3">
-                  <MapPin aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-600 dark:text-gray-400">
-                    {t("footer.address")}
-                  </span>
-                </li>
-              </ul>
-            </address>
-          </div>
-        </div>
-
-        <div className="pt-8 border-t border-gray-300 dark:border-white/10">
-          <div className="text-center">
-            <p className="text-gray-600 dark:text-gray-400">
-              © {new Date().getFullYear()} {t("footer.copyright")}
-            </p>
-          </div>
         </div>
       </Container>
     </footer>
