@@ -1,135 +1,38 @@
-import { useTranslations } from "next-intl";
+import React from 'react';
+import styles from './Footer.module.css';
 
-import {
-  Facebook,
-  Instagram,
-  Mail,
-  MapPin,
-  Phone,
-} from "lucide-react";
-
-import { Container } from "@/components/layouts";
-import { Link } from "@/i18n/routing";
-
-export const Footer = () => {
-  const t = useTranslations();
-
+const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-100 dark:bg-black border-t border-gray-300 dark:border-white/10 text-gray-900 dark:text-white pt-16 pb-8 transition-colors duration-300">
-      <Container>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
-          <div>
-            <div className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              {t("footer.brandLabel")}
-            </div>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              {t("footer.description")}
-            </p>
-            <div className="flex gap-3">
-              <a
-                href="https://www.facebook.com/share/17pXSbQMJT/?mibextid=wwXIfr"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="w-10 h-10 bg-gray-200 dark:bg-white/10 hover:bg-[#429de6] dark:hover:bg-[#429de6] rounded-lg flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
-              >
-                <Facebook aria-hidden="true" className="w-5 h-5" />
-              </a>
-              <a
-                href="https://www.instagram.com/prime_cars_am?igsh=MWF1ZzkxZnlsaTN4eg=="
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="w-10 h-10 bg-gray-200 dark:bg-white/10 hover:bg-[#429de6] dark:hover:bg-[#429de6] rounded-lg flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
-              >
-                <Instagram aria-hidden="true" className="w-5 h-5" />
-              </a>
-            </div>
-          </div>
-
-          <nav aria-label={t("footer.quickLinks")}>
-            <h3 className="text-gray-900 dark:text-white mb-4">
-              {t("footer.quickLinks")}
-            </h3>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  href="/"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
-                >
-                  {t("footer.links.home")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/cars"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
-                >
-                  {t("footer.links.browseCars")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/calculator"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
-                >
-                  {t("footer.links.costCalculator")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/partners"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
-                >
-                  {t("footer.links.partners")}
-                </Link>
-              </li>
-            </ul>
-          </nav>
-
-          <div>
-            <h3 className="text-gray-900 dark:text-white mb-4">
-              {t("footer.contact")}
-            </h3>
-            <address className="not-italic">
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <Mail aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
-                  <a
-                    href="mailto:primecarsarm@gmail.com"
-                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
-                  >
-                    primecarsarm@gmail.com
-                  </a>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Phone aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
-                  <a
-                    href="tel:+37444771130"
-                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
-                  >
-                    +374 44 771130
-                  </a>
-                </li>
-                <li className="flex items-start gap-3">
-                  <MapPin aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-600 dark:text-gray-400">
-                    {t("footer.address")}
-                  </span>
-                </li>
-              </ul>
-            </address>
-          </div>
-        </div>
-
-        <div className="pt-8 border-t border-gray-300 dark:border-white/10">
-          <div className="text-center">
-            <p className="text-gray-600 dark:text-gray-400">
-              © {new Date().getFullYear()} {t("footer.copyright")}
-            </p>
-          </div>
-        </div>
-      </Container>
+    <footer className={styles.footer} aria-label="Footer">
+      <div className={styles.container}>
+        <section className={styles.section} aria-labelledby="contact">
+          <h2 id="contact" className={styles.heading}>Contact Us</h2>
+          <ul className={styles.list}>
+            <li>Email: info@company.com</li>
+            <li>Phone: (123) 456-7890</li>
+          </ul>
+        </section>
+        <section className={styles.section} aria-labelledby="connect">
+          <h2 id="connect" className={styles.heading}>Connect With Us</h2>
+          <ul className={styles.socials}>
+            <li><a href="https://facebook.com" aria-label="Facebook">Facebook</a></li>
+            <li><a href="https://twitter.com" aria-label="Twitter">Twitter</a></li>
+            <li><a href="https://instagram.com" aria-label="Instagram">Instagram</a></li>
+          </ul>
+        </section>
+        <section className={styles.section} aria-labelledby="legal">
+          <h2 id="legal" className={styles.heading}>Legal</h2>
+          <ul className={styles.list}>
+            <li><a href="/terms" aria-label="Terms of Service">Terms of Service</a></li>
+            <li><a href="/privacy" aria-label="Privacy Policy">Privacy Policy</a></li>
+          </ul>
+        </section>
+      </div>
+      <div className={styles.copyright}>
+        © 2023 Company Name. All rights reserved.
+      </div>
     </footer>
   );
 };
+
+export default Footer;
