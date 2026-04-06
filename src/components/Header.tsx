@@ -103,14 +103,14 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
   };
 
   const navLinkClasses = (href: string) =>
-    `group px-4 py-2 transition-colors relative ${
+    `group px-3 py-2 text-sm transition-colors relative ${
       isActiveNav(href)
         ? "text-black dark:text-white"
         : "text-gray-400 hover:text-black dark:hover:text-white"
     }`;
 
   const navUnderline = (href: string) =>
-    `absolute bottom-0 left-4 right-4 h-0.5 bg-[#429de6] origin-left transition-transform duration-300 ease-out ${
+    `absolute bottom-0 left-3 right-3 h-0.5 bg-[#429de6] origin-left transition-transform duration-300 ease-out ${
       isActiveNav(href) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
     }`;
 
@@ -188,11 +188,11 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
               />
             </Link>
 
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden xl:flex items-center gap-0.5">
               {siteNavItems.map(renderNavItem)}
             </nav>
 
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden xl:flex items-center gap-2">
               <Link
                 href="/apply"
                 className="px-4 py-1.5 text-sm bg-[#429de6] text-white rounded-md hover:bg-[#3a8acc] transition-all hover:shadow-lg hover:shadow-blue-500/20 font-medium"
@@ -222,7 +222,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
               </button>
             </div>
 
-            <div className="md:hidden flex items-center gap-1">
+            <div className="xl:hidden flex items-center gap-1">
               <Link
                 href="/apply"
                 className="px-3 py-1.5 text-xs bg-[#429de6] text-white rounded-md hover:bg-[#3a8acc] transition-all font-medium"
@@ -262,7 +262,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
 
       {isMobileMenuOpen && (
         <button
-          className="fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm z-[200] md:hidden"
+          className="fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm z-[200] xl:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
           type="button"
           aria-label={t("header.closeMenuAria")}
@@ -270,7 +270,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
       )}
 
       <div
-        className={`fixed top-0 right-0 h-full w-[280px] bg-white dark:bg-[#111111] border-l border-gray-200 dark:border-white/10 z-[210] md:hidden transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-full w-[280px] bg-white dark:bg-[#111111] border-l border-gray-200 dark:border-white/10 z-[210] xl:hidden transition-transform duration-300 ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
