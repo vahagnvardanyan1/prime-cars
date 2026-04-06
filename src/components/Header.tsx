@@ -82,16 +82,20 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-4 py-2 rounded-lg transition-all relative ${
+                  className={`group px-4 py-2 transition-colors relative ${
                     isActiveHref(item.href)
                       ? "text-black dark:text-white"
                       : "text-gray-400 hover:text-black dark:hover:text-white"
                   }`}
                 >
                   {t(`nav.${item.key}`)}
-                  {isActiveHref(item.href) && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#429de6] rounded-full" />
-                  )}
+                  <span
+                    className={`absolute bottom-0 left-4 right-4 h-0.5 bg-[#429de6] origin-left transition-transform duration-300 ease-out ${
+                      isActiveHref(item.href)
+                        ? "scale-x-100"
+                        : "scale-x-0 group-hover:scale-x-100"
+                    }`}
+                  />
                 </Link>
               ))}
             </nav>
