@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
+import { TextReveal } from "./TextReveal";
 import { type IconType } from "react-icons";
 import {
   FiFileText,
@@ -46,12 +47,18 @@ export function ServicesSection() {
   return (
     <div>
       <div className="text-center mb-16 max-w-3xl mx-auto">
-        <h2 className="mb-4 whitespace-pre-line">
-          {t("home.services.title")}
-        </h2>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
-          {t("home.services.description")}
-        </p>
+        <TextReveal
+          text={t("home.services.title")}
+          as="h2"
+          className="mb-4"
+        />
+        <TextReveal
+          text={t("home.services.description")}
+          as="p"
+          className="text-lg text-gray-600 dark:text-gray-400"
+          delay={0.3}
+          wordDelay={0.03}
+        />
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">

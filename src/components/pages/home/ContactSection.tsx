@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
+import { TextReveal } from "./TextReveal";
 import { FiMail, FiPhone, FiMapPin } from "react-icons/fi";
 import { FaInstagram, FaFacebookF, FaWhatsapp, FaViber } from "react-icons/fa";
 
@@ -11,10 +12,18 @@ export function ContactSection() {
   return (
     <div>
       <div className="text-center mb-12">
-        <h2 className="mb-4">{t("home.contactUs.title")}</h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          {t("home.contactUs.description")}
-        </p>
+        <TextReveal
+          text={t("home.contactUs.title")}
+          as="h2"
+          className="mb-4"
+        />
+        <TextReveal
+          text={t("home.contactUs.description")}
+          as="p"
+          className="text-gray-600 dark:text-gray-400"
+          delay={0.3}
+          wordDelay={0.03}
+        />
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">

@@ -1,6 +1,4 @@
-import { getTranslations } from "next-intl/server";
-
-import { Container, SectionHeader } from "@/components/layouts";
+import { Container } from "@/components/layouts";
 import { fetchAllAvailableCars } from "@/lib/cars/fetchCars";
 import { CarsCarousel } from "@/components/pages/home/CarsCarousel";
 
@@ -13,12 +11,10 @@ import { ContactSection } from "@/components/pages/home/ContactSection";
 import { ShippingMap } from "@/components/pages/home/ShippingMap";
 import { ScrollReveal } from "@/components/pages/home/ScrollReveal";
 import { ScrollSpy } from "@/components/pages/home/ScrollSpy";
+import { PopularDealsHeader } from "@/components/pages/home/PopularDealsHeader";
 
 
 export const HomePage = async () => {
-  const t = await getTranslations();
-
-  // Fetch cars data server-side
   const result = await fetchAllAvailableCars();
   const cars = result.success ? result.cars || [] : [];
 
@@ -68,12 +64,7 @@ export const HomePage = async () => {
 
       <section id="popular-deals" className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
         <Container>
-          <ScrollReveal>
-            <SectionHeader
-              title={t("home.popularDeals.title")}
-              description={t("home.popularDeals.description")}
-            />
-          </ScrollReveal>
+          <PopularDealsHeader />
 
           <ScrollReveal delay={0.2}>
             <CarsCarousel cars={cars} />

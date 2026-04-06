@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
+import { TextReveal } from "./TextReveal";
 import { FiTarget, FiMonitor } from "react-icons/fi";
 
 export function AboutSection() {
@@ -17,7 +18,11 @@ export function AboutSection() {
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="text-center mb-8">{t("home.aboutUs.title")}</h2>
+        <TextReveal
+          text={t("home.aboutUs.title")}
+          as="h2"
+          className="text-center mb-8"
+        />
         <div className="space-y-6 text-gray-600 dark:text-gray-400 leading-relaxed">
           <p>{t("home.aboutUs.intro")}</p>
           <p>{t("home.aboutUs.warehouses")}</p>
@@ -53,9 +58,11 @@ export function AboutSection() {
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6 }}
       >
-        <h3 className="text-2xl font-bold text-center mb-6">
-          {t("home.aboutUs.whyTitle")}
-        </h3>
+        <TextReveal
+          text={t("home.aboutUs.whyTitle")}
+          as="h3"
+          className="text-2xl font-bold text-center mb-6"
+        />
         <div className="space-y-6 text-gray-600 dark:text-gray-400 leading-relaxed">
           <p>{t("home.aboutUs.whyDescription")}</p>
           <p>{t("home.aboutUs.whyBusiness")}</p>

@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { TextReveal } from "./TextReveal";
 import {
   ComposableMap,
   Geographies,
@@ -101,10 +102,18 @@ export function ShippingMap() {
   return (
     <div>
       <div className="text-center mb-8">
-        <h2 className="mb-4">{t("home.shipping.title")}</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-8">
-          {t("home.shipping.description")}
-        </p>
+        <TextReveal
+          text={t("home.shipping.title")}
+          as="h2"
+          className="mb-4"
+        />
+        <TextReveal
+          text={t("home.shipping.description")}
+          as="p"
+          className="text-gray-600 dark:text-gray-400 mb-8"
+          delay={0.3}
+          wordDelay={0.03}
+        />
 
         <div className="inline-flex rounded-full bg-gray-200 dark:bg-white/10 p-1">
           <button

@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Container } from "@/components/layouts";
 import { useTheme } from "@/components/ThemeContext";
-import { Link, usePathname } from "@/i18n/routing";
+import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { siteNavItems } from "@/lib/site-nav";
 
 const HEADER_HEIGHT = 80;
@@ -26,6 +26,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
   const [activeHash, setActiveHash] = useState("");
   const { theme, toggleTheme } = useTheme();
 
+  const router = useRouter();
   const isHomePage = pathname === "/" || pathname === "";
 
   const scrollToSection = useCallback((hash: string) => {
@@ -39,13 +40,17 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
 
   const handleAnchorClick = useCallback(
     (e: React.MouseEvent, href: string) => {
-      if (href.startsWith("#") && isHomePage) {
-        e.preventDefault();
+      if (!href.startsWith("#")) return;
+      e.preventDefault();
+      setIsMobileMenuOpen(false);
+
+      if (isHomePage) {
         scrollToSection(href);
-        setIsMobileMenuOpen(false);
+      } else {
+        router.push(`/${href}`);
       }
     },
-    [isHomePage, scrollToSection]
+    [isHomePage, scrollToSection, router]
   );
 
   useEffect(() => {
@@ -90,7 +95,16 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
-  }, [pathname]);
+
+    // Scroll to hash section after navigating to home page
+    if (isHomePage && window.location.hash) {
+      // Small delay to let the page render before scrolling
+      const timer = setTimeout(() => {
+        scrollToSection(window.location.hash);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [pathname, isHomePage, scrollToSection]);
 
   const isActiveNav = (href: string) => {
     if (href.startsWith("#")) {
