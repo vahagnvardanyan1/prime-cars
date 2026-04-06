@@ -187,6 +187,14 @@
       "namePlaceholder": "Your name",
       "phonePlaceholder": "Phone number",
       "submit": "Submit"
+    },
+    "shipping": {
+      "title": "Global Shipping Network",
+      "description": "We ship vehicles from the USA and Canada to destinations worldwide through our extensive logistics network.",
+      "from": "Shipping from",
+      "to": "Shipping to",
+      "warehouses": "Our warehouses",
+      "destinations": "Delivery destinations"
     }
   },
   "cars": {
@@ -1318,5 +1326,21 @@
     "showing": "Showing",
     "user": "user",
     "users": "users"
+  },
+  "applyPage": {
+    "pageTitle": "Join Us",
+    "subtitle": "Cooperating with Prime Cars means growing your business and achieving greater success. Join the Prime Cars team and unlock new opportunities in the vehicle import industry.",
+    "carsPerMonth": "Number of cars you buy from U.S. each month",
+    "carsOptions": {
+      "upTo5": "Up to 5",
+      "5to20": "5 to 20",
+      "moreThan20": "More than 20"
+    },
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "submit": "Request Registration",
+    "success": "Your application has been submitted successfully!",
+    "required": "Required"
   }
 }

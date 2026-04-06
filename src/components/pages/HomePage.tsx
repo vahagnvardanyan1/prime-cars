@@ -10,6 +10,8 @@ import { PartnersStrip } from "@/components/pages/home/PartnersStrip";
 import { ServicesSection } from "@/components/pages/home/ServicesSection";
 import { AboutSection } from "@/components/pages/home/AboutSection";
 import { ContactSection } from "@/components/pages/home/ContactSection";
+import { ShippingMap } from "@/components/pages/home/ShippingMap";
+import { ScrollReveal } from "@/components/pages/home/ScrollReveal";
 import { ScrollSpy } from "@/components/pages/home/ScrollSpy";
 
 
@@ -42,36 +44,56 @@ export const HomePage = async () => {
 
       <section id="our-partners" className="py-16 lg:py-20 bg-gray-50 dark:bg-[#1a1a1a] transition-colors duration-300">
         <Container>
-          <PartnersStrip />
+          <ScrollReveal>
+            <PartnersStrip />
+          </ScrollReveal>
         </Container>
       </section>
 
       <section id="services" className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
         <Container>
-          <ServicesSection />
+          <ScrollReveal>
+            <ServicesSection />
+          </ScrollReveal>
         </Container>
       </section>
 
-      <section id="popular-deals" className="py-20 lg:py-28 bg-gray-50 dark:bg-[#111111] transition-colors duration-300">
+      <section id="shipping" className="py-20 lg:py-28 bg-gray-50 dark:bg-[#111111] transition-colors duration-300">
         <Container>
-          <SectionHeader
-            title={t("home.popularDeals.title")}
-            description={t("home.popularDeals.description")}
-          />
-
-          <CarsCarousel cars={cars} />
+          <ScrollReveal>
+            <ShippingMap />
+          </ScrollReveal>
         </Container>
       </section>
 
-      <section id="about" className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
+      <section id="popular-deals" className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
         <Container>
-          <AboutSection />
+          <ScrollReveal>
+            <SectionHeader
+              title={t("home.popularDeals.title")}
+              description={t("home.popularDeals.description")}
+            />
+          </ScrollReveal>
+
+          <ScrollReveal delay={0.2}>
+            <CarsCarousel cars={cars} />
+          </ScrollReveal>
         </Container>
       </section>
 
-      <section id="contact" className="py-20 lg:py-28 bg-gray-50 dark:bg-[#111111] transition-colors duration-300">
+      <section id="about" className="py-20 lg:py-28 bg-gray-50 dark:bg-[#111111] transition-colors duration-300">
         <Container>
-          <ContactSection />
+          <ScrollReveal>
+            <AboutSection />
+          </ScrollReveal>
+        </Container>
+      </section>
+
+      <section id="contact" className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
+        <Container>
+          <ScrollReveal>
+            <ContactSection />
+          </ScrollReveal>
         </Container>
       </section>
     </div>

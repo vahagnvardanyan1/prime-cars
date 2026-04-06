@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { FiMail, FiPhone, FiMapPin } from "react-icons/fi";
 import { FaInstagram, FaFacebookF, FaWhatsapp, FaViber } from "react-icons/fa";
 
@@ -17,7 +18,13 @@ export function ContactSection() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">
-        <div className="space-y-4">
+        <motion.div
+          className="space-y-4"
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5 }}
+        >
           <a
             href="mailto:primecarsarm@gmail.com"
             className="flex items-center gap-4 p-5 rounded-2xl border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-all"
@@ -87,9 +94,15 @@ export function ContactSection() {
               <FaViber className="w-5 h-5 text-[#429de6]" />
             </a>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 min-h-[300px]">
+        <motion.div
+          className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 min-h-[300px]"
+          initial={{ opacity: 0, x: 30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3049.0219736966833!2d44.50152187655012!3d40.16406447097785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x406aa30e0f7d7797%3A0xcba3d8fc5f852725!2sPrime%20Cars%20LLC!5e0!3m2!1sen!2sam!4v1775486151372!5m2!1sen!2sam"
             width="100%"
@@ -100,7 +113,7 @@ export function ContactSection() {
             referrerPolicy="no-referrer-when-downgrade"
             title="Prime Cars Location"
           />
-        </div>
+        </motion.div>
       </div>
     </div>
   );

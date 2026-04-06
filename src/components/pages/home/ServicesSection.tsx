@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { type IconType } from "react-icons";
 import {
   FiFileText,
@@ -54,11 +55,15 @@ export function ServicesSection() {
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {services.map((service) => {
+        {services.map((service, index) => {
           const Icon = service.icon;
           return (
-            <div
+            <motion.div
               key={service.key}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.4, delay: index * 0.05, ease: "easeOut" }}
               className="group p-5 rounded-2xl border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 dark:hover:border-[#429de6]/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5"
             >
               <div className="w-10 h-10 rounded-lg bg-[#429de6]/10 flex items-center justify-center mb-3 group-hover:bg-[#429de6]/20 transition-colors">
@@ -70,7 +75,7 @@ export function ServicesSection() {
               <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
                 {t(`home.services.items.${service.key}.description`)}
               </p>
-            </div>
+            </motion.div>
           );
         })}
       </div>
