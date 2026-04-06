@@ -4,8 +4,11 @@ import { useEffect, useState, useCallback } from "react";
 
 const sections = [
   { id: "hero", label: "Hero" },
+  { id: "our-partners", label: "Our Partners" },
+  { id: "services", label: "Our Services" },
   { id: "popular-deals", label: "Popular Deals" },
-  { id: "import-calculator", label: "Import Calculator" },
+  { id: "about", label: "About Us" },
+  { id: "contact", label: "Contact Us" },
 ];
 
 const HEADER_HEIGHT = 80;
@@ -37,7 +40,8 @@ export function ScrollSpy() {
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - HEADER_HEIGHT;
+      const top =
+        el.getBoundingClientRect().top + window.scrollY - HEADER_HEIGHT;
       window.scrollTo({ top, behavior: "smooth" });
     }
   };

@@ -1,12 +1,7 @@
 import { useTranslations } from "next-intl";
 
-import {
-  Facebook,
-  Instagram,
-  Mail,
-  MapPin,
-  Phone,
-} from "lucide-react";
+import { FiMail, FiPhone, FiMapPin } from "react-icons/fi";
+import { FaFacebookF, FaInstagram, FaWhatsapp, FaViber } from "react-icons/fa";
 
 import { Container } from "@/components/layouts";
 import { Link } from "@/i18n/routing";
@@ -17,36 +12,7 @@ export const Footer = () => {
   return (
     <footer className="bg-gray-100 dark:bg-black border-t border-gray-300 dark:border-white/10 text-gray-900 dark:text-white pt-16 pb-8 transition-colors duration-300">
       <Container>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
-          <div>
-            <div className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              {t("footer.brandLabel")}
-            </div>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              {t("footer.description")}
-            </p>
-            <div className="flex gap-3">
-              <a
-                href="https://www.facebook.com/share/17pXSbQMJT/?mibextid=wwXIfr"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="w-10 h-10 bg-gray-200 dark:bg-white/10 hover:bg-[#429de6] dark:hover:bg-[#429de6] rounded-lg flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
-              >
-                <Facebook aria-hidden="true" className="w-5 h-5" />
-              </a>
-              <a
-                href="https://www.instagram.com/prime_cars_am?igsh=MWF1ZzkxZnlsaTN4eg=="
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="w-10 h-10 bg-gray-200 dark:bg-white/10 hover:bg-[#429de6] dark:hover:bg-[#429de6] rounded-lg flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
-              >
-                <Instagram aria-hidden="true" className="w-5 h-5" />
-              </a>
-            </div>
-          </div>
-
+        <div className="grid md:grid-cols-2 gap-12 mb-12">
           <nav aria-label={t("footer.quickLinks")}>
             <h3 className="text-gray-900 dark:text-white mb-4">
               {t("footer.quickLinks")}
@@ -94,7 +60,7 @@ export const Footer = () => {
             <address className="not-italic">
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
-                  <Mail aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
+                  <FiMail aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
                   <a
                     href="mailto:primecarsarm@gmail.com"
                     className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
@@ -103,7 +69,7 @@ export const Footer = () => {
                   </a>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Phone aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
+                  <FiPhone aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
                   <a
                     href="tel:+37444771130"
                     className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:text-[#429de6] focus-visible:underline"
@@ -112,13 +78,60 @@ export const Footer = () => {
                   </a>
                 </li>
                 <li className="flex items-start gap-3">
-                  <MapPin aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
+                  <FiMapPin aria-hidden="true" className="w-5 h-5 text-[#429de6] flex-shrink-0 mt-0.5" />
                   <span className="text-gray-600 dark:text-gray-400">
                     {t("footer.address")}
                   </span>
                 </li>
               </ul>
             </address>
+          </div>
+        </div>
+
+        <div className="my-8 p-6 md:p-8 rounded-2xl bg-gray-200/70 dark:bg-white/5 border border-gray-300 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="text-center md:text-left">
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">
+              {t("footer.brandLabel")}
+            </div>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
+              {t("footer.description")}
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <a
+              href="https://www.facebook.com/share/17pXSbQMJT/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="w-11 h-11 bg-[#429de6]/10 hover:bg-[#429de6] text-[#429de6] hover:text-white rounded-xl flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
+            >
+              <FaFacebookF aria-hidden="true" className="w-5 h-5" />
+            </a>
+            <a
+              href="https://www.instagram.com/prime_cars_am?igsh=MWF1ZzkxZnlsaTN4eg=="
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="w-11 h-11 bg-[#429de6]/10 hover:bg-[#429de6] text-[#429de6] hover:text-white rounded-xl flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
+            >
+              <FaInstagram aria-hidden="true" className="w-5 h-5" />
+            </a>
+            <a
+              href="https://wa.me/37444771130"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp"
+              className="w-11 h-11 bg-[#429de6]/10 hover:bg-[#429de6] text-[#429de6] hover:text-white rounded-xl flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
+            >
+              <FaWhatsapp aria-hidden="true" className="w-5 h-5" />
+            </a>
+            <a
+              href="viber://chat?number=37444771130"
+              aria-label="Viber"
+              className="w-11 h-11 bg-[#429de6]/10 hover:bg-[#429de6] text-[#429de6] hover:text-white rounded-xl flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
+            >
+              <FaViber aria-hidden="true" className="w-5 h-5" />
+            </a>
           </div>
         </div>
 

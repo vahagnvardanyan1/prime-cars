@@ -154,4 +154,6 @@
     background: radial-gradient(circle, rgba(66, 157, 230, 0.3) 0%, transparent 70%);
     filter: blur(60px);
     animation: glow 3s ease-in-out infinite;
-  }}
+  }
+
+}
