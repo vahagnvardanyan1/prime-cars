@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { TextReveal } from "./TextReveal";
@@ -19,6 +20,7 @@ const partners = [
 
 export function PartnersStrip() {
   const t = useTranslations();
+  const doubled = useMemo(() => [...partners, ...partners], []);
 
   return (
     <div className="text-center">
@@ -36,9 +38,9 @@ export function PartnersStrip() {
         wordDelay={0.03}
       />
 
-      <div className="relative overflow-hidden group">
-        <div className="flex w-max animate-scroll group-hover:[animation-play-state:paused]">
-          {[...partners, ...partners].map((partner, i) => (
+      <div className="[mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
+        <div className="flex w-fit hover:[animation-play-state:paused] animate-scroll">
+          {doubled.map((partner, i) => (
             <div
               key={`${partner.name}-${i}`}
               className="flex-shrink-0 px-8 lg:px-12 flex items-center justify-center"

@@ -47,8 +47,7 @@ export function TextReveal({
   const words = text.split(" ");
 
   return (
-    // @ts-expect-error -- polymorphic ref
-    <Tag ref={ref} className={className}>
+    <Tag ref={ref as React.RefObject<HTMLHeadingElement>} className={className}>
       {words.map((word, i) => (
         <motion.span
           key={i}
