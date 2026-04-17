@@ -6,6 +6,7 @@ import { useRouter } from "@/i18n/routing";
 
 import type { Car } from "@/lib/cars/types";
 import { translateEngineType, translateTransmission, translateFuelType } from "@/lib/utils/translateVehicleSpecs";
+import { carDetailPath } from "@/lib/seo/slug";
 import {
   Carousel,
   CarouselContent,
@@ -66,11 +67,11 @@ export const CarsCarousel = ({ cars }: CarsCarouselProps) => {
                 <div
                   role="button"
                   tabIndex={0}
-                  onClick={() => router.push(`/cars/${car.id}`)}
+                  onClick={() => router.push(carDetailPath(car.id, car.year, car.brand, car.model))}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      router.push(`/cars/${car.id}`);
+                      router.push(carDetailPath(car.id, car.year, car.brand, car.model));
                     }
                   }}
                   aria-label={`${carName} - ${carPrice}`}
@@ -91,7 +92,7 @@ export const CarsCarousel = ({ cars }: CarsCarouselProps) => {
                     
                     <Image
                       src={carImage}
-                      alt={carName}
+                      alt={`${car.year} ${carName} — ${carPrice} — Prime Cars import from USA`}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                       sizes="(max-width: 768px) 100vw, 33vw"

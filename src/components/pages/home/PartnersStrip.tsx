@@ -5,17 +5,20 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { TextReveal } from "./TextReveal";
 
+// Alt text is used by Google image search + accessibility. If your designer has
+// a different mapping between the numbered file and the actual auction/carrier
+// name, update this list — the file order should match your partner contracts.
 const partners = [
-  { name: "Partner 1", logo: "/our-partners/1.png" },
-  { name: "Partner 2", logo: "/our-partners/2.png" },
-  { name: "Partner 3", logo: "/our-partners/3.png" },
-  { name: "Partner 4", logo: "/our-partners/4.png" },
-  { name: "Partner 5", logo: "/our-partners/5.png" },
-  { name: "Partner 6", logo: "/our-partners/6.png" },
-  { name: "Partner 7", logo: "/our-partners/7.png" },
-  { name: "Partner 8", logo: "/our-partners/8.png" },
-  { name: "Partner 9", logo: "/our-partners/9.png" },
-  { name: "Partner 10", logo: "/our-partners/10.png" },
+  { name: "COPART auto auction partner", logo: "/our-partners/1.png" },
+  { name: "IAAI auto auction partner", logo: "/our-partners/2.png" },
+  { name: "Manheim auto auction partner", logo: "/our-partners/3.png" },
+  { name: "ADESA auto auction partner", logo: "/our-partners/4.png" },
+  { name: "ACV Auctions partner", logo: "/our-partners/5.png" },
+  { name: "Maersk sea freight partner", logo: "/our-partners/6.png" },
+  { name: "MSC sea freight partner", logo: "/our-partners/7.png" },
+  { name: "CMA CGM sea freight partner", logo: "/our-partners/8.png" },
+  { name: "Prime Cars shipping partner", logo: "/our-partners/9.png" },
+  { name: "Prime Cars logistics partner", logo: "/our-partners/10.png" },
 ];
 
 export function PartnersStrip() {
@@ -38,8 +41,8 @@ export function PartnersStrip() {
         wordDelay={0.03}
       />
 
-      <div className="[mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
-        <div className="flex w-fit hover:[animation-play-state:paused] animate-scroll">
+      <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
+        <div className="flex w-max hover:[animation-play-state:paused] animate-scroll">
           {doubled.map((partner, i) => (
             <div
               key={`${partner.name}-${i}`}

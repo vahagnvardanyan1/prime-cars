@@ -56,6 +56,35 @@
     },
     "copyright": "Prime Cars. All rights reserved."
   },
+  "seo": {
+    "home": {
+      "title": "Prime Cars — Car Import from USA to Armenia | COPART & IAAI",
+      "description": "Prime Cars — your trusted partner for importing vehicles from US auctions to Armenia. Buy cars from COPART and IAAI, sea freight, customs clearance, insurance included.",
+      "keywords": "car import armenia, copart armenia, iaai armenia, buy car from usa, auto auction, vehicle import, Prime Cars, Gyumri cars"
+    },
+    "cars": {
+      "title": "Cars For Sale — Imported from USA | Prime Cars",
+      "description": "Browse vehicles already imported to Armenia and cars in transit from US auctions. Toyota, Honda, BMW, Mercedes, Tesla and more. Full specs, photos and pricing.",
+      "keywords": "cars for sale armenia, imported cars, Toyota Armenia, Tesla, BMW"
+    },
+    "carDetail": {
+      "titleTemplate": "{year} {brand} {model} — ${price} | Prime Cars",
+      "descriptionTemplate": "{year} {brand} {model} imported from the USA. Price ${price}. {fuel} · {transmission}. Full specs, photos and import cost calculator on Prime Cars."
+    },
+    "calculator": {
+      "title": "Car Import Calculator — USA to Armenia | Prime Cars",
+      "description": "Free import cost calculator for vehicles from US auctions: auction fees, ground shipping, sea freight, customs duty. Get an instant estimate for your car.",
+      "keywords": "car import calculator, customs calculator armenia, copart cost, import fees"
+    },
+    "partners": {
+      "title": "Our Partners — COPART, IAAI & More | Prime Cars",
+      "description": "Prime Cars works with leading auto auction houses and shipping providers to deliver the best prices and service for vehicle imports to Armenia."
+    },
+    "apply": {
+      "title": "Apply for Partnership | Prime Cars",
+      "description": "Register and start importing vehicles from the USA. Our team will help you find, buy and deliver the car you want to Armenia."
+    }
+  },
   "home": {
     "hero": {
       "title": "Selling Cars, Building Trust",

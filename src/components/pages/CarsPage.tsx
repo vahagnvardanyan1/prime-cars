@@ -23,6 +23,7 @@ import { useCarsPage } from "@/hooks/useCarsPage";
 import { useIsMobile } from "@/hooks/useMediaQuery";
 import type { SortOption } from "@/hooks/useSortedCars";
 import type { Car, CarCategory } from "@/lib/cars/types";
+import { carDetailPath } from "@/lib/seo/slug";
 
 type ViewMode = "grid" | "list";
 
@@ -32,7 +33,7 @@ const CarListItem = memo(({ car }: { car: Car }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/cars/${car.id}`);
+    router.push(carDetailPath(car.id, car.year, car.brand, car.model));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

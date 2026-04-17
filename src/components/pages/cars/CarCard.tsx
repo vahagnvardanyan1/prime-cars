@@ -6,6 +6,7 @@ import { useRouter } from "@/i18n/routing";
 
 import type { Car } from "@/lib/cars/types";
 import { translateEngineType, translateFuelType } from "@/lib/utils/translateVehicleSpecs";
+import { carDetailPath } from "@/lib/seo/slug";
 import { CategoryBadge } from "@/components/ui/badges";
 
 type CarCardProps = {
@@ -26,7 +27,7 @@ export const CarCard = ({ car }: CarCardProps) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/cars/${car.id}`);
+    router.push(carDetailPath(car.id, car.year, car.brand, car.model));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -61,7 +62,7 @@ export const CarCard = ({ car }: CarCardProps) => {
 
         <Image
           src={car.imageUrl}
-          alt={`${car.brand} ${car.model}`}
+          alt={`${car.year} ${car.brand} ${car.model} — ${formatPrice(car.priceUsd)} — Prime Cars`}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

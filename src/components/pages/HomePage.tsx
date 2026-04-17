@@ -13,13 +13,12 @@ import { ScrollReveal } from "@/components/pages/home/ScrollReveal";
 import { ScrollSpy } from "@/components/pages/home/ScrollSpy";
 import { PopularDealsHeader } from "@/components/pages/home/PopularDealsHeader";
 
-
 export const HomePage = async () => {
   const result = await fetchAllAvailableCars();
   const cars = result.success ? result.cars || [] : [];
 
   return (
-    <div className="pt-20">
+    <div className="pt-20 overflow-x-hidden">
       <ScrollSpy />
 
       <section id="hero" className="relative overflow-hidden bg-gray-50 dark:bg-black min-h-[calc(100vh-5rem)] flex items-center transition-colors duration-300">
