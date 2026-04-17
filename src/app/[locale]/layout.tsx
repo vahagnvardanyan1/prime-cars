@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
 
 import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 
 import type { Locale } from "@/i18n/config";
 import { locales } from "@/i18n/config";
+import { SITE_URL } from "@/lib/seo";
 import { SiteShell } from "@/components/SiteShell";
 import { ThemeProvider } from "@/components/ThemeContext";
 import { Toaster } from "@/components/ui/sonner";
@@ -23,6 +25,17 @@ export const generateStaticParams = () => {
 };
 
 export const dynamicParams = false;
+
+export const metadata: Metadata = {
+  alternates: {
+    languages: {
+      hy: `${SITE_URL}/hy`,
+      en: `${SITE_URL}/en`,
+      ru: `${SITE_URL}/ru`,
+      "x-default": `${SITE_URL}/hy`,
+    },
+  },
+};
 
 const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   const locale = params.locale as string;

@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /*/admin/
+
+User-agent: CCBot
+Disallow: /
+
+Host: https://primecars.am
+Sitemap: https://primecars.am/sitemap.xml
