@@ -7,6 +7,7 @@ import { authenticatedFetch } from "@/lib/auth/token";
 export type CreateShippingData = {
   city: string;
   shipping: number;
+  tax?: number;
   category?: Auction;
 };
 
@@ -28,6 +29,7 @@ export const createShipping = async (
       body: JSON.stringify({
         city: data.city,
         base_price: data.shipping,
+        tax: data.tax ?? 0,
         category: data.category,
       }),
     });

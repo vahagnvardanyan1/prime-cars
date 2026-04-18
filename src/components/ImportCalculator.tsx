@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
-import { Info, MoreHorizontal } from "lucide-react";
+import { Info, MoreHorizontal, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
@@ -15,20 +15,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  calculateVehicleTaxes,
-  formatDate,
-  mapEngineType,
-  type CalculatorResponse,
-} from "@/lib/import-calculator/calculateVehicleTaxes";
+import type { CalculatorResponse } from "@/lib/import-calculator/calculateVehicleTaxes";
 import {
   fetchShippingCities,
   getUniqueCities,
 } from "@/lib/import-calculator/fetchShippingPrices";
 
 import { calculateAuctionFees } from "@/lib/import-calculator/auctionFees";
-import { calculateTruckTaxes, type TruckWeightClass } from "@/lib/import-calculator/calculateTruckTaxes";
-import { calculateQuadricycleTaxes } from "@/lib/import-calculator/calculateQuadricycleTaxes";
+import { type TruckWeightClass } from "@/lib/import-calculator/calculateTruckTaxes";
+import {
+  calculateTruckResult,
+  calculateQuadricycleResult,
+  calculateSnowmobileResult,
+  calculateJetSkiResult,
+  calculatePassengerResult,
+  calculateMotorcycleResult,
+  type VehicleCalcParams,
+} from "@/lib/import-calculator/vehicleCalculators";
 import { CalculatorResults } from "@/components/calculator/CalculatorResults";
 
 interface ImportCalculatorProps {
@@ -61,6 +64,9 @@ export const ImportCalculator = ({
   const [hasReverse, setHasReverse] = useState(false);
   const [icePowerExceedsElectric, setIcePowerExceedsElectric] = useState(false);
   const [outOfAuctionBorders, setOutOfAuctionBorders] = useState(false);
+  const [sublotPrice, setSublotPrice] = useState("");
+  const [locationSearch, setLocationSearch] = useState("");
+  const [otherExpenses, setOtherExpenses] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
@@ -69,6 +75,8 @@ export const ImportCalculator = ({
   const [isCalculating, setIsCalculating] = useState(false);
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [cityPriceMap, setCityPriceMap] = useState<Record<string, number>>({});
+  const [cityTaxMap, setCityTaxMap] = useState<Record<string, number>>({});
+  const [cityTax, setCityTax] = useState(0);
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
 
@@ -115,15 +123,18 @@ export const ImportCalculator = ({
         if (result.success) {
           const sortedCities = getUniqueCities(result.cities);
           setAvailableCities(sortedCities);
-          // For "Other", don't set priceMap since user will enter manually
+          // For "Other", don't set priceMap/taxMap since user will enter manually
           setCityPriceMap(activeTab === "other" ? {} : result.priceMap);
+          setCityTaxMap(activeTab === "other" ? {} : result.taxMap);
         } else {
           setAvailableCities([]);
           setCityPriceMap({});
+          setCityTaxMap({});
         }
       } catch  {
         setAvailableCities([]);
         setCityPriceMap({});
+        setCityTaxMap({});
       } finally {
         setIsLoadingLocations(false);
       }
@@ -145,10 +156,12 @@ export const ImportCalculator = ({
     if (vehicleType !== "truck") {
       setWeightClass("");
     } else {
-      // Trucks only support gasoline and diesel
-      if (engine === "electric" || engine === "hybrid") {
-        setEngine("gasoline");
-      }
+      // Trucks only support gasoline, diesel, and electric
+      if (engine === "hybrid") setEngine("gasoline");
+    }
+    if (vehicleType === "motorcycle") {
+      // Motorcycles only support gasoline, diesel, and electric
+      if (engine === "hybrid") setEngine("gasoline");
     }
   }, [vehicleType, engine]);
 
@@ -220,46 +233,33 @@ export const ImportCalculator = ({
     }
   }, [vehiclePrice, activeTab]);
 
-  // Get shipping price from priceMap when location changes and apply vehicle type adjustments
+  // Get shipping price from priceMap and tax from taxMap when location changes, apply vehicle type adjustments
   useEffect(() => {
-    // For "Other" auction, use manual price if entered
-    if (activeTab === "other") {
-      const manualPrice = parseFloat(manualShippingPrice) || 0;
-      let price = manualPrice;
-      
-      // Apply vehicle type adjustments
+    const applyAdjustments = (base: number) => {
+      let price = base;
       if (vehicleType === "quadricycle" || vehicleType === "motorcycle") {
         price = Math.max(0, price - 500);
       } else if (vehicleType === "truck") {
         price = price + 500;
       }
-      
-      // Apply out of auction borders adjustment (add 50%)
       if (outOfAuctionBorders) {
-        price = price + 50 ;
+        price = price + 50;
       }
-      
-      setShippingPrice(price);
+      return price;
+    };
+
+    if (activeTab === "other") {
+      const manualPrice = parseFloat(manualShippingPrice) || 0;
+      setShippingPrice(applyAdjustments(manualPrice));
+      setCityTax(applyAdjustments(manualPrice)); // For "other", tax = shipping
     } else if (auctionLocation && cityPriceMap[auctionLocation]) {
-      let price = cityPriceMap[auctionLocation];
-      
-      // Apply vehicle type adjustments
-      if (vehicleType === "quadricycle" || vehicleType === "motorcycle") {
-        price = Math.max(0, price - 500); // Subtract $500, but not below 0
-      } else if (vehicleType === "truck") {
-        price = price + 500; // Add $500
-      }
-      
-      // Apply out of auction borders adjustment (add 50%)
-      if (outOfAuctionBorders) {
-        price = price + 50
-      }
-      
-      setShippingPrice(price);
+      setShippingPrice(applyAdjustments(cityPriceMap[auctionLocation]));
+      setCityTax(applyAdjustments(cityTaxMap[auctionLocation] ?? 0));
     } else {
       setShippingPrice(0);
+      setCityTax(0);
     }
-  }, [auctionLocation, cityPriceMap, vehicleType, activeTab, manualShippingPrice, outOfAuctionBorders]);
+  }, [auctionLocation, cityPriceMap, cityTaxMap, vehicleType, activeTab, manualShippingPrice, outOfAuctionBorders]);
 
   // Calculate insurance: (Shipping Price + Auction Fee) * 1%
   useEffect(() => {
@@ -284,9 +284,10 @@ export const ImportCalculator = ({
     // Show validation errors
     setShowValidation(true);
 
-    // Validation - engine volume not required for electric vehicles
-    const isEngineVolumeRequired = engine !== "electric";
-    if (!vehiclePrice || !engine || !day || !month || !year || !auctionLocation || !vehicleType) {
+    // Snowmobiles don't need engine type or volume
+    const needsEngine = vehicleType !== "snowmobile" && vehicleType !== "jetski";
+    const isEngineVolumeRequired = needsEngine && engine !== "electric";
+    if (!vehiclePrice || (needsEngine && !engine) || !day || !month || !year || !auctionLocation || !vehicleType) {
       toast.error(t("calculator.form.validationError") || "Please fill in all required fields");
       return;
     }
@@ -325,92 +326,36 @@ export const ImportCalculator = ({
         eurUsdRate = parseFloat(calculateEurUsdRate(ratesResult.data));
       }
 
-      // Convert (carPrice + shippingPrice) from USD to EUR
-      const carPriceUsd = parseFloat(vehiclePrice);
-      const shippingPriceUsd = shippingPrice || 0;
-      const auctionUsd = parseFloat(auctionFee);
+      const vehicleCalculators: Record<string, (p: VehicleCalcParams) => CalculatorResponse | Promise<CalculatorResponse>> = {
+        truck: calculateTruckResult,
+        quadricycle: calculateQuadricycleResult,
+        snowmobile: calculateSnowmobileResult,
+        jetski: calculateJetSkiResult,
+        passenger: calculatePassengerResult,
+        motorcycle: calculateMotorcycleResult,
+      };
 
-      // Handle truck calculation differently (client-side)
-      if (vehicleType === "truck" && weightClass) {
-        // Convert USD to EUR for truck calculation (divide by eurUsdRate since 1 EUR = eurUsdRate USD)
-        const vehiclePriceEur = carPriceUsd / eurUsdRate;
-        const auctionFeeEur = auctionUsd / eurUsdRate;
+      console.log('[Calculator] Submit values:', { shippingPrice, cityTax, auctionLocation, cityTaxMap: cityTaxMap[auctionLocation] });
+      const params: VehicleCalcParams = {
+        vehiclePriceUsd: parseFloat(vehiclePrice),
+        auctionFeeUsd: parseFloat(auctionFee),
+        shippingPriceUsd: cityTax || 0,
+        engineVolume: engine === "electric" ? 0 : parseFloat(engineVolume),
+        engine,
+        year: parseInt(year),
+        day,
+        month,
+        importer,
+        highGroundClearance,
+        weightClass,
+        hasReverse,
+        eurUsdRate,
+      };
 
-        // Map engine type: "gasoline" -> "petrol", "diesel" -> "diesel"
-        const truckEngineType = engine === "diesel" ? "diesel" : "petrol";
-
-        const truckResult = calculateTruckTaxes({
-          vehiclePriceEur,
-          auctionFeeEur,
-          engineVolumeLiters: parseFloat(engineVolume),
-          weightClass: weightClass as TruckWeightClass,
-          vehicleYear: parseInt(year),
-          engineType: truckEngineType,
-        });
-
-        // Map truck result to CalculatorResponse format
-        // Note: CalculatorResults divides by eurUsdRate to convert EUR→USD, but it should multiply.
-        // To compensate, we multiply by eurUsdRate² here so the final displayed USD values are correct.
-        const rateSquared = eurUsdRate * eurUsdRate;
-        const calculatorResponse: CalculatorResponse = {
-          globTax: Math.round(truckResult.customsDuty * rateSquared),
-          nds: Math.round(truckResult.vat * rateSquared),
-          envTaxPay: Math.round(truckResult.environmentalTax * rateSquared),
-          sumPay: Math.round(truckResult.total * rateSquared),
-          type: "truck",
-        };
-
-        setCalculationResults(calculatorResponse);
-        handleShowResults();
-      } else if (vehicleType === "quadricycle" || vehicleType === "snowmobile") {
-        // Quadricycle/Snowmobile calculation (client-side)
-        const vehiclePriceEur = carPriceUsd / eurUsdRate;
-        const auctionFeeEur = auctionUsd / eurUsdRate;
-
-        const quadResult = calculateQuadricycleTaxes({
-          vehiclePriceEur,
-          auctionFeeEur,
-          engineVolumeLiters: parseFloat(engineVolume),
-          vehicleYear: parseInt(year),
-        });
-
-        // Apply rate² compensation (same as trucks)
-        const rateSquared = eurUsdRate * eurUsdRate;
-        const calculatorResponse: CalculatorResponse = {
-          globTax: Math.round(quadResult.customsDuty * rateSquared),
-          nds: Math.round(quadResult.vat * rateSquared),
-          envTaxPay: Math.round(quadResult.environmentalTax * rateSquared),
-          sumPay: Math.round(quadResult.total * rateSquared),
-          type: vehicleType,
-        };
-
-        setCalculationResults(calculatorResponse);
-        handleShowResults();
-      } else {
-        // Standard vehicle calculation via API
-        // Individual importers don't include shipping in the taxable base
-        const shippingForTax = importer === "individual" ? 0 : shippingPriceUsd;
-        const totalPriceEur = Math.round((carPriceUsd + shippingForTax + auctionUsd) / eurUsdRate);
-
-        const result = await calculateVehicleTaxes({
-          price: totalPriceEur, // Send EUR price to backend as integer
-          volume: engine === "electric" ? 0 : parseFloat(engineVolume), // Use 0 for electric
-          engineType: mapEngineType(engine),
-          date: formatDate({ day, month, year }),
-          isLegal: importer === "legal" ? 1 : 0,
-          offRoad: highGroundClearance ? 1 : 0,
-          ICEpower: 0, // Default to 0 as per API spec
-        });
-
-        if (result.success) {
-          setCalculationResults(result.data);
-          handleShowResults();
-        } else {
-          toast.error(t("calculator.form.calculationError") || "Calculation failed", {
-            description: result.error,
-          });
-        }
-      }
+      const calculator = vehicleCalculators[vehicleType];
+      const result = await calculator(params);
+      setCalculationResults(result);
+      handleShowResults();
     } catch (error) {
       toast.error(t("calculator.form.calculationError") || "Calculation failed", {
         description: error instanceof Error ? error.message : "Unknown error",
@@ -445,7 +390,7 @@ export const ImportCalculator = ({
                     alt="Copart"
                     width={120}
                     height={40}
-                    className="h-8 w-auto"
+                    className="h-10 w-auto"
                   />
                 </div>
               </button>
@@ -467,7 +412,7 @@ export const ImportCalculator = ({
                     alt="IAAI"
                     width={120}
                     height={40}
-                    className="h-10 w-auto"
+                    className="h-16 w-auto"
                   />
                 </div>
               </button>
@@ -489,7 +434,7 @@ export const ImportCalculator = ({
                     alt="Manheim"
                     width={120}
                     height={40}
-                    className="h-8 w-auto"
+                    className="h-10 w-auto"
                   />
                 </div>
               </button>
@@ -535,41 +480,6 @@ export const ImportCalculator = ({
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative">
               {/* Left Column */}
               <div className="space-y-6">
-                {/* Importer */}
-                <fieldset>
-                  <legend className="block text-gray-600 dark:text-gray-400 text-sm mb-3">
-                    {t("calculator.form.importer")} <span className="text-red-500" aria-hidden="true">*</span>
-                  </legend>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" role="radiogroup" aria-required="true">
-                    <button
-                      type="button"
-                      role="radio"
-                      aria-checked={importer === "legal"}
-                      onClick={() => setImporter("legal")}
-                      className={`py-3 px-4 rounded-lg border transition-colors text-sm sm:text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2 ${
-                        importer === "legal"
-                          ? "border-orange-500 bg-transparent text-gray-900 dark:text-white"
-                          : "border-gray-300 dark:border-gray-700 bg-transparent text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-600"
-                      }`}
-                    >
-                      {t("calculator.form.legalPerson")}
-                    </button>
-                    <button
-                      type="button"
-                      role="radio"
-                      aria-checked={importer === "individual"}
-                      onClick={() => setImporter("individual")}
-                      className={`py-3 px-4 rounded-lg border transition-colors text-sm sm:text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2 ${
-                        importer === "individual"
-                          ? "border-orange-500 bg-transparent text-gray-900 dark:text-white"
-                          : "border-gray-300 dark:border-gray-700 bg-transparent text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-600"
-                      }`}
-                    >
-                      {t("calculator.form.individual")}
-                    </button>
-                  </div>
-                </fieldset>
-
                 {/* Vehicle Price */}
                 <div>
                   <label htmlFor="vehicle-price" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
@@ -615,13 +525,17 @@ export const ImportCalculator = ({
                   />
                 </div>
 
-                {/* Auction Location and Out of Borders Checkbox */}
-                <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 sm:gap-4 sm:items-end">
+                {/* Auction Location */}
+                <div className="space-y-4">
                   <div>
                     <label id="auction-location-label" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                       {t("calculator.form.auctionLocation")} <span className="text-red-500" aria-hidden="true">*</span>
                     </label>
-                    <Select value={auctionLocation} onValueChange={setAuctionLocation} disabled={isLoadingLocations}>
+                    <Select
+                      value={auctionLocation}
+                      onValueChange={(val) => { setAuctionLocation(val); setLocationSearch(""); }}
+                      disabled={isLoadingLocations}
+                    >
                       <SelectTrigger
                         aria-labelledby="auction-location-label"
                         aria-required="true"
@@ -632,40 +546,59 @@ export const ImportCalculator = ({
                       >
                         <SelectValue placeholder={isLoadingLocations ? `${t("calculator.form.loadingLocations") || "Loading"}…` : t("calculator.form.selectLocation")} />
                       </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px] overflow-y-auto">
-                        {availableCities.length > 0 ? (
-                          availableCities.map((city) => (
-                            <SelectItem 
-                              key={city}
-                              value={city}
-                              className="text-gray-900 dark:text-white hover:bg-[#429de6]/20 hover:text-[#429de6] hover:font-medium dark:hover:bg-[#429de6]/30 dark:hover:text-[#429de6] focus:bg-[#429de6]/20 focus:text-[#429de6] focus:font-medium dark:focus:bg-[#429de6]/30 dark:focus:text-[#429de6] data-[state=checked]:bg-[#429de6]/20 data-[state=checked]:text-[#429de6] data-[state=checked]:font-medium dark:data-[state=checked]:bg-[#429de6]/30 dark:data-[state=checked]:text-[#429de6] transition-colors cursor-pointer"
-                            >
-                              {city}
+                      <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[340px] p-0">
+                        <div className="sticky top-0 z-10 bg-white dark:bg-[#111111] px-2 py-2 border-b border-gray-200 dark:border-white/10">
+                          <div className="relative">
+                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                            <input
+                              type="text"
+                              value={locationSearch}
+                              onChange={(e) => setLocationSearch(e.target.value)}
+                              onKeyDown={(e) => e.stopPropagation()}
+                              placeholder={t("calculator.form.selectLocation")}
+                              className="w-full pl-8 pr-3 py-1.5 text-sm bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 outline-none"
+                            />
+                          </div>
+                        </div>
+                        <div className="overflow-y-auto max-h-[260px]">
+                          {availableCities.filter(c => c.toLowerCase().includes(locationSearch.toLowerCase())).length > 0 ? (
+                            availableCities
+                              .filter(c => c.toLowerCase().includes(locationSearch.toLowerCase()))
+                              .map((city) => (
+                                <SelectItem
+                                  key={city}
+                                  value={city}
+                                  className="text-gray-900 dark:text-white hover:bg-[#429de6]/20 hover:text-[#429de6] hover:font-medium dark:hover:bg-[#429de6]/30 dark:hover:text-[#429de6] focus:bg-[#429de6]/20 focus:text-[#429de6] focus:font-medium dark:focus:bg-[#429de6]/30 dark:focus:text-[#429de6] data-[state=checked]:bg-[#429de6]/20 data-[state=checked]:text-[#429de6] data-[state=checked]:font-medium dark:data-[state=checked]:bg-[#429de6]/30 dark:data-[state=checked]:text-[#429de6] transition-colors cursor-pointer"
+                                >
+                                  {city}
+                                </SelectItem>
+                              ))
+                          ) : (
+                            <SelectItem value="no-locations" disabled>
+                              {t("calculator.form.noLocationsAvailable") || "No locations available"}
                             </SelectItem>
-                          ))
-                        ) : (
-                          <SelectItem value="no-locations" disabled>
-                            {t("calculator.form.noLocationsAvailable") || "No locations available"}
-                          </SelectItem>
-                        )}
+                          )}
+                        </div>
                       </SelectContent>
                     </Select>
                   </div>
 
                   {/* Out of Auction Borders Checkbox */}
-                  <div className="sm:pb-3">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        id="out-of-borders"
-                        name="outOfAuctionBorders"
-                        type="checkbox"
-                        checked={outOfAuctionBorders}
-                        onChange={(e) => setOutOfAuctionBorders(e.target.checked)}
-                        className="w-4 h-4 flex-shrink-0 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6] focus:ring-offset-0"
-                      />
-                      <span className="text-gray-600 dark:text-gray-400 text-xs leading-tight">{t("calculator.form.outOfAuctionBorders")}</span>
-                    </label>
-                  </div>
+                  <label className="flex items-center gap-2 cursor-pointer w-fit">
+                    <input
+                      id="out-of-borders"
+                      name="outOfAuctionBorders"
+                      type="checkbox"
+                      checked={outOfAuctionBorders}
+                      onChange={(e) => {
+                        setOutOfAuctionBorders(e.target.checked);
+                        if (!e.target.checked) setSublotPrice("");
+                      }}
+                      className="w-4 h-4 flex-shrink-0 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6] focus:ring-offset-0"
+                    />
+                    <span className="text-gray-600 dark:text-gray-400 text-sm leading-tight">{t("calculator.form.outOfAuctionBorders")}</span>
+                  </label>
+
                 </div>
 
                 {/* Manual Shipping Price (Only for "Other" auction) */}
@@ -691,6 +624,24 @@ export const ImportCalculator = ({
                     />
                   </div>
                 )}
+
+                {/* Other Expenses */}
+                <div>
+                  <label htmlFor="other-expenses" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
+                    {t("calculator.form.otherExpenses")}
+                  </label>
+                  <input
+                    id="other-expenses"
+                    name="otherExpenses"
+                    type="number"
+                    inputMode="decimal"
+                    autoComplete="off"
+                    value={otherExpenses}
+                    onChange={(e) => setOtherExpenses(e.target.value)}
+                    placeholder="0"
+                    className="w-full h-12 px-4 rounded-lg bg-transparent border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 tabular-nums focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus:border-[#429de6] transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                </div>
               </div>
 
               {/* Vertical Separator */}
@@ -698,6 +649,41 @@ export const ImportCalculator = ({
 
               {/* Right Column */}
               <div className="space-y-6 lg:pl-8">
+                {/* Importer */}
+                <fieldset>
+                  <legend className="block text-gray-600 dark:text-gray-400 text-sm mb-3">
+                    {t("calculator.form.importer")} <span className="text-red-500" aria-hidden="true">*</span>
+                  </legend>
+                  <div className="grid grid-cols-2 gap-4" role="radiogroup" aria-required="true">
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={importer === "legal"}
+                      onClick={() => setImporter("legal")}
+                      className={`py-3 px-4 rounded-lg border transition-colors text-sm sm:text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2 ${
+                        importer === "legal"
+                          ? "border-orange-500 bg-transparent text-gray-900 dark:text-white"
+                          : "border-gray-300 dark:border-gray-700 bg-transparent text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-600"
+                      }`}
+                    >
+                      {t("calculator.form.legalPerson")}
+                    </button>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={importer === "individual"}
+                      onClick={() => setImporter("individual")}
+                      className={`py-3 px-4 rounded-lg border transition-colors text-sm sm:text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2 ${
+                        importer === "individual"
+                          ? "border-orange-500 bg-transparent text-gray-900 dark:text-white"
+                          : "border-gray-300 dark:border-gray-700 bg-transparent text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-600"
+                      }`}
+                    >
+                      {t("calculator.form.individual")}
+                    </button>
+                  </div>
+                </fieldset>
+
                 {/* Date Selection: Day, Month, Year */}
                 <fieldset>
                   <legend className="sr-only">{t("calculator.form.vehicleYear")} <span className="text-red-500" aria-hidden="true">*</span></legend>
@@ -787,6 +773,7 @@ export const ImportCalculator = ({
                       <SelectItem value="quadricycle">{t("calculator.form.quadricycle")}</SelectItem>
                       <SelectItem value="motorcycle">{t("calculator.form.motorcycle")}</SelectItem>
                       <SelectItem value="snowmobile">{t("calculator.form.snowmobile")}</SelectItem>
+                      <SelectItem value="jetski">{t("calculator.form.jetski")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -819,7 +806,7 @@ export const ImportCalculator = ({
 
                 {/* Engine and Engine Volume Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Engine */}
+                  {/* Engine - Disabled for quadricycle, snowmobile, jetski */}
                   <div className={engine === "electric" ? "sm:col-span-2" : ""}>
                     <label id="engine-type-label" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                       {t("calculator.form.engine")} <span className="text-red-500" aria-hidden="true">*</span>
@@ -827,14 +814,14 @@ export const ImportCalculator = ({
                     <Select
                       value={engine}
                       onValueChange={setEngine}
-                      disabled={vehicleType === "quadricycle"}
+                      disabled={vehicleType === "quadricycle" || vehicleType === "snowmobile" || vehicleType === "jetski"}
                     >
                       <SelectTrigger
                         aria-labelledby="engine-type-label"
                         aria-required="true"
                         aria-invalid={showValidation && !engine}
                         className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
-                          vehicleType === "quadricycle"
+                          vehicleType === "quadricycle" || vehicleType === "snowmobile" || vehicleType === "jetski"
                             ? "cursor-not-allowed opacity-60 border-gray-300 dark:border-gray-700"
                             : getErrorClass(engine) || "border-gray-300 dark:border-gray-700"
                         }`}
@@ -844,17 +831,13 @@ export const ImportCalculator = ({
                       <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
                         <SelectItem value="gasoline">{t("calculator.form.gasoline")}</SelectItem>
                         <SelectItem value="diesel">{t("calculator.form.diesel")}</SelectItem>
-                        {vehicleType !== "truck" && (
-                          <>
-                            <SelectItem value="electric">{t("calculator.form.electric")}</SelectItem>
-                            <SelectItem value="hybrid">{t("calculator.form.hybrid")}</SelectItem>
-                          </>
-                        )}
+                        <SelectItem value="electric">{t("calculator.form.electric")}</SelectItem>
+                        <SelectItem value="hybrid" disabled={vehicleType === "truck" || vehicleType === "motorcycle"}>{t("calculator.form.hybrid")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
-                  {/* Engine Volume - Hidden for electric */}
+                  {/* Engine Volume - Hidden for electric, disabled for snowmobile/jetski */}
                   {engine !== "electric" && (
                     <div>
                       <label htmlFor="engine-volume" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
@@ -986,6 +969,7 @@ export const ImportCalculator = ({
           year={year}
           engine={engine}
           engineVolume={engineVolume}
+          weightClass={weightClass}
           showPartnerMessage={showPartnerMessage}
           onBack={handleBackFromResults}
           // Restricted data - only pass when in admin panel

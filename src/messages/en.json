@@ -115,14 +115,16 @@
     "subtitle": "Discover our carefully selected inventory of luxury and performance vehicles. Whether you're looking for immediate availability, tracking incoming shipments, or seeking a custom order—we have you covered.",
     "browseTitle": "Browse Vehicles",
     "tabs": {
-      "current": "Available Now",
+      "all": "All",
+      "allShort": "All",
+      "current": "Available in Armenia",
       "currentShort": "Available",
       "currentDesc": "Ready to drive today",
-      "arriving": "In Transit",
-      "arrivingShort": "In Transit",
+      "arriving": "On the way",
+      "arrivingShort": "On the way",
       "arrivingDesc": "Track your shipment",
-      "order": "Custom Order",
-      "orderShort": "Custom Order",
+      "order": "By order",
+      "orderShort": "By order",
       "orderDesc": "Source any vehicle"
     },
     "categories": {
@@ -203,11 +205,12 @@
       "GAS": "Gas",
       "PLUGIN_HYBRID": "Plug-in Hybrid"
     },
+    "descriptionTitle": "Description",
     "contactButton": "Contact Us",
     "shareButton": "Share",
     "note": {
       "title": "Note",
-      "description": "All prices are in USD and subject to change. Contact us for the most current pricing and availability."
+      "description": "All prices are in US dollars and are subject to change. Please contact us for current pricing and availability"
     },
     "notFound": {
       "title": "Car Not Found",
@@ -270,6 +273,7 @@
       "quadricycle": "Quadricycle",
       "motorcycle": "Motorcycle",
       "snowmobile": "Snowmobile",
+      "jetski": "Jet Skis",
       "passengerCar": "Passenger Car",
       "sedan": "Sedan",
       "suv": "SUV",
@@ -293,6 +297,7 @@
       "weightClass5to20": "5 to 20 tons",
       "weightClassAbove20": "Above 20 tons",
       "outOfAuctionBorders": "Out of auction borders (Sublot)",
+      "otherExpenses": "Other expenses",
       "calculateCost": "Calculate cost",
       "calculating": "Calculating",
       "validationError": "Please fill in all required fields",
@@ -452,7 +457,7 @@
     },
     "filters": {
       "searchUsers": "Search by name, username, email, phone or passport...",
-      "searchCars": "Search by model, client, VIN, lot or city...",
+      "searchCars": "Search by model, client, VIN, lot or container...",
       "country": "Country",
       "allCountries": "All Countries",
       "role": "Role",
@@ -489,7 +494,11 @@
       "darkMode": "Dark mode",
       "activeLabel": "Active",
       "logout": "Logout",
-      "loggingOut": "Logging out..."
+      "loggingOut": "Logging out...",
+      "preferencesAria": "Preferences"
+    },
+    "preferences": {
+      "logout": "Logout"
     },
     "sidebar": {
       "consoleLabel": "Admin Console",
@@ -644,6 +653,7 @@
       "columns": {
         "city": "City",
         "shipping": "Shipping",
+        "taxes": "Taxes",
         "actions": "Actions"
       },
       "update": "Update",
@@ -837,9 +847,12 @@
       },
       "updateShipping": {
         "title": "Update Shipping Price",
+        "titleTax": "Update Tax",
         "setFor": "Set a new shipping price for {city}.",
+        "setTaxFor": "Set a new tax for {city}.",
         "selectCity": "Select a city to update.",
         "fieldLabel": "Shipping Price (USD)",
+        "fieldLabelTax": "Tax (USD)",
         "cancel": "Cancel",
         "confirm": "Confirm"
       },
@@ -851,6 +864,8 @@
         "selectAuction": "Select auction",
         "shippingPrice": "Shipping Price (USD)",
         "shippingPlaceholder": "100",
+        "taxPrice": "Tax (USD)",
+        "taxPlaceholder": "0",
         "cancel": "Cancel",
         "submit": "Add City",
         "submitting": "Adding...",
@@ -1189,6 +1204,12 @@
     "invoice": "Invoice",
     "download": "Download",
     "actions": "Actions",
+    "saleDate": "Sale Date",
+    "destinationPort": "Destination Port",
+    "container": "Container",
+    "carInvoice": "Car Invoice",
+    "shippingInvoice": "Shipping Invoice",
+    "receiverName": "Receiver's Name",
     "showing": "Showing",
     "carSingular": "car",
     "cars": "cars"

@@ -11,14 +11,7 @@ import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
 import { Pagination } from "@/components/admin/primitives/Pagination";
 import { Button } from "@/components/ui/button";
 import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table } from "@radix-ui/themes";
 
 // ============================================================================
 // Types
@@ -99,16 +92,16 @@ const AvailableCarTableRow = memo(function AvailableCarTableRow({
   );
 
   return (
-    <TableRow className="transition-colors duration-150 hover:bg-yellow-100 dark:hover:bg-[#429de6]/20">
+    <Table.Row className="transition-colors duration-150 hover:bg-yellow-100 dark:hover:bg-[#429de6]/20">
       {/* Row Number */}
-      <TableCell className="px-4 py-3 text-center">
+      <Table.Cell className="px-4 py-3 text-center">
         <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
           {(currentPage - 1) * pageSize + index + 1}
         </div>
-      </TableCell>
+      </Table.Cell>
 
       {/* Photo (Clickable) */}
-      <TableCell className="px-4 py-3">
+      <Table.Cell className="px-4 py-3">
         {car.imageUrl && (
           <button
             onClick={handlePhotoClick}
@@ -128,36 +121,36 @@ const AvailableCarTableRow = memo(function AvailableCarTableRow({
             )}
           </button>
         )}
-      </TableCell>
+      </Table.Cell>
 
       {/* Model */}
-      <TableCell className="px-4 py-3">
+      <Table.Cell className="px-4 py-3">
         <div className="text-sm font-semibold text-gray-900 dark:text-white">
           {car.model}
         </div>
-      </TableCell>
+      </Table.Cell>
 
       {/* Year */}
-      <TableCell className="px-4 py-3">
+      <Table.Cell className="px-4 py-3">
         <div className="text-sm text-gray-900 dark:text-white">{car.year}</div>
-      </TableCell>
+      </Table.Cell>
 
       {/* VIN */}
-      <TableCell className="px-4 py-3">
+      <Table.Cell className="px-4 py-3">
         <div className="text-sm text-gray-900 dark:text-white font-mono">
           {car.vin || "-"}
         </div>
-      </TableCell>
+      </Table.Cell>
 
       {/* Price */}
-      <TableCell className="px-4 py-3">
+      <Table.Cell className="px-4 py-3">
         <div className="text-sm font-semibold text-gray-900 dark:text-white">
           {formatPrice(car.priceUsd)}
         </div>
-      </TableCell>
+      </Table.Cell>
 
       {/* Category */}
-      <TableCell className="px-4 py-3">
+      <Table.Cell className="px-4 py-3">
         <span
           className={`inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold ${
             car.category === "AVAILABLE"
@@ -169,49 +162,49 @@ const AvailableCarTableRow = memo(function AvailableCarTableRow({
         >
           {getCategoryLabel(car.category)}
         </span>
-      </TableCell>
+      </Table.Cell>
 
       {/* Location */}
-      <TableCell className="px-4 py-3">
+      <Table.Cell className="px-4 py-3">
         <div className="text-sm text-gray-900 dark:text-white">
           {car.location || "-"}
         </div>
-      </TableCell>
+      </Table.Cell>
 
       {/* Engine */}
-      <TableCell className="px-4 py-3">
+      <Table.Cell className="px-4 py-3">
         <div className="text-sm text-gray-900 dark:text-white capitalize">
           {car.engine?.toLowerCase() || "-"}
         </div>
-      </TableCell>
+      </Table.Cell>
 
       {/* Horsepower */}
-      <TableCell className="px-4 py-3">
+      <Table.Cell className="px-4 py-3">
         <div className="text-sm text-gray-900 dark:text-white">
           {car.horsepower ? `${car.horsepower} HP` : "-"}
         </div>
-      </TableCell>
+      </Table.Cell>
 
       {/* Transmission */}
-      <TableCell className="px-4 py-3">
+      <Table.Cell className="px-4 py-3">
         <div className="text-sm text-gray-900 dark:text-white capitalize">
           {car.transmission?.toLowerCase() || "-"}
         </div>
-      </TableCell>
+      </Table.Cell>
 
       {/* Description */}
-      <TableCell className="px-4 py-3">
+      <Table.Cell className="px-4 py-3">
         <div
           className="text-sm text-gray-900 dark:text-white line-clamp-2"
           title={car.description || "-"}
         >
           {car.description || "-"}
         </div>
-      </TableCell>
+      </Table.Cell>
 
       {/* Actions */}
       {isAdmin && (
-        <TableCell className="px-4 py-3 text-center pr-6 sm:pr-8">
+        <Table.Cell className="px-4 py-3 text-center pr-6 sm:pr-8">
           <div className="flex items-center justify-center gap-2">
             {car.photos && car.photos.length > 0 && (
               <DownloadImagesButton
@@ -248,9 +241,9 @@ const AvailableCarTableRow = memo(function AvailableCarTableRow({
               </Button>
             )}
           </div>
-        </TableCell>
+        </Table.Cell>
       )}
-    </TableRow>
+    </Table.Row>
   );
 });
 
@@ -396,45 +389,45 @@ export const AvailableCarsView = memo(function AvailableCarsView({
         </div>
 
         <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="border-gray-200 dark:border-white/10">
-                <TableHead className="text-center w-16">{t("table.number")}</TableHead>
-                <TableHead className="min-w-[100px]">{t("table.photo")}</TableHead>
-                <TableHead className="min-w-[200px]">{t("table.model")}</TableHead>
-                <TableHead className="min-w-[100px]">{t("table.year")}</TableHead>
-                <TableHead className="min-w-[160px]">{t("table.vin")}</TableHead>
-                <TableHead className="min-w-[140px]">{t("table.price")}</TableHead>
-                <TableHead className="min-w-[120px]">{t("table.category")}</TableHead>
-                <TableHead className="min-w-[140px]">{t("table.location")}</TableHead>
-                <TableHead className="min-w-[120px]">{t("table.engine")}</TableHead>
-                <TableHead className="min-w-[100px]">{t("table.hp")}</TableHead>
-                <TableHead className="min-w-[140px]">{t("table.transmission")}</TableHead>
-                <TableHead className="min-w-[200px]">{t("table.description")}</TableHead>
+          <Table.Root>
+            <Table.Header>
+              <Table.Row className="border-gray-200 dark:border-white/10">
+                <Table.ColumnHeaderCell className="text-center w-16">{t("table.number")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[100px]">{t("table.photo")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[200px]">{t("table.model")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[100px]">{t("table.year")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[160px]">{t("table.vin")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[140px]">{t("table.price")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[120px]">{t("table.category")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[140px]">{t("table.location")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[120px]">{t("table.engine")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[100px]">{t("table.hp")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[140px]">{t("table.transmission")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[200px]">{t("table.description")}</Table.ColumnHeaderCell>
                 {isAdmin && (
-                  <TableHead className="text-center min-w-[160px]">
+                  <Table.ColumnHeaderCell className="text-center min-w-[160px]">
                     {t("table.actions")}
-                  </TableHead>
+                  </Table.ColumnHeaderCell>
                 )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
               {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={isAdmin ? 13 : 12} className="py-12">
+                <Table.Row>
+                  <Table.Cell colSpan={isAdmin ? 13 : 12} className="py-12">
                     <div className="flex items-center justify-center">
                       {loadingSpinner}
                     </div>
-                  </TableCell>
-                </TableRow>
+                  </Table.Cell>
+                </Table.Row>
               ) : !cars || cars.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={isAdmin ? 13 : 12} className="py-12">
+                <Table.Row>
+                  <Table.Cell colSpan={isAdmin ? 13 : 12} className="py-12">
                     <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
                       {t("noCarsFound")}
                     </div>
-                  </TableCell>
-                </TableRow>
+                  </Table.Cell>
+                </Table.Row>
               ) : (
                 cars.map((car, index) => (
                   <AvailableCarTableRow
@@ -452,8 +445,8 @@ export const AvailableCarsView = memo(function AvailableCarsView({
                   />
                 ))
               )}
-            </TableBody>
-          </Table>
+            </Table.Body>
+          </Table.Root>
         </div>
 
         {/* Pagination */}

@@ -115,14 +115,16 @@
     "subtitle": "Բացահայտեք մեր մանրակրկիտ ընտրված լյուքս և սպորտային ավտոմեքենաների ընտրանին։ Փնտրում եք հասանելիություն, հետևում ենք ուղարկվող ավտոներին կամ անհատական պատվեր։ Մենք ձեզ հետ ենք։",
     "browseTitle": "Ընտրել ավտոմեքենա",
     "tabs": {
-      "current": "Հասանելի հիմա",
-      "currentShort": "Հասանելի",
+      "all": "Բոլորը",
+      "allShort": "Բոլ.",
+      "current": "Առկա ՀՀ-ում",
+      "currentShort": "Առկա",
       "currentDesc": "Պատրաստ է վարելու այսօր",
       "arriving": "Ճանապարհին",
       "arrivingShort": "Ճանապարհին",
       "arrivingDesc": "Հետևեք առաքմանը",
-      "order": "Անհատական պատվեր",
-      "orderShort": "Պատվեր",
+      "order": "Պատվերով",
+      "orderShort": "Պատվերով",
       "orderDesc": "Կգտնենք ցանկացած մեքենա"
     },
     "categories": {
@@ -174,7 +176,7 @@
       "year": "Տարի",
       "horsepower": "Հզորություն",
       "engine": "Շարժիչ",
-      "transmission": "Տրանսմիսիա",
+      "transmission": "Փոխանցման տուփ",
       "fuelType": "Վառելիքի տեսակ",
       "location": "Գտնվելու վայր"
     },
@@ -203,11 +205,12 @@
       "GAS": "Գազ",
       "PLUGIN_HYBRID": "Պլագին հիբրիդ"
     },
+    "descriptionTitle": "Նկարագրություն",
     "contactButton": "Կապ հաստատել",
     "shareButton": "Կիսվել",
     "note": {
       "title": "Նշում",
-      "description": "Բոլոր գները ԱՄՆ դոլարով են և կարող են փոփոխվել։ Կապվեք մեզ հետ ամենավերջին գների և հասանելիության համար։"
+      "description": "Բոլոր գները ԱՄՆ դոլարով են և կարող են փոփոխվել։ Կապվեք մեզ հետ ակտուալ գների և հասանելիության համար։"
     },
     "notFound": {
       "title": "Մեքենան չի գտնվել",
@@ -272,7 +275,8 @@
       "quadricycle": "Քվադրոցիկլ",
       "motorcycle": "Մոտոցիկլ",
       "snowmobile": "Ձյունագնաց",
-      "passengerCar": "Ուղևորական մեքենա",
+      "jetski": "Մոտdelays-ranaway",
+      "passengerCar": "Ուdelays-ranaway մdelays",
       "sedan": "Սեդան",
       "suv": "Ամենագնաց",
       "sports": "Սպորտային",
@@ -295,6 +299,7 @@
       "weightClass5to20": "5-ից 20 տոննա",
       "weightClassAbove20": "20 տոննայից ավելի",
       "outOfAuctionBorders": "Աճուրդի սահմաններից դուրս (Sublot)",
+      "otherExpenses": "Այլ ծախսեր",
       "calculateCost": "Հաշվել արժեքը",
       "calculating": "Հաշվարկվում է...",
       "validationError": "Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը",
@@ -452,7 +457,7 @@
     },
     "filters": {
       "searchUsers": "Որոնել ըստ անվան, օգտանունի, էլ․ փոստի, հեռախոսի կամ անձնագրի...",
-      "searchCars": "Որոնել ըստ մոդելի, հաճախորդի, VIN, լոտի կամ քաղաքի...",
+      "searchCars": "Որոնել ըստ մոդելի, հաճախորդի, VIN, լոտի կամ կոնտեյների...",
       "country": "Երկիր",
       "allCountries": "Երկրներ",
       "role": "Դեր",
@@ -488,8 +493,12 @@
       "lightMode": "Բաց",
       "darkMode": "Մուգ",
       "activeLabel": "Ակտիվ",
-      "logout": "Դուրս գալ",
-      "loggingOut": "Դուրս գալիս..."
+      "logout": "Ելք",
+      "loggingOut": "Դուրս գալիս...",
+      "preferencesAria": "Նախընտրանքներ"
+    },
+    "preferences": {
+      "logout": "Ելք"
     },
     "sidebar": {
       "consoleLabel": "Ադմին վահանակ",
@@ -644,6 +653,7 @@
       "columns": {
         "city": "Քաղաք",
         "shipping": "Առաքում",
+        "taxes": "Հարկեր",
         "actions": "Գործողություններ"
       },
       "update": "Թարմացնել",
@@ -1184,6 +1194,12 @@
     "invoice": "Հաշիվ",
     "download": "Ներբեռնել",
     "actions": "Գործողություններ",
+    "saleDate": "Վաճառքի ամսաթիվ",
+    "destinationPort": "Նպատակային նավահանգիստ",
+    "container": "Կոնտեյներ",
+    "carInvoice": "Մեքենայի հաշիվ",
+    "shippingInvoice": "Առաքման հաշիվ",
+    "receiverName": "Ստացողի անուն",
     "showing": "Ցուցադրվում է",
     "carSingular": "մեքենա",
     "cars": "մեքենաներ"

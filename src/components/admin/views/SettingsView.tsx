@@ -19,20 +19,14 @@ import { type ShippingCity, AdminUser } from "@/lib/admin/types";
 import { Auction } from "@/lib/admin/types";
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table } from "@radix-ui/themes";
 
 type SettingsViewProps = {
   cities: ShippingCity[];
   users: AdminUser[];
   onApplyGlobalAdjustment: ({ delta, auction }: { delta: number; auction: Auction }) => Promise<void>;
   onUpdateCityClick: ({ cityId }: { cityId: string }) => void;
+  onUpdateCityTaxClick: ({ cityId }: { cityId: string }) => void;
   onDeleteCity: ({ cityId }: { cityId: string }) => Promise<void>;
   onUpdateCoefficient: ({ userId, coefficient, category }: { userId: string; coefficient: number; category?: Auction }) => Promise<void>;
   onShippingCreated?: () => void;
@@ -55,6 +49,7 @@ export const SettingsView = ({
   users,
   onApplyGlobalAdjustment,
   onUpdateCityClick,
+  onUpdateCityTaxClick,
   onDeleteCity,
   onUpdateCoefficient,
   onShippingCreated,
@@ -502,24 +497,24 @@ export const SettingsView = ({
           </div>
 
           <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-gray-50 hover:bg-gray-50 dark:bg-white/[0.03] border-b border-gray-200 dark:border-white/10">
-              <TableHead className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider min-w-[150px] sm:min-w-[200px]">
+        <Table.Root>
+          <Table.Header>
+            <Table.Row className="bg-gray-50 hover:bg-gray-50 dark:bg-white/[0.03] border-b border-gray-200 dark:border-white/10">
+              <Table.ColumnHeaderCell className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider w-full">
                 {t("admin.settingsView.columns.city")}
-              </TableHead>
-              <TableHead className="px-4 py-3 sm:py-4 text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider min-w-[140px] sm:min-w-[180px]">
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+                {t("admin.settingsView.columns.taxes")}
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
                 {t("admin.settingsView.columns.shipping")}
-              </TableHead>
-              <TableHead className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-right text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider min-w-[160px] sm:min-w-[200px]">
-                {t("admin.settingsView.columns.actions")}
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+              </Table.ColumnHeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
             {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={3} className="py-12">
+              <Table.Row>
+                <Table.Cell colSpan={3} className="py-12">
                   <div className="flex flex-col items-center justify-center gap-3">
                     <svg className="animate-spin h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -529,63 +524,47 @@ export const SettingsView = ({
                       {t("admin.settingsView.loadingCities")}
                     </span>
                   </div>
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ) : filteredCities.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={3} className="py-12">
+              <Table.Row>
+                <Table.Cell colSpan={3} className="py-12">
                   <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
-                    {citySearch 
+                    {citySearch
                       ? t("admin.settingsView.noCitiesMatchSearch", { search: citySearch })
                       : t("admin.settingsView.noCitiesFound", { auction: selectedAuction.toUpperCase() })
                     }
                   </div>
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ) : (
               filteredCities.map((c) => (
-                <TableRow key={c.id} className="border-b border-gray-200 dark:border-white/10 transition-colors duration-150 hover:bg-yellow-100 dark:hover:bg-[#429de6]/20">
-                <TableCell className="px-4 sm:px-6 lg:px-8 py-4 sm:py-5 min-w-[150px] sm:min-w-[200px]">
-                  <div className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
-                    {c.city}
-                  </div>
-                </TableCell>
-                <TableCell className="px-4 py-4 sm:py-5 min-w-[140px] sm:min-w-[180px]">
-                  <div className="text-sm sm:text-base font-semibold text-[#429de6] dark:text-[#429de6]">
-                    {formatUsd({ value: c.shippingUsd })}
-                  </div>
-                </TableCell>
-                <TableCell className="px-4 sm:px-6 lg:px-8 py-4 sm:py-5 text-right min-w-[160px] sm:min-w-[200px]">
-                  <div className="inline-flex items-center justify-end gap-2 sm:gap-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="h-9 sm:h-10 px-3 sm:px-4 rounded-lg sm:rounded-xl border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5 text-xs sm:text-sm font-medium transition-colors"
-                      onClick={() => onUpdateCityClick({ cityId: c.id })}
-                    >
-                      {t("admin.settingsView.update")}
-                    </Button>
-
+                <Table.Row key={c.id} className="border-b border-gray-200 dark:border-white/10 transition-colors duration-150 hover:bg-yellow-100 dark:hover:bg-[#429de6]/20">
+                <Table.Cell className="px-4 sm:px-6 lg:px-8 py-4 sm:py-5 w-full">
+                  <div className="inline-flex items-center gap-2.5">
+                    <span className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
+                      {c.city}
+                    </span>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button
+                        <button
                           type="button"
-                          variant="outline"
-                          className="h-9 sm:h-10 px-3 sm:px-4 rounded-lg sm:rounded-xl border-red-200 bg-white text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300 dark:border-red-500/20 dark:bg-[#0b0f14] dark:text-red-400 dark:hover:bg-red-500/10 dark:hover:text-red-300 text-xs sm:text-sm font-medium transition-colors"
+                          className="p-1.5 rounded-lg border border-red-200 text-red-400 hover:text-red-500 hover:border-red-300 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400/70 dark:hover:text-red-400 dark:hover:border-red-500/40 dark:hover:bg-red-500/10 transition-colors"
                           disabled={deletingCityId === c.id}
                         >
                           {deletingCityId === c.id ? (
-                            <div className="flex items-center gap-1.5 sm:gap-2">
-                              <svg className="animate-spin h-3.5 w-3.5 sm:h-4 sm:w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
-                              <span className="hidden sm:inline">Deleting...</span>
-                            </div>
+                            <svg className="animate-spin h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
                           ) : (
-                            t("admin.settingsView.delete")
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M3 6h18" />
+                              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                            </svg>
                           )}
-                        </Button>
+                        </button>
                       </AlertDialogTrigger>
                       <AlertDialogContent className="rounded-2xl border-gray-200 dark:border-white/10 dark:bg-[#0b0f14]">
                         <AlertDialogHeader>
@@ -621,12 +600,46 @@ export const SettingsView = ({
                       </AlertDialogContent>
                     </AlertDialog>
                   </div>
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+                <Table.Cell className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">
+                  <div className="inline-flex items-center gap-2">
+                    <span className="text-sm sm:text-base font-semibold text-[#429de6]">
+                      {formatUsd({ value: c.tax })}
+                    </span>
+                    <button
+                      type="button"
+                      className="p-1.5 rounded-lg border border-gray-200 text-gray-400 hover:text-[#429de6] hover:border-[#429de6]/30 hover:bg-[#429de6]/5 dark:border-white/10 dark:text-gray-500 dark:hover:text-[#429de6] dark:hover:border-[#429de6]/30 dark:hover:bg-[#429de6]/10 transition-colors"
+                      onClick={() => onUpdateCityTaxClick({ cityId: c.id })}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" />
+                      </svg>
+                    </button>
+                  </div>
+                </Table.Cell>
+                <Table.Cell className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">
+                  <div className="inline-flex items-center gap-2">
+                    <span className="text-sm sm:text-base font-semibold text-[#429de6]">
+                      {formatUsd({ value: c.shippingUsd })}
+                    </span>
+                    <button
+                      type="button"
+                      className="p-1.5 rounded-lg border border-gray-200 text-gray-400 hover:text-[#429de6] hover:border-[#429de6]/30 hover:bg-[#429de6]/5 dark:border-white/10 dark:text-gray-500 dark:hover:text-[#429de6] dark:hover:border-[#429de6]/30 dark:hover:bg-[#429de6]/10 transition-colors"
+                      onClick={() => onUpdateCityClick({ cityId: c.id })}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" />
+                      </svg>
+                    </button>
+                  </div>
+                </Table.Cell>
+              </Table.Row>
               ))
             )}
-          </TableBody>
-        </Table>
+          </Table.Body>
+        </Table.Root>
           </div>
         </Surface>
       )}

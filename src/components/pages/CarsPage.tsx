@@ -25,6 +25,7 @@ import type { SortOption } from "@/hooks/useSortedCars";
 import type { Car, CarCategory } from "@/lib/cars/types";
 
 type ViewMode = "grid" | "list";
+type TabType = CarCategory | "ALL";
 
 const CarListItem = memo(({ car }: { car: Car }) => {
   const t = useTranslations("carsPage");
@@ -68,7 +69,7 @@ const CarListItem = memo(({ car }: { car: Car }) => {
             <div className="flex items-start justify-between mb-2">
               <div>
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                  {car.brand} {car.model}
+                  {car.model}
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{car.year}</p>
               </div>
@@ -215,11 +216,11 @@ export const CarsPage = () => {
   const t = useTranslations("carsPage");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { currentCars, arrivingCars, orderCars, isLoading, loadCarsForCategory } = useCarsPage();
+  const { allCars, currentCars, arrivingCars, orderCars, isLoading } = useCarsPage();
   const isMobile = useIsMobile();
 
   // Initialize sort from URL or default to year-newest
-  const [activeTab, setActiveTab] = useState<CarCategory>("AVAILABLE");
+  const [activeTab, setActiveTab] = useState<TabType>("ALL");
   const [sortOption, setSortOption] = useState<SortOption>(() => {
     const sortFromUrl = searchParams.get("sort") as SortOption;
     return sortFromUrl && ["price-asc", "price-desc", "year-newest", "year-oldest"].includes(sortFromUrl)
@@ -228,9 +229,8 @@ export const CarsPage = () => {
   });
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
-  const handleTabChange = (category: CarCategory) => {
-    setActiveTab(category);
-    loadCarsForCategory(category);
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
   };
 
   const handleSortChange = (newSort: SortOption) => {
@@ -280,7 +280,7 @@ export const CarsPage = () => {
 
       {/* Tabs Section */}
       <Container className="pt-6 sm:pt-8 lg:pt-10 pb-6 sm:pb-8">
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as CarCategory)} className="w-full">
+        <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as TabType)} className="w-full">
           {/* Sort and View Toggle - Above Tabs */}
           <div className="flex items-center gap-3 mb-4">
             {/* Sort Dropdown */}
@@ -416,6 +416,31 @@ export const CarsPage = () => {
           <div role="tablist" className="flex items-center gap-2 mb-6 sm:mb-8 overflow-x-auto">
               <button
                 role="tab"
+                aria-selected={activeTab === "ALL"}
+                onClick={() => handleTabChange("ALL")}
+                className={`relative px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap rounded-lg ${
+                  activeTab === "ALL"
+                    ? "text-white bg-gray-700 dark:bg-white/20"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10"
+                }`}
+              >
+                <span className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="hidden sm:inline">{t("tabs.all")}</span>
+                  <span className="sm:hidden">{t("tabs.allShort")}</span>
+                  {!isLoading("AVAILABLE") && !isLoading("ONROAD") && !isLoading("TRANSIT") && allCars.length > 0 && (
+                    <span className={`px-1.5 py-0.5 text-xs font-semibold rounded-full ${
+                      activeTab === "ALL"
+                        ? "bg-white/20 text-white"
+                        : "bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-gray-300"
+                    }`}>
+                      {allCars.length}
+                    </span>
+                  )}
+                </span>
+              </button>
+
+              <button
+                role="tab"
                 aria-selected={activeTab === "AVAILABLE"}
                 onClick={() => handleTabChange("AVAILABLE")}
                 className={`relative px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap rounded-lg ${
@@ -491,6 +516,10 @@ export const CarsPage = () => {
             </div>
 
           {/* Tab Content */}
+          <TabsContent value="ALL" className="mt-0">
+            <CarsGrid cars={allCars} isLoading={isLoading("AVAILABLE") || isLoading("ONROAD") || isLoading("TRANSIT")} category="AVAILABLE" sortFn={(cars) => cars} viewMode={isMobile ? "grid" : viewMode} />
+          </TabsContent>
+
           <TabsContent value="AVAILABLE" className="mt-0">
             <CarsGrid cars={currentCars} isLoading={isLoading("AVAILABLE")} category="AVAILABLE" sortFn={sortCars} viewMode={isMobile ? "grid" : viewMode} />
           </TabsContent>

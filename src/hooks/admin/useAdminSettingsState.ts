@@ -17,6 +17,10 @@ type UpdateCityPriceModalState =
   | { isOpen: false }
   | { isOpen: true; cityId: string };
 
+type UpdateCityTaxModalState =
+  | { isOpen: false }
+  | { isOpen: true; cityId: string };
+
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 // Module-level cache that persists across component mounts/unmounts
@@ -29,6 +33,9 @@ const citiesCache: Map<string, {
 export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) => {
   const [updateCityPriceModal, setUpdateCityPriceModal] =
     useState<UpdateCityPriceModalState>({ isOpen: false });
+
+  const [updateCityTaxModal, setUpdateCityTaxModal] =
+    useState<UpdateCityTaxModalState>({ isOpen: false });
 
   const [cities, setCities] = useState<ShippingCity[]>([]);
   const [isLoadingCities, setIsLoadingCities] = useState(false);
@@ -51,6 +58,14 @@ export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) =
 
   const closeUpdateCityPrice = () => {
     setUpdateCityPriceModal({ isOpen: false });
+  };
+
+  const openUpdateCityTax = ({ cityId }: { cityId: string }) => {
+    setUpdateCityTaxModal({ isOpen: true, cityId });
+  };
+
+  const closeUpdateCityTax = () => {
+    setUpdateCityTaxModal({ isOpen: false });
   };
 
   const deleteCity = async ({ cityId }: { cityId: string }) => {
@@ -295,10 +310,38 @@ export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) =
     }
   };
 
+  const updateCityTax = ({
+    cityId,
+    nextTax,
+  }: {
+    cityId: string;
+    nextTax: number;
+  }) => {
+    const updatedCities = cities.map((c) =>
+      c.id === cityId ? { ...c, tax: nextTax } : c,
+    );
+    setCities(updatedCities);
+
+    if (currentAuction) {
+      const cached = citiesCache.get(currentAuction);
+      if (cached) {
+        citiesCache.set(currentAuction, {
+          data: updatedCities,
+          timestamp: cached.timestamp,
+        });
+      }
+    }
+  };
+
   const selectedCity = useMemo(() => {
     if (!updateCityPriceModal.isOpen) return null;
     return cities.find((c) => c.id === updateCityPriceModal.cityId) ?? null;
   }, [cities, updateCityPriceModal]);
+
+  const selectedCityForTax = useMemo(() => {
+    if (!updateCityTaxModal.isOpen) return null;
+    return cities.find((c) => c.id === updateCityTaxModal.cityId) ?? null;
+  }, [cities, updateCityTaxModal]);
 
   return {
     cities,
@@ -308,6 +351,11 @@ export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) =
     closeUpdateCityPrice,
     selectedCity,
     updateCityPrice,
+    updateCityTaxModal,
+    openUpdateCityTax,
+    closeUpdateCityTax,
+    selectedCityForTax,
+    updateCityTax,
     deleteCity,
     applyGlobalAdjustment,
     loadCities,

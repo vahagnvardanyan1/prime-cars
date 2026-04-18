@@ -98,6 +98,7 @@ export type ShippingCity = {
   id: string;
   city: string;
   shippingUsd: number;
+  tax: number;
   auction?: Auction;
 };
 

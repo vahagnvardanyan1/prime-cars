@@ -14,14 +14,7 @@ import { Pagination } from "@/components/admin/primitives/Pagination";
 import { CarFilters, type CarFiltersState } from "@/components/admin/filters/CarFilters";
 import { Button } from "@/components/ui/button";
 import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table } from "@radix-ui/themes";
 
 // ============================================================================
 // Types
@@ -99,233 +92,185 @@ const CarTableRow = memo(function CarTableRow({
   );
 
   return (
-    <TableRow className="transition-colors duration-150 hover:bg-yellow-100 dark:hover:bg-[#429de6]/20">
-      {/* Row Number */}
-      <TableCell className="px-4 py-3 text-center">
-        <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-          {(currentPage - 1) * pageSize + index + 1}
-        </div>
-      </TableCell>
-
-      {/* Photo (Clickable) */}
-      <TableCell className="px-4 py-3">
-        {car.imageUrl && (
-          <button
-            onClick={handlePhotoClick}
-            className="relative h-12 w-16 overflow-hidden rounded-xl ring-1 ring-gray-200 dark:ring-white/10 flex-shrink-0 hover:ring-2 hover:ring-[#429de6] transition-all cursor-pointer"
-          >
-            <Image
-              src={car.imageUrl}
-              alt={car.model}
-              fill
-              className="object-cover"
-              sizes="64px"
-            />
-            {car.photos && car.photos.length > 1 && (
-              <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded">
-                +{car.photos.length - 1}
+    <Table.Row className="transition-colors duration-150 hover:bg-yellow-100 dark:hover:bg-[#429de6]/20">
+      {/* Photo + Model (combined sticky column) */}
+      <Table.Cell className="sticky left-0 z-10 bg-white dark:bg-[#0b0f14] p-0">
+        <div className="flex items-stretch h-full w-full">
+          {/* Photo + download icon */}
+          <div className="px-3 py-2 flex-shrink-0 flex items-center gap-3">
+            {car.imageUrl && (
+              <button
+                onClick={handlePhotoClick}
+                className="relative h-10 w-14 flex-shrink-0 overflow-hidden rounded-lg ring-1 ring-gray-200 dark:ring-white/10 hover:ring-2 hover:ring-[#429de6] transition-all cursor-pointer"
+              >
+                <Image
+                  src={car.imageUrl}
+                  alt={car.model}
+                  fill
+                  className="object-cover"
+                  sizes="56px"
+                />
+                {car.photos && car.photos.length > 1 && (
+                  <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded">
+                    +{car.photos.length - 1}
+                  </div>
+                )}
+              </button>
+            )}
+            {car.photos && car.photos.length > 0 && (
+              <DownloadImagesButton
+                images={car.photos}
+                carName={`${car.model} ${car.year}`}
+                variant="ghost"
+                size="sm"
+                useZip={true}
+                showCount={false}
+                compactText={true}
+                className="h-8 w-8 p-0 flex-shrink-0 rounded-lg text-gray-500 dark:text-gray-400 hover:text-[#429de6] dark:hover:text-[#429de6] hover:bg-gray-100 dark:hover:bg-white/10 transition-colors [&_span]:!hidden [&_svg]:!mr-0"
+              />
+            )}
+          </div>
+          {/* Divider between Photos and Car */}
+          <div className="w-px self-stretch bg-gray-200 dark:bg-white/10 flex-shrink-0" />
+          {/* Year + Model + Lot + VIN */}
+          <div className="w-[170px] px-3 py-2 min-w-0 flex flex-col justify-center">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              {car.year}
+            </div>
+            <div className="truncate text-sm font-semibold text-gray-900 dark:text-white mt-0.5" title={car.model}>
+              {car.model}
+            </div>
+            {car.details?.lot && (
+              <div className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-gray-700 dark:text-gray-300 mt-0.5">
+                {car.details.lot}
               </div>
             )}
-          </button>
-        )}
-      </TableCell>
+            {car.details?.vin && (
+              <div className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 font-mono text-gray-600 dark:text-gray-400 mt-0.5 truncate" title={car.details.vin}>
+                {car.details.vin}
+              </div>
+            )}
+          </div>
+          {/* Divider */}
+          <div className="w-px self-stretch bg-gray-200 dark:bg-white/10 flex-shrink-0" />
+        </div>
+      </Table.Cell>
 
-      {/* Purchase Date */}
-      <TableCell className="px-4 py-3 min-w-[140px]">
+      {/* Sale Date */}
+      <Table.Cell className="px-3 py-2 min-w-[110px] border-r border-gray-100 dark:border-white/5">
         <div className="text-sm text-gray-900 dark:text-white whitespace-nowrap">
           {formatDate(car.details?.purchaseDate)}
         </div>
-      </TableCell>
-
-      {/* Car (Model + Year) */}
-      <TableCell className="px-6 py-3 sm:px-8 min-w-[200px]">
-        <div className="min-w-0">
-          <div className="truncate text-base font-semibold text-gray-900 dark:text-white">
-            {car.model}
-          </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            {car.year}
-          </div>
-        </div>
-      </TableCell>
-
-      {/* Lot */}
-      <TableCell className="px-4 py-3 min-w-[140px]">
-        <div className="text-sm text-gray-900 dark:text-white">
-          {car.details?.lot || "-"}
-        </div>
-      </TableCell>
-
-      {/* VIN */}
-      <TableCell className="px-4 py-3 min-w-[160px]">
-        <div className="text-sm text-gray-900 dark:text-white font-mono">
-          {car.details?.vin || "-"}
-        </div>
-      </TableCell>
+      </Table.Cell>
 
       {/* Auction */}
-      <TableCell className="px-4 py-3 min-w-[120px]">
+      <Table.Cell className="px-3 py-2 min-w-[90px] border-r border-gray-100 dark:border-white/5">
         <div className="text-sm text-gray-900 dark:text-white capitalize">
           {car.details?.auction || "-"}
         </div>
-      </TableCell>
+      </Table.Cell>
 
       {/* Client */}
-      <TableCell className="px-4 py-3 min-w-[140px]">
-        <div className="text-sm text-gray-900 dark:text-white font-medium">
+      <Table.Cell className="px-3 py-2 min-w-[110px] border-r border-gray-100 dark:border-white/5 max-w-[140px]">
+        <div className="text-sm text-gray-900 dark:text-white font-medium truncate" title={car.client || undefined}>
           {car.client || "-"}
         </div>
-      </TableCell>
+      </Table.Cell>
 
-      {/* Price */}
-      <TableCell className="px-4 py-3 min-w-[140px]">
-        <div className="text-base font-semibold text-gray-900 dark:text-white whitespace-nowrap">
-          {formatUsd({ value: car.priceUsd })}
-        </div>
-      </TableCell>
-
-      {/* Type */}
-      <TableCell className="px-4 py-3 min-w-[120px]">
-        <div className="text-sm text-gray-900 dark:text-white capitalize">
-          {car.details?.type || "-"}
-        </div>
-      </TableCell>
-
-      {/* City */}
-      <TableCell className="px-4 py-3 min-w-[140px]">
-        <div className="text-sm text-gray-900 dark:text-white">
+      {/* Destination Port */}
+      <Table.Cell className="px-3 py-2 min-w-[110px] border-r border-gray-100 dark:border-white/5 max-w-[140px]">
+        <div className="text-sm text-gray-900 dark:text-white truncate" title={car.details?.city || undefined}>
           {car.details?.city || "-"}
         </div>
-      </TableCell>
+      </Table.Cell>
 
-      {/* Container Number Booking */}
-      <TableCell className="px-4 py-3 min-w-[140px] text-center">
-        <div className="text-sm text-gray-900 dark:text-white font-mono">
+      {/* Container */}
+      <Table.Cell className="px-3 py-2 min-w-[110px] border-r border-gray-100 dark:border-white/5 max-w-[140px]">
+        <div className="text-sm text-gray-900 dark:text-white font-mono truncate" title={car.details?.containerNumberBooking || undefined}>
           {car.details?.containerNumberBooking || "-"}
         </div>
-      </TableCell>
+      </Table.Cell>
 
-      {/* Promised Pick Up Date */}
-      <TableCell className="px-4 py-3 min-w-[140px] text-center">
-        <div className="text-sm text-gray-900 dark:text-white whitespace-nowrap">
-          {formatDate(car.details?.promisedPickUpDate)}
+      {/* Price */}
+      {/* Price + Car Invoice download */}
+      <Table.Cell className="px-3 py-2 min-w-[130px] border-r border-gray-100 dark:border-white/5">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+            {formatUsd({ value: car.priceUsd })}
+          </span>
+          {car.details?.vehiclePdf && (
+            <a
+              href={car.details.vehiclePdf}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 inline-flex items-center justify-center h-6 w-6 rounded leading-none overflow-hidden text-gray-400 hover:text-[#429de6] dark:text-gray-500 dark:hover:text-[#429de6] transition-colors"
+              title={tTable("download")}
+            >
+              <Download className="h-5 w-5" />
+            </a>
+          )}
         </div>
-      </TableCell>
+      </Table.Cell>
 
-      {/* Delivered to Warehouse */}
-      <TableCell className="px-4 py-3 min-w-[140px] text-center">
-        <div className="text-sm text-gray-900 dark:text-white whitespace-nowrap">
-          {formatDate(car.details?.deliveredWarehouse)}
+      {/* City (Delivered Warehouse) */}
+      <Table.Cell className="px-3 py-2 min-w-[110px] border-r border-gray-100 dark:border-white/5 max-w-[140px]">
+        <div className="text-sm text-gray-900 dark:text-white truncate" title={car.details?.deliveredWarehouse || undefined}>
+          {car.details?.deliveredWarehouse || "-"}
         </div>
-      </TableCell>
+      </Table.Cell>
 
-      {/* Notes */}
-      <TableCell className="px-4 py-3 min-w-[200px]">
-        <div className="text-sm text-gray-900 dark:text-white truncate">
-          {car.details?.customerNotes || "-"}
-        </div>
-      </TableCell>
-
-      {/* Car Payment */}
-      <TableCell className="px-4 py-3 min-w-[140px]">
-        <PaymentStatus
-          paid={car.carPaid}
-          label={car.carPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
-          size="sm"
-        />
-      </TableCell>
-
-      {/* Vehicle PDF */}
-      <TableCell className="px-4 py-3 text-center min-w-[120px]">
-        {car.details?.vehiclePdf ? (
-          <a
-            href={car.details.vehiclePdf}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 h-9 px-3 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-gray-400 dark:border-white/10 dark:bg-[#161b22] dark:text-gray-300 dark:hover:bg-white/5 dark:hover:border-white/20 transition-all"
-          >
-            <Download className="h-4 w-4" />
-            <span className="hidden sm:inline">{tTable("download")}</span>
-          </a>
-        ) : (
-          <span className="text-sm text-gray-400 dark:text-gray-600">-</span>
-        )}
-      </TableCell>
-
-      {/* Shipping Payment */}
-      <TableCell className="px-4 py-3 min-w-[140px]">
-        <PaymentStatus
-          paid={car.shippingPaid}
-          label={car.shippingPaid ? t("admin.modals.addCar.paid") : t("admin.modals.addCar.notPaid")}
-          size="sm"
-        />
-      </TableCell>
-
-      {/* Shipping PDF */}
-      <TableCell className="px-4 py-3 text-center min-w-[120px]">
+      {/* Shipping Invoice */}
+      <Table.Cell className="px-3 py-2 text-center min-w-[60px] border-r border-gray-100 dark:border-white/5">
         {car.details?.shippingPdf ? (
           <a
             href={car.details.shippingPdf}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 h-9 px-3 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-gray-400 dark:border-white/10 dark:bg-[#161b22] dark:text-gray-300 dark:hover:bg-white/5 dark:hover:border-white/20 transition-all"
+            className="inline-flex items-center justify-center h-7 w-7 rounded-md text-gray-500 hover:text-[#429de6] dark:text-gray-400 dark:hover:text-[#429de6] transition-colors"
+            title={tTable("download")}
           >
             <Download className="h-4 w-4" />
-            <span className="hidden sm:inline">{tTable("download")}</span>
           </a>
         ) : (
-          <span className="text-sm text-gray-400 dark:text-gray-600">-</span>
+          <span className="text-xs text-gray-400 dark:text-gray-600">-</span>
         )}
-      </TableCell>
+      </Table.Cell>
 
       {/* Insurance */}
-      <TableCell className="px-4 py-3 min-w-[120px]">
-        <PaymentStatus
-          paid={car.insurance}
-          label={car.insurance ? t("admin.modals.addCar.exists") : t("admin.modals.addCar.notExists")}
-          size="sm"
-        />
-      </TableCell>
-
-      {/* Insurance PDF */}
-      <TableCell className="px-4 py-3 text-center min-w-[120px]">
+      <Table.Cell className="px-3 py-2 text-center min-w-[60px] border-r border-gray-100 dark:border-white/5">
         {car.details?.insurancePdf ? (
           <a
             href={car.details.insurancePdf}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 h-9 px-3 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-gray-400 dark:border-white/10 dark:bg-[#161b22] dark:text-gray-300 dark:hover:bg-white/5 dark:hover:border-white/20 transition-all"
+            className="inline-flex items-center justify-center h-7 w-7 rounded-md text-gray-500 hover:text-[#429de6] dark:text-gray-400 dark:hover:text-[#429de6] transition-colors"
+            title={tTable("download")}
           >
             <Download className="h-4 w-4" />
-            <span className="hidden sm:inline">{tTable("download")}</span>
           </a>
         ) : (
-          <span className="text-sm text-gray-400 dark:text-gray-600">-</span>
+          <span className="text-xs text-gray-400 dark:text-gray-600">-</span>
         )}
-      </TableCell>
+      </Table.Cell>
 
-      {/* Created Date */}
-      <TableCell className="px-4 py-3 min-w-[140px]">
-        <div className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
-          {formatDate(car.createdAt)}
+      {/* Receiver's Name */}
+      <Table.Cell className="px-3 py-2 min-w-[110px] border-r border-gray-100 dark:border-white/5">
+        <div className="text-sm text-gray-400 dark:text-gray-600">-</div>
+      </Table.Cell>
+
+      {/* Notes */}
+      <Table.Cell className="px-3 py-2 min-w-[150px] border-r border-gray-100 dark:border-white/5 max-w-[180px]">
+        <div
+          className="text-sm text-gray-900 dark:text-white line-clamp-1"
+          title={car.details?.customerNotes || undefined}
+        >
+          {car.details?.customerNotes || "-"}
         </div>
-      </TableCell>
+      </Table.Cell>
 
       {/* Actions */}
-      <TableCell className="px-4 py-3 text-center pr-6 sm:pr-8 min-w-[160px]">
+      <Table.Cell className="px-3 py-2 text-center pr-4 sm:pr-6 min-w-[120px]">
         <div className="flex items-center justify-center gap-2">
-          {car.photos && car.photos.length > 0 && (
-            <DownloadImagesButton
-              images={car.photos}
-              carName={`${car.model} ${car.year}`}
-              variant="outline"
-              size="sm"
-              useZip={true}
-              showCount={false}
-              compactText={true}
-              className="h-9 px-3 gap-2 border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400 hover:text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-950/50 dark:hover:border-emerald-700 dark:hover:text-emerald-300 transition-all"
-            />
-          )}
           {isAdmin && onUpdateCar && (
             <Button
               onClick={handleUpdate}
@@ -349,8 +294,8 @@ const CarTableRow = memo(function CarTableRow({
             </Button>
           )}
         </div>
-      </TableCell>
-    </TableRow>
+      </Table.Cell>
+    </Table.Row>
   );
 });
 
@@ -499,55 +444,51 @@ export const CarsView = memo(function CarsView({
           />
         )}
 
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-                <TableHead className="px-4 py-4 text-center text-sm font-semibold w-[60px]">#</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[100px]">{tTable("photos")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("purchaseDate")}</TableHead>
-                <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[200px]">{tTable("car")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("lot")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[160px]">{tTable("vin")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("auction")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("client")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("price")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("type")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("city")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px] text-center">{tTable("containerNumberBooking")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px] text-center">{tTable("promisedPickUpDate")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px] text-center">{tTable("deliveredWarehouse")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">{tTable("notes")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("carPaid")}</TableHead>
-                <TableHead className="px-4 py-4 text-center text-sm font-semibold min-w-[120px]">{tTable("vehiclePdf")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("shippingPaid")}</TableHead>
-                <TableHead className="px-4 py-4 text-center text-sm font-semibold min-w-[120px]">{tTable("shippingPdf")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("insurance")}</TableHead>
-                <TableHead className="px-4 py-4 text-center text-sm font-semibold min-w-[120px]">{tTable("insurancePdf")}</TableHead>
-                <TableHead className="px-4 py-4 text-sm font-semibold min-w-[140px]">{tTable("created")}</TableHead>
-                <TableHead className="px-4 py-4 text-center pr-6 sm:pr-8 text-sm font-semibold min-w-[160px]">{tTable("actions")}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <div className="scrollbar-visible"><Table.Root>
+            <Table.Header className="sticky top-0 z-30">
+              <Table.Row className="bg-gray-50 hover:bg-gray-50 dark:bg-[#0b0f14] dark:hover:bg-[#0b0f14]">
+                <Table.ColumnHeaderCell className="sticky left-0 z-40 bg-gray-50 dark:bg-[#0b0f14] p-0">
+                  <div className="flex items-stretch h-full w-full">
+                    <div className="w-[124px] px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{tTable("photos")}</div>
+                    <div className="w-px self-stretch bg-gray-200 dark:bg-white/10 flex-shrink-0" />
+                    <div className="w-[170px] px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{tTable("car")}</div>
+                    <div className="w-px self-stretch bg-gray-200 dark:bg-white/10 flex-shrink-0" />
+                  </div>
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 min-w-[110px] border-r border-gray-100 dark:border-white/5">{tTable("saleDate")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 min-w-[90px] border-r border-gray-100 dark:border-white/5">{tTable("auction")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 min-w-[110px] border-r border-gray-100 dark:border-white/5">{tTable("client")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 min-w-[110px] border-r border-gray-100 dark:border-white/5">{tTable("destinationPort")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 min-w-[110px] border-r border-gray-100 dark:border-white/5">{tTable("container")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 min-w-[130px] border-r border-gray-100 dark:border-white/5">{tTable("price")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 min-w-[110px] border-r border-gray-100 dark:border-white/5">{tTable("city")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-3 py-2.5 text-center text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 min-w-[90px] border-r border-gray-100 dark:border-white/5">{tTable("shippingInvoice")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 min-w-[90px] border-r border-gray-100 dark:border-white/5">{tTable("insurance")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 min-w-[110px] border-r border-gray-100 dark:border-white/5">{tTable("receiverName")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 min-w-[150px] border-r border-gray-100 dark:border-white/5">{tTable("notes")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-3 py-2.5 text-center pr-4 sm:pr-6 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 min-w-[120px]">{tTable("actions")}</Table.ColumnHeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
               {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={24} className="py-12">
+                <Table.Row>
+                  <Table.Cell colSpan={13} className="py-12">
                     <div className="flex flex-col items-center justify-center gap-3">
                       {loadingSpinner}
                       <span className="text-sm text-gray-600 dark:text-gray-400">
                         {t("admin.carsView.loadingCars")}
                       </span>
                     </div>
-                  </TableCell>
-                </TableRow>
+                  </Table.Cell>
+                </Table.Row>
               ) : !cars || cars.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={24} className="py-12">
+                <Table.Row>
+                  <Table.Cell colSpan={13} className="py-12">
                     <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
                       {t("admin.carsView.noCarsFound")}
                     </div>
-                  </TableCell>
-                </TableRow>
+                  </Table.Cell>
+                </Table.Row>
               ) : (
                 cars.map((car, index) => (
                   <CarTableRow
@@ -564,9 +505,8 @@ export const CarsView = memo(function CarsView({
                   />
                 ))
               )}
-            </TableBody>
-          </Table>
-        </div>
+            </Table.Body>
+          </Table.Root></div>
 
         {/* Pagination */}
         {onPageChange && onPageSizeChange && totalPages > 0 && (

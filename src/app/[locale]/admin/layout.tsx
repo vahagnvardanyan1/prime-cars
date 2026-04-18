@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, useState, useEffect } from "react";
+import { Theme } from "@radix-ui/themes";
 
 import { Menu, Home } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -29,6 +30,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginSuccessful, setLoginSuccessful] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Track if component has mounted to prevent hydration errors
   useEffect(() => {
@@ -99,13 +101,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
+    <Theme appearance="inherit">
     <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-[#0a0a0a]" suppressHydrationWarning>
       {/* Show notification popup only for non-admin users */}
       {user && !isAdmin && <NotificationPopup userId={user.id} />}
       
-      <AdminSidebar isAdmin={isAdmin} />
+      <AdminSidebar
+        isAdmin={isAdmin}
+        isCollapsed={isSidebarCollapsed}
+        onToggle={() => setIsSidebarCollapsed(prev => !prev)}
+      />
 
-      <div className="flex flex-1 flex-col overflow-hidden md:ml-[280px]">
+      <div className={`flex flex-1 flex-col overflow-hidden transition-[margin] duration-300 ${isSidebarCollapsed ? "md:ml-[72px]" : "md:ml-[280px]"}`}>
         <AdminTopbar
           left={
             <div className="flex items-center gap-4">
@@ -156,6 +163,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </main>
       </div>
     </div>
+    </Theme>
   );
 }
 
