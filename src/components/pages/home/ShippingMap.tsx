@@ -115,7 +115,7 @@ export function ShippingMap() {
           wordDelay={0.03}
         />
 
-        <div className="inline-flex rounded-full bg-gray-200 dark:bg-white/10 p-1">
+        <div className="inline-flex rounded-full bg-gray-200 dark:bg-white/[0.08] p-1">
           <button
             type="button"
             onClick={() => setTab("from")}
@@ -143,7 +143,7 @@ export function ShippingMap() {
 
       <div
         ref={containerRef}
-        className="rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 relative"
+        className="rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] relative"
         onMouseLeave={() => setTooltip(null)}
       >
         {/* Zoom controls */}

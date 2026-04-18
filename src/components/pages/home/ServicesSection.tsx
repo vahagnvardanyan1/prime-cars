@@ -71,7 +71,7 @@ export function ServicesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.4, delay: index * 0.05, ease: "easeOut" }}
-              className="group p-5 rounded-2xl border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 dark:hover:border-[#429de6]/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5"
+              className="group p-5 rounded-2xl border border-gray-200 dark:border-white/[0.08] hover:border-[#429de6]/30 dark:hover:border-[#429de6]/30 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5"
             >
               <div className="w-10 h-10 rounded-lg bg-[#429de6]/10 flex items-center justify-center mb-3 group-hover:bg-[#429de6]/20 transition-colors">
                 <Icon className="w-5 h-5 text-[#429de6]" />

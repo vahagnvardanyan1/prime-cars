@@ -5,20 +5,17 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { TextReveal } from "./TextReveal";
 
-// Alt text is used by Google image search + accessibility. If your designer has
-// a different mapping between the numbered file and the actual auction/carrier
-// name, update this list — the file order should match your partner contracts.
 const partners = [
-  { name: "COPART auto auction partner", logo: "/our-partners/1.png" },
-  { name: "IAAI auto auction partner", logo: "/our-partners/2.png" },
-  { name: "Manheim auto auction partner", logo: "/our-partners/3.png" },
-  { name: "ADESA auto auction partner", logo: "/our-partners/4.png" },
-  { name: "ACV Auctions partner", logo: "/our-partners/5.png" },
-  { name: "Maersk sea freight partner", logo: "/our-partners/6.png" },
-  { name: "MSC sea freight partner", logo: "/our-partners/7.png" },
-  { name: "CMA CGM sea freight partner", logo: "/our-partners/8.png" },
-  { name: "Prime Cars shipping partner", logo: "/our-partners/9.png" },
-  { name: "Prime Cars logistics partner", logo: "/our-partners/10.png" },
+  { name: "Maersk sea freight partner", logo: "/our-partners/1.png", darkLogo: "/our-partners/1-dark.png" },
+  { name: "MSC sea freight partner", logo: "/our-partners/2.png", darkLogo: "/our-partners/2-dark.png" },
+  { name: "COSCO Shipping partner", logo: "/our-partners/3.png", darkLogo: "/our-partners/3-dark.png" },
+  { name: "Hapag-Lloyd partner", logo: "/our-partners/4.png", darkLogo: "/our-partners/4-dark.png" },
+  { name: "ONE Ocean Network Express partner", logo: "/our-partners/5.png", darkLogo: "/our-partners/5-dark.webp" },
+  { name: "ZIM shipping partner", logo: "/our-partners/6.png", darkLogo: null },
+  { name: "CMA CGM sea freight partner", logo: "/our-partners/7.png", darkLogo: null },
+  { name: "Yang Ming Marine partner", logo: "/our-partners/8.png", darkLogo: "/our-partners/8-dark.png" },
+  { name: "OOCL shipping partner", logo: "/our-partners/9.png", darkLogo: null },
+  { name: "Evergreen shipping partner", logo: "/our-partners/10.png", darkLogo: "/our-partners/10-dark.png" },
 ];
 
 export function PartnersStrip() {
@@ -48,14 +45,35 @@ export function PartnersStrip() {
               key={`${partner.name}-${i}`}
               className="flex-shrink-0 px-8 lg:px-12 flex items-center justify-center"
             >
-              <Image
-                src={partner.logo}
-                alt={partner.name}
-                width={160}
-                height={60}
-                className="h-10 lg:h-12 w-auto object-contain pointer-events-none select-none dark:brightness-0 dark:invert"
-                draggable={false}
-              />
+              {partner.darkLogo ? (
+                <>
+                  <Image
+                    src={partner.logo}
+                    alt={partner.name}
+                    width={160}
+                    height={60}
+                    className="h-10 lg:h-12 w-auto object-contain pointer-events-none select-none dark:hidden"
+                    draggable={false}
+                  />
+                  <Image
+                    src={partner.darkLogo}
+                    alt={partner.name}
+                    width={160}
+                    height={60}
+                    className="h-10 lg:h-12 w-auto object-contain pointer-events-none select-none hidden dark:block"
+                    draggable={false}
+                  />
+                </>
+              ) : (
+                <Image
+                  src={partner.logo}
+                  alt={partner.name}
+                  width={160}
+                  height={60}
+                  className="h-10 lg:h-12 w-auto object-contain pointer-events-none select-none dark:brightness-0 dark:invert"
+                  draggable={false}
+                />
+              )}
             </div>
           ))}
         </div>

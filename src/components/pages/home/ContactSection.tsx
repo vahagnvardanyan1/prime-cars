@@ -36,7 +36,7 @@ export function ContactSection() {
         >
           <a
             href="mailto:primecarsarm@gmail.com"
-            className="flex items-center gap-4 p-5 rounded-2xl border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-all"
+            className="flex items-center gap-4 p-5 rounded-2xl border border-gray-200 dark:border-white/[0.08] hover:border-[#429de6]/50 transition-all"
           >
             <div className="w-10 h-10 rounded-lg bg-[#429de6]/10 flex items-center justify-center flex-shrink-0">
               <FiMail className="w-5 h-5 text-[#429de6]" />
@@ -48,7 +48,7 @@ export function ContactSection() {
 
           <a
             href="tel:+37444771130"
-            className="flex items-center gap-4 p-5 rounded-2xl border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-all"
+            className="flex items-center gap-4 p-5 rounded-2xl border border-gray-200 dark:border-white/[0.08] hover:border-[#429de6]/50 transition-all"
           >
             <div className="w-10 h-10 rounded-lg bg-[#429de6]/10 flex items-center justify-center flex-shrink-0">
               <FiPhone className="w-5 h-5 text-[#429de6]" />
@@ -58,7 +58,7 @@ export function ContactSection() {
             </span>
           </a>
 
-          <div className="flex items-center gap-4 p-5 rounded-2xl border border-gray-200 dark:border-white/10">
+          <div className="flex items-center gap-4 p-5 rounded-2xl border border-gray-200 dark:border-white/[0.08]">
             <div className="w-10 h-10 rounded-lg bg-[#429de6]/10 flex items-center justify-center flex-shrink-0">
               <FiMapPin className="w-5 h-5 text-[#429de6]" />
             </div>
@@ -106,7 +106,7 @@ export function ContactSection() {
         </motion.div>
 
         <motion.div
-          className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 min-h-[300px]"
+          className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/[0.08] min-h-[300px]"
           initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-80px" }}

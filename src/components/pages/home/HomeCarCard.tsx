@@ -34,9 +34,9 @@ export const HomeCarCard = ({ car, category }: HomeCarCardProps) => {
   const t = useTranslations("home.carSections");
 
   return (
-    <div className="group relative bg-white dark:bg-[#111111] rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 hover:border-yellow-400 dark:hover:border-[#429de6] hover:bg-yellow-50 dark:hover:bg-[#429de6]/10 transition-all duration-300 hover:shadow-xl hover:shadow-yellow-200 dark:hover:shadow-[#429de6]/5">
+    <div className="group relative bg-white dark:bg-white/[0.03] rounded-2xl overflow-hidden border border-gray-200 dark:border-white/[0.08] hover:border-[#429de6]/40 dark:hover:border-[#429de6]/40 hover:bg-blue-50/50 dark:hover:bg-[#429de6]/[0.06] transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10 dark:hover:shadow-[#429de6]/10">
       {/* Image Container */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#1a1a1a]">
+      <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-white/[0.02]">
         {/* Year Badge */}
         <div className="absolute top-4 left-4 px-3 py-1.5 bg-white/95 dark:bg-black/60 backdrop-blur-md rounded-full text-gray-900 dark:text-white text-xs font-medium border border-gray-200/50 dark:border-white/10 z-10 tabular-nums">
           {car.year}

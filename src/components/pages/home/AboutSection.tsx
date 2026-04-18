@@ -33,7 +33,7 @@ export function AboutSection() {
 
       {/* Team & Trust */}
       <motion.div
-        className="max-w-4xl mx-auto bg-gray-50 dark:bg-white/5 rounded-2xl p-8 lg:p-12 border border-gray-200 dark:border-white/10"
+        className="max-w-4xl mx-auto bg-gray-50 dark:bg-white/[0.03] rounded-2xl p-8 lg:p-12 border border-gray-200 dark:border-white/[0.08]"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
@@ -73,7 +73,7 @@ export function AboutSection() {
       {/* Mission & Platform */}
       <div className="grid lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
         <motion.div
-          className="p-6 rounded-2xl border border-gray-200 dark:border-white/10"
+          className="p-6 rounded-2xl border border-gray-200 dark:border-white/[0.08]"
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -87,7 +87,7 @@ export function AboutSection() {
         </motion.div>
 
         <motion.div
-          className="p-6 rounded-2xl border border-gray-200 dark:border-white/10"
+          className="p-6 rounded-2xl border border-gray-200 dark:border-white/[0.08]"
           initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-80px" }}

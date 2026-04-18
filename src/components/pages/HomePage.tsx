@@ -19,9 +19,12 @@ export const HomePage = async () => {
 
   return (
     <div className="pt-20 overflow-x-hidden">
+      {/* Noise grain texture for dark mode depth */}
+      <div className="noise-overlay" aria-hidden="true" />
+
       <ScrollSpy />
 
-      <section id="hero" className="relative overflow-hidden bg-gray-50 dark:bg-black min-h-[calc(100vh-5rem)] flex items-center transition-colors duration-300">
+      <section id="hero" className="relative overflow-hidden bg-[var(--color-surface)] min-h-[calc(100vh-5rem)] flex items-center transition-colors duration-300">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] dark:opacity-100 opacity-0 transition-opacity duration-300">
           <div className="glow-effect"></div>
         </div>
@@ -37,32 +40,32 @@ export const HomePage = async () => {
         </Container>
       </section>
 
-      <section id="our-partners" className="py-16 lg:py-20 bg-gray-50 dark:bg-black border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
-        <Container>
+      <section id="our-partners" className="section-glow section-glow-blue py-16 lg:py-20 bg-[var(--color-surface-alt)] transition-colors duration-300">
+        <Container className="relative z-10">
           <ScrollReveal>
             <PartnersStrip />
           </ScrollReveal>
         </Container>
       </section>
 
-      <section id="services" className="py-20 lg:py-28 bg-white dark:bg-black border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
-        <Container>
+      <section id="services" className="section-glow section-glow-blue py-20 lg:py-28 bg-[var(--color-surface)] transition-colors duration-300">
+        <Container className="relative z-10">
           <ScrollReveal>
             <ServicesSection />
           </ScrollReveal>
         </Container>
       </section>
 
-      <section id="shipping" className="py-20 lg:py-28 bg-gray-50 dark:bg-black border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
-        <Container>
+      <section id="shipping" className="section-glow section-glow-emerald py-20 lg:py-28 bg-[var(--color-surface-alt)] transition-colors duration-300">
+        <Container className="relative z-10">
           <ScrollReveal>
             <ShippingMap />
           </ScrollReveal>
         </Container>
       </section>
 
-      <section id="popular-deals" className="py-20 lg:py-28 bg-white dark:bg-black border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
-        <Container>
+      <section id="popular-deals" className="section-glow section-glow-violet py-20 lg:py-28 bg-[var(--color-surface)] transition-colors duration-300">
+        <Container className="relative z-10">
           <PopularDealsHeader />
 
           <ScrollReveal delay={0.2}>
@@ -71,15 +74,15 @@ export const HomePage = async () => {
         </Container>
       </section>
 
-      <section id="about" className="py-20 lg:py-28 bg-gray-50 dark:bg-black border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
-        <Container>
+      <section id="about" className="section-glow section-glow-blue py-20 lg:py-28 bg-[var(--color-surface-alt)] transition-colors duration-300">
+        <Container className="relative z-10">
           <ScrollReveal>
             <AboutSection />
           </ScrollReveal>
         </Container>
       </section>
 
-      <section id="contact" className="py-20 lg:py-28 bg-white dark:bg-black border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
+      <section id="contact" className="py-20 lg:py-28 bg-[var(--color-surface)] transition-colors duration-300">
         <Container>
           <ScrollReveal>
             <ContactSection />
