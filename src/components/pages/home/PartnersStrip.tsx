@@ -53,7 +53,7 @@ export function PartnersStrip() {
                 alt={partner.name}
                 width={160}
                 height={60}
-                className="h-10 lg:h-12 w-auto object-contain pointer-events-none select-none"
+                className="h-10 lg:h-12 w-auto object-contain pointer-events-none select-none dark:brightness-0 dark:invert"
                 draggable={false}
               />
             </div>

@@ -37,7 +37,7 @@ export const HomePage = async () => {
         </Container>
       </section>
 
-      <section id="our-partners" className="py-16 lg:py-20 bg-gray-50 dark:bg-[#1a1a1a] transition-colors duration-300">
+      <section id="our-partners" className="py-16 lg:py-20 bg-gray-50 dark:bg-black transition-colors duration-300">
         <Container>
           <ScrollReveal>
             <PartnersStrip />
