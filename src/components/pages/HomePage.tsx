@@ -37,7 +37,7 @@ export const HomePage = async () => {
         </Container>
       </section>
 
-      <section id="our-partners" className="py-16 lg:py-20 bg-gray-50 dark:bg-black transition-colors duration-300">
+      <section id="our-partners" className="py-16 lg:py-20 bg-gray-50 dark:bg-black border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
         <Container>
           <ScrollReveal>
             <PartnersStrip />
@@ -45,7 +45,7 @@ export const HomePage = async () => {
         </Container>
       </section>
 
-      <section id="services" className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
+      <section id="services" className="py-20 lg:py-28 bg-white dark:bg-black border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
         <Container>
           <ScrollReveal>
             <ServicesSection />
@@ -53,7 +53,7 @@ export const HomePage = async () => {
         </Container>
       </section>
 
-      <section id="shipping" className="py-20 lg:py-28 bg-gray-50 dark:bg-[#111111] transition-colors duration-300">
+      <section id="shipping" className="py-20 lg:py-28 bg-gray-50 dark:bg-black border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
         <Container>
           <ScrollReveal>
             <ShippingMap />
@@ -61,7 +61,7 @@ export const HomePage = async () => {
         </Container>
       </section>
 
-      <section id="popular-deals" className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
+      <section id="popular-deals" className="py-20 lg:py-28 bg-white dark:bg-black border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
         <Container>
           <PopularDealsHeader />
 
@@ -71,7 +71,7 @@ export const HomePage = async () => {
         </Container>
       </section>
 
-      <section id="about" className="py-20 lg:py-28 bg-gray-50 dark:bg-[#111111] transition-colors duration-300">
+      <section id="about" className="py-20 lg:py-28 bg-gray-50 dark:bg-black border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
         <Container>
           <ScrollReveal>
             <AboutSection />
@@ -79,7 +79,7 @@ export const HomePage = async () => {
         </Container>
       </section>
 
-      <section id="contact" className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
+      <section id="contact" className="py-20 lg:py-28 bg-white dark:bg-black border-t border-gray-200 dark:border-white/5 transition-colors duration-300">
         <Container>
           <ScrollReveal>
             <ContactSection />
