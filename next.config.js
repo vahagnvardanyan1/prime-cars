@@ -2,6 +2,7 @@
 const withNextIntl = require("next-intl/plugin")("./src/i18n/request.ts");
 
 const nextConfig = {
+  reactStrictMode: false,
   images: {
     // Modern formats trim car-photo bandwidth by ~40-60% and feed better LCP.
     formats: ["image/avif", "image/webp"],
