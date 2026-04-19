@@ -196,7 +196,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
                 src="/logo.png"
                 alt={t("header.logoAlt")}
                 className="h-10 w-auto"
-                width={240}
+                width={90}
                 height={40}
                 priority
               />
@@ -294,7 +294,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
               src="/logo.png"
               alt={t("header.logoAlt")}
               className="h-8 w-auto"
-              width={120}
+              width={72}
               height={32}
             />
           </Link>
