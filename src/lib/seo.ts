@@ -10,13 +10,6 @@ export const DEFAULT_OG_IMAGE = "/og/default.png";
 
 export const OG_IMAGE_DIMENSIONS = { width: 1200, height: 630 } as const;
 
-// Verification codes — set via env so tokens don't live in source.
-export const VERIFICATION = {
-  google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
-  yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION,
-  bing: process.env.NEXT_PUBLIC_BING_VERIFICATION,
-} as const;
-
 // Map our locale codes to BCP47 locale strings Google uses in OG/hreflang.
 export const OG_LOCALE: Record<Locale, string> = {
   hy: "hy_AM",
@@ -122,16 +115,10 @@ export const createPageMetadata = ({
       description,
       images: [ogImageUrl],
     },
-    ...(VERIFICATION.google || VERIFICATION.yandex || VERIFICATION.bing
-      ? {
-          verification: {
-            ...(VERIFICATION.google ? { google: VERIFICATION.google } : {}),
-            ...(VERIFICATION.yandex ? { yandex: VERIFICATION.yandex } : {}),
-            ...(VERIFICATION.bing ? { other: { "msvalidate.01": VERIFICATION.bing } } : {}),
-          },
-        }
-      : {}),
-  };
+    verification:{
+      google:'F4kBhWdm_HcUK5bfLAHiWZSPvzqs8eRlLafm81NZHZw'
+    }
+};
 };
 
 export const NOINDEX_METADATA: Metadata = {
