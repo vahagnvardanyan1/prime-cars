@@ -1,0 +1,36 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /*/admin/
+Disallow: /admin/
+
+# CCBot
+User-agent: CCBot
+Disallow: /
+
+# GPTBot
+User-agent: GPTBot
+Disallow: /
+
+# Google-Extended
+User-agent: Google-Extended
+Disallow: /
+
+# anthropic-ai
+User-agent: anthropic-ai
+Disallow: /
+
+# ClaudeBot
+User-agent: ClaudeBot
+Disallow: /
+
+# PerplexityBot
+User-agent: PerplexityBot
+Disallow: /
+
+# Host
+Host: https://primecars.am
+
+# Sitemaps
+Sitemap: https://primecars.am/sitemap.xml
