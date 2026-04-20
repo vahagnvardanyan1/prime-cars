@@ -27,7 +27,11 @@
     "home": "Home",
     "cars": "Cars",
     "calculator": "Calculator",
-    "partners": "For Partners"
+    "partners": "For Partners",
+    "services": "Our Services",
+    "about": "About Us",
+    "contact": "Contact Us",
+    "airFreight": "Air Freight"
   },
   "header": {
     "logoAlt": "Prime Cars Logo",
@@ -35,11 +39,12 @@
     "toggleThemeAria": "Toggle theme",
     "toggleMenuAria": "Toggle menu",
     "closeMenuAria": "Close menu",
-    "changeLanguageAria": "Change language"
+    "changeLanguageAria": "Change language",
+    "applyNow": "Apply Now"
   },
   "footer": {
     "brandLabel": "Prime Cars",
-    "description": "Your trusted partner in international car imports and auctions since 2013.",
+    "description": "Your reliable partner in the field of auctions and car imports since 2016.",
     "quickLinks": "Quick Links",
     "contact": "Contact Us",
     "address": "Arshakunyats 26",
@@ -50,6 +55,35 @@
       "partners": "For Partners"
     },
     "copyright": "Prime Cars. All rights reserved."
+  },
+  "seo": {
+    "home": {
+      "title": "Prime Cars — Car Import from USA to Armenia | COPART & IAAI",
+      "description": "Prime Cars — your trusted partner for importing vehicles from US auctions to Armenia. Buy cars from COPART and IAAI, sea freight, customs clearance, insurance included.",
+      "keywords": "car import armenia, copart armenia, iaai armenia, buy car from usa, auto auction, vehicle import, Prime Cars, Gyumri cars"
+    },
+    "cars": {
+      "title": "Cars For Sale — Imported from USA | Prime Cars",
+      "description": "Browse vehicles already imported to Armenia and cars in transit from US auctions. Toyota, Honda, BMW, Mercedes, Tesla and more. Full specs, photos and pricing.",
+      "keywords": "cars for sale armenia, imported cars, Toyota Armenia, Tesla, BMW"
+    },
+    "carDetail": {
+      "titleTemplate": "{year} {brand} {model} — ${price} | Prime Cars",
+      "descriptionTemplate": "{year} {brand} {model} imported from the USA. Price ${price}. {fuel} · {transmission}. Full specs, photos and import cost calculator on Prime Cars."
+    },
+    "calculator": {
+      "title": "Car Import Calculator — USA to Armenia | Prime Cars",
+      "description": "Free import cost calculator for vehicles from US auctions: auction fees, ground shipping, sea freight, customs duty. Get an instant estimate for your car.",
+      "keywords": "car import calculator, customs calculator armenia, copart cost, import fees"
+    },
+    "partners": {
+      "title": "Our Partners — COPART, IAAI & More | Prime Cars",
+      "description": "Prime Cars works with leading auto auction houses and shipping providers to deliver the best prices and service for vehicle imports to Armenia."
+    },
+    "apply": {
+      "title": "Apply for Partnership | Prime Cars",
+      "description": "Register and start importing vehicles from the USA. Our team will help you find, buy and deliver the car you want to Armenia."
+    }
   },
   "home": {
     "hero": {
@@ -79,6 +113,117 @@
     "importCosts": {
       "title": "Calculate Your Import Costs",
       "description": "Get an instant estimate of all costs involved in importing your dream vehicle. Our comprehensive calculator includes shipping, customs, duties, and all associated fees."
+    },
+    "ourPartners": {
+      "title": "Our Partners",
+      "description": "Our commitment to providing first-class services is backed by strong and lasting partnerships with leading shipping companies."
+    },
+    "services": {
+      "title": "Your reliable partner\nin the world of cars",
+      "description": "We offer a full range of services — from participating in U.S. auctions to handing over the keys to your vehicle. At the core of our work is not just car delivery, but building long-term partnerships with our clients. Purchasing a car is an important decision, and our goal is to make this process safe, transparent and efficient.",
+      "items": {
+        "contract": {
+          "title": "Signing a Cooperation Agreement",
+          "description": "Official partnership agreement with transparent terms and clearly defined obligations of both parties."
+        },
+        "historyCheck": {
+          "title": "Vehicle History Check",
+          "description": "Before participating in an auction, we verify the history of the selected vehicle using services such as AutoCheck and Carfax."
+        },
+        "auctionAccess": {
+          "title": "Access to Auction Accounts",
+          "description": "By registering as our partner, you gain access to insurance and dealer-only auctions, as well as the ability to purchase vehicles across multiple platforms."
+        },
+        "purchasing": {
+          "title": "Purchasing Vehicles Through Auctions",
+          "description": "You can participate in auctions either by visiting our office or from any location by following live auctions online and purchasing vehicles at your desired price."
+        },
+        "groundShipping": {
+          "title": "Ground Shipping to US Ports",
+          "description": "The car is transported from the auction to the appropriate port, and additional photos of the car are provided upon arrival."
+        },
+        "insurance": {
+          "title": "Insurance",
+          "description": "Based on port photographs, cargo insurance (Class A) is provided by leading local insurance companies."
+        },
+        "seaShipping": {
+          "title": "Sea Shipping",
+          "description": "Sea freight from the US to a designated country. The vehicle is loaded into a container, and you can track the progress of your vehicle online."
+        },
+        "customs": {
+          "title": "Unloading & Customs Clearance",
+          "description": "In the presence of our specialists, the vehicle is unloaded from the container and undergoes customs clearance through our brokerage organization."
+        },
+        "support": {
+          "title": "24/7 Customer Support",
+          "description": "To optimize processes and improve customer service, we have created a customer support team that acts as a link between us and our partners."
+        },
+        "dashboard": {
+          "title": "Personal Online Dashboard",
+          "description": "Using our technological advantages, we provide dealers with a convenient and personalized online account. In this digital environment, users gain quick access to essential information and can fully control processes, adapting them to their individual needs.\nThe system includes user-friendly tools for tracking all logistics processes, a smart calculator, and a range of innovative, well-designed features."
+        },
+        "extraMedia": {
+          "title": "Extra Photo & Video",
+          "description": "If necessary, our partners can request additional photos or videos from our warehouses. We provide high-quality services that, in turn, meet the requirements of our partners."
+        },
+        "inspection": {
+          "title": "Pre-Purchase Vehicle Inspection",
+          "description": "An expert will visit the auction site to take additional photographs and videos, and to obtain additional information."
+        },
+        "cover": {
+          "title": "Vehicle Cover Before Delivery",
+          "description": "Cover your vehicle completely with a tent. Protect your car from rain, dirt and dust."
+        },
+        "windowFilm": {
+          "title": "Window Covering with Film",
+          "description": "If your car is missing windows or a windshield, we will cover them with a film to prevent water, dust and dirt from getting inside."
+        },
+        "airFreight": {
+          "title": "Air Freight",
+          "description": "Express vehicle delivery by air freight."
+        },
+        "cargoShipping": {
+          "title": "Cargo Shipping",
+          "description": "Transportation of cargo of any complexity from the USA by sea and air."
+        }
+      }
+    },
+    "aboutUs": {
+      "title": "About Us",
+      "intro": "Prime Cars is a representative of the largest American auto auctions, such as IAAI, Copart, Manheim, ADESA, and the Auction Pipeline network in Armenia, and has more than 10 years of experience. Our company specializes in international logistics, with a strong focus on transporting vehicles from the USA. We not only manage logistics, but also build a path of trust and reliability for each client.",
+      "warehouses": "We offer professional vehicle transportation services from the USA and Canada to any destination worldwide. Our warehouses in the US and Canada are located in the following cities: New York, Norfolk, Savannah, Miami, Houston, Los Angeles, Seattle, Toronto, Honolulu, and Anchorage. This infrastructure guarantees safe storage, fast processing, and full control at every stage of transportation.",
+      "access": "We have access to complete information about auction lots, as well as additional tools for dealers, including access to dealer-only auctions. We have extensive experience in transporting both new and used cars, trucks, motorcycles, ATVs, cargo, motorboats, equipment, and other types of vehicles.",
+      "assistance": "If you have found a car that interests you, or if you have a personal vehicle in the USA that you would like to transport to Armenia, Prime Cars will assist you every step of the way, ensuring your vehicle arrives safely and on time.",
+      "team": "The Prime Cars team treats your vehicles as if they were their own. That is why our customers return to us year after year. In every vehicle we deliver, we see not just cargo, but trust — and we strive to justify that trust every day.",
+      "advantages": "According to our customers, the main advantages of Prime Cars are stability, reliability, safety, and efficient business processes.",
+      "dream": "If you have found the car of your dreams, trust us with the rest. Enjoy a seamless and professional experience with Prime Cars. Our goal is not only to meet expectations, but to exceed them.",
+      "whyTitle": "Why Choose Prime Cars",
+      "whyDescription": "Based on years of experience, we offer effective and transparent solutions at every stage of vehicle transportation. We believe that true quality lies in continuous development, and the success of our partners is our success.",
+      "whyBusiness": "To support the rapid launch and growth of your business, we provide free access to all Category A auctions, as well as a personal online platform where information, photos, and financial reports for purchased vehicles are available.",
+      "whyPrice": "Thanks to our direct contracts with major industry partners, we deliver high-quality service at competitive prices. We not only deliver vehicles, but also build long-term, reliable partnerships.",
+      "missionTitle": "Our Mission and Values",
+      "missionDescription": "Our mission is simple: to make the car buying process as easy and transparent as possible. We provide professional services for buying, transporting, and delivering vehicles. We support our partners in helping more people acquire their dream cars.",
+      "platformTitle": "Personal Account",
+      "platformDescription": "A personal account is provided free of charge for dealers to monitor all logistics processes and financial reports of purchased vehicles."
+    },
+    "contactUs": {
+      "title": "Contact Us",
+      "description": "Get in touch with us for any questions."
+    },
+    "apply": {
+      "title": "Apply Now",
+      "description": "Fill out the form and we will get back to you.",
+      "namePlaceholder": "Your name",
+      "phonePlaceholder": "Phone number",
+      "submit": "Submit"
+    },
+    "shipping": {
+      "title": "Global Shipping Network",
+      "description": "We ship vehicles from the USA and Canada to destinations worldwide through our extensive logistics network.",
+      "from": "Shipping from",
+      "to": "Shipping to",
+      "warehouses": "Our warehouses",
+      "destinations": "Delivery destinations"
     }
   },
   "cars": {
@@ -137,6 +282,10 @@
     "viewCta": "View Details",
     "requestCta": "Order Now",
     "sort": "Sort",
+    "sortAriaLabel": "Sort vehicles",
+    "viewToggleAriaLabel": "Toggle view mode",
+    "gridViewAriaLabel": "Grid view",
+    "listViewAriaLabel": "List view",
     "sortOptions": {
       "priceAsc": "Price: Low to High",
       "priceDesc": "Price: High to Low",
@@ -231,6 +380,7 @@
     "horsepowerUnit": "HP"
   },
   "calculator": {
+    "loading": "Loading...",
     "page": {
       "title": "Import Cost Calculator",
       "description": "Get an accurate estimate of all costs involved in importing your vehicle. Our calculator includes shipping, customs duties, inspection fees, and more."
@@ -281,9 +431,18 @@
       "insurance": "Insurance",
       "highGroundClearance": "High ground clearance",
       "hasReverse": "Has Reverse",
+      "icePowerExceedsElectric": "ICE power exceeds the maximum 30-minute power of electric motor",
+      "weightClass": "Weight class",
+      "selectWeightClass": "Select weight class",
+      "weightClassUnder5": "Up to 5 tons",
+      "weightClass5to20": "5 to 20 tons",
+      "weightClassAbove20": "Above 20 tons",
+      "outOfAuctionBorders": "Out of auction borders (Sublot)",
       "calculateCost": "Calculate cost",
-      "calculating": "Calculating...",
+      "calculating": "Calculating",
       "validationError": "Please fill in all required fields",
+      "required": "required",
+      "auctionTabsAriaLabel": "Auction type selection",
       "calculationError": "Calculation failed",
       "loadingLocations": "Loading locations...",
       "locationLoadError": "Failed to load locations",
@@ -346,8 +505,8 @@
       "vat": "VAT",
       "environmentalTax": "Environmental tax",
       "totalAmount": "Total Amount",
-      "legalPerson": "Legal person (ACP)",
-      "individual": "Individual (SCDR)",
+      "legalPerson": "Legal person",
+      "individual": "Individual",
       "passengerCar": "Passenger Car",
       "auctionLocationLabel": "Auction location",
       "chooseYearLabel": "Choose year",
@@ -356,7 +515,9 @@
       "partnerMessage": "To use calculator become a partner.",
       "importantTitle": "Important",
       "importantNotice": "All Transactions with companies and citizens of the Republic of Armenia are made exclusively in Armenian currency (Dram / AMD). Note: customs fees are calculated at the exchange rate set by the Central Bank of Armenia as of the given day.",
-      "backToCalculator": "Back to Calculator"
+      "backToCalculator": "Back to Calculator",
+      "restrictedDataTitle": "Full cost breakdown available for partners",
+      "becomePartner": "Become a Partner to see all details"
     }
   },
   "partners": {
@@ -671,6 +832,9 @@
         "user": "User",
         "selectUser": "Select a user",
         "loadingUsers": "Loading users...",
+        "loadingCities": "Loading cities...",
+        "selectCity": "Select a city",
+        "selectAuctionFirst": "Select auction first",
         "purchaseDate": "Purchase date",
         "type": "Type",
         "vehicleTypes": {
@@ -688,6 +852,7 @@
           "other": "Other"
         },
         "model": "Model",
+        "modelPlaceholder": "e.g. BMW X5",
         "vehicleModels": {
           "bmw": "BMW",
           "mercedes": "Mercedes-Benz",
@@ -742,6 +907,7 @@
         "statusDraft": "Draft",
         "customerNotes": "Customer notes",
         "customerNotesPlaceholder": "Optional notes for the customer or internal team…",
+        "paymentsAndDocuments": "Payments & Documents",
         "carPaid": "Car Payment",
         "shippingPaid": "Shipping Payment",
         "insurance": "Insurance",
@@ -751,15 +917,31 @@
         "notExists": "Not Exists",
         "invoiceLabel": "Invoice (PDF)",
         "dragDropInvoice": "Drag and drop your invoice",
+        "vehiclePdfLabel": "Vehicle Document (PDF)",
+        "dragDropVehiclePdf": "Drag and drop vehicle document",
+        "insurancePdfLabel": "Insurance Document (PDF)",
+        "dragDropInsurancePdf": "Drag and drop insurance document",
+        "shippingPdfLabel": "Shipping Document (PDF)",
+        "dragDropShippingPdf": "Drag and drop shipping document",
         "dropPdfHere": "Drop the PDF file here",
         "clickToBrowse": "or click to browse",
         "pdfOnlyMaxSize": "PDF only, max 10MB",
         "onlyPdfAllowed": "Only PDF files are allowed",
         "fileSizeLimit": "File size must be less than 10MB",
+        "currentInvoice": "Current invoice",
+        "viewInvoice": "View",
+        "updateInvoice": "Update",
+        "newFile": "New file",
+        "willReplaceCurrent": "Will replace current",
+        "cancelUpdate": "Cancel update",
         "uploadInvoice": "Upload Invoice",
         "format": "Format: PDF",
         "dropToUpload": "Drop to upload",
         "invalidFormat": "Invalid file format. Please upload a PDF file only.",
+        "containerNumberBooking": "Container Number Booking",
+        "containerNumberBookingPlaceholder": "e.g. MAEU1234567",
+        "promisedPickUpDate": "Promised Pick Up Date",
+        "deliveredWarehouse": "Delivered to Warehouse",
         "cancel": "Cancel",
         "submit": "Submit",
         "submitting": "Submitting..."
@@ -861,13 +1043,28 @@
         "subtitle": "Edit vehicle information and details",
         "existingPhotos": "Existing Photos",
         "addNewPhotos": "Add New Photos",
+        "loadingCities": "Loading cities...",
+        "selectCity": "Select a city",
+        "selectAuctionFirst": "Select auction first",
         "invoiceLabel": "Invoice (PDF)",
         "dragDropInvoice": "Drag and drop your invoice",
+        "vehiclePdfLabel": "Vehicle Document (PDF)",
+        "dragDropVehiclePdf": "Drag and drop vehicle document",
+        "insurancePdfLabel": "Insurance Document (PDF)",
+        "dragDropInsurancePdf": "Drag and drop insurance document",
+        "shippingPdfLabel": "Shipping Document (PDF)",
+        "dragDropShippingPdf": "Drag and drop shipping document",
         "dropPdfHere": "Drop the PDF file here",
         "clickToBrowse": "or click to browse",
         "pdfOnlyMaxSize": "PDF only, max 10MB",
         "onlyPdfAllowed": "Only PDF files are allowed",
         "fileSizeLimit": "File size must be less than 10MB",
+        "currentInvoice": "Current invoice",
+        "viewInvoice": "View",
+        "updateInvoice": "Update",
+        "newFile": "New file",
+        "willReplaceCurrent": "Will replace current",
+        "cancelUpdate": "Cancel update",
         "model": "Model",
         "modelPlaceholder": "e.g., BMW X5",
         "year": "Year",
@@ -888,6 +1085,7 @@
         "client": "Client",
         "customerNotes": "Customer Notes",
         "notesPlaceholder": "Add any special notes or instructions...",
+        "paymentsAndDocuments": "Payments & Documents",
         "carPaid": "Car Payment",
         "shippingPaid": "Shipping Payment",
         "insurance": "Insurance",
@@ -899,6 +1097,10 @@
         "noAuction": "No auction",
         "loadingUsers": "Loading users...",
         "noClient": "No client",
+        "containerNumberBooking": "Container Number Booking",
+        "containerNumberBookingPlaceholder": "e.g. MAEU1234567",
+        "promisedPickUpDate": "Promised Pick Up Date",
+        "deliveredWarehouse": "Delivered to Warehouse",
         "cancel": "Cancel",
         "updating": "Updating...",
         "updateButton": "Update Car",
@@ -1117,11 +1319,17 @@
     "lot": "Lot",
     "vin": "VIN",
     "purchaseDate": "Purchase Date",
+    "containerNumberBooking": "Container #",
+    "promisedPickUpDate": "Promised Pick Up",
+    "deliveredWarehouse": "Delivered Warehouse",
     "notes": "Notes",
     "status": "Status",
     "carPaid": "Car Payment",
+    "vehiclePdf": "Vehicle PDF",
     "shippingPaid": "Shipping Payment",
+    "shippingPdf": "Shipping PDF",
     "insurance": "Insurance",
+    "insurancePdf": "Insurance PDF",
     "created": "Created",
     "invoice": "Invoice",
     "download": "Download",
@@ -1147,9 +1355,21 @@
     "showing": "Showing",
     "user": "user",
     "users": "users"
+  },
+  "applyPage": {
+    "pageTitle": "Join Us",
+    "subtitle": "Cooperating with Prime Cars means growing your business and achieving greater success. Join the Prime Cars team and unlock new opportunities in the vehicle import industry.",
+    "carsPerMonth": "Number of cars you buy from U.S. each month",
+    "carsOptions": {
+      "upTo5": "Up to 5",
+      "5to20": "5 to 20",
+      "moreThan20": "More than 20"
+    },
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "submit": "Request Registration",
+    "success": "Your application has been submitted successfully!",
+    "required": "Required"
   }
 }
-
-
-
-

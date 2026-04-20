@@ -41,7 +41,9 @@ type CreateCarData = {
 type CreateCarParams = {
   data: CreateCarData;
   images?: File[];
-  invoiceFile?: File | null;
+  vehiclePdf?: File | null;
+  insurancePdf?: File | null;
+  shippingPdf?: File | null;
 };
 
 // Fetch cars (admin)
@@ -92,7 +94,9 @@ const fetchAdminCars = async (params?: FetchCarsParams): Promise<FetchCarsRespon
           lot: details?.lot || car.lot,
           vin: details?.vin || car.vin,
           customerNotes: details?.customerNotes || car.customerNotes,
-          invoice: details?.invoice || car.invoice,
+          vehiclePdf: details?.vehiclePdf || car.vehiclePdf,
+          insurancePdf: details?.insurancePdf || car.insurancePdf,
+          shippingPdf: details?.shippingPdf || car.shippingPdf,
         },
       };
     }),
@@ -103,7 +107,7 @@ const fetchAdminCars = async (params?: FetchCarsParams): Promise<FetchCarsRespon
 };
 
 // Create car
-const createCar = async ({ data, images, invoiceFile }: CreateCarParams): Promise<AdminCar> => {
+const createCar = async ({ data, images, vehiclePdf, insurancePdf, shippingPdf }: CreateCarParams): Promise<AdminCar> => {
   const formData = new FormData();
   
   // Append car data
@@ -120,9 +124,15 @@ const createCar = async ({ data, images, invoiceFile }: CreateCarParams): Promis
     });
   }
 
-  // Append invoice
-  if (invoiceFile) {
-    formData.append("invoice", invoiceFile);
+  // Append PDFs
+  if (vehiclePdf) {
+    formData.append("vehiclePdf", vehiclePdf);
+  }
+  if (insurancePdf) {
+    formData.append("insurancePdf", insurancePdf);
+  }
+  if (shippingPdf) {
+    formData.append("shippingPdf", shippingPdf);
   }
 
   const response = await authenticatedFetch(`${API_BASE_URL}/cars`, {
@@ -161,7 +171,9 @@ const createCar = async ({ data, images, invoiceFile }: CreateCarParams): Promis
       lot: carDetails?.lot || car.lot,
       vin: carDetails?.vin || car.vin,
       customerNotes: carDetails?.customerNotes || car.customerNotes,
-      invoice: carDetails?.invoice || car.invoice,
+      vehiclePdf: carDetails?.vehiclePdf || car.vehiclePdf,
+      insurancePdf: carDetails?.insurancePdf || car.insurancePdf,
+      shippingPdf: carDetails?.shippingPdf || car.shippingPdf,
     },
   };
 };
@@ -207,7 +219,9 @@ const updateCar = async ({ id, data }: { id: string; data: Partial<CreateCarData
       lot: carDetails?.lot || car.lot,
       vin: carDetails?.vin || car.vin,
       customerNotes: carDetails?.customerNotes || car.customerNotes,
-      invoice: carDetails?.invoice || car.invoice,
+      vehiclePdf: carDetails?.vehiclePdf || car.vehiclePdf,
+      insurancePdf: carDetails?.insurancePdf || car.insurancePdf,
+      shippingPdf: carDetails?.shippingPdf || car.shippingPdf,
     },
   };
 };

@@ -6,7 +6,7 @@ import { authenticatedFetch } from "@/lib/auth/token";
 
 type CreateCarData = {
   userId?: string;
-  model: string; // VehicleModel enum value
+  model: string;
   type: string; // VehicleType enum value
   auction: string; // Auction enum value
   year: number;
@@ -19,6 +19,9 @@ type CreateCarData = {
   lot?: string;
   vin?: string;
   customerNotes?: string;
+  containerNumberBooking?: string;
+  promisedPickUpDate?: string;
+  deliveredWarehouse?: string;
 };
 
 type CreateCarResponse = {
@@ -30,11 +33,15 @@ type CreateCarResponse = {
 export const createCar = async ({
   data,
   images = [],
-  invoiceFile,
+  vehiclePdfFile,
+  insurancePdfFile,
+  shippingPdfFile,
 }: {
   data: CreateCarData;
   images?: File[];
-  invoiceFile?: File | null;
+  vehiclePdfFile?: File | null;
+  insurancePdfFile?: File | null;
+  shippingPdfFile?: File | null;
 }): Promise<CreateCarResponse> => {
   try {
     // Create FormData
@@ -42,9 +49,9 @@ export const createCar = async ({
 
     // Append required fields
     if (data.userId) formData.append("client", String(data.userId));
-    formData.append("model", data.model); // VehicleModel enum value
-    formData.append("type", data.type); // VehicleType enum value  
-    formData.append("auction", data.auction); // Auction enum value
+    formData.append("model", data.model); 
+    formData.append("type", data.type); 
+    formData.append("auction", data.auction); 
     formData.append("year", data.year.toString());
     formData.append("autoPrice", data.priceUsd.toString());
     formData.append("vehicleModel", data.model);
@@ -62,8 +69,15 @@ export const createCar = async ({
     if (data.lot) formData.append("lot", data.lot);
     if (data.vin) formData.append("vin", data.vin);
     if (data.customerNotes) formData.append("customerNotes", data.customerNotes);
-
-
+    if (data.containerNumberBooking) formData.append("containerNumberBooking", data.containerNumberBooking);
+    if (data.promisedPickUpDate) {
+      const isoDate = new Date(data.promisedPickUpDate).toISOString();
+      formData.append("promisedPickUpDate", isoDate);
+    }
+    if (data.deliveredWarehouse) {
+      const isoDate = new Date(data.deliveredWarehouse).toISOString();
+      formData.append("deliveredWarehouse", isoDate);
+    }
 
     // Append image files
     if (images && images.length > 0) {
@@ -72,9 +86,15 @@ export const createCar = async ({
       });
     }
 
-    // Append invoice file
-    if (invoiceFile) {
-      formData.append("invoice", invoiceFile);
+    // Append new PDF files
+    if (vehiclePdfFile) {
+      formData.append("vehiclePdf", vehiclePdfFile);
+    }
+    if (insurancePdfFile) {
+      formData.append("insurancePdf", insurancePdfFile);
+    }
+    if (shippingPdfFile) {
+      formData.append("shippingPdf", shippingPdfFile);
     }
 
     const response = await authenticatedFetch(`${API_BASE_URL}/vehicles`, {

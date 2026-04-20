@@ -1,82 +1,93 @@
-import Image from "next/image";
-import { getTranslations } from "next-intl/server";
-
-import { ImportCalculator } from "@/components/ImportCalculator";
-import { Link } from "@/i18n/routing";
+import { Container } from "@/components/layouts";
 import { fetchAllAvailableCars } from "@/lib/cars/fetchCars";
 import { CarsCarousel } from "@/components/pages/home/CarsCarousel";
 
+import { HeroContent } from "@/components/pages/home/HeroContent";
+import { HeroLogo } from "@/components/pages/home/HeroLogo";
+import { PartnersStrip } from "@/components/pages/home/PartnersStrip";
+import { ServicesSection } from "@/components/pages/home/ServicesSection";
+import { AboutSection } from "@/components/pages/home/AboutSection";
+import { ContactSection } from "@/components/pages/home/ContactSection";
+import { ShippingMap } from "@/components/pages/home/ShippingMap";
+import { ScrollReveal } from "@/components/pages/home/ScrollReveal";
+import { ScrollSpy } from "@/components/pages/home/ScrollSpy";
+import { PopularDealsHeader } from "@/components/pages/home/PopularDealsHeader";
+
 export const HomePage = async () => {
-  const t = await getTranslations();
-  
-  // Fetch cars data server-side
   const result = await fetchAllAvailableCars();
   const cars = result.success ? result.cars || [] : [];
 
   return (
-    <div className="pt-20">
-      <section className="relative overflow-hidden bg-gray-50 dark:bg-black min-h-[90vh] flex items-center transition-colors duration-300">
+    <div className="pt-20 overflow-x-hidden">
+      {/* Noise grain texture for dark mode depth */}
+      <div className="noise-overlay" aria-hidden="true" />
+
+      <ScrollSpy />
+
+      <section id="hero" className="relative overflow-hidden bg-[var(--color-surface)] min-h-[calc(100vh-5rem)] flex items-center transition-colors duration-300">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] dark:opacity-100 opacity-0 transition-opacity duration-300">
           <div className="glow-effect"></div>
         </div>
 
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12 w-full relative z-10">
+        <Container className="w-full relative z-10">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
-            <div className="text-center lg:text-left">
-              <h1 className="mb-6 text-gray-900 dark:text-white">
-                {t("home.hero.title")}
-              </h1>
+            <HeroContent className="order-2 lg:order-1" />
 
-              <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
-                {t("home.hero.description")}
-              </p>
-
-              <Link
-                href="/calculator"
-                className="px-8 py-3 bg-[#429de6] text-white rounded-lg hover:bg-[#3a8acc] transition-all hover:shadow-lg hover:shadow-blue-500/20 mx-auto lg:mx-0 block lg:inline-block"
-              >
-                {t("home.hero.primaryCta")}
-              </Link>
-            </div>
-
-            <div className="relative">
-              <Image
-                src="/logo.png"
-                alt={t("home.hero.heroImageAlt")}
-                className="w-full h-auto relative z-10"
-                width={1000}
-                height={600}
-                priority
-              />
+            <div className="self-start order-1 lg:order-2">
+              <HeroLogo />
             </div>
           </div>
-        </div>
+        </Container>
       </section>
 
-      <section className="py-20 lg:py-28 bg-white dark:bg-black transition-colors duration-300">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          <div className="text-center mb-12">
-            <h2 className="mb-4">{t("home.popularDeals.title")}</h2>
-            <p className="max-w-3xl mx-auto">
-              {t("home.popularDeals.description")}
-            </p>
-          </div>
-
-          <CarsCarousel cars={cars} />
-        </div>
+      <section id="our-partners" className="section-glow section-glow-blue py-16 lg:py-20 bg-[var(--color-surface-alt)] transition-colors duration-300">
+        <Container className="relative z-10">
+          <ScrollReveal>
+            <PartnersStrip />
+          </ScrollReveal>
+        </Container>
       </section>
 
-      <section className="py-20 lg:py-28 bg-white dark:bg-black border-t border-gray-200 dark:border-white/10 transition-colors duration-300">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          <div className="text-center mb-12">
-            <h2 className="mb-4">{t("home.importCosts.title")}</h2>
-            <p className="max-w-3xl mx-auto">
-              {t("home.importCosts.description")}
-            </p>
-          </div>
+      <section id="services" className="section-glow section-glow-blue py-20 lg:py-28 bg-[var(--color-surface)] transition-colors duration-300">
+        <Container className="relative z-10">
+          <ScrollReveal>
+            <ServicesSection />
+          </ScrollReveal>
+        </Container>
+      </section>
 
-          <ImportCalculator showPartnerMessage={true} />
-        </div>
+      <section id="shipping" className="section-glow section-glow-emerald py-20 lg:py-28 bg-[var(--color-surface-alt)] transition-colors duration-300">
+        <Container className="relative z-10">
+          <ScrollReveal>
+            <ShippingMap />
+          </ScrollReveal>
+        </Container>
+      </section>
+
+      <section id="popular-deals" className="section-glow section-glow-violet py-20 lg:py-28 bg-[var(--color-surface)] transition-colors duration-300">
+        <Container className="relative z-10">
+          <PopularDealsHeader />
+
+          <ScrollReveal delay={0.2}>
+            <CarsCarousel cars={cars} />
+          </ScrollReveal>
+        </Container>
+      </section>
+
+      <section id="about" className="section-glow section-glow-blue py-20 lg:py-28 bg-[var(--color-surface-alt)] transition-colors duration-300">
+        <Container className="relative z-10">
+          <ScrollReveal>
+            <AboutSection />
+          </ScrollReveal>
+        </Container>
+      </section>
+
+      <section id="contact" className="py-20 lg:py-28 bg-[var(--color-surface)] transition-colors duration-300">
+        <Container>
+          <ScrollReveal>
+            <ContactSection />
+          </ScrollReveal>
+        </Container>
       </section>
     </div>
   );

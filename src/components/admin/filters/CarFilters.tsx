@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useCallback, useMemo } from "react";
 import { Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -13,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DateRangePicker } from "@/components/admin/primitives/DateRangePicker";
+
 export type CarFiltersState = {
   search: string;
   type: string;
@@ -52,55 +54,59 @@ const AUCTIONS = [
   "other",
 ];
 
-export const CarFilters = ({ filters, onFiltersChange, onClearFilters }: CarFiltersProps) => {
+export const CarFilters = memo(function CarFilters({ filters, onFiltersChange, onClearFilters }: CarFiltersProps) {
   const t = useTranslations("admin.filters");
   const tCar = useTranslations("admin.modals.addCar");
 
-  const hasActiveFilters = 
-    filters.search !== "" || 
-    filters.type !== "all" || 
-    filters.auction !== "all" || 
+  // Memoize the active filters check
+  const hasActiveFilters = useMemo(() =>
+    filters.search !== "" ||
+    filters.type !== "all" ||
+    filters.auction !== "all" ||
     filters.carPaid !== "all" ||
     filters.shippingPaid !== "all" ||
     filters.insurance !== "all" ||
     filters.purchaseDateFrom !== "" ||
-    filters.purchaseDateTo !== "";
+    filters.purchaseDateTo !== "",
+    [filters]
+  );
 
-  const handleSearchChange = (search: string) => {
+  // Stable callback handlers
+  const handleSearchChange = useCallback((search: string) => {
     onFiltersChange({ ...filters, search });
-  };
+  }, [filters, onFiltersChange]);
 
-  const handleTypeChange = (type: string) => {
+  const handleTypeChange = useCallback((type: string) => {
     onFiltersChange({ ...filters, type });
-  };
+  }, [filters, onFiltersChange]);
 
-  const handleAuctionChange = (auction: string) => {
+  const handleAuctionChange = useCallback((auction: string) => {
     onFiltersChange({ ...filters, auction });
-  };
+  }, [filters, onFiltersChange]);
 
-  const handleCarPaidChange = (value: string) => {
+  const handleCarPaidChange = useCallback((value: string) => {
     onFiltersChange({ ...filters, carPaid: value as "all" | "paid" | "not-paid" });
-  };
+  }, [filters, onFiltersChange]);
 
-  const handleShippingPaidChange = (value: string) => {
+  const handleShippingPaidChange = useCallback((value: string) => {
     onFiltersChange({ ...filters, shippingPaid: value as "all" | "paid" | "not-paid" });
-  };
+  }, [filters, onFiltersChange]);
 
-  const handleInsuranceChange = (value: string) => {
+  const handleInsuranceChange = useCallback((value: string) => {
     onFiltersChange({ ...filters, insurance: value as "all" | "exists" | "not-exists" });
-  };
+  }, [filters, onFiltersChange]);
 
-  const handlePurchaseDateFromChange = (value: string) => {
+  const handlePurchaseDateFromChange = useCallback((value: string) => {
     onFiltersChange({ ...filters, purchaseDateFrom: value });
-  };
+  }, [filters, onFiltersChange]);
 
-  const handlePurchaseDateToChange = (value: string) => {
+  const handlePurchaseDateToChange = useCallback((value: string) => {
     onFiltersChange({ ...filters, purchaseDateTo: value });
-  };
+  }, [filters, onFiltersChange]);
 
-  const handlePurchaseDateClear = () => {
+  const handlePurchaseDateClear = useCallback(() => {
     onFiltersChange({ ...filters, purchaseDateFrom: "", purchaseDateTo: "" });
-  };
+  }, [filters, onFiltersChange]);
 
   return (
     <div className="px-6 py-4 border-b border-gray-200 dark:border-white/10">
@@ -108,7 +114,7 @@ export const CarFilters = ({ filters, onFiltersChange, onClearFilters }: CarFilt
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search Input */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               type="text"
               placeholder={t("searchCars")}
@@ -126,7 +132,7 @@ export const CarFilters = ({ filters, onFiltersChange, onClearFilters }: CarFilt
             disabled={!hasActiveFilters}
             className="h-10 px-4 whitespace-nowrap border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 hover:border-red-400 dark:hover:border-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
           >
-            <X className="h-4 w-4 mr-2" />
+            <X aria-hidden="true" className="h-4 w-4 mr-2" />
             {t("clearFilters")}
           </Button>
         </div>
@@ -216,4 +222,4 @@ export const CarFilters = ({ filters, onFiltersChange, onClearFilters }: CarFilt
       </div>
     </div>
   );
-};
+});

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { toast } from "sonner";
 
@@ -45,12 +45,12 @@ export const AdminCarsPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  const handleDeleteCarClick = (car: AdminCar) => {
+  const handleDeleteCarClick = useCallback((car: AdminCar) => {
     setCarToDelete(car);
     setIsDeleteDialogOpen(true);
-  };
+  }, []);
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = useCallback(async () => {
     if (!carToDelete) return;
 
     setIsDeletingCar(true);
@@ -76,19 +76,38 @@ export const AdminCarsPage = () => {
     } finally {
       setIsDeletingCar(false);
     }
-  };
+  }, [carToDelete, state]);
+
+  // Stable callback references to avoid re-renders
+  const handleRefresh = useCallback(() => state.loadCars({ forceRefresh: true }), [state]);
+
+  const handleUpdateCar = useCallback((car: AdminCar) => {
+    setSelectedCarForUpdate(car);
+    setIsUpdateCarModalOpen(true);
+  }, []);
+
+  const handleAddCarModalChange = useCallback(({ open }: { open: boolean }) => {
+    if (open) {
+      state.openAddCar();
+    } else {
+      state.closeAddCar();
+    }
+  }, [state]);
+
+  const handleUpdateCarModalChange = useCallback(({ open }: { open: boolean }) => {
+    setIsUpdateCarModalOpen(open);
+  }, []);
+
+  const handleCarCreated = useCallback(() => state.loadCars({ forceRefresh: true }), [state]);
 
   return (
     <>
       <CarsView
         cars={state.cars}
         isLoading={state.isLoadingCars}
-        onRefresh={() => state.loadCars({ forceRefresh: true })}
+        onRefresh={handleRefresh}
         onAddCar={state.openAddCar}
-        onUpdateCar={(car) => {
-          setSelectedCarForUpdate(car);
-          setIsUpdateCarModalOpen(true);
-        }}
+        onUpdateCar={handleUpdateCar}
         onDeleteCar={handleDeleteCarClick}
         isAdmin={isAdmin}
         filters={state.filters}
@@ -106,16 +125,16 @@ export const AdminCarsPage = () => {
         <>
           <AddCarModal
             open={state.isAddCarOpen}
-            onOpenChange={({ open }) => (open ? state.openAddCar() : state.closeAddCar())}
+            onOpenChange={handleAddCarModalChange}
             onCreateCar={state.addCar}
-            onCarCreated={() => state.loadCars({ forceRefresh: true })}
+            onCarCreated={handleCarCreated}
           />
 
           <UpdateCarModal
             open={isUpdateCarModalOpen}
             car={selectedCarForUpdate}
-            onOpenChange={({ open }) => setIsUpdateCarModalOpen(open)}
-            onCarUpdated={() => state.loadCars({ forceRefresh: true })}
+            onOpenChange={handleUpdateCarModalChange}
+            onCarUpdated={handleCarCreated}
           />
 
           <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

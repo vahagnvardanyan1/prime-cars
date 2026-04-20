@@ -28,7 +28,9 @@ type AddCarModalFormikProps = {
 export const AddCarModalFormik = ({ open, onOpenChange, onCarCreated }: AddCarModalFormikProps) => {
   const t = useTranslations();
   const { files, previews, setFileAt, removeFileAt, clearAll } = usePhotoUploads({ initialSlots: 1 });
-  const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
+  const [vehiclePdfFile, setVehiclePdfFile] = useState<File | null>(null);
+  const [insurancePdfFile, setInsurancePdfFile] = useState<File | null>(null);
+  const [shippingPdfFile, setShippingPdfFile] = useState<File | null>(null);
   
   const { data: usersData, isLoading: loadingUsers } = useUsers();
   const createCarMutation = useCreateCar();
@@ -67,13 +69,17 @@ export const AddCarModalFormik = ({ open, onOpenChange, onCarCreated }: AddCarMo
               {
                 data: values,
                 images: imageFiles,
-                invoiceFile: invoiceFile,
+                vehiclePdf: vehiclePdfFile,
+                insurancePdf: insurancePdfFile,
+                shippingPdf: shippingPdfFile,
               },
               {
                 onSuccess: () => {
                   resetForm();
                   clearAll();
-                  setInvoiceFile(null);
+                  setVehiclePdfFile(null);
+                  setInsurancePdfFile(null);
+                  setShippingPdfFile(null);
                   if (onCarCreated) onCarCreated();
                   close();
                 },
@@ -441,11 +447,46 @@ export const AddCarModalFormik = ({ open, onOpenChange, onCarCreated }: AddCarMo
                   </div>
                 </div>
 
-                {/* Invoice Upload */}
-                <div className="pt-4 border-t border-gray-200 dark:border-white/10">
+                {/* PDF Uploads */}
+                <div className="pt-4 border-t border-gray-200 dark:border-white/10 space-y-4">
                   <PdfUploader
-                    onFileSelect={setInvoiceFile}
+                    onFileSelect={setVehiclePdfFile}
                     disabled={isSubmitting}
+                    translations={{
+                      label: "Vehicle Invoice (PDF)",
+                      dragDrop: "Drag and drop vehicle invoice",
+                      dropHere: "Drop the PDF file here",
+                      clickToBrowse: "or click to browse",
+                      maxSize: "PDF only, max 10MB",
+                      onlyPdfAllowed: "Only PDF files are allowed",
+                      fileSizeLimit: "File size must be less than 10MB"
+                    }}
+                  />
+                  <PdfUploader
+                    onFileSelect={setInsurancePdfFile}
+                    disabled={isSubmitting}
+                    translations={{
+                      label: "Insurance (PDF)",
+                      dragDrop: "Drag and drop insurance document",
+                      dropHere: "Drop the PDF file here",
+                      clickToBrowse: "or click to browse",
+                      maxSize: "PDF only, max 10MB",
+                      onlyPdfAllowed: "Only PDF files are allowed",
+                      fileSizeLimit: "File size must be less than 10MB"
+                    }}
+                  />
+                  <PdfUploader
+                    onFileSelect={setShippingPdfFile}
+                    disabled={isSubmitting}
+                    translations={{
+                      label: "Shipping (PDF)",
+                      dragDrop: "Drag and drop shipping document",
+                      dropHere: "Drop the PDF file here",
+                      clickToBrowse: "or click to browse",
+                      maxSize: "PDF only, max 10MB",
+                      onlyPdfAllowed: "Only PDF files are allowed",
+                      fileSizeLimit: "File size must be less than 10MB"
+                    }}
                   />
                 </div>
               </div>

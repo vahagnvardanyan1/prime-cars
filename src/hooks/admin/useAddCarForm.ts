@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 
 import type { AdminCarDetails } from "@/lib/admin/types";
-import { VehicleType, VehicleModel, Auction } from "@/lib/admin/types";
+import { VehicleType, Auction } from "@/lib/admin/types";
 
 type FormErrors = {
   model?: string;
@@ -30,6 +30,9 @@ type UseAddCarFormReturn = {
     lot: string;
     vin: string;
     customerNotes: string;
+    containerNumberBooking: string;
+    promisedPickUpDate: string;
+    deliveredWarehouse: string;
   };
   actions: {
     setModel: ({ value }: { value: string }) => void;
@@ -45,6 +48,9 @@ type UseAddCarFormReturn = {
     setLot: ({ value }: { value: string }) => void;
     setVin: ({ value }: { value: string }) => void;
     setCustomerNotes: ({ value }: { value: string }) => void;
+    setContainerNumberBooking: ({ value }: { value: string }) => void;
+    setPromisedPickUpDate: ({ value }: { value: string }) => void;
+    setDeliveredWarehouse: ({ value }: { value: string }) => void;
     reset: () => void;
     clearError: ({ field }: { field: keyof FormErrors }) => void;
   };
@@ -61,7 +67,7 @@ type UseAddCarFormReturn = {
 };
 
 export const useAddCarForm = (): UseAddCarFormReturn => {
-  const [model, setModel] = useState<string>(VehicleModel.BMW);
+  const [model, setModel] = useState<string>("");
   const [year, setYear] = useState("");
   const [priceUsd, setPriceUsd] = useState("");
   const [carPaid, setCarPaid] = useState(false);
@@ -75,6 +81,9 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
   const [lot, setLot] = useState("");
   const [vin, setVin] = useState("");
   const [customerNotes, setCustomerNotes] = useState("");
+  const [containerNumberBooking, setContainerNumberBooking] = useState("");
+  const [promisedPickUpDate, setPromisedPickUpDate] = useState("");
+  const [deliveredWarehouse, setDeliveredWarehouse] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
 
   const isSubmitEnabled = useMemo(() => {
@@ -106,6 +115,9 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       lot: lot.trim().length ? lot : undefined,
       vin: vin.trim().length ? vin : undefined,
       customerNotes: customerNotes.trim().length ? customerNotes : undefined,
+      containerNumberBooking: containerNumberBooking.trim().length ? containerNumberBooking : undefined,
+      promisedPickUpDate: promisedPickUpDate.trim().length ? promisedPickUpDate : undefined,
+      deliveredWarehouse: deliveredWarehouse.trim().length ? deliveredWarehouse : undefined,
     };
 
     return {
@@ -116,9 +128,12 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
   }, [
     auction,
     city,
+    containerNumberBooking,
     customerNotes,
+    deliveredWarehouse,
     isSubmitEnabled,
     lot,
+    promisedPickUpDate,
     purchaseDate,
     type,
     vin,
@@ -165,16 +180,16 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const clearError = ({ field }: { field: keyof FormErrors }) => {
+  const clearError = useCallback(({ field }: { field: keyof FormErrors }) => {
     setErrors((prev) => {
       const next = { ...prev };
       delete next[field];
       return next;
     });
-  };
+  }, []);
 
-  const reset = () => {
-    setModel(VehicleModel.BMW);
+  const reset = useCallback(() => {
+    setModel("");
     setYear("");
     setPriceUsd("");
     setCarPaid(false);
@@ -187,8 +202,11 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
     setLot("");
     setVin("");
     setCustomerNotes("");
+    setContainerNumberBooking("");
+    setPromisedPickUpDate("");
+    setDeliveredWarehouse("");
     setErrors({});
-  };
+  }, []);
 
   return {
     fields: {
@@ -205,6 +223,9 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       lot,
       vin,
       customerNotes,
+      containerNumberBooking,
+      promisedPickUpDate,
+      deliveredWarehouse,
     },
     actions: {
       setModel: ({ value }) => setModel(value),
@@ -220,6 +241,9 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       setLot: ({ value }) => setLot(value),
       setVin: ({ value }) => setVin(value),
       setCustomerNotes: ({ value }) => setCustomerNotes(value),
+      setContainerNumberBooking: ({ value }) => setContainerNumberBooking(value),
+      setPromisedPickUpDate: ({ value }) => setPromisedPickUpDate(value),
+      setDeliveredWarehouse: ({ value }) => setDeliveredWarehouse(value),
       reset,
       clearError,
     },

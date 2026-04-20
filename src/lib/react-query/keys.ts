@@ -37,6 +37,7 @@ export const queryKeys = {
     all: ["shipping"] as const,
     list: (filters?: Record<string, unknown>) => ["shipping", "list", filters] as const,
     detail: (id: string) => ["shipping", "detail", id] as const,
+    prices: (auction?: string) => ["shipping", "prices", auction] as const,
   },
   
   // Calculator

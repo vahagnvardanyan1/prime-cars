@@ -6,7 +6,12 @@ export type AdminCarDetails = {
   lot?: string;
   vin?: string;
   customerNotes?: string;
-  invoice?: string;
+  vehiclePdf?: string;
+  insurancePdf?: string;
+  shippingPdf?: string;
+  containerNumberBooking?: string;
+  promisedPickUpDate?: string;
+  deliveredWarehouse?: string;
 };
 
 export type AdminCar = {
@@ -21,6 +26,9 @@ export type AdminCar = {
   insurance: boolean;
   status?: string;
   details?: AdminCarDetails;
+  vehiclePdf?: string;
+  insurancePdf?: string;
+  shippingPdf?: string;
   client?: string;
   invoiceId?: string;
   createdAt?: string;

@@ -6,10 +6,20 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { CheckCircle2, XCircle } from "lucide-react";
 
+// Helper to sanitize numeric input (removes leading zeros, non-numeric chars)
+const sanitizeNumericInput = (value: string): string => {
+  // Remove non-numeric characters except for empty string
+  const numericOnly = value.replace(/[^0-9]/g, "");
+  // Remove leading zeros (but keep "0" if that's all there is)
+  if (numericOnly === "") return "";
+  return String(parseInt(numericOnly, 10));
+};
+
 import type { AdminCar } from "@/lib/admin/types";
 import { VehicleType, Auction } from "@/lib/admin/types";
 import { updateCar } from "@/lib/admin/updateCar";
 import { fetchUsers } from "@/lib/admin/fetchUsers";
+import { useShippingPrices } from "@/lib/react-query/hooks/useShipping";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,11 +75,23 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
   const [auction, setAuction] = useState<string>("");
   const [purchaseDate, setPurchaseDate] = useState("");
   const [city, setCity] = useState("");
+
+  // Fetch cities using React Query (cached automatically)
+  const { data: cities = [], isLoading: loadingCities } = useShippingPrices(
+    auction as Auction | undefined
+  );
   const [lot, setLot] = useState("");
   const [vin, setVin] = useState("");
   const [customerNotes, setCustomerNotes] = useState("");
-  const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
-  const [currentInvoice, setCurrentInvoice] = useState<string>("");
+  const [containerNumberBooking, setContainerNumberBooking] = useState("");
+  const [promisedPickUpDate, setPromisedPickUpDate] = useState("");
+  const [deliveredWarehouse, setDeliveredWarehouse] = useState("");
+  const [vehiclePdfFile, setVehiclePdfFile] = useState<File | null>(null);
+  const [currentVehiclePdf, setCurrentVehiclePdf] = useState<string>("");
+  const [insurancePdfFile, setInsurancePdfFile] = useState<File | null>(null);
+  const [currentInsurancePdf, setCurrentInsurancePdf] = useState<string>("");
+  const [shippingPdfFile, setShippingPdfFile] = useState<File | null>(null);
+  const [currentShippingPdf, setCurrentShippingPdf] = useState<string>("");
   const [carPaid, setCarPaid] = useState(false);
   const [shippingPaid, setShippingPaid] = useState(false);
   const [insurance, setInsurance] = useState(false);
@@ -87,8 +109,15 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
       setLot(car.details?.lot || "");
       setVin(car.details?.vin || "");
       setCustomerNotes(car.details?.customerNotes || "");
-      setCurrentInvoice(car.details?.invoice || "");
-      setInvoiceFile(null);
+      setContainerNumberBooking(car.details?.containerNumberBooking || "");
+      setPromisedPickUpDate(car.details?.promisedPickUpDate ? car.details.promisedPickUpDate.split('T')[0] : "");
+      setDeliveredWarehouse(car.details?.deliveredWarehouse ? car.details.deliveredWarehouse.split('T')[0] : "");
+      setCurrentVehiclePdf(car.details?.vehiclePdf || "");
+      setVehiclePdfFile(null);
+      setCurrentInsurancePdf(car.details?.insurancePdf || "");
+      setInsurancePdfFile(null);
+      setCurrentShippingPdf(car.details?.shippingPdf || "");
+      setShippingPdfFile(null);
       setCarPaid(car.carPaid || false);
       setShippingPaid(car.shippingPaid || false);
       setInsurance(car.insurance || false);
@@ -176,10 +205,8 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
   };
 
   const handleClose = () => {
-    // Reset selected user and invoice when closing
+    // Reset selected user when closing
     setSelectedUserId("");
-    setInvoiceFile(null);
-    setCurrentInvoice("");
     setCarPaid(false);
     setShippingPaid(false);
     setInsurance(false);
@@ -238,8 +265,13 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
           ...(lot.trim() && { lot: lot.trim() }),
           ...(vin.trim() && { vin: vin.trim() }),
           ...(customerNotes.trim() && { customerNotes: customerNotes.trim() }),
+          ...(containerNumberBooking.trim() && { containerNumberBooking: containerNumberBooking.trim() }),
+          ...(promisedPickUpDate.trim() && { promisedPickUpDate: promisedPickUpDate.trim() }),
+          ...(deliveredWarehouse.trim() && { deliveredWarehouse: deliveredWarehouse.trim() }),
         },
-        invoiceFile,
+        vehiclePdfFile,
+        insurancePdfFile,
+        shippingPdfFile,
         existingPhotos,
         newPhotos: newPhotoFiles,
         photosToDelete,
@@ -387,12 +419,11 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
               </Label>
               <Input
                 id="year"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={year}
-                onChange={(e) => setYear(e.target.value)}
+                onChange={(e) => setYear(sanitizeNumericInput(e.target.value))}
                 placeholder={t("yearPlaceholder")}
-                min="1900"
-                max={new Date().getFullYear() + 1}
                 required
                 className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
@@ -404,12 +435,11 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
               </Label>
               <Input
                 id="price"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={priceUsd}
-                onChange={(e) => setPriceUsd(e.target.value)}
+                onChange={(e) => setPriceUsd(sanitizeNumericInput(e.target.value))}
                 placeholder={t("pricePlaceholder")}
-                min="0"
-                step="0.01"
                 required
                 className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
@@ -473,13 +503,32 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
               <Label htmlFor="city" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
                 {t("city")}
               </Label>
-              <Input
-                id="city"
+              <Select
                 value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder={t("cityPlaceholder")}
-                className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
-              />
+                onValueChange={setCity}
+                disabled={loadingCities || !auction || isSubmitting}
+              >
+                <SelectTrigger className="w-full h-[44px] sm:h-[48px] bg-white dark:bg-[#161b22] hover:bg-gray-50 hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/50 focus:border-blue-500 dark:focus:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                  <SelectValue placeholder={
+                    loadingCities 
+                      ? t("loadingCities") 
+                      : !auction 
+                        ? t("selectAuctionFirst")
+                        : t("selectCity")
+                  } />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-[#1c2128] border border-gray-200 dark:border-white/10 rounded-lg shadow-lg max-h-[300px] overflow-auto z-[100]">
+                  {cities.map((cityItem) => (
+                    <SelectItem 
+                      key={cityItem.id} 
+                      value={cityItem.city}
+                      className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10 text-gray-900 dark:text-white px-3 py-2 text-[15px] sm:text-[16px]"
+                    >
+                      {cityItem.city}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">
@@ -529,140 +578,258 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
             </div>
           </div>
 
-          {/* Row 3: Payment Status & Insurance */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 pt-1 sm:pt-2">
-            {/* Car Payment */}
-            <div 
-              className={`
-                relative overflow-hidden p-4 sm:p-5 rounded-xl border-2 transition-all duration-300 cursor-pointer
-                ${carPaid 
-                  ? 'bg-green-50/80 border-green-300 dark:bg-green-950/30 dark:border-green-800/50 hover:bg-green-50 dark:hover:bg-green-950/40' 
-                  : 'bg-orange-50/80 border-orange-300 dark:bg-orange-950/30 dark:border-orange-800/50 hover:bg-orange-50 dark:hover:bg-orange-950/40'
-                }
-              `}
-              onClick={() => !isSubmitting && setCarPaid(!carPaid)}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 space-y-1.5">
-                  <div className="flex items-center gap-2">
-                    {carPaid ? (
-                      <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
-                    ) : (
-                      <XCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
-                    )}
-                    <Label htmlFor="car-paid" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
-                      {t("carPaid")}
-                    </Label>
+          {/* Row 3: Shipping & Logistics Information */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            <div className="space-y-2">
+              <Label htmlFor="containerNumberBooking" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+                {t("containerNumberBooking")}
+              </Label>
+              <Input
+                id="containerNumberBooking"
+                value={containerNumberBooking}
+                onChange={(e) => setContainerNumberBooking(e.target.value)}
+                placeholder={t("containerNumberBookingPlaceholder")}
+                className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="promisedPickUpDate" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+                {t("promisedPickUpDate")}
+              </Label>
+              <Input
+                id="promisedPickUpDate"
+                type="date"
+                value={promisedPickUpDate}
+                onChange={(e) => setPromisedPickUpDate(e.target.value)}
+                className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="deliveredWarehouse" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+                {t("deliveredWarehouse")}
+              </Label>
+              <Input
+                id="deliveredWarehouse"
+                type="date"
+                value={deliveredWarehouse}
+                onChange={(e) => setDeliveredWarehouse(e.target.value)}
+                className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
+              />
+            </div>
+          </div>
+
+          {/* Row 4: Payment Status & Insurance - Better organized UI */}
+          <div className="pt-1 sm:pt-2 space-y-6">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+              {t("paymentsAndDocuments")}
+            </h3>
+
+            {/* Car Payment Card */}
+            <div className={`
+              relative overflow-hidden rounded-xl border-2 transition-all duration-300
+              ${carPaid 
+                ? 'bg-green-50/80 border-green-300 dark:bg-green-950/30 dark:border-green-800/50' 
+                : 'bg-orange-50/80 border-orange-300 dark:bg-orange-950/30 dark:border-orange-800/50'
+              }
+            `}>
+              <div 
+                className="p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                onClick={() => !isSubmitting && setCarPaid(!carPaid)}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      {carPaid ? (
+                        <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                      ) : (
+                        <XCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+                      )}
+                      <Label htmlFor="car-paid" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
+                        {t("carPaid")}
+                      </Label>
+                    </div>
+                    <div className={`
+                      inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
+                      ${carPaid 
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' 
+                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
+                      }
+                    `}>
+                      {carPaid ? t("paid") : t("notPaid")}
+                    </div>
                   </div>
-                  <div className={`
-                    inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
-                    ${carPaid 
-                      ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' 
-                      : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
-                    }
-                  `}>
-                    {carPaid ? t("paid") : t("notPaid")}
-                  </div>
+                  <Switch
+                    id="car-paid"
+                    checked={carPaid}
+                    onCheckedChange={setCarPaid}
+                    disabled={isSubmitting}
+                    onClick={(e) => e.stopPropagation()}
+                  />
                 </div>
-                <Switch
-                  id="car-paid"
-                  checked={carPaid}
-                  onCheckedChange={setCarPaid}
+              </div>
+              <div className="px-4 pb-4 pt-2 border-t border-green-200/50 dark:border-green-800/30">
+                <PdfUploader
+                  onFileSelect={setVehiclePdfFile}
+                  currentFileName={currentVehiclePdf}
                   disabled={isSubmitting}
-                  onClick={(e) => e.stopPropagation()}
+                  translations={{
+                    label: t("vehiclePdfLabel"),
+                    dragDrop: t("dragDropVehiclePdf"),
+                    dropHere: t("dropPdfHere"),
+                    clickToBrowse: t("clickToBrowse"),
+                    maxSize: t("pdfOnlyMaxSize"),
+                    onlyPdfAllowed: t("onlyPdfAllowed"),
+                    fileSizeLimit: t("fileSizeLimit"),
+                    currentInvoice: t("currentInvoice"),
+                    viewInvoice: t("viewInvoice"),
+                    updateInvoice: t("updateInvoice"),
+                    newFile: t("newFile"),
+                    willReplaceCurrent: t("willReplaceCurrent"),
+                    cancelUpdate: t("cancelUpdate")
+                  }}
                 />
               </div>
             </div>
 
-            {/* Shipping Payment */}
-            <div 
-              className={`
-                relative overflow-hidden p-4 sm:p-5 rounded-xl border-2 transition-all duration-300 cursor-pointer
-                ${shippingPaid 
-                  ? 'bg-green-50/80 border-green-300 dark:bg-green-950/30 dark:border-green-800/50 hover:bg-green-50 dark:hover:bg-green-950/40' 
-                  : 'bg-orange-50/80 border-orange-300 dark:bg-orange-950/30 dark:border-orange-800/50 hover:bg-orange-50 dark:hover:bg-orange-950/40'
-                }
-              `}
-              onClick={() => !isSubmitting && setShippingPaid(!shippingPaid)}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 space-y-1.5">
-                  <div className="flex items-center gap-2">
-                    {shippingPaid ? (
-                      <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
-                    ) : (
-                      <XCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
-                    )}
-                    <Label htmlFor="shipping-paid" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
-                      {t("shippingPaid")}
-                    </Label>
+            {/* Shipping Payment Card */}
+            <div className={`
+              relative overflow-hidden rounded-xl border-2 transition-all duration-300
+              ${shippingPaid 
+                ? 'bg-green-50/80 border-green-300 dark:bg-green-950/30 dark:border-green-800/50' 
+                : 'bg-orange-50/80 border-orange-300 dark:bg-orange-950/30 dark:border-orange-800/50'
+              }
+            `}>
+              <div 
+                className="p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                onClick={() => !isSubmitting && setShippingPaid(!shippingPaid)}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      {shippingPaid ? (
+                        <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                      ) : (
+                        <XCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0" />
+                      )}
+                      <Label htmlFor="shipping-paid" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
+                        {t("shippingPaid")}
+                      </Label>
+                    </div>
+                    <div className={`
+                      inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
+                      ${shippingPaid 
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' 
+                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
+                      }
+                    `}>
+                      {shippingPaid ? t("paid") : t("notPaid")}
+                    </div>
                   </div>
-                  <div className={`
-                    inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
-                    ${shippingPaid 
-                      ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' 
-                      : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
-                    }
-                  `}>
-                    {shippingPaid ? t("paid") : t("notPaid")}
-                  </div>
+                  <Switch
+                    id="shipping-paid"
+                    checked={shippingPaid}
+                    onCheckedChange={setShippingPaid}
+                    disabled={isSubmitting}
+                    onClick={(e) => e.stopPropagation()}
+                  />
                 </div>
-                <Switch
-                  id="shipping-paid"
-                  checked={shippingPaid}
-                  onCheckedChange={setShippingPaid}
+              </div>
+              <div className="px-4 pb-4 pt-2 border-t border-green-200/50 dark:border-green-800/30">
+                <PdfUploader
+                  onFileSelect={setShippingPdfFile}
+                  currentFileName={currentShippingPdf}
                   disabled={isSubmitting}
-                  onClick={(e) => e.stopPropagation()}
+                  translations={{
+                    label: t("shippingPdfLabel"),
+                    dragDrop: t("dragDropShippingPdf"),
+                    dropHere: t("dropPdfHere"),
+                    clickToBrowse: t("clickToBrowse"),
+                    maxSize: t("pdfOnlyMaxSize"),
+                    onlyPdfAllowed: t("onlyPdfAllowed"),
+                    fileSizeLimit: t("fileSizeLimit"),
+                    currentInvoice: t("currentInvoice"),
+                    viewInvoice: t("viewInvoice"),
+                    updateInvoice: t("updateInvoice"),
+                    newFile: t("newFile"),
+                    willReplaceCurrent: t("willReplaceCurrent"),
+                    cancelUpdate: t("cancelUpdate")
+                  }}
                 />
               </div>
             </div>
 
-            {/* Insurance */}
-            <div 
-              className={`
-                relative overflow-hidden p-4 sm:p-5 rounded-xl border-2 transition-all duration-300 cursor-pointer
-                ${insurance 
-                  ? 'bg-blue-50/80 border-blue-300 dark:bg-blue-950/30 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-blue-950/40' 
-                  : 'bg-gray-50/80 border-gray-300 dark:bg-gray-800/30 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/40'
-                }
-              `}
-              onClick={() => !isSubmitting && setInsurance(!insurance)}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 space-y-1.5">
-                  <div className="flex items-center gap-2">
-                    {insurance ? (
-                      <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                    ) : (
-                      <XCircle className="h-5 w-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
-                    )}
-                    <Label htmlFor="insurance" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
-                      {t("insurance")}
-                    </Label>
+            {/* Insurance Card */}
+            <div className={`
+              relative overflow-hidden rounded-xl border-2 transition-all duration-300
+              ${insurance 
+                ? 'bg-blue-50/80 border-blue-300 dark:bg-blue-950/30 dark:border-blue-800/50' 
+                : 'bg-gray-50/80 border-gray-300 dark:bg-gray-800/30 dark:border-gray-700/50'
+              }
+            `}>
+              <div 
+                className="p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                onClick={() => !isSubmitting && setInsurance(!insurance)}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      {insurance ? (
+                        <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                      ) : (
+                        <XCircle className="h-5 w-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+                      )}
+                      <Label htmlFor="insurance" className="text-base font-bold text-gray-900 dark:text-white cursor-pointer">
+                        {t("insurance")}
+                      </Label>
+                    </div>
+                    <div className={`
+                      inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
+                      ${insurance 
+                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' 
+                        : 'bg-gray-100 text-gray-700 dark:bg-gray-800/50 dark:text-gray-300'
+                      }
+                    `}>
+                      {insurance ? t("exists") : t("notExists")}
+                    </div>
                   </div>
-                  <div className={`
-                    inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold
-                    ${insurance 
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' 
-                      : 'bg-gray-100 text-gray-700 dark:bg-gray-800/50 dark:text-gray-300'
-                    }
-                  `}>
-                    {insurance ? t("exists") : t("notExists")}
-                  </div>
+                  <Switch
+                    id="insurance"
+                    checked={insurance}
+                    onCheckedChange={setInsurance}
+                    disabled={isSubmitting}
+                    onClick={(e) => e.stopPropagation()}
+                  />
                 </div>
-                <Switch
-                  id="insurance"
-                  checked={insurance}
-                  onCheckedChange={setInsurance}
+              </div>
+              <div className="px-4 pb-4 pt-2 border-t border-blue-200/50 dark:border-blue-800/30">
+                <PdfUploader
+                  onFileSelect={setInsurancePdfFile}
+                  currentFileName={currentInsurancePdf}
                   disabled={isSubmitting}
-                  onClick={(e) => e.stopPropagation()}
+                  translations={{
+                    label: t("insurancePdfLabel"),
+                    dragDrop: t("dragDropInsurancePdf"),
+                    dropHere: t("dropPdfHere"),
+                    clickToBrowse: t("clickToBrowse"),
+                    maxSize: t("pdfOnlyMaxSize"),
+                    onlyPdfAllowed: t("onlyPdfAllowed"),
+                    fileSizeLimit: t("fileSizeLimit"),
+                    currentInvoice: t("currentInvoice"),
+                    viewInvoice: t("viewInvoice"),
+                    updateInvoice: t("updateInvoice"),
+                    newFile: t("newFile"),
+                    willReplaceCurrent: t("willReplaceCurrent"),
+                    cancelUpdate: t("cancelUpdate")
+                  }}
                 />
               </div>
             </div>
           </div>
 
-          {/* Row 4: Customer Notes and Invoice Upload */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 pt-1 sm:pt-2">
+          {/* Row 4: Customer Notes */}
+          <div className="pt-1 sm:pt-2">
             <div className="space-y-2">
               <Label htmlFor="notes" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
               {t("customerNotes")}
@@ -676,21 +843,6 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 resize-none bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
             </div>
-            
-            <PdfUploader
-              onFileSelect={setInvoiceFile}
-              currentFileName={currentInvoice}
-              disabled={isSubmitting}
-              translations={{
-                label: t("invoiceLabel"),
-                dragDrop: t("dragDropInvoice"),
-                dropHere: t("dropPdfHere"),
-                clickToBrowse: t("clickToBrowse"),
-                maxSize: t("pdfOnlyMaxSize"),
-                onlyPdfAllowed: t("onlyPdfAllowed"),
-                fileSizeLimit: t("fileSizeLimit")
-              }}
-            />
           </div>
         </div>
 

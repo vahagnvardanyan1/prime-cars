@@ -1,0 +1,28 @@
+{
+  "name": "Prime Cars — Ավտոմեքենաների ներմուծում",
+  "short_name": "Prime Cars",
+  "description": "Prime Cars — ԱՄՆ-ից մեքենաների ներմուծում Հայաստան։ COPART, IAAI, ծովային փոխադրում, մաքսազերծում։",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "hy-AM",
+  "dir": "ltr",
+  "background_color": "#0a0e14",
+  "theme_color": "#429de6",
+  "categories": ["business", "shopping", "automotive"],
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

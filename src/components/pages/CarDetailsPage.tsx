@@ -100,9 +100,9 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
           </p>
           <button
             onClick={() => router.push("/cars")}
-            className="inline-flex items-center px-5 py-2.5 bg-[#429de6] text-white text-sm font-semibold rounded-lg hover:bg-[#3a8acc] transition-all hover:shadow-lg active:scale-95"
+            className="inline-flex items-center px-5 py-2.5 bg-[#429de6] text-white text-sm font-semibold rounded-lg hover:bg-[#3a8acc] transition-colors hover:shadow-lg active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
           >
-            <ChevronLeft className="w-4 h-4 mr-1.5" />
+            <ChevronLeft aria-hidden="true" className="w-4 h-4 mr-1.5" />
             {t("notFound.backButton")}
           </button>
         </div>

@@ -6,6 +6,7 @@ import { useRouter } from "@/i18n/routing";
 
 import type { Car } from "@/lib/cars/types";
 import { translateEngineType, translateTransmission, translateFuelType } from "@/lib/utils/translateVehicleSpecs";
+import { carDetailPath } from "@/lib/seo/slug";
 import {
   Carousel,
   CarouselContent,
@@ -13,6 +14,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { CategoryBadge } from "@/components/ui/badges";
 
 interface CarsCarouselProps {
   cars: Car[];
@@ -49,7 +51,8 @@ export const CarsCarousel = ({ cars }: CarsCarouselProps) => {
         <CarouselContent className="-ml-4">
           {cars.map((car) => {
             const carImage = car.photos?.[0] || car.imageUrl;
-            const carName = `${car.brand} ${car.model}`;
+            // const carName = `${car.brand} ${car.model};
+            const carName = car?.model;
             const carPrice = new Intl.NumberFormat("en-US", {
               style: "currency",
               currency: "USD",
@@ -57,13 +60,22 @@ export const CarsCarousel = ({ cars }: CarsCarouselProps) => {
             }).format(car.priceUsd);
 
             return (
-              <CarouselItem 
-                key={car.id} 
+              <CarouselItem
+                key={car.id}
                 className="pl-4 basis-[85%] sm:basis-[55%] md:basis-[42%] lg:basis-[31%] xl:basis-[28%]"
               >
-                <div 
-                  onClick={() => router.push(`/cars/${car.id}`)}
-                  className="bg-white dark:bg-[#111111] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-all group h-full cursor-pointer"
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => router.push(carDetailPath(car.id, car.year, car.brand, car.model))}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      router.push(carDetailPath(car.id, car.year, car.brand, car.model));
+                    }
+                  }}
+                  aria-label={`${carName} - ${carPrice}`}
+                  className="bg-white dark:bg-[#111111] rounded-xl overflow-hidden border border-gray-200 dark:border-white/10 hover:border-[#429de6]/50 transition-colors group h-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-offset-2"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden bg-gray-100 dark:bg-[#1a1a1a]">
                     {/* Year Badge - Left */}
@@ -72,21 +84,15 @@ export const CarsCarousel = ({ cars }: CarsCarouselProps) => {
                     </div>
                     
                     {/* Category Badge - Right */}
-                    <div className={`absolute top-4 right-4 px-3 py-1 backdrop-blur-sm rounded-full text-xs font-semibold border z-10 ${
-                      car.category === "AVAILABLE" 
-                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" 
-                        : car.category === "ONROAD" 
-                        ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" 
-                        : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20"
-                    }`}>
-                      {car.category === "AVAILABLE" && t("carDetails.badges.available")}
-                      {car.category === "ONROAD" && t("carDetails.badges.arriving")}
-                      {car.category === "TRANSIT" && t("carDetails.badges.order")}
-                    </div>
+                    <CategoryBadge
+                      category={car.category}
+                      variant="pill"
+                      className="absolute top-4 right-4 z-10"
+                    />
                     
                     <Image
                       src={carImage}
-                      alt={carName}
+                      alt={`${car.year} ${carName} — ${carPrice} — Prime Cars import from USA`}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
                       sizes="(max-width: 768px) 100vw, 33vw"
@@ -96,16 +102,16 @@ export const CarsCarousel = ({ cars }: CarsCarouselProps) => {
                     <h3 className="mb-2 line-clamp-2">{carName}</h3>
                     <p className="text-sm mb-4 text-gray-600 dark:text-gray-400">
                       {car.transmission && translateTransmission(car.transmission, tCarDetails)}
-                      {car.transmission && car.fuelType && " • "}
+                      {car.transmission && car.fuelType && <span aria-hidden="true"> • </span>}
                       {car.fuelType && translateFuelType(car.fuelType, tCarDetails)}
-                      {(car.transmission || car.fuelType) && car.engine && " • "}
+                      {(car.transmission || car.fuelType) && car.engine && <span aria-hidden="true"> • </span>}
                       {car.engine && translateEngineType(car.engine, tCarDetails)}
                     </p>
                     <div className="border-t border-gray-200 dark:border-white/10 pt-4">
                       <div className="text-gray-500 dark:text-gray-400 text-xs mb-1">
                         {t("home.popularDeals.priceLabel")}
                       </div>
-                      <div className="text-gray-900 dark:text-white text-lg font-semibold">
+                      <div className="text-gray-900 dark:text-white text-lg font-semibold tabular-nums">
                         {carPrice}
                       </div>
                     </div>
