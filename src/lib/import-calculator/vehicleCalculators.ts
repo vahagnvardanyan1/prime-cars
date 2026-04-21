@@ -23,27 +23,30 @@ export type VehicleCalcParams = {
 };
 
 /**
- * CalculatorResults multiplies results by eurUsdRate (expecting EUR input).
- * Client-side functions produce EUR values, so we pre-multiply by eurUsdRate²
- * to ensure the final displayed USD values are correct.
+ * Calculators produce EUR values. This function converts EUR → USD
+ * by multiplying by eurUsdRate (single multiplication).
+ *
+ * PREVIOUS VERSION (kept for reference):
+ * Used eurUsdRate² here, combined with CalculatorResults' × eurUsdRate = rate³ total.
+ * const r2 = eurUsdRate * eurUsdRate;
+ * globTax: Math.round(result.customsDuty * r2),
  */
 function applyRateCompensation(
   result: { customsDuty: number; vat: number; environmentalTax: number; total: number },
   eurUsdRate: number,
   type: string
 ): CalculatorResponse {
-  const r2 = eurUsdRate * eurUsdRate;
   return {
-    globTax: Math.round(result.customsDuty * r2),
-    nds: Math.round(result.vat * r2),
-    envTaxPay: Math.round(result.environmentalTax * r2),
-    sumPay: Math.round(result.total * r2),
+    globTax: Math.round(result.customsDuty * eurUsdRate),
+    nds: Math.round(result.vat * eurUsdRate),
+    envTaxPay: Math.round(result.environmentalTax * eurUsdRate),
+    sumPay: Math.round(result.total * eurUsdRate),
     type,
   };
 }
 
 export function calculateTruckResult(params: VehicleCalcParams): CalculatorResponse {
-  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolume, weightClass, year, engine, eurUsdRate, importer } = params;
+  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolume, weightClass, year, day, month, engine, eurUsdRate, importer } = params;
   const result = calculateTruckTaxes({
     vehiclePriceEur: vehiclePriceUsd / eurUsdRate,
     auctionFeeEur: auctionFeeUsd / eurUsdRate,
@@ -51,6 +54,8 @@ export function calculateTruckResult(params: VehicleCalcParams): CalculatorRespo
     engineVolumeLiters: engineVolume,
     weightClass: weightClass as TruckWeightClass,
     vehicleYear: year,
+    vehicleMonth: parseInt(month),
+    vehicleDay: parseInt(day),
     engineType: engine === "diesel" ? "diesel" : engine === "electric" ? "electric" : "petrol",
     importer,
   });
@@ -58,13 +63,15 @@ export function calculateTruckResult(params: VehicleCalcParams): CalculatorRespo
 }
 
 export function calculateQuadricycleResult(params: VehicleCalcParams): CalculatorResponse {
-  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolume, year, eurUsdRate, importer, hasReverse } = params;
+  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolume, year, day, month, eurUsdRate, importer, hasReverse } = params;
   const result = calculateQuadricycleTaxes({
     vehiclePriceEur: vehiclePriceUsd / eurUsdRate,
     auctionFeeEur: auctionFeeUsd / eurUsdRate,
     shippingPriceEur: shippingPriceUsd / eurUsdRate,
     engineVolumeLiters: engineVolume,
     vehicleYear: year,
+    vehicleMonth: parseInt(month),
+    vehicleDay: parseInt(day),
     importer,
     hasReverse,
   });
@@ -72,12 +79,14 @@ export function calculateQuadricycleResult(params: VehicleCalcParams): Calculato
 }
 
 export function calculateSnowmobileResult(params: VehicleCalcParams): CalculatorResponse {
-  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, year, eurUsdRate, importer } = params;
+  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, year, day, month, eurUsdRate, importer } = params;
   const result = calculateSnowmobileTaxes({
     vehiclePriceEur: vehiclePriceUsd / eurUsdRate,
     auctionFeeEur: auctionFeeUsd / eurUsdRate,
     shippingPriceEur: shippingPriceUsd / eurUsdRate,
     vehicleYear: year,
+    vehicleMonth: parseInt(month),
+    vehicleDay: parseInt(day),
     importer,
   });
   return applyRateCompensation(result, eurUsdRate, "snowmobile");

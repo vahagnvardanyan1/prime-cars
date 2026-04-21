@@ -11,7 +11,8 @@ import {
   calculateEurUsdRate,
   type ExchangeRates,
 } from "@/lib/import-calculator/fetchExchangeRates";
-import { calculateServiceFee } from "@/lib/import-calculator/auctionFees";
+import { calculateServiceFee, calculateServiceFeeFromBrackets } from "@/lib/import-calculator/auctionFees";
+import type { IncomeTaxBracket } from "@/lib/admin/types";
 
 // Fallback rates hoisted outside component to avoid recreation (React best practice 7.9)
 const FALLBACK_RATES: ExchangeRates = {
@@ -35,12 +36,15 @@ type CalculatorResultsProps = {
   engineVolume: string;
   weightClass?: string;
   showPartnerMessage?: boolean;
+  otherExpenses?: string;
   onBack: () => void;
   // Restricted data - only provided in admin panel
   insuranceFee?: string;
   shippingPrice?: number;
   calculationResults?: CalculatorResponse | null;
   hasInsurance?: boolean;
+  // Per-user income tax brackets (for logged-in users)
+  incomeTaxBrackets?: IncomeTaxBracket[] | null;
 };
 
 export const CalculatorResults = ({
@@ -57,12 +61,14 @@ export const CalculatorResults = ({
   engineVolume,
   weightClass,
   showPartnerMessage = false,
+  otherExpenses,
   onBack,
   // Restricted data - only available in admin
   insuranceFee,
   shippingPrice,
   calculationResults,
   hasInsurance = false,
+  incomeTaxBrackets,
 }: CalculatorResultsProps) => {
   const t = useTranslations();
   const [exchangeRates, setExchangeRates] = useState<ExchangeRates | null>(null);
@@ -112,10 +118,17 @@ export const CalculatorResults = ({
       return { customsUsd: 0, vatUsd: 0, envTaxUsd: 0 };
     }
 
+    // Local calculators (truck, quadricycle, etc.) return USD via applyRateCompensation.
+    // Passenger car API returns EUR — needs conversion here.
+    // These type strings are set by us in vehicleCalculators.ts — they will never collide with API types.
+    const LOCAL_USD_TYPES = ["truck", "quadricycle", "snowmobile", "jetski", "motorcycle"];
+    const isAlreadyUsd = LOCAL_USD_TYPES.includes(calculationResults.type);
+    const rate = isAlreadyUsd ? 1 : eurUsdRateNum;
+
     return {
-      customsUsd: Math.round((calculationResults.globTax ?? 0) * eurUsdRateNum),
-      vatUsd: Math.round((calculationResults.nds ?? 0) * eurUsdRateNum),
-      envTaxUsd: Math.round((calculationResults.envTaxPay ?? 0) * eurUsdRateNum),
+      customsUsd: Math.round((calculationResults.globTax ?? 0) * rate),
+      vatUsd: Math.round((calculationResults.nds ?? 0) * rate),
+      envTaxUsd: Math.round((calculationResults.envTaxPay ?? 0) * rate),
     };
   }, [hasRestrictedData, calculationResults, eurUsdRateNum]);
 
@@ -137,7 +150,15 @@ export const CalculatorResults = ({
     // Calculate subtotal before service fee
     const subtotal = vehiclePriceUsd + auctionFeeUsd + shippingPriceUsd + insuranceFeeUsd + customsUsd + vatUsd + envTaxUsd;
 
-    return Math.round(calculateServiceFee(subtotal, importer));
+    // Use per-user brackets if available (logged-in individual), otherwise hardcoded
+    if (importer === "individual" && incomeTaxBrackets && incomeTaxBrackets.length > 0) {
+      const fee = Math.round(calculateServiceFeeFromBrackets(subtotal, incomeTaxBrackets));
+      console.log('[ServiceFee] Using user brackets | subtotal:', subtotal, '| fee:', fee, '| brackets:', incomeTaxBrackets.length);
+      return fee;
+    }
+    const fee = Math.round(calculateServiceFee(subtotal, importer));
+    console.log('[ServiceFee] Using hardcoded | subtotal:', subtotal, '| importer:', importer, '| fee:', fee);
+    return fee;
   }, [
     hasRestrictedData,
     vehiclePrice,
@@ -147,6 +168,7 @@ export const CalculatorResults = ({
     hasInsurance,
     taxCalculations,
     importer,
+    incomeTaxBrackets,
   ]);
 
   // Memoize total calculation (React best practice 5.2 - extract expensive work)
@@ -158,11 +180,12 @@ export const CalculatorResults = ({
     const shippingPriceUsd = shippingPrice ?? 0;
     const auctionFeeUsd = parseFloat(auctionFee) || 0;
     const insuranceFeeUsd = hasInsurance ? (parseFloat(insuranceFee ?? "0") || 0) : 0;
+    const otherExpensesUsd = parseFloat(otherExpenses ?? "0") || 0;
 
     const { customsUsd, vatUsd, envTaxUsd } = taxCalculations;
 
     return Math.round(
-      vehiclePriceUsd + shippingPriceUsd + customsUsd + vatUsd + envTaxUsd + auctionFeeUsd + calculatedServiceFee + insuranceFeeUsd
+      vehiclePriceUsd + shippingPriceUsd + customsUsd + vatUsd + envTaxUsd + auctionFeeUsd + calculatedServiceFee + insuranceFeeUsd + otherExpensesUsd
     );
   }, [
     hasRestrictedData,
@@ -171,6 +194,7 @@ export const CalculatorResults = ({
     auctionFee,
     insuranceFee,
     hasInsurance,
+    otherExpenses,
     taxCalculations,
     calculatedServiceFee,
   ]);
@@ -403,6 +427,20 @@ export const CalculatorResults = ({
                   )}
                 </td>
               </tr>
+
+              {/* Row 5: Other Expenses (only if value > 0) */}
+              {(parseFloat(otherExpenses ?? "0") || 0) > 0 && (
+                <tr className="bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-900/50 hover:from-gray-200 hover:to-gray-50 dark:hover:from-gray-800 dark:hover:to-gray-900/60 transition-colors">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.otherExpenses")}</td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
+                    ${otherExpenses}
+                  </td>
+                  <td className="px-3 sm:px-6 py-3 sm:py-4"></td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4"></td>
+                  <td colSpan={2} className="px-3 sm:px-6 py-3 sm:py-4"></td>
+                </tr>
+              )}
 
               {/* Total row - full width */}
               <tr className="bg-gradient-to-r from-[#429de6]/10 to-[#429de6]/20 dark:from-[#429de6]/20 dark:to-[#429de6]/10 hover:from-[#429de6]/20 hover:to-[#429de6]/30 dark:hover:from-[#429de6]/30 dark:hover:to-[#429de6]/20 transition-colors border-t-2 border-[#429de6]/30 dark:border-[#429de6]/50">

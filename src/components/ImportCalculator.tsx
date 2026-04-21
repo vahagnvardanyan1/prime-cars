@@ -22,6 +22,9 @@ import {
 } from "@/lib/import-calculator/fetchShippingPrices";
 
 import { calculateAuctionFees } from "@/lib/import-calculator/auctionFees";
+import { fetchUserIncomeTax } from "@/lib/admin/fetchUserIncomeTax";
+import type { IncomeTaxBracket } from "@/lib/admin/types";
+import { useUser } from "@/contexts/UserContext";
 import { type TruckWeightClass } from "@/lib/import-calculator/calculateTruckTaxes";
 import {
   calculateTruckResult,
@@ -46,6 +49,7 @@ export const ImportCalculator = ({
   disablePartnerRestrictions = false 
 }: ImportCalculatorProps) => {
   const t = useTranslations();
+  const { user } = useUser();
 
   const [activeTab, setActiveTab] = useState<"iaai" | "copart" | "manheim" | "other">("copart");
   const [importer, setImporter] = useState("legal");
@@ -55,9 +59,9 @@ export const ImportCalculator = ({
   const [shippingPrice, setShippingPrice] = useState(0);
   const [manualShippingPrice, setManualShippingPrice] = useState("");
   const [auctionLocation, setAuctionLocation] = useState("");
-  const [vehicleType, setVehicleType] = useState("");
+  const [vehicleType, setVehicleType] = useState("passenger");
   const [weightClass, setWeightClass] = useState<TruckWeightClass | "">("");
-  const [engine, setEngine] = useState("");
+  const [engine, setEngine] = useState("gasoline");
   const [engineVolume, setEngineVolume] = useState("");
   const [insurance, setInsurance] = useState(false);
   const [highGroundClearance, setHighGroundClearance] = useState(false);
@@ -79,6 +83,23 @@ export const ImportCalculator = ({
   const [cityTax, setCityTax] = useState(0);
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
+  const [userBrackets, setUserBrackets] = useState<IncomeTaxBracket[] | null>(null);
+
+  // Fetch user's income tax brackets if logged in
+  useEffect(() => {
+    if (!user?.id) { setUserBrackets(null); return; }
+    console.log('[IncomeTax] Fetching brackets for user:', user.id);
+    fetchUserIncomeTax({ userId: user.id }).then(result => {
+      console.log('[IncomeTax] API result:', JSON.stringify(result));
+      if (result.success && result.incomeTaxBrackets.length > 0) {
+        setUserBrackets(result.incomeTaxBrackets);
+        console.log('[IncomeTax] Loaded', result.incomeTaxBrackets.length, 'brackets');
+      } else {
+        console.log('[IncomeTax] No brackets found, using hardcoded defaults');
+        setUserBrackets(null);
+      }
+    });
+  }, [user?.id]);
 
   // Handle browser back button when showing results
   useEffect(() => {
@@ -972,7 +993,9 @@ export const ImportCalculator = ({
           weightClass={weightClass}
           showPartnerMessage={showPartnerMessage}
           onBack={handleBackFromResults}
+          otherExpenses={otherExpenses}
           // Restricted data - only pass when in admin panel
+          incomeTaxBrackets={userBrackets}
           {...(disablePartnerRestrictions && {
             insuranceFee,
             shippingPrice,

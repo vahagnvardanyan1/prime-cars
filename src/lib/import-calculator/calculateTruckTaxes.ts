@@ -19,6 +19,7 @@ import {
   ENVIRONMENTAL_TAX_RATES,
   VAT_RATE,
 } from "./truckTaxConstants";
+import { calculateVehicleAge } from "./calculateAge";
 
 export type TruckWeightClass = TruckWeightClassType;
 export type { TruckEngineType };
@@ -30,6 +31,8 @@ export type TruckTaxParams = {
   engineVolumeLiters: number;
   weightClass: TruckWeightClass;
   vehicleYear: number;
+  vehicleMonth: number;
+  vehicleDay: number;
   engineType: TruckEngineType;
   importer: string; // "legal" | "individual"
 };
@@ -41,13 +44,8 @@ export type TruckTaxResult = {
   total: number;
 };
 
-function calculateVehicleAge(vehicleYear: number): number {
-  const currentYear = new Date().getFullYear();
-  return currentYear - vehicleYear;
-}
-
-function getAgeCategory(vehicleYear: number): TruckAgeCategory {
-  const age = calculateVehicleAge(vehicleYear);
+function getAgeCategory(vehicleYear: number, vehicleMonth: number, vehicleDay: number): TruckAgeCategory {
+  const age = calculateVehicleAge(vehicleYear, vehicleMonth, vehicleDay);
 
   if (age <= 2) return "0-2";
   if (age <= 4) return "3-4";
@@ -193,9 +191,11 @@ function calculateCustomsDuty(
   weightClass: TruckWeightClass,
   engineVolumeLiters: number,
   customsDutyBase: number,
-  vehicleYear: number
+  vehicleYear: number,
+  vehicleMonth: number,
+  vehicleDay: number
 ): number {
-  const age = calculateVehicleAge(vehicleYear);
+  const age = calculateVehicleAge(vehicleYear, vehicleMonth, vehicleDay);
   const engineCc = engineVolumeLiters * 1000;
 
   if (engineType === "electric") {
@@ -235,6 +235,8 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
     engineVolumeLiters,
     weightClass,
     vehicleYear,
+    vehicleMonth,
+    vehicleDay,
     engineType,
     importer,
   } = params;
@@ -252,7 +254,9 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
     weightClass,
     engineVolumeLiters,
     customsDutyBase,
-    vehicleYear
+    vehicleYear,
+    vehicleMonth,
+    vehicleDay
   );
 
   // VAT: differs by importer type
@@ -267,7 +271,7 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
   // Environmental tax: same base for both importers (no customsDuty, no shipping)
   // (vehiclePrice + auctionFee) × age-based rate%
   const envTaxBase = baseValue;
-  const ageCategory = getAgeCategory(vehicleYear);
+  const ageCategory = getAgeCategory(vehicleYear, vehicleMonth, vehicleDay);
   const envTaxRate = ENVIRONMENTAL_TAX_RATES[ageCategory];
   const environmentalTax = envTaxBase * envTaxRate;
 

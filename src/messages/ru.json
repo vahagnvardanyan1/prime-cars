@@ -296,7 +296,7 @@
       "weightClassUnder5": "До 5 тонн",
       "weightClass5to20": "От 5 до 20 тонн",
       "weightClassAbove20": "Более 20 тонн",
-      "outOfAuctionBorders": "За пределами аукциона (Sublot)",
+      "outOfAuctionBorders": "За пределами аукциона (Offsite, Sublot)",
       "otherExpenses": "Прочие расходы",
       "calculateCost": "Рассчитать стоимость",
       "calculating": "Расчёт",
@@ -679,6 +679,23 @@
         "auctionChange": "Аукцион",
         "cancel": "Отмена",
         "confirm": "Подтвердить обновление"
+      },
+    "incomeTaxTab": "Комиссия",
+    "incomeTaxTitle": "Комиссионные ставки",
+    "incomeTaxDescription": "Настройте комиссионные ставки для каждого пользователя. Каждая ставка определяет диапазон суммы и размер комиссии (фиксированный или процентный), который применяется.",
+    "incomeTaxLoading": "Загрузка комиссионных ставок...",
+    "incomeTaxLoadError": "Не удалось загрузить комиссионные ставки",
+    "incomeTaxSaveSuccess": "Комиссионные ставки успешно обновлены",
+    "incomeTaxSaveError": "Не удалось обновить комиссионные ставки",
+    "incomeTaxAddBracket": "Добавить ставку",
+    "incomeTaxSave": "Сохранить ставки",
+    "incomeTaxCancel": "Отмена",
+    "incomeTaxConfirmDialog": {
+      "title": "Обновление комиссионных ставок",
+      "description": "Вы уверены, что хотите обновить комиссионные ставки для",
+      "bracketCount": "{count, plural, one {# ставка} few {# ставки} many {# ставок} other {# ставки}} будут сохранены",
+      "cancel": "Отмена",
+      "confirm": "Подтвердить обновление"
       }
     },
     "modals": {

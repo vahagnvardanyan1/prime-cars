@@ -14,6 +14,7 @@ import { AddShippingModal } from "@/components/admin/modals/AddShippingModal";
 import { ChangePasswordModal } from "@/components/admin/modals/ChangePasswordModal";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { UserCoefficientRow } from "@/components/admin/primitives/UserCoefficientRow";
+import { UserIncomeTaxRow } from "@/components/admin/primitives/UserIncomeTaxRow";
 import { formatUsd } from "@/lib/admin/format";
 import { type ShippingCity, AdminUser } from "@/lib/admin/types";
 import { Auction } from "@/lib/admin/types";
@@ -75,9 +76,11 @@ export const SettingsView = ({
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   
   // Initialize tab and search from URL
-  const [activeTab, setActiveTab] = useState<"shipping" | "users">(() => {
+  const [activeTab, setActiveTab] = useState<"shipping" | "users" | "incomeTax">(() => {
     const tab = searchParams.get("tab");
-    return tab === "users" ? "users" : "shipping";
+    if (tab === "users") return "users";
+    if (tab === "incomeTax") return "incomeTax";
+    return "shipping";
   });
   
   const [citySearch, setCitySearch] = useState(() => {
@@ -100,6 +103,8 @@ export const SettingsView = ({
     
     if (tab === "users") {
       setActiveTab("users");
+    } else if (tab === "incomeTax") {
+      setActiveTab("incomeTax");
     } else {
       setActiveTab("shipping");
     }
@@ -153,14 +158,14 @@ export const SettingsView = ({
     fetchPriceSummary();
   }, [adjustmentAuction]);
 
-  const handleTabChange = (tab: "shipping" | "users") => {
+  const handleTabChange = (tab: "shipping" | "users" | "incomeTax") => {
     setActiveTab(tab);
     // Update URL without page reload
     const params = new URLSearchParams(searchParams.toString());
-    if (tab === "users") {
-      params.set("tab", "users");
-    } else {
+    if (tab === "shipping") {
       params.delete("tab"); // Default is shipping, so remove param
+    } else {
+      params.set("tab", tab);
     }
     router.push(`?${params.toString()}`, { scroll: false });
   };
@@ -300,6 +305,17 @@ export const SettingsView = ({
               }`}
             >
               {t("admin.settingsView.usersTab")}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleTabChange("incomeTax")}
+              className={`px-4 sm:px-6 py-3 text-xs sm:text-sm font-semibold whitespace-nowrap transition-all ${
+                activeTab === "incomeTax"
+                  ? "border-b-2 border-[#429de6] text-[#429de6] dark:text-[#429de6]"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+              }`}
+            >
+              {t("admin.settingsView.incomeTaxTab")}
             </button>
           </div>
           <div className="px-2 sm:pr-4">
@@ -695,6 +711,60 @@ export const SettingsView = ({
                       user={user}
                       onUpdateCoefficient={onUpdateCoefficient}
                     />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </Surface>
+      )}
+
+      {/* Income Tax Tab */}
+      {isAdmin && activeTab === "incomeTax" && (
+        <Surface>
+          <div className="px-6 py-6">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {t("admin.settingsView.incomeTaxTitle")}
+            </h1>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              {t("admin.settingsView.incomeTaxDescription")}
+            </p>
+          </div>
+
+          {/* Search Input */}
+          <div className="px-6 pb-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="text"
+                placeholder={tSettings("searchUserPlaceholder")}
+                value={userSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
+                className="pl-10 h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10 focus-visible:ring-[#429de6]"
+              />
+            </div>
+          </div>
+
+          <div className="px-6 pb-6">
+            {isLoadingUsers ? (
+              <div className="py-12 flex flex-col items-center justify-center gap-3">
+                <svg className="animate-spin h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {t("admin.settingsView.loadingUsers")}
+                </span>
+              </div>
+            ) : filteredUsers.length === 0 ? (
+              <div className="py-12 flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
+                {userSearch ? t("admin.settingsView.noUsersMatchSearch") : t("admin.settingsView.noUsersFound")}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {filteredUsers.map((user) => (
+                  <div key={user.id} className="p-3 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-[#0b0f14] hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                    <UserIncomeTaxRow user={user} />
                   </div>
                 ))}
               </div>

@@ -94,6 +94,13 @@ export type AdminUser = {
   category?: Auction;
 };
 
+export type IncomeTaxBracket = {
+  min: number;
+  max: number | null;
+  tax: number;
+  isPercent: boolean;
+};
+
 export type ShippingCity = {
   id: string;
   city: string;

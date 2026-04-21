@@ -3,6 +3,7 @@
  * Source: Official auction websites
  * Last updated: 2026-01-17
  */
+import type { IncomeTaxBracket } from "@/lib/admin/types";
 
 export type AuctionFees = {
   gateFee: number;
@@ -295,7 +296,7 @@ const calculateIndividualServiceFee = (price: number): number => {
   if (price <= 80000) return 800;
   if (price <= 90000) return 900;
   if (price <= 100000) return 1000;
-  return price * 0.01;
+  return Math.round(price * 0.05);
 };
 
 const calculateLegalServiceFee = (price: number): number => {
@@ -325,4 +326,22 @@ export const calculateServiceFee = (price: number, importer: string): number => 
   return importer === "individual"
     ? calculateIndividualServiceFee(price)
     : calculateLegalServiceFee(price);
+};
+
+export const calculateServiceFeeFromBrackets = (
+  price: number,
+  brackets: IncomeTaxBracket[]
+): number => {
+  if (price <= 0 || brackets.length === 0) return 0;
+
+  const bracket = brackets.find(
+    b => price >= b.min && (b.max === null || price <= b.max)
+  );
+
+  if (!bracket) return 0;
+
+  if (bracket.isPercent) {
+    return Math.round(price * bracket.tax / 100);
+  }
+  return bracket.tax;
 };
