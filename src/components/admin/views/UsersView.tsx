@@ -8,14 +8,7 @@ import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
 import { Pagination } from "@/components/admin/primitives/Pagination";
 import { UserFilters, type UserFiltersState } from "@/components/admin/filters/UserFilters";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table } from "@radix-ui/themes";
 import type { AdminUser } from "@/lib/admin/types";
 
 type UsersViewProps = {
@@ -105,25 +98,25 @@ export const UsersView = ({
       )}
 
       <div className="overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-            <TableHead className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[250px]">{tTable("name")}</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">{tTable("username")}</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[200px]">{tTable("email")}</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">{tTable("phone")}</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[150px]">{tTable("passport")}</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[180px]">{tTable("company")}</TableHead>
-            <TableHead className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("country")}</TableHead>
+      <Table.Root>
+        <Table.Header>
+          <Table.Row className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
+            <Table.ColumnHeaderCell className="px-6 py-4 sm:px-8 text-sm font-semibold min-w-[250px]">{tTable("name")}</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="px-4 py-4 text-sm font-semibold min-w-[150px]">{tTable("username")}</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="px-4 py-4 text-sm font-semibold min-w-[200px]">{tTable("email")}</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="px-4 py-4 text-sm font-semibold min-w-[150px]">{tTable("phone")}</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="px-4 py-4 text-sm font-semibold min-w-[150px]">{tTable("passport")}</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="px-4 py-4 text-sm font-semibold min-w-[180px]">{tTable("company")}</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="px-4 py-4 text-sm font-semibold min-w-[120px]">{tTable("country")}</Table.ColumnHeaderCell>
             {isAdmin && (
-              <TableHead className="px-4 py-4 text-center pr-6 sm:pr-8 text-sm font-semibold min-w-[160px]">{tTable("actions")}</TableHead>
+              <Table.ColumnHeaderCell className="px-4 py-4 text-center pr-6 sm:pr-8 text-sm font-semibold min-w-[160px]">{tTable("actions")}</Table.ColumnHeaderCell>
             )}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {isLoading ? (
-            <TableRow>
-              <TableCell colSpan={isAdmin ? 8 : 7} className="py-12">
+            <Table.Row>
+              <Table.Cell colSpan={isAdmin ? 8 : 7} className="py-12">
                 <div className="flex flex-col items-center justify-center gap-3">
                   <div aria-hidden="true" className="animate-spin">
                     <svg className="h-8 w-8 text-[#429de6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -135,20 +128,20 @@ export const UsersView = ({
                     {tTable("loadingUsers")}
                   </span>
                 </div>
-              </TableCell>
-            </TableRow>
+              </Table.Cell>
+            </Table.Row>
           ) : users.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={isAdmin ? 8 : 7} className="py-12">
+            <Table.Row>
+              <Table.Cell colSpan={isAdmin ? 8 : 7} className="py-12">
                 <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
                   {tTable("noUsersFound")}
                 </div>
-              </TableCell>
-            </TableRow>
+              </Table.Cell>
+            </Table.Row>
           ) : (
             users.map((u) => (
-            <TableRow key={u.id} className="transition-colors duration-150 hover:bg-yellow-100 dark:hover:bg-[#429de6]/20">
-              <TableCell className="px-2 py-3 min-w-[250px]">
+            <Table.Row key={u.id} className="transition-colors duration-150 hover:bg-yellow-100 dark:hover:bg-[#429de6]/20">
+              <Table.Cell className="px-2 py-3 min-w-[250px]">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-sm font-semibold text-gray-900 ring-1 ring-gray-200 dark:bg-white/5 dark:text-white dark:ring-white/10 flex-shrink-0">
                     {getInitials({ firstName: u.firstName, lastName: u.lastName })}
@@ -162,41 +155,41 @@ export const UsersView = ({
                     </div>
                   </div>
                 </div>
-              </TableCell>
-              <TableCell className="px-1.5 py-3 min-w-[150px]">
+              </Table.Cell>
+              <Table.Cell className="px-1.5 py-3 min-w-[150px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {u.username || "-"}
                 </div>
-              </TableCell>
-              <TableCell className="px-1.5 py-3 min-w-[200px]">
+              </Table.Cell>
+              <Table.Cell className="px-1.5 py-3 min-w-[200px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {u.email || "-"}
                 </div>
-              </TableCell>
-              <TableCell className="px-1.5 py-3 min-w-[150px]">
+              </Table.Cell>
+              <Table.Cell className="px-1.5 py-3 min-w-[150px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {u.phone || "-"}
                 </div>
-              </TableCell>
-              <TableCell className="px-1.5 py-3 min-w-[150px]">
+              </Table.Cell>
+              <Table.Cell className="px-1.5 py-3 min-w-[150px]">
                 <div className="text-sm text-gray-900 dark:text-white font-mono">
                   {u.passport || "-"}
                 </div>
-              </TableCell>
-              <TableCell className="px-1.5 py-3 min-w-[180px]">
+              </Table.Cell>
+              <Table.Cell className="px-1.5 py-3 min-w-[180px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {u.companyName || "-"}
                 </div>
-              </TableCell>
-              <TableCell className="px-1.5 py-3 min-w-[120px]">
+              </Table.Cell>
+              <Table.Cell className="px-1.5 py-3 min-w-[120px]">
                 <div className="text-sm text-gray-900 dark:text-white">
                   {u.country || "-"}
                 </div>
-              </TableCell>
+              </Table.Cell>
 
               {/* Actions */}
               {isAdmin && (
-                <TableCell className="px-1.5 py-3 text-center pr-2 min-w-[160px]">
+                <Table.Cell className="px-1.5 py-3 text-center pr-2 min-w-[160px]">
                   <div className="flex items-center justify-center gap-2">
                     {onUpdateUser && (
                       <Button
@@ -223,13 +216,13 @@ export const UsersView = ({
                       </Button>
                     )}
                   </div>
-                </TableCell>
+                </Table.Cell>
               )}
-            </TableRow>
+            </Table.Row>
             ))
           )}
-        </TableBody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
       </div>
 
       {/* Pagination */}

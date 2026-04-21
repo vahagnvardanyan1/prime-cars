@@ -31,7 +31,7 @@ export const filterCars = ({ cars, filters }: { cars: AdminCar[]; filters: CarFi
           car.client,
           car.details?.vin,
           car.details?.lot,
-          car.details?.city,
+          car.details?.containerNumberBooking,
         ]
       });
       if (!matches) return false;

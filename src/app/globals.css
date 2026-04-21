@@ -1,3 +1,5 @@
+@import "@radix-ui/themes/styles.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -219,4 +221,108 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
+
+  /* Scrollbar Visible Utility — overrides the global native scrollbar hide */
+  .scrollbar-visible {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(128, 128, 128, 0.4) rgba(128, 128, 128, 0.1);
+    -ms-overflow-style: auto;
+  }
+
+  .scrollbar-visible::-webkit-scrollbar {
+    display: block;
+    width: 8px;
+    height: 10px;
+  }
+
+  .scrollbar-visible::-webkit-scrollbar-track {
+    background: rgba(128, 128, 128, 0.08);
+    border-radius: 999px;
+  }
+
+  .scrollbar-visible::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.4);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  .scrollbar-visible::-webkit-scrollbar-thumb:hover {
+    background: rgba(128, 128, 128, 0.7);
+    background-clip: content-box;
+  }
+
+  .scrollbar-visible::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  .dark .scrollbar-visible::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .dark .scrollbar-visible::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    background-clip: content-box;
+  }
+
+  .dark .scrollbar-visible::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.45);
+    background-clip: content-box;
+  }
+
+}
+
+/* ── Radix Table ScrollArea — always-visible scrollbars ──────────────────
+   These rules are intentionally outside @layer so they are unlayered CSS.
+   Unlayered rules beat all layered (@layer base/utilities) rules by cascade.
+   The !important also beats any other unlayered rule from @radix-ui/themes. */
+
+.scrollbar-visible .rt-ScrollAreaRoot {
+  height: calc(100vh - 380px);
+  /* Shift the horizontal scrollbar to start after the sticky column (124+170=294px) */
+  --scrollarea-scrollbar-horizontal-margin-left: 294px;
+}
+
+/* Render scrollbar above sticky cells so it doesn't go under them */
+.scrollbar-visible .rt-ScrollAreaScrollbar {
+  z-index: 50;
+  position: relative;
+}
+
+/* Kill the fade-out animation in every possible state */
+.scrollbar-visible .rt-ScrollAreaScrollbar,
+.scrollbar-visible .rt-ScrollAreaScrollbar[data-state='visible'],
+.scrollbar-visible .rt-ScrollAreaScrollbar[data-state='hidden'] {
+  opacity: 1 !important;
+  animation: none !important;
+  animation-duration: 0s !important;
+  animation-fill-mode: none !important;
+  display: flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* Track */
+.scrollbar-visible .rt-ScrollAreaScrollbar {
+  --scrollarea-scrollbar-size: 8px;
+  background-color: rgba(128, 128, 128, 0.08) !important;
+  border-radius: 999px;
+}
+.dark .scrollbar-visible .rt-ScrollAreaScrollbar {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Thumb */
+.scrollbar-visible .rt-ScrollAreaThumb {
+  background-color: rgba(128, 128, 128, 0.4) !important;
+  border-radius: 999px;
+}
+.scrollbar-visible .rt-ScrollAreaThumb:hover {
+  background-color: rgba(128, 128, 128, 0.7) !important;
+}
+.dark .scrollbar-visible .rt-ScrollAreaThumb {
+  background-color: rgba(255, 255, 255, 0.25) !important;
+}
+.dark .scrollbar-visible .rt-ScrollAreaThumb:hover {
+  background-color: rgba(255, 255, 255, 0.45) !important;
 }

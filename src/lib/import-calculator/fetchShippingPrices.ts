@@ -5,6 +5,7 @@ export type ShippingData = {
   city: string;
   shippingUsd: number;
   base_price?: number;
+  tax?: number;
   auction?: string;
   base_last_adjustment_amount?: number;
   total_adjustment_amount?: number;
@@ -15,7 +16,7 @@ export type FetchCitiesParams = {
 };
 
 export type FetchCitiesResult =
-  | { success: true; cities: string[]; priceMap: Record<string, number> }
+  | { success: true; cities: string[]; priceMap: Record<string, number>; taxMap: Record<string, number> }
   | { success: false; error: string };
 
 /**
@@ -42,22 +43,26 @@ export const fetchShippingCities = async (
 
     const result = await response.json();
     const responseData = result.data || result;
-    
+    console.log('[Calculator] Shipping API response sample:', responseData?.[0]);
+
     if (Array.isArray(responseData)) {
       const cities: string[] = [];
       const priceMap: Record<string, number> = {};
-      
+      const taxMap: Record<string, number> = {};
+
       responseData.forEach((item: ShippingData) => {
         if (item.city) {
           cities.push(item.city);
-          priceMap[item.city] = (item.base_price ?? 0) + (item?.base_last_adjustment_amount ?? 0)   + (item?.total_adjustment_amount ?? 0) 
+          priceMap[item.city] = (item.base_price ?? 0) + (item?.base_last_adjustment_amount ?? 0)   + (item?.total_adjustment_amount ?? 0);
+          taxMap[item.city] = item.tax ?? 0;
         }
       });
-      
+
       return {
         success: true,
         cities,
         priceMap,
+        taxMap,
       };
     }
     
@@ -65,6 +70,7 @@ export const fetchShippingCities = async (
       success: true,
       cities: [],
       priceMap: {},
+      taxMap: {},
     };
   } catch (error) {
     return {

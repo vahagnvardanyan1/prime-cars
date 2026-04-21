@@ -8,6 +8,7 @@ const nextConfig = {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "t3.storageapi.dev" },
       { protocol: "https", hostname: "coordinated-taco-gvu1ledv.storage.railway.app" },
       { protocol: "https", hostname: "storage.railway.app", pathname: "/embedded-cabinet-2pnyxqnq/**" },
       { protocol: "https", hostname: "t3.storageapi.dev" },

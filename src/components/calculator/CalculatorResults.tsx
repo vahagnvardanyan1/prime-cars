@@ -11,7 +11,8 @@ import {
   calculateEurUsdRate,
   type ExchangeRates,
 } from "@/lib/import-calculator/fetchExchangeRates";
-import { calculateServiceFee } from "@/lib/import-calculator/auctionFees";
+import { calculateServiceFee, calculateServiceFeeFromBrackets } from "@/lib/import-calculator/auctionFees";
+import type { IncomeTaxBracket } from "@/lib/admin/types";
 
 // Fallback rates hoisted outside component to avoid recreation (React best practice 7.9)
 const FALLBACK_RATES: ExchangeRates = {
@@ -33,13 +34,17 @@ type CalculatorResultsProps = {
   year: string;
   engine: string;
   engineVolume: string;
+  weightClass?: string;
   showPartnerMessage?: boolean;
+  otherExpenses?: string;
   onBack: () => void;
   // Restricted data - only provided in admin panel
   insuranceFee?: string;
   shippingPrice?: number;
   calculationResults?: CalculatorResponse | null;
   hasInsurance?: boolean;
+  // Per-user income tax brackets (for logged-in users)
+  incomeTaxBrackets?: IncomeTaxBracket[] | null;
 };
 
 export const CalculatorResults = ({
@@ -54,13 +59,16 @@ export const CalculatorResults = ({
   year,
   engine,
   engineVolume,
+  weightClass,
   showPartnerMessage = false,
+  otherExpenses,
   onBack,
   // Restricted data - only available in admin
   insuranceFee,
   shippingPrice,
   calculationResults,
   hasInsurance = false,
+  incomeTaxBrackets,
 }: CalculatorResultsProps) => {
   const t = useTranslations();
   const [exchangeRates, setExchangeRates] = useState<ExchangeRates | null>(null);
@@ -110,12 +118,24 @@ export const CalculatorResults = ({
       return { customsUsd: 0, vatUsd: 0, envTaxUsd: 0 };
     }
 
+    // Local calculators (truck, quadricycle, etc.) return USD via applyRateCompensation.
+    // Passenger car API returns EUR — needs conversion here.
+    // These type strings are set by us in vehicleCalculators.ts — they will never collide with API types.
+    const LOCAL_USD_TYPES = ["truck", "quadricycle", "snowmobile", "jetski", "motorcycle"];
+    const isAlreadyUsd = LOCAL_USD_TYPES.includes(calculationResults.type);
+    const rate = isAlreadyUsd ? 1 : eurUsdRateNum;
+
     return {
-      customsUsd: Math.round((calculationResults.globTax ?? 0) * eurUsdRateNum),
-      vatUsd: Math.round((calculationResults.nds ?? 0) * eurUsdRateNum),
-      envTaxUsd: Math.round((calculationResults.envTaxPay ?? 0) * eurUsdRateNum),
+      customsUsd: Math.round((calculationResults.globTax ?? 0) * rate),
+      vatUsd: Math.round((calculationResults.nds ?? 0) * rate),
+      envTaxUsd: Math.round((calculationResults.envTaxPay ?? 0) * rate),
     };
   }, [hasRestrictedData, calculationResults, eurUsdRateNum]);
+
+  const taxTotal = useMemo(() => {
+    const { customsUsd, vatUsd, envTaxUsd } = taxCalculations;
+    return customsUsd + vatUsd + envTaxUsd;
+  }, [taxCalculations]);
 
   // Calculate service fee based on total of all costs (Vehicle price + Auction fee + Transportation + Insurance + Customs + VAT + Env tax)
   const calculatedServiceFee = useMemo(() => {
@@ -130,7 +150,15 @@ export const CalculatorResults = ({
     // Calculate subtotal before service fee
     const subtotal = vehiclePriceUsd + auctionFeeUsd + shippingPriceUsd + insuranceFeeUsd + customsUsd + vatUsd + envTaxUsd;
 
-    return Math.round(calculateServiceFee(subtotal));
+    // Use per-user brackets if available (logged-in individual), otherwise hardcoded
+    if (importer === "individual" && incomeTaxBrackets && incomeTaxBrackets.length > 0) {
+      const fee = Math.round(calculateServiceFeeFromBrackets(subtotal, incomeTaxBrackets));
+      console.log('[ServiceFee] Using user brackets | subtotal:', subtotal, '| fee:', fee, '| brackets:', incomeTaxBrackets.length);
+      return fee;
+    }
+    const fee = Math.round(calculateServiceFee(subtotal, importer));
+    console.log('[ServiceFee] Using hardcoded | subtotal:', subtotal, '| importer:', importer, '| fee:', fee);
+    return fee;
   }, [
     hasRestrictedData,
     vehiclePrice,
@@ -139,6 +167,8 @@ export const CalculatorResults = ({
     insuranceFee,
     hasInsurance,
     taxCalculations,
+    importer,
+    incomeTaxBrackets,
   ]);
 
   // Memoize total calculation (React best practice 5.2 - extract expensive work)
@@ -150,11 +180,12 @@ export const CalculatorResults = ({
     const shippingPriceUsd = shippingPrice ?? 0;
     const auctionFeeUsd = parseFloat(auctionFee) || 0;
     const insuranceFeeUsd = hasInsurance ? (parseFloat(insuranceFee ?? "0") || 0) : 0;
+    const otherExpensesUsd = parseFloat(otherExpenses ?? "0") || 0;
 
     const { customsUsd, vatUsd, envTaxUsd } = taxCalculations;
 
     return Math.round(
-      vehiclePriceUsd + shippingPriceUsd + customsUsd + vatUsd + envTaxUsd + auctionFeeUsd + calculatedServiceFee + insuranceFeeUsd
+      vehiclePriceUsd + shippingPriceUsd + customsUsd + vatUsd + envTaxUsd + auctionFeeUsd + calculatedServiceFee + insuranceFeeUsd + otherExpensesUsd
     );
   }, [
     hasRestrictedData,
@@ -163,6 +194,7 @@ export const CalculatorResults = ({
     auctionFee,
     insuranceFee,
     hasInsurance,
+    otherExpenses,
     taxCalculations,
     calculatedServiceFee,
   ]);
@@ -263,6 +295,14 @@ export const CalculatorResults = ({
             </span>
             <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
             {t("calculator.results.engineVolumeLabel")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">{engineVolume || "1"}</span>
+            {vehicleType === "truck" && weightClass && (
+              <>
+                <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
+                {t("calculator.form.weightClass")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">
+                  {t(`calculator.form.weightClass${weightClass === "under5" ? "Under5" : weightClass === "5to20" ? "5to20" : "Above20"}`)}
+                </span>
+              </>
+            )}
           </p>
         </div>
       </div>
@@ -275,19 +315,50 @@ export const CalculatorResults = ({
             <tbody className="divide-y divide-gray-300 dark:divide-gray-800">
               {/* Row 1: Vehicle price | Customs duty */}
               <tr className="bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-900/50 hover:from-gray-200 hover:to-gray-50 dark:hover:from-gray-800 dark:hover:to-gray-900/60 transition-colors">
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base w-[30%]">{t("calculator.form.vehiclePrice")}</td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base w-[28%]">{t("calculator.form.vehiclePrice")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg w-[5%]">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base w-[15%]">
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base w-[14%]">
                   ${vehiclePrice || "0"}
                 </td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base w-[30%]">{t("calculator.results.customsDuty")}</td>
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base w-[28%]">{t("calculator.results.customsDuty")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg w-[5%]">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base w-[15%]">
+                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base w-[12%]">
                   {hasRestrictedData ? (
                     <span className="text-[#429de6] dark:text-[#5db3f0]">${taxCalculations.customsUsd}</span>
                   ) : (
                     <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none">$000</span>
                   )}
+                </td>
+                {/* Tax summary — smooth brace + total spanning 3 tax rows */}
+                <td rowSpan={3} className="align-middle px-0 w-[120px] sm:w-[140px]">
+                  <div className="flex items-center justify-center h-full">
+                    <svg className="shrink-0 w-[20px] sm:w-[24px] self-stretch" viewBox="0 0 14 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M2 0 C6 0, 7 2, 7 12 L7 42 C7 46, 9 50, 12 50 C9 50, 7 54, 7 58 L7 88 C7 98, 6 100, 2 100"
+                        stroke="url(#braceGradient)"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <defs>
+                        <linearGradient id="braceGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#429de6" stopOpacity="0.3" />
+                          <stop offset="45%" stopColor="#429de6" stopOpacity="0.7" />
+                          <stop offset="55%" stopColor="#429de6" stopOpacity="0.7" />
+                          <stop offset="100%" stopColor="#429de6" stopOpacity="0.3" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <div className="pl-2 sm:pl-3 pr-2 sm:pr-4">
+                      {hasRestrictedData ? (
+                        <span className="text-[#429de6] dark:text-[#5db3f0] font-bold text-sm sm:text-base whitespace-nowrap">
+                          ${taxTotal}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 dark:text-gray-500 opacity-60 blur-[3px] select-none text-sm">$000</span>
+                      )}
+                    </div>
+                  </div>
                 </td>
               </tr>
 
@@ -348,7 +419,7 @@ export const CalculatorResults = ({
                 </td>
                 <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.serviceFee")}</td>
                 <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
-                <td className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
+                <td colSpan={2} className="px-3 sm:px-6 py-3 sm:py-4 text-right font-semibold text-sm sm:text-base">
                   {hasRestrictedData ? (
                     <span className="text-[#429de6] dark:text-[#5db3f0]">${calculatedServiceFee}</span>
                   ) : (
@@ -357,11 +428,24 @@ export const CalculatorResults = ({
                 </td>
               </tr>
 
+              {/* Row 5: Other Expenses (only if value > 0) */}
+              {(parseFloat(otherExpenses ?? "0") || 0) > 0 && (
+                <tr className="bg-gradient-to-r from-gray-100 to-white dark:from-gray-900 dark:to-gray-900/50 hover:from-gray-200 hover:to-gray-50 dark:hover:from-gray-800 dark:hover:to-gray-900/60 transition-colors">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-900 dark:text-white font-medium text-sm sm:text-base">{t("calculator.form.otherExpenses")}</td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 text-center text-gray-400 dark:text-gray-600 text-base sm:text-lg">/</td>
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 text-right text-[#429de6] dark:text-[#5db3f0] font-semibold text-sm sm:text-base">
+                    ${otherExpenses}
+                  </td>
+                  <td className="px-3 sm:px-6 py-3 sm:py-4"></td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4"></td>
+                  <td colSpan={2} className="px-3 sm:px-6 py-3 sm:py-4"></td>
+                </tr>
+              )}
+
               {/* Total row - full width */}
               <tr className="bg-gradient-to-r from-[#429de6]/10 to-[#429de6]/20 dark:from-[#429de6]/20 dark:to-[#429de6]/10 hover:from-[#429de6]/20 hover:to-[#429de6]/30 dark:hover:from-[#429de6]/30 dark:hover:to-[#429de6]/20 transition-colors border-t-2 border-[#429de6]/30 dark:border-[#429de6]/50">
-                <td colSpan={4} className="px-3 sm:px-6 py-4 sm:py-5 text-gray-900 dark:text-white font-bold text-base sm:text-lg">{t("calculator.results.totalAmount")}</td>
-                <td className="px-2 sm:px-4 py-4 sm:py-5 text-center text-[#429de6]/60 dark:text-[#5db3f0]/70 text-lg sm:text-xl font-bold">/</td>
-                <td className="px-3 sm:px-6 py-4 sm:py-5 text-right font-bold text-xl sm:text-2xl">
+                <td colSpan={5} className="px-3 sm:px-6 py-4 sm:py-5 text-gray-900 dark:text-white font-bold text-base sm:text-lg">{t("calculator.results.totalAmount")}</td>
+                <td colSpan={2} className="px-3 sm:px-6 py-4 sm:py-5 text-right font-bold text-xl sm:text-2xl">
                   {hasRestrictedData ? (
                     <span className="text-[#429de6] dark:text-[#5db3f0]">${totalAmount}</span>
                   ) : (

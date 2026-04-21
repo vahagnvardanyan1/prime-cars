@@ -6,14 +6,7 @@ import { useTranslations } from "next-intl";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table } from "@radix-ui/themes";
 import type { Notification } from "@/lib/admin/notifications/types";
 
 type NotificationsViewProps = {
@@ -85,76 +78,76 @@ export const NotificationsView = ({
       </div>
 
       <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
-              <TableHead className="px-6 py-3 sm:px-8 text-sm font-semibold w-[200px]">{t("message")}</TableHead>
-              <TableHead className="px-4 py-3 text-sm font-semibold w-[280px]">{t("description")}</TableHead>
-              <TableHead className="px-4 py-3 text-sm font-semibold w-[200px]">{t("reason")}</TableHead>
-              <TableHead className="px-4 py-3 text-sm font-semibold w-[120px]">{t("createdAt")}</TableHead>
-              <TableHead className="px-4 py-3 text-sm font-semibold w-[100px]">{t("actions")}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        <Table.Root>
+          <Table.Header>
+            <Table.Row className="bg-gray-50/70 hover:bg-gray-50/70 dark:bg-white/5">
+              <Table.ColumnHeaderCell className="px-6 py-3 sm:px-8 text-sm font-semibold w-[200px]">{t("message")}</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="px-4 py-3 text-sm font-semibold w-[280px]">{t("description")}</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="px-4 py-3 text-sm font-semibold w-[200px]">{t("reason")}</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="px-4 py-3 text-sm font-semibold w-[120px]">{t("createdAt")}</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="px-4 py-3 text-sm font-semibold w-[100px]">{t("actions")}</Table.ColumnHeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
             {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-32 text-center text-gray-500 dark:text-gray-400">
+              <Table.Row>
+                <Table.Cell colSpan={5} className="h-32 text-center text-gray-500 dark:text-gray-400">
                   {t("loading")}
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ) : notifications.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-32 text-center text-gray-500 dark:text-gray-400">
+              <Table.Row>
+                <Table.Cell colSpan={5} className="h-32 text-center text-gray-500 dark:text-gray-400">
                   {t("noNotifications")}
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             ) : (
               notifications.map((notification) => {
                 // Treat all notifications as read when user is admin
                 const shouldShowAsRead = isAdmin || notification.isRead;
-                
+
                 return (
-                <TableRow
+                <Table.Row
                   key={notification.id}
                   className={`transition-all duration-200 cursor-pointer ${
-                    shouldShowAsRead 
-                      ? 'hover:bg-yellow-100 dark:hover:bg-[#429de6]/20 opacity-75' 
+                    shouldShowAsRead
+                      ? 'hover:bg-yellow-100 dark:hover:bg-[#429de6]/20 opacity-75'
                       : 'hover:bg-yellow-100 dark:hover:bg-[#429de6]/20 bg-white dark:bg-[#0b0f14]'
                   }`}
                   onClick={() => onViewNotification?.(notification)}
                 >
-                  <TableCell className="px-6 py-3 sm:px-8">
+                  <Table.Cell className="px-6 py-3 sm:px-8">
                     <div className="flex items-center gap-3 max-w-[200px]">
                       <div className={`flex-shrink-0 w-2 h-2 rounded-full ${
-                        shouldShowAsRead 
-                          ? 'bg-gray-300 dark:bg-gray-600' 
+                        shouldShowAsRead
+                          ? 'bg-gray-300 dark:bg-gray-600'
                           : 'bg-[#429de6] animate-pulse'
                       }`} />
                       <div className="min-w-0 flex-1">
                         <div className={`font-medium line-clamp-2 break-words ${
-                          shouldShowAsRead 
-                            ? 'text-gray-600 dark:text-gray-400' 
+                          shouldShowAsRead
+                            ? 'text-gray-600 dark:text-gray-400'
                             : 'text-gray-900 dark:text-white'
                         }`}>
                           {notification.message}
                         </div>
                       </div>
                     </div>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                     <div className="line-clamp-2 break-words overflow-hidden max-w-[280px]">
                       {notification.description}
                     </div>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                     <div className="line-clamp-2 break-words overflow-hidden max-w-[200px]">
                       {notification.reason || '-'}
                     </div>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                     {formatDate({ dateString: notification.createdAt, t })}
-                  </TableCell>
-                  <TableCell className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                  </Table.Cell>
+                  <Table.Cell className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1">
                       {isAdmin && onViewReadUsers && (
                         <Button
@@ -185,12 +178,12 @@ export const NotificationsView = ({
                         </Button>
                       )}
                     </div>
-                  </TableCell>
-                </TableRow>
+                  </Table.Cell>
+                </Table.Row>
               )})
             )}
-          </TableBody>
-        </Table>
+          </Table.Body>
+        </Table.Root>
       </div>
     </Surface>
   );
