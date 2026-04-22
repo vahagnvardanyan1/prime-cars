@@ -61,6 +61,7 @@ export const useCarsPage = () => {
     [allCars]
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isLoading = (_category?: string) => isLoadingAll;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
