@@ -10,6 +10,7 @@ export const queryKeys = {
     all: ["users"] as const,
     list: (filters?: Record<string, unknown>) => ["users", "list", filters] as const,
     detail: (id: string) => ["users", "detail", id] as const,
+    incomeTax: (id: string) => ["users", "incomeTax", id] as const,
   },
   
   // Cars

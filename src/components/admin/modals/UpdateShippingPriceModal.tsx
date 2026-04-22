@@ -15,8 +15,9 @@ type UpdateShippingPriceModalProps = {
   open: boolean;
   city: ShippingCity | null;
   currentAuction: Auction;
+  mode?: "shipping" | "tax";
   onOpenChange: ({ open }: { open: boolean }) => void;
-  onConfirm: ({ cityId, nextShippingUsd }: { cityId: string; nextShippingUsd: number }) => void;
+  onConfirm: ({ cityId, nextValue }: { cityId: string; nextValue: number }) => void;
   onSuccess?: () => void;
 };
 
@@ -24,6 +25,7 @@ export const UpdateShippingPriceModal = ({
   open,
   city,
   currentAuction,
+  mode = "shipping",
   onOpenChange,
   onConfirm,
   onSuccess,
@@ -41,35 +43,35 @@ export const UpdateShippingPriceModal = ({
     setValue("");
   };
 
+  const isTaxMode = mode === "tax";
+
   const confirm = async () => {
     if (!city || !isConfirmEnabled || isSubmitting) return;
-    
-    const nextShippingUsd = Math.max(0, Number(value));
-    
+
+    const nextValue = Math.max(0, Number(value));
+
     setIsSubmitting(true);
     try {
       const result = await updateShipping({
         city: city.city,
-        shipping: nextShippingUsd,
+        ...(isTaxMode ? { tax: nextValue } : { shipping: nextValue }),
         category: currentAuction,
       });
 
       if (result.success) {
-        toast.success("Shipping price updated", {
-          description: `${city.city} shipping price updated to $${nextShippingUsd}.`,
+        toast.success(isTaxMode ? "Tax updated" : "Shipping price updated", {
+          description: `${city.city} ${isTaxMode ? "tax" : "shipping price"} updated to $${nextValue}.`,
         });
-        // Update local state
-        onConfirm({ cityId: city.id, nextShippingUsd });
-        // Trigger refresh callback
+        onConfirm({ cityId: city.id, nextValue });
         onSuccess?.();
         close();
       } else {
-        toast.error("Failed to update shipping price", {
-          description: result.error || "Could not update the price.",
+        toast.error(`Failed to update ${isTaxMode ? "tax" : "shipping price"}`, {
+          description: result.error || "Could not update the value.",
         });
       }
     } catch (error) {
-      toast.error("Failed to update shipping price", {
+      toast.error(`Failed to update ${isTaxMode ? "tax" : "shipping price"}`, {
         description: error instanceof Error ? error.message : "An unexpected error occurred.",
       });
     } finally {
@@ -83,12 +85,12 @@ export const UpdateShippingPriceModal = ({
         <div className="px-7 py-6">
           <DialogHeader className="space-y-2">
             <DialogTitle className="text-gray-900 dark:text-white">
-              {t("admin.modals.updateShipping.title")}
+              {t(isTaxMode ? "admin.modals.updateShipping.titleTax" : "admin.modals.updateShipping.title")}
             </DialogTitle>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {city ? (
                 <>
-                  {t("admin.modals.updateShipping.setFor", { city: city.city })}
+                  {t(isTaxMode ? "admin.modals.updateShipping.setTaxFor" : "admin.modals.updateShipping.setFor", { city: city.city })}
                 </>
               ) : (
                 t("admin.modals.updateShipping.selectCity")
@@ -98,13 +100,13 @@ export const UpdateShippingPriceModal = ({
 
           <div className="mt-6 space-y-2">
             <div className="text-xs font-medium uppercase tracking-[0.12em] text-gray-500 dark:text-gray-400">
-              {t("admin.modals.updateShipping.fieldLabel")}
+              {t(isTaxMode ? "admin.modals.updateShipping.fieldLabelTax" : "admin.modals.updateShipping.fieldLabel")}
             </div>
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}
               inputMode="numeric"
-              placeholder={city ? `${city.shippingUsd}` : "0"}
+              placeholder={city ? `${isTaxMode ? city.tax : city.shippingUsd}` : "0"}
               disabled={isSubmitting}
               className="h-11 rounded-xl border-gray-200 bg-white text-gray-900 focus-visible:ring-[#429de6]/30 dark:border-white/10 dark:bg-[#0a0a0a] dark:text-white"
             />

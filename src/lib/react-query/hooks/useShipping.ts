@@ -68,6 +68,7 @@ const createShipping = async (data: CreateShippingData): Promise<ShippingCity> =
     id: item._id || item.id,
     city: item.city,
     shippingUsd: item.shippingUsd || item.price,
+    tax: item.tax ?? 0,
     auction: item.auction,
   };
 };
@@ -94,6 +95,7 @@ const updateShipping = async ({ id, data }: { id: string; data: Partial<CreateSh
     id: item._id || item.id,
     city: item.city,
     shippingUsd: item.shippingUsd || item.price,
+    tax: item.tax ?? 0,
     auction: item.auction,
   };
 };

@@ -17,6 +17,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [showShareSuccess, setShowShareSuccess] = useState(false);
 
+
   const photos = car?.photos || (car ? [car.imageUrl] : []);
 
   // Preload images for faster navigation
@@ -256,7 +257,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
               <div className="flex items-start justify-between gap-3 mb-2">
                 <div className="flex-1 min-w-0">
                   <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1.5 line-clamp-2">
-                    {car.brand} {car.model}
+                    {car.model}
                   </h1>
                   <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
                     {car.year} • {car.location}
@@ -330,18 +331,6 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
                   </div>
                 )}
 
-                {car.fuelType && (
-                  <div className="flex items-start gap-2.5 sm:gap-3">
-                    <div className="p-2 bg-white dark:bg-white/10 rounded-lg flex-shrink-0">
-                      <Fuel className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{t("specs.fuelType")}</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{translateFuelType(car.fuelType, t)}</p>
-                    </div>
-                  </div>
-                )}
-
                 {car.location && (
                   <div className="flex items-start gap-2.5 sm:gap-3">
                     <div className="p-2 bg-white dark:bg-white/10 rounded-lg flex-shrink-0">
@@ -355,6 +344,18 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
                 )}
               </div>
             </div>
+
+            {/* Description */}
+            {car.description && (
+              <div className="px-1">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5">
+                  {t("descriptionTitle")}
+                </p>
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line">
+                  {car.description}
+                </p>
+              </div>
+            )}
 
             {/* CTA Buttons */}
             <div className="space-y-2.5 sm:space-y-3">

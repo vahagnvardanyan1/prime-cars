@@ -6,28 +6,21 @@ import { useTranslations } from "next-intl";
 
 export function HeroContent({ className }: { className?: string }) {
   const t = useTranslations();
-  const title = t("home.hero.title");
-  const words = title.split(" ");
 
   return (
     <div className={`text-center lg:text-left ${className ?? ""}`}>
-      <h1 className="mb-6 text-gray-900 dark:text-white">
-        {words.map((word, i) => (
-          <motion.span
-            key={i}
-            className="inline-block mr-[0.3em]"
-            initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{
-              duration: 0.3,
-              delay: 0.1 + i * 0.06,
-              ease: [0.25, 0.46, 0.45, 0.94],
-            }}
-          >
-            {word}
-          </motion.span>
-        ))}
-      </h1>
+      <motion.h1
+        className="mb-6 text-gray-900 dark:text-white"
+        initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{
+          duration: 0.4,
+          delay: 0.1,
+          ease: [0.25, 0.46, 0.45, 0.94],
+        }}
+      >
+        {t("home.hero.title")}
+      </motion.h1>
 
       <motion.p
         className="mb-8 text-lg text-gray-600 dark:text-gray-400"
@@ -35,7 +28,7 @@ export function HeroContent({ className }: { className?: string }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{
           duration: 0.4,
-          delay: 0.2 + words.length * 0.06,
+          delay: 0.25,
           ease: "easeOut",
         }}
       >
@@ -47,7 +40,7 @@ export function HeroContent({ className }: { className?: string }) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{
           duration: 0.3,
-          delay: 0.4 + words.length * 0.06,
+          delay: 0.4,
           ease: "easeOut",
         }}
       >

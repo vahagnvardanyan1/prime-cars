@@ -39,6 +39,7 @@ export const AdminSettingsPage = () => {
         isAdmin={isAdmin}
         onApplyGlobalAdjustment={state.applyGlobalAdjustment}
         onUpdateCityClick={state.openUpdateCityPrice}
+        onUpdateCityTaxClick={state.openUpdateCityTax}
         onDeleteCity={state.deleteCity}
         onUpdateCoefficient={state.updateCoefficient}
         onShippingCreated={() => state.loadCities({ forceRefresh: true, auction: state.currentAuction || Auction.COPART })}
@@ -54,7 +55,19 @@ export const AdminSettingsPage = () => {
         onOpenChange={({ open }) =>
           open ? null : state.closeUpdateCityPrice()
         }
-        onConfirm={state.updateCityPrice}
+        onConfirm={({ cityId, nextValue }) => state.updateCityPrice({ cityId, nextShippingUsd: nextValue })}
+        onSuccess={() => state.loadCities({ forceRefresh: true, auction: state.currentAuction || Auction.COPART })}
+      />
+
+      <UpdateShippingPriceModal
+        open={state.updateCityTaxModal.isOpen}
+        city={state.selectedCityForTax}
+        currentAuction={state.currentAuction || Auction.COPART}
+        mode="tax"
+        onOpenChange={({ open }) =>
+          open ? null : state.closeUpdateCityTax()
+        }
+        onConfirm={({ cityId, nextValue }) => state.updateCityTax({ cityId, nextTax: nextValue })}
         onSuccess={() => state.loadCities({ forceRefresh: true, auction: state.currentAuction || Auction.COPART })}
       />
     </>

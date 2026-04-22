@@ -12,19 +12,22 @@ type UpdateShippingResponse = {
 export const updateShipping = async ({
   city,
   shipping,
+  tax,
   category = Auction.COPART,
 }: {
   city: string;
-  shipping: number;
+  shipping?: number;
+  tax?: number;
   category: Auction;
 }): Promise<UpdateShippingResponse> => {
   try {
+    const body = tax !== undefined ? { tax } : { base_price: shipping };
     const response = await authenticatedFetch(`${API_BASE_URL}/shippings/admin/city-prices?city=${city}&category=${category}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ base_price: shipping }),
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {

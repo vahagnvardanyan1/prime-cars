@@ -1,111 +1,76 @@
 "use client";
 
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import type { CarCategory } from "@/lib/cars/types";
+import type { Car, CarCategory } from "@/lib/cars/types";
 
-import { fetchCarsByCategory } from "@/lib/cars/fetchCars";
+import { fetchAllAvailableCars } from "@/lib/cars/fetchCars";
 
-// Query keys for caching
 const carsPageKeys = {
-  all: ["carsPage"] as const,
-  byCategory: (category: CarCategory) => [...carsPageKeys.all, category] as const,
+  all: ["carsPage", "all"] as const,
 };
 
 export const useCarsPage = () => {
-  // Fetch AVAILABLE cars
   const {
-    data: currentCars = [],
-    isLoading: isLoadingAvailable,
-    error: availableError,
-    refetch: refetchAvailable,
+    data,
+    isLoading: isLoadingAll,
+    error,
+    refetch,
   } = useQuery({
-    queryKey: carsPageKeys.byCategory("AVAILABLE"),
+    queryKey: carsPageKeys.all,
     queryFn: async () => {
-      const result = await fetchCarsByCategory({ category: "AVAILABLE" });
+      const result = await fetchAllAvailableCars();
       if (!result.success) {
-        throw new Error(result.error || "Failed to fetch available cars");
-      }
-      return Array.isArray(result.cars) ? result.cars : [];
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, // 10 minutes
-    retry: 2,
-  });
-
-  // Fetch ONROAD cars (lazy loaded)
-  const {
-    data: arrivingCars = [],
-    isLoading: isLoadingOnroad,
-    error: onroadError,
-    refetch: refetchOnroad,
-  } = useQuery({
-    queryKey: carsPageKeys.byCategory("ONROAD"),
-    queryFn: async () => {
-      const result = await fetchCarsByCategory({ category: "ONROAD" });
-      if (!result.success) {
-        throw new Error(result.error || "Failed to fetch onroad cars");
+        throw new Error(result.error || "Failed to fetch cars");
       }
       return Array.isArray(result.cars) ? result.cars : [];
     },
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,
     retry: 2,
-    enabled: false, // Don't auto-fetch, load on demand
   });
 
-  // Fetch TRANSIT cars (lazy loaded)
-  const {
-    data: orderCars = [],
-    isLoading: isLoadingTransit,
-    error: transitError,
-    refetch: refetchTransit,
-  } = useQuery({
-    queryKey: carsPageKeys.byCategory("TRANSIT"),
-    queryFn: async () => {
-      const result = await fetchCarsByCategory({ category: "TRANSIT" });
-      if (!result.success) {
-        throw new Error(result.error || "Failed to fetch transit cars");
+  const [allCars, setAllCars] = useState<Car[]>([]);
+  const shuffled = useRef(false);
+
+  useEffect(() => {
+    if (data && data.length > 0 && !shuffled.current) {
+      shuffled.current = true;
+      const arr = [...data];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
       }
-      return Array.isArray(result.cars) ? result.cars : [];
-    },
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
-    retry: 2,
-    enabled: false, // Don't auto-fetch, load on demand
-  });
-
-  const isLoading = (category: CarCategory) => {
-    switch (category) {
-      case "AVAILABLE":
-        return isLoadingAvailable;
-      case "ONROAD":
-        return isLoadingOnroad;
-      case "TRANSIT":
-        return isLoadingTransit;
-      default:
-        return false;
+      setAllCars(arr);
     }
+  }, [data]);
+
+  const currentCars = useMemo(
+    () => allCars.filter((c: Car) => c.category === "AVAILABLE"),
+    [allCars]
+  );
+
+  const arrivingCars = useMemo(
+    () => allCars.filter((c: Car) => c.category === "ONROAD"),
+    [allCars]
+  );
+
+  const orderCars = useMemo(
+    () => allCars.filter((c: Car) => c.category === "TRANSIT"),
+    [allCars]
+  );
+
+  const isLoading = (_category?: CarCategory) => isLoadingAll;
+
+  const loadCarsForCategory = async (_category: CarCategory) => {
+    return refetch();
   };
 
-  const loadCarsForCategory = async (category: CarCategory) => {
-    switch (category) {
-      case "AVAILABLE":
-        return refetchAvailable();
-      case "ONROAD":
-        return refetchOnroad();
-      case "TRANSIT":
-        return refetchTransit();
-    }
-  };
-
-  const errors = [
-    availableError ? `AVAILABLE: ${(availableError as Error).message}` : null,
-    onroadError ? `ONROAD: ${(onroadError as Error).message}` : null,
-    transitError ? `TRANSIT: ${(transitError as Error).message}` : null,
-  ].filter(Boolean) as string[];
+  const errors = error ? [(error as Error).message] : [];
 
   return {
+    allCars,
     currentCars,
     arrivingCars,
     orderCars,

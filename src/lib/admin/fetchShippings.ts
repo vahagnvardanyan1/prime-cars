@@ -10,6 +10,7 @@ type BackendShipping = {
   city?: string;
   base_price?: number;
   shippingUsd?: number;
+  tax?: number;
   auction?: string;
 };
 
@@ -49,6 +50,7 @@ export const fetchShippings = async ({ auction }: { auction?: Auction } = {}): P
       id: shipping._id || shipping.id || "",
       city: shipping.city || "",
       shippingUsd: shipping.shippingUsd || shipping.base_price || 0,
+      tax: shipping.tax ?? 0,
       auction: shipping.auction,
     })) || [];
 

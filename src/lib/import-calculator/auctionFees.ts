@@ -3,6 +3,7 @@
  * Source: Official auction websites
  * Last updated: 2026-01-17
  */
+import type { IncomeTaxBracket } from "@/lib/admin/types";
 
 export type AuctionFees = {
   gateFee: number;
@@ -283,11 +284,22 @@ export const calculateAuctionFees = ({
   };
 };
 
-/**
- * Calculate service fee based on vehicle price (in USD)
- * Tiered structure up to $50,000, then 1.5% for amounts above
- */
-export const calculateServiceFee = (price: number): number => {
+const calculateIndividualServiceFee = (price: number): number => {
+  if (price <= 0) return 0;
+  if (price <= 20000) return 200;
+  if (price <= 25000) return 250;
+  if (price <= 30000) return 300;
+  if (price <= 40000) return 400;
+  if (price <= 50000) return 500;
+  if (price <= 60000) return 600;
+  if (price <= 70000) return 700;
+  if (price <= 80000) return 800;
+  if (price <= 90000) return 900;
+  if (price <= 100000) return 1000;
+  return Math.round(price * 0.05);
+};
+
+const calculateLegalServiceFee = (price: number): number => {
   if (price <= 0) return 0;
   if (price <= 7500) return 300;
   if (price <= 10000) return 325;
@@ -307,7 +319,29 @@ export const calculateServiceFee = (price: number): number => {
   if (price <= 45000) return 675;
   if (price <= 47500) return 700;
   if (price <= 50000) return 725;
-  
-  // For amounts over $50,000, calculate 1.5%
   return price * 0.015;
+};
+
+export const calculateServiceFee = (price: number, importer: string): number => {
+  return importer === "individual"
+    ? calculateIndividualServiceFee(price)
+    : calculateLegalServiceFee(price);
+};
+
+export const calculateServiceFeeFromBrackets = (
+  price: number,
+  brackets: IncomeTaxBracket[]
+): number => {
+  if (price <= 0 || brackets.length === 0) return 0;
+
+  const bracket = brackets.find(
+    b => price >= b.min && (b.max === null || price <= b.max)
+  );
+
+  if (!bracket) return 0;
+
+  if (bracket.isPercent) {
+    return Math.round(price * bracket.tax / 100);
+  }
+  return bracket.tax;
 };
