@@ -180,7 +180,9 @@ export function ShippingMap() {
         {tab === "from" ? (
           <ComposableMap
             projection="geoAlbersUsa"
-            projectionConfig={{ scale: 1000 }}
+            projectionConfig={{ scale: 800 }}
+            width={800}
+            height={500}
             className="w-full h-auto"
             style={{ maxHeight: 500 }}
           >

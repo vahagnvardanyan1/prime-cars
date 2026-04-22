@@ -98,7 +98,7 @@ export const useAdminCarsStateRefactored = () => {
     // You can add more server-side filters here if your API supports them
   });
 
-  const allCars = data?.cars || [];
+  const allCars = useMemo(() => data?.cars || [], [data?.cars]);
 
   // Client-side filtering (or move to server-side if API supports it)
   const filteredCars = useMemo(

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
-import { ChevronLeft, MapPin, Gauge, Fuel, Settings, Calendar, TrendingUp, X, ChevronRight } from "lucide-react";
+import { ChevronLeft, MapPin, Gauge, Settings, Calendar, TrendingUp, X, ChevronRight } from "lucide-react";
 import { useCarDetails } from "@/hooks/useCarDetails";
 import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
-import { translateEngineType, translateTransmission, translateFuelType } from "@/lib/utils/translateVehicleSpecs";
+import { translateEngineType, translateTransmission } from "@/lib/utils/translateVehicleSpecs";
 
 export const CarDetailsPage = ({ carId }: { carId: string }) => {
   const t = useTranslations("carDetails");
@@ -18,7 +18,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
   const [showShareSuccess, setShowShareSuccess] = useState(false);
 
 
-  const photos = car?.photos || (car ? [car.imageUrl] : []);
+  const photos = useMemo(() => car?.photos || (car ? [car.imageUrl] : []), [car]);
 
   // Preload images for faster navigation
   useEffect(() => {
@@ -211,6 +211,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
               onClick={() => openLightbox(selectedImage)}
               className="aspect-[16/10] rounded-xl overflow-hidden bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 cursor-pointer group relative"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={photos[selectedImage]}
                 alt={`${car.brand} ${car.model}`}
@@ -239,6 +240,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
                       : "opacity-70 hover:opacity-100"
                   }`}
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={photo}
                     alt={`${car.brand} ${car.model} - ${index + 1}`}
@@ -446,6 +448,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
 
           {/* Main Image */}
           <div className="relative w-full max-w-7xl max-h-[85vh] sm:max-h-[90vh] pointer-events-none">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={photos[lightboxIndex]}
               alt={`${car.brand} ${car.model} - ${lightboxIndex + 1}`}
@@ -492,6 +495,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
                     : "opacity-60 hover:opacity-100 active:opacity-80"
                 }`}
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={photo}
                   alt={`Thumbnail ${index + 1}`}

@@ -68,7 +68,7 @@ export const ImportCalculator = ({
   const [hasReverse, setHasReverse] = useState(false);
   const [icePowerExceedsElectric, setIcePowerExceedsElectric] = useState(false);
   const [outOfAuctionBorders, setOutOfAuctionBorders] = useState(false);
-  const [sublotPrice, setSublotPrice] = useState("");
+  const [, setSublotPrice] = useState("");
   const [locationSearch, setLocationSearch] = useState("");
   const [otherExpenses, setOtherExpenses] = useState("");
   const [showResults, setShowResults] = useState(false);
@@ -297,7 +297,7 @@ export const ImportCalculator = ({
     } else {
       setInsuranceFee("");
     }
-  }, [auctionFee, shippingPrice]);
+  }, [auctionFee, shippingPrice, vehiclePrice]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

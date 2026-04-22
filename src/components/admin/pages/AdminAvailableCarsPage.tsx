@@ -148,6 +148,7 @@ export const AdminAvailableCarsPage = () => {
       const parsed = parseInt(urlPageSize, 10);
       if (parsed !== pageSize) setPageSize(parsed);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   const handleUpdateCar = (car: Car) => {

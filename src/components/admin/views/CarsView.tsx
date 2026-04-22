@@ -8,7 +8,6 @@ import { useTranslations } from "next-intl";
 import type { AdminCar } from "@/lib/admin/types";
 import { formatUsd } from "@/lib/admin/format";
 import { Surface } from "@/components/admin/primitives/Surface";
-import { PaymentStatus } from "@/components/admin/primitives/PaymentStatus";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
 import { Pagination } from "@/components/admin/primitives/Pagination";
 import { CarFilters, type CarFiltersState } from "@/components/admin/filters/CarFilters";
@@ -72,9 +71,6 @@ const carouselSpinner = (
 
 const CarTableRow = memo(function CarTableRow({
   car,
-  index,
-  currentPage,
-  pageSize,
   isAdmin,
   onPhotoClick,
   onUpdateCar,
@@ -554,6 +550,7 @@ export const CarsView = memo(function CarsView({
             )}
 
             {selectedCarPhotos.length > 0 && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={selectedCarPhotos[currentPhotoIndex]}
                 alt={`Photo ${currentPhotoIndex + 1}`}

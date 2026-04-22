@@ -57,7 +57,7 @@ export const useAdminUsersStateRefactored = () => {
     // Add more server-side filters if API supports them
   });
 
-  const allUsers = data?.users || [];
+  const allUsers = useMemo(() => data?.users || [], [data?.users]);
 
   // Client-side filtering (or move to server-side if API supports it)
   const filteredUsers = useMemo(

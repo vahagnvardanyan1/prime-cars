@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import type { Car, CarCategory } from "@/lib/cars/types";
+import type { Car } from "@/lib/cars/types";
 
 import { fetchAllAvailableCars } from "@/lib/cars/fetchCars";
 
@@ -61,9 +61,11 @@ export const useCarsPage = () => {
     [allCars]
   );
 
-  const isLoading = (_category?: CarCategory) => isLoadingAll;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const isLoading = (_category?: string) => isLoadingAll;
 
-  const loadCarsForCategory = async (_category: CarCategory) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const loadCarsForCategory = async (_category?: string) => {
     return refetch();
   };
 

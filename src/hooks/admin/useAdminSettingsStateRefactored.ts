@@ -30,7 +30,7 @@ export const useAdminSettingsStateRefactored = () => {
   const updateCoefficientMutation = useUpdateUserCoefficient();
   const increaseShippingPricesMutation = useIncreaseShippingPrices();
 
-  const cities = citiesData || [];
+  const cities = useMemo(() => citiesData || [], [citiesData]);
   const users = usersData?.users || [];
 
   const openUpdateCityPrice = ({ cityId }: { cityId: string }) => {

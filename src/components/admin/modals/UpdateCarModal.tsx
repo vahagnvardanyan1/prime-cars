@@ -342,6 +342,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                     }}
                     className="group relative h-[140px] sm:h-[160px] overflow-hidden rounded-2xl border border-solid border-gray-200 dark:border-white/10 cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-[#429de6] transition-all"
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={photoUrl}
                       alt={`Car photo ${index + 1}`}

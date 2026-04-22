@@ -496,6 +496,7 @@ export const AvailableCarsView = memo(function AvailableCarsView({
             )}
 
             {selectedCarPhotos.length > 0 && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={selectedCarPhotos[currentPhotoIndex]}
                 alt={`Photo ${currentPhotoIndex + 1}`}

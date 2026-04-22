@@ -51,6 +51,7 @@ export const NotificationReadUsersModal = ({
     if (open && notificationId) {
       loadReadUsers();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, notificationId]);
 
   const loadReadUsers = async () => {
