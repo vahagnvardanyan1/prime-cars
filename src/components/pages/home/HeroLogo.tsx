@@ -9,7 +9,7 @@ export function HeroLogo() {
 
   return (
     <motion.div
-      className="relative flex items-start justify-center -mt-64"
+      className="relative flex items-start justify-center -mt-16 lg:-mt-64"
       initial={{ y: -200, opacity: 0, scale: 0.9 }}
       animate={{ y: 0, opacity: 1, scale: 1 }}
       transition={{

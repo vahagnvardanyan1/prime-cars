@@ -23,12 +23,14 @@ type LanguageSwitcherProps = {
   className?: string;
   align?: "start" | "end";
   variant?: "ghost" | "outline";
+  compact?: boolean;
 };
 
 export const LanguageSwitcher = ({
   className,
   align = "end",
   variant = "ghost",
+  compact = false,
 }: LanguageSwitcherProps) => {
   const t = useTranslations();
   const router = useRouter();
@@ -68,7 +70,7 @@ export const LanguageSwitcher = ({
           aria-label={t("header.changeLanguageAria")}
         >
           <span className="text-lg leading-none">{current.flag}</span>
-          <Globe aria-hidden="true" className="h-5 w-5 opacity-70" />
+          {!compact && <Globe aria-hidden="true" className="h-5 w-5 opacity-70" />}
         </Button>
       </DropdownMenuTrigger>
 

@@ -237,13 +237,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
             </div>
 
             <div className="xl:hidden flex items-center gap-1">
-              <Link
-                href="/apply"
-                className="px-3 py-1.5 text-xs bg-[#429de6] text-white rounded-md hover:bg-[#3a8acc] transition-all font-medium"
-              >
-                {t("header.applyNow")}
-              </Link>
-              <LanguageSwitcher />
+              <LanguageSwitcher compact />
               <button
                 onClick={toggleTheme}
                 className="w-9 h-9 flex items-center justify-center text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10 rounded-lg transition-all"

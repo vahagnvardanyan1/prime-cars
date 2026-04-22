@@ -8,7 +8,7 @@ export function HeroContent({ className }: { className?: string }) {
   const t = useTranslations();
 
   return (
-    <div className={`text-center lg:text-left ${className ?? ""}`}>
+    <div className={`text-center lg:text-left max-w-full break-words ${className ?? ""}`}>
       <motion.h1
         className="mb-6 text-gray-900 dark:text-white"
         initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
@@ -23,7 +23,7 @@ export function HeroContent({ className }: { className?: string }) {
       </motion.h1>
 
       <motion.p
-        className="mb-8 text-lg text-gray-600 dark:text-gray-400"
+        className="mb-8 text-base sm:text-lg text-gray-600 dark:text-gray-400"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
