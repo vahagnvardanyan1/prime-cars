@@ -11,7 +11,7 @@ const nextConfig = {
       { protocol: "https", hostname: "t3.storageapi.dev" },
       { protocol: "https", hostname: "coordinated-taco-gvu1ledv.storage.railway.app" },
       { protocol: "https", hostname: "storage.railway.app", pathname: "/embedded-cabinet-2pnyxqnq/**" },
-      { protocol: "https", hostname: "t3.storageapi.dev" },
+      { protocol: "https", hostname: "storage.googleapis.com", pathname: "/prime-auto-images/**" },
     ],
   },
   reactStrictMode: true,
