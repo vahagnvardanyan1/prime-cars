@@ -208,7 +208,11 @@
     },
     "contactUs": {
       "title": "Contact Us",
-      "description": "Get in touch with us for any questions."
+      "description": "Get in touch with us for any questions.",
+      "availability": "We are always available for you",
+      "workingHoursLabel": "Working hours",
+      "workingDays": "Monday – Friday",
+      "workingTime": "10:00 – 22:00"
     },
     "apply": {
       "title": "Apply Now",
@@ -598,7 +602,10 @@
     "pagination": {
       "showing": "Showing",
       "of": "of",
-      "itemsPerPage": "Items per page"
+      "itemsPerPage": "Items per page",
+      "pageNavigation": "Page navigation",
+      "previousPage": "Previous page",
+      "nextPage": "Next page"
     },
     "filters": {
       "searchUsers": "Search by name, username, email, phone or passport...",
@@ -639,11 +646,16 @@
       "darkMode": "Dark mode",
       "activeLabel": "Active",
       "logout": "Logout",
-      "loggingOut": "Logging out...",
-      "preferencesAria": "Preferences"
+      "loggingOut": "Logging out..."
     },
     "preferences": {
       "logout": "Logout"
+    },
+    "logout": {
+      "title": "Log out",
+      "description": "Are you sure you want to log out?",
+      "cancel": "Cancel",
+      "confirm": "Log out"
     },
     "sidebar": {
       "consoleLabel": "Admin Console",

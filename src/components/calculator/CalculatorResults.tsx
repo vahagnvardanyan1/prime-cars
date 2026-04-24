@@ -223,9 +223,9 @@ export const CalculatorResults = ({
   }, [onBack]);
 
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black rounded-2xl border border-gray-300 dark:border-gray-800 overflow-hidden shadow-xl">
-      {/* Back Button - Top Left */}
-      <div className="bg-gray-100 dark:bg-black/40 border-b border-gray-300 dark:border-gray-800 px-4 sm:px-6 py-3">
+    <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black rounded-2xl border border-gray-300 dark:border-gray-800 shadow-xl">
+      {/* Back Button - Sticky */}
+      <div className="sticky top-0 z-10 backdrop-blur-md bg-gray-100/90 dark:bg-black/80 border-b border-gray-300 dark:border-gray-800 rounded-t-2xl px-4 sm:px-6 py-3">
         <button
           onClick={handleBack}
           className="inline-flex items-center gap-2 text-[#429de6] dark:text-[#5db3f0] hover:text-[#3a8acc] dark:hover:text-[#6fc0f5] transition-colors group"

@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { TextReveal } from "./TextReveal";
-import { FiMail, FiPhone, FiMapPin } from "react-icons/fi";
+import { FiMail, FiPhone, FiMapPin, FiClock } from "react-icons/fi";
 import { FaInstagram, FaFacebookF, FaWhatsapp, FaViber } from "react-icons/fa";
 
 export function ContactSection() {
@@ -34,6 +34,23 @@ export function ContactSection() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5 }}
         >
+          <div className="flex gap-4 p-5 rounded-2xl border border-gray-200 dark:border-white/[0.08]">
+            <div className="w-10 h-10 rounded-lg bg-[#429de6]/10 flex items-center justify-center flex-shrink-0">
+              <FiClock className="w-5 h-5 text-[#429de6]" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                {t("home.contactUs.availability")}
+              </p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                {t("home.contactUs.workingHoursLabel")}
+              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+                {t("home.contactUs.workingDays")} · {t("home.contactUs.workingTime")}
+              </p>
+            </div>
+          </div>
+
           <a
             href="mailto:primecarsarm@gmail.com"
             className="flex items-center gap-4 p-5 rounded-2xl border border-gray-200 dark:border-white/[0.08] hover:border-[#429de6]/50 transition-all"

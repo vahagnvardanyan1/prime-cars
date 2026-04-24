@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient, type UseQueryOptions } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { CACHE_STALE_TIME } from "@/lib/react-query/client";
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
 import type { AdminCar } from "@/lib/admin/types";
@@ -244,7 +245,7 @@ export const useAdminCars = (params?: FetchCarsParams, options?: Omit<UseQueryOp
   return useQuery({
     queryKey: queryKeys.cars.admin.list(params),
     queryFn: () => fetchAdminCars(params),
-    staleTime: 1000 * 60, // 1 minute
+    staleTime: CACHE_STALE_TIME,
     ...options,
   });
 };

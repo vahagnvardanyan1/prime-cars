@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { CACHE_STALE_TIME, CACHE_GC_TIME } from "@/lib/react-query/client";
 import type { Car, CarCategory } from "@/lib/cars/types";
 import { fetchCarsByCategory, fetchAllAvailableCars, fetchAvailableCarsPaginated } from "@/lib/cars/fetchCars";
 import { createAvailableCar } from "@/lib/admin/createAvailableCar";
@@ -11,10 +12,13 @@ import type { AvailableCarFormData, UpdateAvailableCarFormData } from "@/lib/adm
 export const availableCarsKeys = {
   all: ["availableCars"] as const,
   lists: () => [...availableCarsKeys.all, "list"] as const,
-  list: (category?: CarCategory, page?: number, limit?: number, search?: string) => 
-    category 
-      ? [...availableCarsKeys.lists(), category, page, limit, search] as const 
-      : [...availableCarsKeys.lists(), "all", page, limit, search] as const,
+  list: (category?: CarCategory, page?: number, limit?: number, search?: string) => {
+    // Normalize search: treat "" and undefined the same to avoid cache misses
+    const normalizedSearch = search?.trim() || undefined;
+    return category
+      ? [...availableCarsKeys.lists(), category, page, limit, normalizedSearch] as const
+      : [...availableCarsKeys.lists(), "all", page, limit, normalizedSearch] as const;
+  },
   details: () => [...availableCarsKeys.all, "detail"] as const,
   detail: (id: string) => [...availableCarsKeys.details(), id] as const,
 };
@@ -31,10 +35,13 @@ export const useAvailableCars = ({
   search?: string;
   carCategory?: CarCategory;
 } = {}) => {
+  // Normalize empty search to undefined so query keys stay consistent across mounts
+  const normalizedSearch = search?.trim() || undefined;
+
   return useQuery({
-    queryKey: availableCarsKeys.list(carCategory, page, limit, search),
+    queryKey: availableCarsKeys.list(carCategory, page, limit, normalizedSearch),
     queryFn: async () => {
-      const response = await fetchAvailableCarsPaginated({ page, limit, search, carCategory });
+      const response = await fetchAvailableCarsPaginated({ page, limit, search: normalizedSearch, carCategory });
       if (!response.success) {
         throw new Error(response.error || "Failed to fetch available cars");
       }
@@ -46,8 +53,8 @@ export const useAvailableCars = ({
         pageSize: response.limit || limit,
       };
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
+    staleTime: CACHE_STALE_TIME,
+    gcTime: CACHE_GC_TIME,
   });
 };
 
@@ -62,8 +69,8 @@ export const useAllAvailableCars = () => {
       }
       return response.cars;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
+    staleTime: CACHE_STALE_TIME,
+    gcTime: CACHE_GC_TIME,
   });
 };
 
@@ -78,8 +85,8 @@ export const useAvailableCarsByCategory = (category: CarCategory) => {
       }
       return response.cars;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, // 10 minutes
+    staleTime: CACHE_STALE_TIME,
+    gcTime: CACHE_GC_TIME,
   });
 };
 

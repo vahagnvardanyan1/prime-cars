@@ -13,6 +13,16 @@ import { useUser } from "@/contexts/UserContext";
 import type { AdminNavKey } from "@/hooks/admin/useAdminDashboardState";
 import { cn } from "@/components/ui/utils";
 import { Link } from "@/i18n/routing";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type AdminSidebarContentProps = {
   onRequestClose?: () => void;
@@ -44,6 +54,7 @@ export const AdminSidebarContent = ({
   const { user, clearUser } = useUser();
   const pathname = usePathname();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -158,7 +169,7 @@ export const AdminSidebarContent = ({
       {/* Logout button — pinned to bottom */}
       <div className={cn("mt-auto px-3 pb-4", isCollapsed ? "flex justify-center" : "")}>
         <button
-          onClick={handleLogout}
+          onClick={() => setIsLogoutDialogOpen(true)}
           disabled={isLoggingOut}
           title={isCollapsed ? t("admin.preferences.logout") : undefined}
           className={cn(
@@ -177,6 +188,35 @@ export const AdminSidebarContent = ({
           )}
         </button>
       </div>
+
+      {/* Logout confirmation dialog */}
+      <AlertDialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
+        <AlertDialogContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-gray-900 dark:text-white">
+              {t("admin.logout.title")}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
+              {t("admin.logout.description")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              disabled={isLoggingOut}
+              className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
+            >
+              {t("admin.logout.cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
+            >
+              {isLoggingOut ? "..." : t("admin.logout.confirm")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

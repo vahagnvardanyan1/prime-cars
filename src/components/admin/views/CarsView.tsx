@@ -93,7 +93,7 @@ const CarTableRow = memo(function CarTableRow({
       <Table.Cell className="sticky left-0 z-10 bg-white dark:bg-[#0b0f14] p-0">
         <div className="flex items-stretch h-full w-full">
           {/* Photo + download icon */}
-          <div className="px-3 py-2 flex-shrink-0 flex items-center gap-3">
+          <div className="w-[124px] px-3 py-2 flex-shrink-0 flex items-center gap-3">
             {car.imageUrl && (
               <button
                 onClick={handlePhotoClick}

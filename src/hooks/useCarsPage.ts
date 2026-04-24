@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
+import { CACHE_STALE_TIME, CACHE_GC_TIME } from "@/lib/react-query/client";
 import type { Car } from "@/lib/cars/types";
 
 import { fetchAllAvailableCars } from "@/lib/cars/fetchCars";
@@ -26,8 +27,8 @@ export const useCarsPage = () => {
       }
       return Array.isArray(result.cars) ? result.cars : [];
     },
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
+    staleTime: CACHE_STALE_TIME,
+    gcTime: CACHE_GC_TIME,
     retry: 2,
   });
 

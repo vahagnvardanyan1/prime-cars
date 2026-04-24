@@ -208,7 +208,11 @@
     },
     "contactUs": {
       "title": "Связаться",
-      "description": "Свяжитесь с нами по любым вопросам."
+      "description": "Свяжитесь с нами по любым вопросам.",
+      "availability": "Мы всегда доступны для вас",
+      "workingHoursLabel": "Часы работы",
+      "workingDays": "Понедельник – Пятница",
+      "workingTime": "10:00 – 22:00"
     },
     "apply": {
       "title": "Подать заявку",
@@ -598,7 +602,10 @@
     "pagination": {
       "showing": "Показано",
       "of": "из",
-      "itemsPerPage": "Элементов на странице"
+      "itemsPerPage": "Элементов на странице",
+      "pageNavigation": "Навигация по страницам",
+      "previousPage": "Предыдущая страница",
+      "nextPage": "Следующая страница"
     },
     "filters": {
       "searchUsers": "Поиск по имени, имени пользователя, email, телефону или паспорту...",
@@ -632,7 +639,6 @@
       "searchPlaceholder": "Поиск (только визуально)",
       "quickSettings": "Быстрые настройки",
       "openNavAria": "Открыть навигацию",
-      "preferencesAria": "Предпочтения",
       "languageLabel": "Язык",
       "themeLabel": "Тема",
       "lightMode": "Светлая",
@@ -644,6 +650,12 @@
     },
     "preferences": {
       "logout": "Выход"
+    },
+    "logout": {
+      "title": "Выход",
+      "description": "Вы уверены, что хотите выйти?",
+      "cancel": "Отмена",
+      "confirm": "Выход"
     },
     "sidebar": {
       "consoleLabel": "Админ‑консоль",

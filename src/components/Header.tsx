@@ -311,6 +311,16 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
           >
             {t("header.applyNow")}
           </Link>
+          <button
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              onLoginClick();
+            }}
+            className="px-4 py-3 border border-black/20 dark:border-white/20 text-gray-900 dark:text-white rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-all text-center font-medium"
+            type="button"
+          >
+            {t("header.signInNow")}
+          </button>
         </nav>
       </div>
     </>

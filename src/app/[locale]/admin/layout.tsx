@@ -3,7 +3,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { Theme } from "@radix-ui/themes";
 
-import { Menu, Home } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
@@ -16,7 +16,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useUser } from "@/contexts/UserContext";
 import { LoginModal } from "@/components/LoginModal";
 import { NotificationPopup } from "@/components/NotificationPopup";
-import { Link } from "@/i18n/routing";
 
 type AdminLayoutProps = {
   children: ReactNode;
@@ -116,14 +115,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <AdminTopbar
           left={
             <div className="flex items-center gap-4">
-              <Link 
-                href="/"
-                className="md:hidden flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 transition-all duration-200 group shrink-0"
-                title="Go to Home"
-              >
-                <Home className="h-4 w-4 text-gray-700 dark:text-gray-300 group-hover:text-[#429de6] dark:group-hover:text-[#429de6] transition-colors" />
-              </Link>
-
               <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
                 <SheetTrigger asChild>
                   <Button

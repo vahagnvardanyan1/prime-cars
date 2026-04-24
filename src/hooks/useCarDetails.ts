@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
+import { CACHE_STALE_TIME, CACHE_GC_TIME } from "@/lib/react-query/client";
 import { fetchAvailableCarById } from "@/lib/cars/fetchCars";
 
 export const useCarDetails = ({ carId }: { carId: string }) => {
@@ -14,8 +15,8 @@ export const useCarDetails = ({ carId }: { carId: string }) => {
       }
       return result.car;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, // 10 minutes
+    staleTime: CACHE_STALE_TIME,
+    gcTime: CACHE_GC_TIME,
     retry: 2,
     enabled: !!carId, // Only fetch if carId exists
   });

@@ -208,7 +208,11 @@
     },
     "contactUs": {
       "title": "Կապ մեզ հետ",
-      "description": "Կապվեք մեզ հետ ցանկացած հարցով։"
+      "description": "Կապվեք մեզ հետ ցանկացած հարցով։",
+      "availability": "Մենք միշտ հասանելի ենք ձեզ համար",
+      "workingHoursLabel": "Աշխատանքային ժամեր",
+      "workingDays": "Երկուշաբթի - Ուրբաթ",
+      "workingTime": "10:00 - 22:00"
     },
     "apply": {
       "title": "Դիմել հիմա",
@@ -443,7 +447,7 @@
       "weightClassUnder5": "Մինչև 5 տոննա",
       "weightClass5to20": "5-ից 20 տոննա",
       "weightClassAbove20": "20 տոննայից ավելի",
-      "outOfAuctionBorders": "Աճուրդի սահմաններից դուրս (Sublot)",
+      "outOfAuctionBorders": "Աճուրդի սահմաններից դուրս (Offsite, Sublot)",
       "otherExpenses": "Այլ ծախսեր",
       "calculateCost": "Հաշվել արժեքը",
       "calculating": "Հաշվարկվում է...",
@@ -598,7 +602,10 @@
     "pagination": {
       "showing": "Ցուցադրվում է",
       "of": "ից",
-      "itemsPerPage": "Տարրեր էջում"
+      "itemsPerPage": "Տարրեր մեկ էջում",
+      "pageNavigation": "Էջերի նավիգացիա",
+      "previousPage": "Նախորդ էջ",
+      "nextPage": "Հաջորդ էջ"
     },
     "filters": {
       "searchUsers": "Որոնել ըստ անվան, օգտանունի, էլ․ փոստի, հեռախոսի կամ անձնագրի...",
@@ -643,6 +650,12 @@
     },
     "preferences": {
       "logout": "Ելք"
+    },
+    "logout": {
+      "title": "Ելք",
+      "description": "Վստա՞հ եք, որ ցանկանում եք դուրս գալ։",
+      "cancel": "Չեղարկել",
+      "confirm": "Ելք"
     },
     "sidebar": {
       "consoleLabel": "Ադմին վահանակ",

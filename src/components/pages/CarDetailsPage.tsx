@@ -370,10 +370,10 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
               </a>
               
               {/* Secondary Actions */}
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-                <button 
+              <div className="grid grid-cols-2 md:grid-cols-1 gap-2.5 sm:gap-3">
+                <button
                   onClick={handleShare}
-                  className="px-4 sm:px-5 py-3 sm:py-3.5 bg-white dark:bg-white/10 text-gray-900 dark:text-white text-sm sm:text-base border border-gray-200 dark:border-white/20 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-white/20 transition-all duration-200"
+                  className="md:hidden px-4 sm:px-5 py-3 sm:py-3.5 bg-white dark:bg-white/10 text-gray-900 dark:text-white text-sm sm:text-base border border-gray-200 dark:border-white/20 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-white/20 transition-all duration-200"
                 >
                   {t("shareButton")}
                 </button>

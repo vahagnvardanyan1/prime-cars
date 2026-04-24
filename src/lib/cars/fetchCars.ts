@@ -9,8 +9,8 @@ const mapBackendCarToFrontend = (backendCar: BackendAvailableCar): Car => {
 
   return {
     id: backendCar.id,
-    imageUrl: backendCar.carPhotos[0] || '', // First photo as main image
-    photos: backendCar.carPhotos,
+    imageUrl: backendCar.carPhotos?.[0] || '',
+    photos: backendCar.carPhotos || [],
     brand,
     model: backendCar.carModel, // Keep full model name
     year: backendCar.carYear,
@@ -104,8 +104,11 @@ export const fetchAvailableCarsPaginated = async ({
     const carsArray: BackendAvailableCar[] = dataWrapper?.data || [];
     const meta = dataWrapper?.meta || {};
 
+    console.log(carsArray, "Fetched paginated cars from available-cars/paginated endpoint");
+
     // Map backend cars to frontend Car type
     const cars = carsArray.map(mapBackendCarToFrontend);
+    console.log(cars, "Mapped paginated cars to frontend Car type");
     return {
       success: true,
       cars,

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient, type UseQueryOptions } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { CACHE_STALE_TIME, CACHE_GC_TIME } from "@/lib/react-query/client";
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
 import type { ShippingCity, Auction } from "@/lib/admin/types";
@@ -134,7 +135,7 @@ export const useShipping = (params?: FetchShippingParams, options?: Omit<UseQuer
   return useQuery({
     queryKey: queryKeys.shipping.list(params),
     queryFn: () => fetchShipping(params),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: CACHE_STALE_TIME,
     ...options,
   });
 };
@@ -222,8 +223,8 @@ export const useShippingPrices = (
       }
       return result.cities || [];
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, 
+    staleTime: CACHE_STALE_TIME,
+    gcTime: CACHE_GC_TIME,
     enabled: !!auction, 
     ...options,
   });
