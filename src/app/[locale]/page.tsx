@@ -5,6 +5,8 @@ import { HomePage } from "@/components/pages/HomePage";
 import type { Locale } from "@/i18n/config";
 import { createPageMetadata } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 type PageProps = { params: { locale: Locale } };
 
 export const generateMetadata = async ({
