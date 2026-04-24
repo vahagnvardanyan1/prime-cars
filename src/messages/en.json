@@ -1,4 +1,9 @@
 {
+  "notFound": {
+    "title": "This page has gone missing",
+    "description": "Looks like the page isn’t available. Let’s head back home.",
+    "backHome": "Back to Home"
+  },
   "meta": {
     "localeName": "English"
   },
