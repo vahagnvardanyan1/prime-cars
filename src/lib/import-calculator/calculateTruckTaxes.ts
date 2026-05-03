@@ -1,6 +1,5 @@
 import {
   type TruckWeightClass as TruckWeightClassType,
-  type TruckAgeCategory,
   type TruckEngineType,
   PETROL_RATE_DEFAULT,
   PETROL_UNDER5_LARGE_ENGINE_RATE_0_3,
@@ -16,10 +15,11 @@ import {
   DIESEL_ENGINE_CC_THRESHOLD,
   ELECTRIC_CUSTOMS_DUTY_RATE,
   OLD_TRUCK_CUSTOMS_RATE_PER_CM3,
-  ENVIRONMENTAL_TAX_RATES,
   VAT_RATE,
 } from "./truckTaxConstants";
 import { calculateVehicleAge } from "./calculateAge";
+import { calculateEnvironmentalTax } from "./calculateEnvironmentalTax";
+import { truckLog } from "./truckDebug";
 
 export type TruckWeightClass = TruckWeightClassType;
 export type { TruckEngineType };
@@ -28,7 +28,7 @@ export type TruckTaxParams = {
   vehiclePriceEur: number;
   auctionFeeEur: number;
   shippingPriceEur: number;
-  engineVolumeLiters: number;
+  engineVolumeCm3: number;
   weightClass: TruckWeightClass;
   vehicleYear: number;
   vehicleMonth: number;
@@ -44,144 +44,203 @@ export type TruckTaxResult = {
   total: number;
 };
 
-function getAgeCategory(vehicleYear: number, vehicleMonth: number, vehicleDay: number): TruckAgeCategory {
-  const age = calculateVehicleAge(vehicleYear, vehicleMonth, vehicleDay);
-
-  if (age <= 2) return "0-2";
-  if (age <= 4) return "3-4";
-  if (age <= 9) return "5-9";
-  if (age <= 14) return "10-14";
-  return "15+";
-}
+type CustomsDutyOutcome = {
+  value: number;
+  branch: string;
+  details: Record<string, unknown>;
+};
 
 // ==================== PETROL CUSTOMS DUTY FUNCTIONS ====================
 
 /**
  * Petrol, under 5 tons, <2800cc
- * 0-7 years → 15%
- * 7+ years  → engineCc × €1.0
+ * 0-7 years → 15% (P1)
+ * 7+ years  → engineCc × €1.0 (P2)
  */
 function calculatePetrolUnder5SmallEngine(
   customsDutyBase: number,
   engineCc: number,
   age: number
-): number {
-  if (age > 7) return engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
-  return customsDutyBase * PETROL_RATE_DEFAULT;
+): CustomsDutyOutcome {
+  if (age > 7) {
+    const value = engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
+    return { value, branch: "P2", details: { formula: "engineCc × €1.0", engineCc, age } };
+  }
+  const value = customsDutyBase * PETROL_RATE_DEFAULT;
+  return { value, branch: "P1", details: { formula: "base × 15%", customsDutyBase, age } };
 }
 
 /**
  * Petrol, under 5 tons, ≥2800cc
- * 0-3 years → 12.5%
- * 3-7 years → 15%
- * 7+ years  → engineCc × €1.0
+ * 0-3 years → 12.5% (P3)
+ * 3-7 years → 15% (P4)
+ * 7+ years  → engineCc × €1.0 (P5)
  */
 function calculatePetrolUnder5LargeEngine(
   customsDutyBase: number,
   engineCc: number,
   age: number
-): number {
-  if (age > 7) return engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
-  if (age <= 3) return customsDutyBase * PETROL_UNDER5_LARGE_ENGINE_RATE_0_3;
-  return customsDutyBase * PETROL_RATE_DEFAULT;
+): CustomsDutyOutcome {
+  if (age > 7) {
+    const value = engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
+    return { value, branch: "P5", details: { formula: "engineCc × €1.0", engineCc, age } };
+  }
+  if (age <= 3) {
+    const value = customsDutyBase * PETROL_UNDER5_LARGE_ENGINE_RATE_0_3;
+    return { value, branch: "P3", details: { formula: "base × 12.5%", customsDutyBase, age } };
+  }
+  const value = customsDutyBase * PETROL_RATE_DEFAULT;
+  return { value, branch: "P4", details: { formula: "base × 15%", customsDutyBase, age } };
 }
 
 /**
- * Petrol, 5-20 tons AND 20+ tons (same logic, any engine volume)
+ * Petrol, 5-20 tons (P6/P7) AND 20+ tons (P8/P9) — same logic, any engine volume
  * 0-7 years → 15%
  * 7+ years  → engineCc × €1.0
  */
 function calculatePetrolHeavy(
   customsDutyBase: number,
   engineCc: number,
-  age: number
-): number {
-  if (age > 7) return engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
-  return customsDutyBase * PETROL_RATE_DEFAULT;
+  age: number,
+  weightClass: TruckWeightClass
+): CustomsDutyOutcome {
+  const old = age > 7;
+  const branch =
+    weightClass === "5to20" ? (old ? "P7" : "P6") : old ? "P9" : "P8";
+  if (old) {
+    const value = engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
+    return { value, branch, details: { formula: "engineCc × €1.0", engineCc, age } };
+  }
+  const value = customsDutyBase * PETROL_RATE_DEFAULT;
+  return { value, branch, details: { formula: "base × 15%", customsDutyBase, age } };
 }
 
 // ==================== DIESEL CUSTOMS DUTY FUNCTIONS ====================
 
 /**
  * Diesel, under 5 tons, <2500cc
- * 0-5 years → 10%
- * 5-7 years → MAX(base × 10%, engineCc × €0.13)
- * 7+ years  → engineCc × €1.0
+ * 0-5 years → 10% (D1)
+ * 5-7 years → MAX(base × 10%, engineCc × €0.13) (D2)
+ * 7+ years  → engineCc × €1.0 (D3)
  */
 function calculateDieselUnder5SmallEngine(
   customsDutyBase: number,
   engineCc: number,
   age: number
-): number {
-  if (age > 7) return engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
+): CustomsDutyOutcome {
+  if (age > 7) {
+    const value = engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
+    return { value, branch: "D3", details: { formula: "engineCc × €1.0", engineCc, age } };
+  }
   if (age > 5) {
     const percentageBased = customsDutyBase * DIESEL_RATE_UNDER5;
     const volumeBased = engineCc * DIESEL_UNDER5_SMALL_CM3_RATE;
-    return Math.max(percentageBased, volumeBased);
+    const value = Math.max(percentageBased, volumeBased);
+    return {
+      value,
+      branch: "D2",
+      details: {
+        formula: "MAX(base × 10%, engineCc × €0.13)",
+        percentageBased,
+        volumeBased,
+        chosen: percentageBased >= volumeBased ? "percentage" : "volume",
+        age,
+      },
+    };
   }
-  return customsDutyBase * DIESEL_RATE_UNDER5;
+  const value = customsDutyBase * DIESEL_RATE_UNDER5;
+  return { value, branch: "D1", details: { formula: "base × 10%", customsDutyBase, age } };
 }
 
 /**
  * Diesel, under 5 tons, ≥2500cc
- * 0-7 years → 10%
- * 7+ years  → engineCc × €1.0
+ * 0-7 years → 10% (D4)
+ * 7+ years  → engineCc × €1.0 (D5)
  */
 function calculateDieselUnder5LargeEngine(
   customsDutyBase: number,
   engineCc: number,
   age: number
-): number {
-  if (age > 7) return engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
-  return customsDutyBase * DIESEL_RATE_UNDER5;
+): CustomsDutyOutcome {
+  if (age > 7) {
+    const value = engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
+    return { value, branch: "D5", details: { formula: "engineCc × €1.0", engineCc, age } };
+  }
+  const value = customsDutyBase * DIESEL_RATE_UNDER5;
+  return { value, branch: "D4", details: { formula: "base × 10%", customsDutyBase, age } };
 }
 
 /**
  * Diesel, 5-20 tons, any engine volume
- * 0-3 years → 15%
- * 3-5 years → 10%
- * 5-7 years → MAX(base × 10%, engineCc × €0.18)
- * 7+ years  → engineCc × €1.0
+ * 0-3 years → 15% (D6)
+ * 3-5 years → 10% (D7)
+ * 5-7 years → MAX(base × 10%, engineCc × €0.18) (D8)
+ * 7+ years  → engineCc × €1.0 (D9)
  */
 function calculateDiesel5to20(
   customsDutyBase: number,
   engineCc: number,
   age: number
-): number {
-  if (age > 7) return engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
+): CustomsDutyOutcome {
+  if (age > 7) {
+    const value = engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
+    return { value, branch: "D9", details: { formula: "engineCc × €1.0", engineCc, age } };
+  }
   if (age > 5) {
     const percentageBased = customsDutyBase * DIESEL_RATE_5TO20_5_7;
     const volumeBased = engineCc * DIESEL_5TO20_CM3_RATE;
-    return Math.max(percentageBased, volumeBased);
+    const value = Math.max(percentageBased, volumeBased);
+    return {
+      value,
+      branch: "D8",
+      details: {
+        formula: "MAX(base × 10%, engineCc × €0.18)",
+        percentageBased,
+        volumeBased,
+        chosen: percentageBased >= volumeBased ? "percentage" : "volume",
+        age,
+      },
+    };
   }
-  if (age > 3) return customsDutyBase * DIESEL_RATE_5TO20_3_5;
-  return customsDutyBase * DIESEL_RATE_5TO20_0_3;
+  if (age > 3) {
+    const value = customsDutyBase * DIESEL_RATE_5TO20_3_5;
+    return { value, branch: "D7", details: { formula: "base × 10%", customsDutyBase, age } };
+  }
+  const value = customsDutyBase * DIESEL_RATE_5TO20_0_3;
+  return { value, branch: "D6", details: { formula: "base × 15%", customsDutyBase, age } };
 }
 
 /**
  * Diesel, 20+ tons, any engine volume
- * 0-3 years → 5%
- * 3-7 years → 10%
- * 7+ years  → engineCc × €1.0
+ * 0-3 years → 5% (D10)
+ * 3-7 years → 10% (D11)
+ * 7+ years  → engineCc × €1.0 (D12)
  */
 function calculateDieselAbove20(
   customsDutyBase: number,
   engineCc: number,
   age: number
-): number {
-  if (age > 7) return engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
-  if (age > 3) return customsDutyBase * DIESEL_RATE_ABOVE20_3_7;
-  return customsDutyBase * DIESEL_RATE_ABOVE20_0_3;
+): CustomsDutyOutcome {
+  if (age > 7) {
+    const value = engineCc * OLD_TRUCK_CUSTOMS_RATE_PER_CM3;
+    return { value, branch: "D12", details: { formula: "engineCc × €1.0", engineCc, age } };
+  }
+  if (age > 3) {
+    const value = customsDutyBase * DIESEL_RATE_ABOVE20_3_7;
+    return { value, branch: "D11", details: { formula: "base × 10%", customsDutyBase, age } };
+  }
+  const value = customsDutyBase * DIESEL_RATE_ABOVE20_0_3;
+  return { value, branch: "D10", details: { formula: "base × 5%", customsDutyBase, age } };
 }
 
 // ==================== ELECTRIC CUSTOMS DUTY FUNCTION ====================
 
 /**
- * Electric trucks — flat 15% for all cases, no exceptions
- * No weight class, age, or engine volume distinction
+ * Electric trucks — flat 15% for all cases (E1)
  */
-function calculateElectricCustomsDuty(customsDutyBase: number): number {
-  return customsDutyBase * ELECTRIC_CUSTOMS_DUTY_RATE;
+function calculateElectricCustomsDuty(customsDutyBase: number): CustomsDutyOutcome {
+  const value = customsDutyBase * ELECTRIC_CUSTOMS_DUTY_RATE;
+  return { value, branch: "E1", details: { formula: "base × 15%", customsDutyBase } };
 }
 
 // ==================== ROUTER ====================
@@ -189,40 +248,58 @@ function calculateElectricCustomsDuty(customsDutyBase: number): number {
 function calculateCustomsDuty(
   engineType: TruckEngineType,
   weightClass: TruckWeightClass,
-  engineVolumeLiters: number,
+  engineVolumeCm3: number,
   customsDutyBase: number,
   vehicleYear: number,
   vehicleMonth: number,
   vehicleDay: number
-): number {
+): CustomsDutyOutcome {
   const age = calculateVehicleAge(vehicleYear, vehicleMonth, vehicleDay);
-  const engineCc = engineVolumeLiters * 1000;
+  const engineCc = engineVolumeCm3;
+
+  let outcome: CustomsDutyOutcome;
+  let ccThreshold: number | null = null;
 
   if (engineType === "electric") {
-    return calculateElectricCustomsDuty(customsDutyBase);
-  }
-
-  if (engineType === "petrol") {
+    outcome = calculateElectricCustomsDuty(customsDutyBase);
+  } else if (engineType === "petrol") {
     if (weightClass === "under5") {
-      if (engineCc < PETROL_ENGINE_CC_THRESHOLD) {
-        return calculatePetrolUnder5SmallEngine(customsDutyBase, engineCc, age);
-      }
-      return calculatePetrolUnder5LargeEngine(customsDutyBase, engineCc, age);
+      ccThreshold = PETROL_ENGINE_CC_THRESHOLD;
+      outcome =
+        engineCc < PETROL_ENGINE_CC_THRESHOLD
+          ? calculatePetrolUnder5SmallEngine(customsDutyBase, engineCc, age)
+          : calculatePetrolUnder5LargeEngine(customsDutyBase, engineCc, age);
+    } else {
+      outcome = calculatePetrolHeavy(customsDutyBase, engineCc, age, weightClass);
     }
-    return calculatePetrolHeavy(customsDutyBase, engineCc, age);
+  } else {
+    // diesel
+    if (weightClass === "under5") {
+      ccThreshold = DIESEL_ENGINE_CC_THRESHOLD;
+      outcome =
+        engineCc < DIESEL_ENGINE_CC_THRESHOLD
+          ? calculateDieselUnder5SmallEngine(customsDutyBase, engineCc, age)
+          : calculateDieselUnder5LargeEngine(customsDutyBase, engineCc, age);
+    } else if (weightClass === "5to20") {
+      outcome = calculateDiesel5to20(customsDutyBase, engineCc, age);
+    } else {
+      outcome = calculateDieselAbove20(customsDutyBase, engineCc, age);
+    }
   }
 
-  // diesel
-  if (weightClass === "under5") {
-    if (engineCc < DIESEL_ENGINE_CC_THRESHOLD) {
-      return calculateDieselUnder5SmallEngine(customsDutyBase, engineCc, age);
-    }
-    return calculateDieselUnder5LargeEngine(customsDutyBase, engineCc, age);
-  }
-  if (weightClass === "5to20") {
-    return calculateDiesel5to20(customsDutyBase, engineCc, age);
-  }
-  return calculateDieselAbove20(customsDutyBase, engineCc, age);
+  truckLog("customs/route", {
+    engineType,
+    weightClass,
+    engineCc,
+    age,
+    ccThreshold,
+    customsDutyBase,
+    branch: outcome.branch,
+    customsDuty: outcome.value,
+    ...outcome.details,
+  });
+
+  return outcome;
 }
 
 // ==================== MAIN CALCULATION ====================
@@ -232,7 +309,7 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
     vehiclePriceEur,
     auctionFeeEur,
     shippingPriceEur,
-    engineVolumeLiters,
+    engineVolumeCm3,
     weightClass,
     vehicleYear,
     vehicleMonth,
@@ -241,46 +318,74 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
     importer,
   } = params;
 
+  debugger
   // Customs duty base differs by importer type
-  const customsDutyBase =
-    importer === "legal"
-      ? vehiclePriceEur + auctionFeeEur + shippingPriceEur
-      : vehiclePriceEur + auctionFeeEur;
+  const includesShippingInCustoms = importer === "legal";
+  const customsDutyBase = includesShippingInCustoms
+    ? vehiclePriceEur + auctionFeeEur + shippingPriceEur
+    : vehiclePriceEur + auctionFeeEur;
 
   const baseValue = vehiclePriceEur + auctionFeeEur;
 
-  const customsDuty = calculateCustomsDuty(
+  truckLog("bases", {
+    importer,
+    includesShippingInCustoms,
+    vehiclePriceEur,
+    auctionFeeEur,
+    shippingPriceEur,
+    customsDutyBase,
+    baseValue,
+  });
+
+  const customsOutcome = calculateCustomsDuty(
     engineType,
     weightClass,
-    engineVolumeLiters,
+    engineVolumeCm3,
     customsDutyBase,
     vehicleYear,
     vehicleMonth,
     vehicleDay
   );
+  const customsDuty = customsOutcome.value;
 
   // VAT: differs by importer type
   // Individual: (vehiclePrice + auctionFee + customsDuty) × 20%
   // Legal: (vehiclePrice + auctionFee + customsDuty + shipping) × 20%
-  const vatBase =
-    importer === "legal"
-      ? customsDuty + baseValue + shippingPriceEur
-      : customsDuty + baseValue;
+  const vatBase = includesShippingInCustoms
+    ? customsDuty + baseValue + shippingPriceEur
+    : customsDuty + baseValue;
   const vat = vatBase * VAT_RATE;
 
-  // Environmental tax: same base for both importers (no customsDuty, no shipping)
-  // (vehiclePrice + auctionFee) × age-based rate%
-  const envTaxBase = baseValue;
-  const ageCategory = getAgeCategory(vehicleYear, vehicleMonth, vehicleDay);
-  const envTaxRate = ENVIRONMENTAL_TAX_RATES[ageCategory];
-  const environmentalTax = envTaxBase * envTaxRate;
+  truckLog("vat", {
+    includesShipping: includesShippingInCustoms,
+    vatBase,
+    vatRate: VAT_RATE,
+    vat,
+  });
+
+  // Environmental tax: calendar-year-based age (vehicleYear → "year 1"), same
+  // base for both importers (no customsDuty, no shipping).
+  const envTax = calculateEnvironmentalTax(baseValue, vehicleYear);
+  const environmentalTax = envTax.amount;
+
+  truckLog("env", {
+    envTaxBase: baseValue,
+    envAge: envTax.envAge,
+    ageCategory: envTax.ageCategory,
+    envTaxRate: envTax.rate,
+    environmentalTax,
+  });
 
   const total = customsDuty + vat + environmentalTax;
 
-  return {
+  const result: TruckTaxResult = {
     customsDuty: Math.round(customsDuty),
     vat: Math.round(vat),
     environmentalTax: Math.round(environmentalTax),
     total: Math.round(total),
   };
+
+  truckLog("result/eur", { branch: customsOutcome.branch, ...result });
+
+  return result;
 }

@@ -65,17 +65,17 @@ export const generateMetadata = async ({
     ? car.model.slice(car.brand.length).trim()
     : car.model;
 
-  const fill = (template: string) =>
-    template
-      .replace("{year}", String(car.year))
-      .replace("{brand}", car.brand)
-      .replace("{model}", modelWithoutBrand || car.model)
-      .replace("{price}", priceStr)
-      .replace("{fuel}", fuel)
-      .replace("{transmission}", transmission);
+  const templateVars = {
+    year: String(car.year),
+    brand: car.brand,
+    model: modelWithoutBrand || car.model,
+    price: priceStr,
+    fuel,
+    transmission,
+  };
 
-  const title = fill(tSeo("titleTemplate"));
-  const description = fill(tSeo("descriptionTemplate"));
+  const title = tSeo("titleTemplate", templateVars);
+  const description = tSeo("descriptionTemplate", templateVars);
   const path = carDetailPath(car.id, car.year, car.brand, car.model);
   const ogImage = car.photos?.[0] || car.imageUrl || "/og/default.png";
 

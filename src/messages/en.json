@@ -444,6 +444,7 @@
       "insurance": "Insurance",
       "highGroundClearance": "High ground clearance",
       "hasReverse": "Has Reverse",
+      "noReverse": "No Reverse",
       "icePowerExceedsElectric": "ICE power exceeds the maximum 30-minute power of electric motor",
       "weightClass": "Weight class",
       "selectWeightClass": "Select weight class",

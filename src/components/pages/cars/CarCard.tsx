@@ -60,13 +60,14 @@ export const CarCard = ({ car }: CarCardProps) => {
           className="absolute top-3 right-3 z-10"
         />
 
-        <Image
+       {car.imageUrl && <Image
           src={car.imageUrl}
           alt={`${car.year} ${car.brand} ${car.model} — ${formatPrice(car.priceUsd)} — Prime Cars`}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
+       }
       </div>
 
       {/* Content */}

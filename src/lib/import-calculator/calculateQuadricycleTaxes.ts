@@ -1,21 +1,17 @@
 import {
-  type QuadricycleAgeCategory,
   HAS_REVERSE_CUSTOMS_DUTY_RATE,
   NOT_REVERSE_CUSTOMS_DUTY_RATE,
-  QUADRICYCLE_ENV_TAX_RATES,
   QUADRICYCLE_VAT_RATE,
 } from "./quadricycleTaxConstants";
 
-import { calculateVehicleAge } from "./calculateAge";
+import { calculateEnvironmentalTax } from "./calculateEnvironmentalTax";
 
 export type QuadricycleTaxParams = {
   vehiclePriceEur: number;
   auctionFeeEur: number;
   shippingPriceEur: number;
-  engineVolumeLiters: number;
+  engineVolumeCm3: number;
   vehicleYear: number;
-  vehicleMonth: number;
-  vehicleDay: number;
   importer: string; // "legal" | "individual"
   hasReverse: boolean;
 };
@@ -26,16 +22,6 @@ export type QuadricycleTaxResult = {
   environmentalTax: number;
   total: number;
 };
-
-function getAgeCategory(vehicleYear: number, vehicleMonth: number, vehicleDay: number): QuadricycleAgeCategory {
-  const age = calculateVehicleAge(vehicleYear, vehicleMonth, vehicleDay);
-
-  if (age <= 2) return "0-2";
-  if (age <= 4) return "3-4";
-  if (age <= 9) return "5-9";
-  if (age <= 14) return "10-14";
-  return "15+";
-}
 
 // ==================== HAS REVERSE ====================
 
@@ -58,8 +44,6 @@ function calculateHasReverseTaxes(
   auctionFeeEur: number,
   shippingPriceEur: number,
   vehicleYear: number,
-  vehicleMonth: number,
-  vehicleDay: number,
   importer: string
 ): QuadricycleTaxResult {
   const baseValue = vehiclePriceEur + auctionFeeEur;
@@ -78,10 +62,8 @@ function calculateHasReverseTaxes(
       : baseValue + customsDuty;
   const vat = vatBase * QUADRICYCLE_VAT_RATE;
 
-  // Environmental Tax: same for both importers (no customsDuty, no shipping)
-  const ageCategory = getAgeCategory(vehicleYear, vehicleMonth, vehicleDay);
-  const envTaxRate = QUADRICYCLE_ENV_TAX_RATES[ageCategory];
-  const environmentalTax = baseValue * envTaxRate;
+  // Environmental Tax: calendar-year-based age, same for both importers.
+  const environmentalTax = calculateEnvironmentalTax(baseValue, vehicleYear).amount;
 
   const total = customsDuty + vat + environmentalTax;
 
@@ -114,8 +96,6 @@ function calculateNotReverseTaxes(
   auctionFeeEur: number,
   shippingPriceEur: number,
   vehicleYear: number,
-  vehicleMonth: number,
-  vehicleDay: number,
   importer: string
 ): QuadricycleTaxResult {
   const baseValue = vehiclePriceEur + auctionFeeEur;
@@ -134,10 +114,8 @@ function calculateNotReverseTaxes(
       : baseValue + customsDuty;
   const vat = vatBase * QUADRICYCLE_VAT_RATE;
 
-  // Environmental Tax: same for both importers (no customsDuty, no shipping)
-  const ageCategory = getAgeCategory(vehicleYear, vehicleMonth, vehicleDay);
-  const envTaxRate = QUADRICYCLE_ENV_TAX_RATES[ageCategory];
-  const environmentalTax = baseValue * envTaxRate;
+  // Environmental Tax: calendar-year-based age, same for both importers.
+  const environmentalTax = calculateEnvironmentalTax(baseValue, vehicleYear).amount;
 
   const total = customsDuty + vat + environmentalTax;
 
@@ -159,20 +137,17 @@ export function calculateQuadricycleTaxes(
     auctionFeeEur,
     shippingPriceEur,
     vehicleYear,
-    vehicleMonth,
-    vehicleDay,
     importer,
     hasReverse,
   } = params;
 
+  debugger
   if (hasReverse) {
     return calculateHasReverseTaxes(
       vehiclePriceEur,
       auctionFeeEur,
       shippingPriceEur,
       vehicleYear,
-      vehicleMonth,
-      vehicleDay,
       importer
     );
   }
@@ -182,8 +157,6 @@ export function calculateQuadricycleTaxes(
     auctionFeeEur,
     shippingPriceEur,
     vehicleYear,
-    vehicleMonth,
-    vehicleDay,
     importer
   );
 }

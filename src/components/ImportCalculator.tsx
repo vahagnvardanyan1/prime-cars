@@ -35,6 +35,7 @@ import {
   calculateMotorcycleResult,
   type VehicleCalcParams,
 } from "@/lib/import-calculator/vehicleCalculators";
+import { normalizeEngineVolumeToCm3 } from "@/lib/import-calculator/normalizeEngineVolume";
 import { CalculatorResults } from "@/components/calculator/CalculatorResults";
 
 interface ImportCalculatorProps {
@@ -65,10 +66,9 @@ export const ImportCalculator = ({
   const [engineVolume, setEngineVolume] = useState("");
   const [insurance, setInsurance] = useState(false);
   const [highGroundClearance, setHighGroundClearance] = useState(false);
-  const [hasReverse, setHasReverse] = useState(false);
+  const [hasReverse, setHasReverse] = useState(true);
   const [icePowerExceedsElectric, setIcePowerExceedsElectric] = useState(false);
   const [outOfAuctionBorders, setOutOfAuctionBorders] = useState(false);
-  const [, setSublotPrice] = useState("");
   const [locationSearch, setLocationSearch] = useState("");
   const [otherExpenses, setOtherExpenses] = useState("");
   const [showResults, setShowResults] = useState(false);
@@ -88,14 +88,10 @@ export const ImportCalculator = ({
   // Fetch user's income tax brackets if logged in
   useEffect(() => {
     if (!user?.id) { setUserBrackets(null); return; }
-    console.log('[IncomeTax] Fetching brackets for user:', user.id);
     fetchUserIncomeTax({ userId: user.id }).then(result => {
-      console.log('[IncomeTax] API result:', JSON.stringify(result));
       if (result.success && result.incomeTaxBrackets.length > 0) {
         setUserBrackets(result.incomeTaxBrackets);
-        console.log('[IncomeTax] Loaded', result.incomeTaxBrackets.length, 'brackets');
       } else {
-        console.log('[IncomeTax] No brackets found, using hardcoded defaults');
         setUserBrackets(null);
       }
     });
@@ -136,6 +132,7 @@ export const ImportCalculator = ({
       setAuctionLocation(""); // Reset selection when tab changes
       setManualShippingPrice(""); // Reset manual price when tab changes
       
+      debugger
       try {
         // For "Other", fetch Copart cities
         const categoryToFetch = activeTab === "other" ? "copart" : activeTab;
@@ -164,9 +161,10 @@ export const ImportCalculator = ({
     loadCities();
   }, [activeTab]);
 
-  // Auto-set engine to gasoline for quadricycle
+  // Auto-set engine to gasoline for quadricycle, snowmobile, jetski
+  // (these vehicle types have the engine selector disabled)
   useEffect(() => {
-    if (vehicleType === "quadricycle") {
+    if (vehicleType === "quadricycle" || vehicleType === "snowmobile" || vehicleType === "jetski") {
       setEngine("gasoline");
     }
   }, [vehicleType]);
@@ -193,11 +191,9 @@ export const ImportCalculator = ({
     }
   }, [engine]);
 
-  // Set ICE power checkbox to true by default when hybrid is selected
+  // Reset ICE power checkbox when leaving hybrid; user controls it manually when hybrid.
   useEffect(() => {
-    if (engine === "hybrid") {
-      setIcePowerExceedsElectric(true);
-    } else {
+    if (engine !== "hybrid") {
       setIcePowerExceedsElectric(false);
     }
   }, [engine]);
@@ -254,12 +250,14 @@ export const ImportCalculator = ({
     }
   }, [vehiclePrice, activeTab]);
 
-  // Get shipping price from priceMap and tax from taxMap when location changes, apply vehicle type adjustments
+  // Get shipping price from priceMap and tax from taxMap when location changes.
+  // Adjustments only apply to shippingPrice (the displayed transport cost).
+  // cityTax is the customs/VAT base for legal importers and must stay raw.
   useEffect(() => {
-    const applyAdjustments = (base: number) => {
+    const applyShippingAdjustments = (base: number) => {
       let price = base;
       if (vehicleType === "quadricycle" || vehicleType === "motorcycle") {
-        price = Math.max(0, price - 500);
+        price = price * 0.5;
       } else if (vehicleType === "truck") {
         price = price + 500;
       }
@@ -271,11 +269,15 @@ export const ImportCalculator = ({
 
     if (activeTab === "other") {
       const manualPrice = parseFloat(manualShippingPrice) || 0;
-      setShippingPrice(applyAdjustments(manualPrice));
-      setCityTax(applyAdjustments(manualPrice)); // For "other", tax = shipping
+      const adjShipping = applyShippingAdjustments(manualPrice);
+      setShippingPrice(adjShipping);
+      setCityTax(manualPrice);
     } else if (auctionLocation && cityPriceMap[auctionLocation]) {
-      setShippingPrice(applyAdjustments(cityPriceMap[auctionLocation]));
-      setCityTax(applyAdjustments(cityTaxMap[auctionLocation] ?? 0));
+      const rawShipping = cityPriceMap[auctionLocation];
+      const rawCityTax = cityTaxMap[auctionLocation] ?? 0;
+      const adjShipping = applyShippingAdjustments(rawShipping);
+      setShippingPrice(adjShipping);
+      setCityTax(rawCityTax);
     } else {
       setShippingPrice(0);
       setCityTax(0);
@@ -357,11 +359,13 @@ export const ImportCalculator = ({
       };
 
       console.log('[Calculator] Submit values:', { shippingPrice, cityTax, auctionLocation, cityTaxMap: cityTaxMap[auctionLocation] });
+      const engineVolumeCm3 =
+        engine === "electric" ? 0 : normalizeEngineVolumeToCm3(engineVolume).cm3;
       const params: VehicleCalcParams = {
         vehiclePriceUsd: parseFloat(vehiclePrice),
         auctionFeeUsd: parseFloat(auctionFee),
         shippingPriceUsd: cityTax || 0,
-        engineVolume: engine === "electric" ? 0 : parseFloat(engineVolume),
+        engineVolumeCm3,
         engine,
         year: parseInt(year),
         day,
@@ -613,7 +617,6 @@ export const ImportCalculator = ({
                       checked={outOfAuctionBorders}
                       onChange={(e) => {
                         setOutOfAuctionBorders(e.target.checked);
-                        if (!e.target.checked) setSublotPrice("");
                       }}
                       className="w-4 h-4 flex-shrink-0 bg-transparent border-gray-300 dark:border-gray-700 text-[#429de6] rounded focus:ring-[#429de6] focus:ring-offset-0"
                     />
@@ -853,13 +856,15 @@ export const ImportCalculator = ({
                         <SelectItem value="gasoline">{t("calculator.form.gasoline")}</SelectItem>
                         <SelectItem value="diesel">{t("calculator.form.diesel")}</SelectItem>
                         <SelectItem value="electric">{t("calculator.form.electric")}</SelectItem>
-                        <SelectItem value="hybrid" disabled={vehicleType === "truck" || vehicleType === "motorcycle"}>{t("calculator.form.hybrid")}</SelectItem>
+                        {vehicleType !== "motorcycle" && (
+                          <SelectItem value="hybrid" disabled={vehicleType === "truck"}>{t("calculator.form.hybrid")}</SelectItem>
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
 
-                  {/* Engine Volume - Hidden for electric, disabled for snowmobile/jetski */}
-                  {engine !== "electric" && (
+                  {/* Engine Volume - Hidden for electric, snowmobile, jetski */}
+                  {engine !== "electric" && vehicleType !== "snowmobile" && vehicleType !== "jetski" && (
                     <div>
                       <label htmlFor="engine-volume" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                         {t("calculator.form.engineVolume")} <span className="text-red-500" aria-hidden="true">*</span>
@@ -991,6 +996,7 @@ export const ImportCalculator = ({
           engine={engine}
           engineVolume={engineVolume}
           weightClass={weightClass}
+          hasReverse={hasReverse}
           showPartnerMessage={showPartnerMessage}
           onBack={handleBackFromResults}
           otherExpenses={otherExpenses}

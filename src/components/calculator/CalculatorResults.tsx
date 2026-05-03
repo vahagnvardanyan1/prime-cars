@@ -35,6 +35,7 @@ type CalculatorResultsProps = {
   engine: string;
   engineVolume: string;
   weightClass?: string;
+  hasReverse?: boolean;
   showPartnerMessage?: boolean;
   otherExpenses?: string;
   onBack: () => void;
@@ -60,6 +61,7 @@ export const CalculatorResults = ({
   engine,
   engineVolume,
   weightClass,
+  hasReverse,
   showPartnerMessage = false,
   otherExpenses,
   onBack,
@@ -293,13 +295,25 @@ export const CalculatorResults = ({
             {t("calculator.results.engineLabel")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">
               {engine ? t(`calculator.form.${engine}`) : t("calculator.form.gasoline")}
             </span>
-            <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
-            {t("calculator.results.engineVolumeLabel")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">{engineVolume || "1"}</span>
+            {engine !== "electric" && vehicleType !== "snowmobile" && vehicleType !== "jetski" && (
+              <>
+                <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
+                {t("calculator.results.engineVolumeLabel")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">{engineVolume || "1"}</span>
+              </>
+            )}
             {vehicleType === "truck" && weightClass && (
               <>
                 <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
                 {t("calculator.form.weightClass")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">
                   {t(`calculator.form.weightClass${weightClass === "under5" ? "Under5" : weightClass === "5to20" ? "5to20" : "Above20"}`)}
+                </span>
+              </>
+            )}
+            {vehicleType === "quadricycle" && (
+              <>
+                <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
+                <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">
+                  {t(hasReverse ? "calculator.form.hasReverse" : "calculator.form.noReverse")}
                 </span>
               </>
             )}

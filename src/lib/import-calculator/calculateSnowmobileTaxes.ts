@@ -1,21 +1,9 @@
-import { calculateVehicleAge } from "./calculateAge";
+import { calculateEnvironmentalTax } from "./calculateEnvironmentalTax";
 
 // ==================== CONSTANTS ====================
 
 const SNOWMOBILE_CUSTOMS_RATE = 0.05; // 5%
 const SNOWMOBILE_VAT_RATE = 0.20; // 20%
-
-type SnowmobileAgeCategory = "0-2" | "3-4" | "5-9" | "10-14" | "15+";
-
-// Environmental tax rates by age bracket
-// Note: age brackets shift +1 year every January 1st (handled automatically by currentYear - vehicleYear)
-const SNOWMOBILE_ENV_TAX_RATES: Record<SnowmobileAgeCategory, number> = {
-  "0-2": 0.02, // 2%
-  "3-4": 0.04, // 4%
-  "5-9": 0.06, // 6%
-  "10-14": 0.12, // 12%
-  "15+": 0.24, // 24%
-};
 
 // ==================== TYPES ====================
 
@@ -24,8 +12,6 @@ export type SnowmobileTaxParams = {
   auctionFeeEur: number;
   shippingPriceEur: number;
   vehicleYear: number;
-  vehicleMonth: number;
-  vehicleDay: number;
   importer: string; // "legal" | "individual"
 };
 
@@ -35,18 +21,6 @@ export type SnowmobileTaxResult = {
   environmentalTax: number;
   total: number;
 };
-
-// ==================== HELPERS ====================
-
-function getAgeCategory(vehicleYear: number, vehicleMonth: number, vehicleDay: number): SnowmobileAgeCategory {
-  const age = calculateVehicleAge(vehicleYear, vehicleMonth, vehicleDay);
-
-  if (age <= 2) return "0-2";
-  if (age <= 4) return "3-4";
-  if (age <= 9) return "5-9";
-  if (age <= 14) return "10-14";
-  return "15+";
-}
 
 // ==================== MAIN CALCULATION ====================
 
@@ -73,8 +47,6 @@ export function calculateSnowmobileTaxes(
     auctionFeeEur,
     shippingPriceEur,
     vehicleYear,
-    vehicleMonth,
-    vehicleDay,
     importer,
   } = params;
 
@@ -94,10 +66,8 @@ export function calculateSnowmobileTaxes(
       : baseValue + customsDuty;
   const vat = vatBase * SNOWMOBILE_VAT_RATE;
 
-  // Environmental Tax: same for both importers (no customsDuty, no shipping)
-  const ageCategory = getAgeCategory(vehicleYear, vehicleMonth, vehicleDay);
-  const envTaxRate = SNOWMOBILE_ENV_TAX_RATES[ageCategory];
-  const environmentalTax = baseValue * envTaxRate;
+  // Environmental Tax: calendar-year-based age, same for both importers.
+  const environmentalTax = calculateEnvironmentalTax(baseValue, vehicleYear).amount;
 
   const total = customsDuty + vat + environmentalTax;
 

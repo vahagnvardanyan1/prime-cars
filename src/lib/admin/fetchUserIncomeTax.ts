@@ -26,7 +26,6 @@ export const fetchUserIncomeTax = async ({
     }
 
     const result = await response.json();
-    console.log('[IncomeTax] API response for user', userId, ':', JSON.stringify(result));
     const brackets = result.incomeTaxBrackets ?? result.data?.incomeTaxBrackets ?? [];
 
     return { success: true, incomeTaxBrackets: brackets };

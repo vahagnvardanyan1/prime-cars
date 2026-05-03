@@ -5,12 +5,13 @@ import { calculateQuadricycleTaxes } from "./calculateQuadricycleTaxes";
 import { calculateMotorcycleTaxes } from "./calculateMotorcycleTaxes";
 import { calculateSnowmobileTaxes } from "./calculateSnowmobileTaxes";
 import { calculateJetSkiTaxes } from "./calculateJetSkiTaxes";
+import { truckLog, truckWarn } from "./truckDebug";
 
 export type VehicleCalcParams = {
   vehiclePriceUsd: number;
   auctionFeeUsd: number;
   shippingPriceUsd: number;
-  engineVolume: number; // liters; caller passes 0 for electric
+  engineVolumeCm3: number; // canonical cm³; caller passes 0 for electric
   engine: string; // "gasoline" | "diesel" | "electric" | "hybrid"
   year: number;
   day: string;
@@ -46,47 +47,96 @@ function applyRateCompensation(
 }
 
 export function calculateTruckResult(params: VehicleCalcParams): CalculatorResponse {
-  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolume, weightClass, year, day, month, engine, eurUsdRate, importer } = params;
+  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolumeCm3, weightClass, year, day, month, engine, eurUsdRate, importer } = params;
+
+  truckLog("entry/usd", {
+    vehiclePriceUsd,
+    auctionFeeUsd,
+    shippingPriceUsd,
+    engineVolumeCm3,
+    weightClass,
+    year,
+    month,
+    day,
+    rawEngine: engine,
+    importer,
+    eurUsdRate,
+  });
+
+  const engineType: "diesel" | "electric" | "petrol" =
+    engine === "diesel" ? "diesel" : engine === "electric" ? "electric" : "petrol";
+  const hybridFallback = engine === "hybrid";
+  const unknownEngineFallback =
+    engine !== "diesel" && engine !== "electric" && engine !== "gasoline" && engine !== "hybrid";
+
+  truckLog("entry/engine-resolved", { rawEngine: engine, engineType, hybridFallback, unknownEngineFallback });
+  if (hybridFallback) {
+    truckWarn("entry/engine-resolved", {
+      message: "Hybrid engine for truck silently mapped to petrol — verify expected behavior.",
+      rawEngine: engine,
+    });
+  }
+  if (unknownEngineFallback) {
+    truckWarn("entry/engine-resolved", {
+      message: "Unknown engine value for truck silently mapped to petrol.",
+      rawEngine: engine,
+    });
+  }
+
+  const vehiclePriceEur = vehiclePriceUsd / eurUsdRate;
+  const auctionFeeEur = auctionFeeUsd / eurUsdRate;
+  const shippingPriceEur = shippingPriceUsd / eurUsdRate;
+  truckLog("entry/eur", { vehiclePriceEur, auctionFeeEur, shippingPriceEur, eurUsdRate });
+
+  debugger
   const result = calculateTruckTaxes({
-    vehiclePriceEur: vehiclePriceUsd / eurUsdRate,
-    auctionFeeEur: auctionFeeUsd / eurUsdRate,
-    shippingPriceEur: shippingPriceUsd / eurUsdRate,
-    engineVolumeLiters: engineVolume,
+    vehiclePriceEur,
+    auctionFeeEur,
+    shippingPriceEur,
+    engineVolumeCm3,
     weightClass: weightClass as TruckWeightClass,
     vehicleYear: year,
     vehicleMonth: parseInt(month),
     vehicleDay: parseInt(day),
-    engineType: engine === "diesel" ? "diesel" : engine === "electric" ? "electric" : "petrol",
+    engineType,
     importer,
   });
-  return applyRateCompensation(result, eurUsdRate, "truck");
+  const usd = applyRateCompensation(result, eurUsdRate, "truck");
+  truckLog("result/usd", { ...usd, eurUsdRate });
+  return usd;
 }
 
 export function calculateQuadricycleResult(params: VehicleCalcParams): CalculatorResponse {
-  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolume, year, day, month, eurUsdRate, importer, hasReverse } = params;
-  const result = calculateQuadricycleTaxes({
+  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolumeCm3, year, eurUsdRate, importer, hasReverse } = params;
+  console.log("[Quadricycle/entry-usd]", {
+    vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, importer, hasReverse, engineVolumeCm3, year, eurUsdRate,
+  });
+  const eurInputs = {
     vehiclePriceEur: vehiclePriceUsd / eurUsdRate,
     auctionFeeEur: auctionFeeUsd / eurUsdRate,
     shippingPriceEur: shippingPriceUsd / eurUsdRate,
-    engineVolumeLiters: engineVolume,
+  };
+  console.log("[Quadricycle/entry-eur]", { ...eurInputs, eurUsdRate });
+  const result = calculateQuadricycleTaxes({
+    ...eurInputs,
+    engineVolumeCm3,
     vehicleYear: year,
-    vehicleMonth: parseInt(month),
-    vehicleDay: parseInt(day),
     importer,
     hasReverse,
   });
-  return applyRateCompensation(result, eurUsdRate, "quadricycle");
+  console.log("[Quadricycle/result-eur]", result);
+  const usd = applyRateCompensation(result, eurUsdRate, "quadricycle");
+  console.log("[Quadricycle/result-usd]", { ...usd, eurUsdRate });
+  return usd;
 }
 
 export function calculateSnowmobileResult(params: VehicleCalcParams): CalculatorResponse {
-  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, year, day, month, eurUsdRate, importer } = params;
+  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, year, eurUsdRate, importer } = params;
   const result = calculateSnowmobileTaxes({
     vehiclePriceEur: vehiclePriceUsd / eurUsdRate,
     auctionFeeEur: auctionFeeUsd / eurUsdRate,
     shippingPriceEur: shippingPriceUsd / eurUsdRate,
     vehicleYear: year,
-    vehicleMonth: parseInt(month),
-    vehicleDay: parseInt(day),
     importer,
   });
   return applyRateCompensation(result, eurUsdRate, "snowmobile");
@@ -105,15 +155,17 @@ export function calculateJetSkiResult(params: VehicleCalcParams): CalculatorResp
 
 export async function calculatePassengerResult(params: VehicleCalcParams): Promise<CalculatorResponse> {
   const {
-    vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engine, engineVolume,
+    vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engine, engineVolumeCm3,
     day, month, year, importer, highGroundClearance, eurUsdRate,
   } = params;
   const shippingForTax = importer === "individual" ? 0 : shippingPriceUsd;
   const totalPriceEur = Math.round((vehiclePriceUsd + shippingForTax + auctionFeeUsd) / eurUsdRate);
-  console.log('[Passenger] vehiclePriceUsd:', vehiclePriceUsd, 'auctionFeeUsd:', auctionFeeUsd, 'shippingPriceUsd (cityTax):', shippingPriceUsd, 'shippingForTax:', shippingForTax, 'totalPriceEur:', totalPriceEur, 'eurUsdRate:', eurUsdRate);
+  // Backend currently expects engine volume in liters; convert from canonical cm³.
+  const volumeLiters = engineVolumeCm3 > 0 ? engineVolumeCm3 / 1000 : 0;
+  debugger
   const result = await calculateVehicleTaxes({
     price: totalPriceEur,
-    volume: engineVolume,
+    volume: volumeLiters,
     engineType: mapEngineType(engine),
     date: formatDate({ day, month, year: String(year) }),
     isLegal: importer === "legal" ? 1 : 0,
@@ -125,14 +177,24 @@ export async function calculatePassengerResult(params: VehicleCalcParams): Promi
 }
 
 export function calculateMotorcycleResult(params: VehicleCalcParams): CalculatorResponse {
-  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolume, engine, eurUsdRate, importer } = params;
-  const result = calculateMotorcycleTaxes({
+  const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolumeCm3, engine, eurUsdRate, importer } = params;
+  console.log("[Motorcycle/entry-usd]", {
+    vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, importer, engineVolumeCm3, engine, eurUsdRate,
+  });
+  const eurInputs = {
     vehiclePriceEur: vehiclePriceUsd / eurUsdRate,
     auctionFeeEur: auctionFeeUsd / eurUsdRate,
     shippingPriceEur: shippingPriceUsd / eurUsdRate,
-    engineVolumeLiters: engineVolume,
+  };
+  console.log("[Motorcycle/entry-eur]", { ...eurInputs, eurUsdRate });
+  const result = calculateMotorcycleTaxes({
+    ...eurInputs,
+    engineVolumeCm3,
     importer,
     isElectric: engine === "electric",
   });
-  return applyRateCompensation(result, eurUsdRate, "motorcycle");
+  console.log("[Motorcycle/result-eur]", result);
+  const usd = applyRateCompensation(result, eurUsdRate, "motorcycle");
+  console.log("[Motorcycle/result-usd]", { ...usd, eurUsdRate });
+  return usd;
 }

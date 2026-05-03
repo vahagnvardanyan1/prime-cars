@@ -212,12 +212,14 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
               className="aspect-[16/10] rounded-xl overflow-hidden bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 cursor-pointer group relative"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
+            {photos[selectedImage] && 
               <img
                 src={photos[selectedImage]}
                 alt={`${car.brand} ${car.model}`}
                 loading="eager"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
+                />
+              }
               {/* Zoom icon overlay */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 dark:bg-black/90 rounded-full p-2">

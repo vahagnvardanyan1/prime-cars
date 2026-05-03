@@ -12,7 +12,7 @@ export type MotorcycleTaxParams = {
   vehiclePriceEur: number;
   auctionFeeEur: number;
   shippingPriceEur: number;
-  engineVolumeLiters: number;
+  engineVolumeCm3: number;
   importer: string; // "legal" | "individual"
   isElectric: boolean;
 };
@@ -58,17 +58,15 @@ function calculateMotoElectric(customsDutyBase: number): number {
 
 function calculateCustomsDuty(
   customsDutyBase: number,
-  engineVolumeLiters: number,
+  engineVolumeCm3: number,
   isElectric: boolean
 ): number {
   if (isElectric) {
     return calculateMotoElectric(customsDutyBase);
   }
 
-  const engineCc = engineVolumeLiters * 1000;
-
-  if (engineCc < 250) return calculateMotoSmallEngine(customsDutyBase);
-  if (engineCc < 800) return calculateMotoMediumEngine(customsDutyBase);
+  if (engineVolumeCm3 < 250) return calculateMotoSmallEngine(customsDutyBase);
+  if (engineVolumeCm3 < 800) return calculateMotoMediumEngine(customsDutyBase);
   return calculateMotoLargeEngine(customsDutyBase);
 }
 
@@ -88,11 +86,12 @@ export function calculateMotorcycleTaxes(
     vehiclePriceEur,
     auctionFeeEur,
     shippingPriceEur,
-    engineVolumeLiters,
+    engineVolumeCm3,
     importer,
     isElectric,
   } = params;
 
+  
   const baseValue = vehiclePriceEur + auctionFeeEur;
 
   // Customs Duty: base differs by importer
@@ -100,7 +99,7 @@ export function calculateMotorcycleTaxes(
     importer === "legal"
       ? baseValue + shippingPriceEur
       : baseValue;
-  const customsDuty = calculateCustomsDuty(customsDutyBase, engineVolumeLiters, isElectric);
+  const customsDuty = calculateCustomsDuty(customsDutyBase, engineVolumeCm3, isElectric);
 
   // VAT: base differs by importer
   const vatBase =

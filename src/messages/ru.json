@@ -444,6 +444,7 @@
       "insurance": "Страхование",
       "highGroundClearance": "Высокий клиренс",
       "hasReverse": "Имеет задний ход",
+      "noReverse": "Без заднего хода",
       "icePowerExceedsElectric": "Мощность ДВС больше максимальной 30-минутной мощности ЭД",
       "weightClass": "Весовая категория",
       "selectWeightClass": "Выберите весовую категорию",
