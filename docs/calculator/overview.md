@@ -49,7 +49,7 @@ Armenian customs rates are denominated in EUR (e.g. `OLD_TRUCK_CUSTOMS_RATE_PER_
 
 Decimal point present → liters → multiply by 1000. Otherwise the raw integer is treated as cm³.
 
-The passenger backend still expects liters, so `calculatePassengerResult` does an explicit `cm3 / 1000` re‑conversion at that one boundary.
+The passenger backend now expects cm³ as well — `calculatePassengerResult` passes `engineVolumeCm3` straight through.
 
 ## Two age formulas (intentional)
 
