@@ -20,6 +20,7 @@ export type VehicleCalcParams = {
   highGroundClearance: boolean;
   weightClass: TruckWeightClass | "";
   hasReverse: boolean;
+  icePowerExceedsElectric: boolean;
   eurUsdRate: number;
 };
 
@@ -156,13 +157,12 @@ export function calculateJetSkiResult(params: VehicleCalcParams): CalculatorResp
 export async function calculatePassengerResult(params: VehicleCalcParams): Promise<CalculatorResponse> {
   const {
     vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engine, engineVolumeCm3,
-    day, month, year, importer, highGroundClearance, eurUsdRate,
+    day, month, year, importer, highGroundClearance, icePowerExceedsElectric, eurUsdRate,
   } = params;
   const shippingForTax = importer === "individual" ? 0 : shippingPriceUsd;
   const totalPriceEur = Math.round((vehiclePriceUsd + shippingForTax + auctionFeeUsd) / eurUsdRate);
   // Backend currently expects engine volume in liters; convert from canonical cm³.
   const volumeLiters = engineVolumeCm3 > 0 ? engineVolumeCm3 / 1000 : 0;
-  debugger
   const result = await calculateVehicleTaxes({
     price: totalPriceEur,
     volume: volumeLiters,
@@ -170,7 +170,7 @@ export async function calculatePassengerResult(params: VehicleCalcParams): Promi
     date: formatDate({ day, month, year: String(year) }),
     isLegal: importer === "legal" ? 1 : 0,
     offRoad: highGroundClearance ? 1 : 0,
-    ICEpower: 0,
+    ICEpower: icePowerExceedsElectric ? 1 : 0,
   });
   if (!result.success) throw new Error(result.error);
   return result.data;

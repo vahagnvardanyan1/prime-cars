@@ -29,8 +29,10 @@ export const mapEngineType = (engine: string): number => {
   const engineMap: Record<string, number> = {
     gasoline: 1,
     diesel: 2,
-    electric: 3,
-    hybrid: 4, // Generic hybrid
+    hybrid: 3,
+    // petrolAndElectric: 3,
+    // dieselAndElectric: 4, 
+    electric: 5,
   };
   return engineMap[engine] || 1;
 };

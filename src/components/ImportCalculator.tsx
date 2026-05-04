@@ -37,6 +37,7 @@ import {
 } from "@/lib/import-calculator/vehicleCalculators";
 import { normalizeEngineVolumeToCm3 } from "@/lib/import-calculator/normalizeEngineVolume";
 import { CalculatorResults } from "@/components/calculator/CalculatorResults";
+import { fetchShippingCitiesPublic } from "@/lib/import-calculator/fetchShippingCitiesPublic";
 
 interface ImportCalculatorProps {
   showNotice?: boolean;
@@ -125,31 +126,41 @@ export const ImportCalculator = ({
     window.history.back();
   }, []);
 
-  // Fetch cities and prices when activeTab changes
+  // Fetch cities and prices when activeTab or auth state changes.
+  // Public (anonymous) users get a city list only — no priceMap/taxMap —
+  // so the calculator falls back to the manual "Other" tab for shipping input.
   useEffect(() => {
     const loadCities = async () => {
       setIsLoadingLocations(true);
       setAuctionLocation(""); // Reset selection when tab changes
       setManualShippingPrice(""); // Reset manual price when tab changes
-      
-      debugger
+
       try {
         // For "Other", fetch Copart cities
         const categoryToFetch = activeTab === "other" ? "copart" : activeTab;
-        const result = await fetchShippingCities({ category: categoryToFetch });
-        
-        if (result.success) {
-          const sortedCities = getUniqueCities(result.cities);
-          setAvailableCities(sortedCities);
-          // For "Other", don't set priceMap/taxMap since user will enter manually
-          setCityPriceMap(activeTab === "other" ? {} : result.priceMap);
-          setCityTaxMap(activeTab === "other" ? {} : result.taxMap);
-        } else {
+        const result = user
+          ? await fetchShippingCities({ category: categoryToFetch })
+          : await fetchShippingCitiesPublic({ category: categoryToFetch });
+
+        if (!result.success) {
           setAvailableCities([]);
           setCityPriceMap({});
           setCityTaxMap({});
+          return;
         }
-      } catch  {
+
+        setAvailableCities(getUniqueCities(result.cities));
+
+        // Manual "Other" tab — user enters shipping by hand, ignore any maps.
+        // Public endpoint — no priceMap/taxMap returned; clear state.
+        if (activeTab === "other" || !("priceMap" in result)) {
+          setCityPriceMap({});
+          setCityTaxMap({});
+        } else {
+          setCityPriceMap(result.priceMap);
+          setCityTaxMap(result.taxMap);
+        }
+      } catch {
         setAvailableCities([]);
         setCityPriceMap({});
         setCityTaxMap({});
@@ -159,7 +170,7 @@ export const ImportCalculator = ({
     };
 
     loadCities();
-  }, [activeTab]);
+  }, [activeTab, user]);
 
   // Auto-set engine to gasoline for quadricycle, snowmobile, jetski
   // (these vehicle types have the engine selector disabled)
@@ -170,17 +181,18 @@ export const ImportCalculator = ({
   }, [vehicleType]);
 
   // Reset weight class when switching away from truck
-  // Reset engine to gasoline if truck is selected with invalid engine type
+  // Reset engine to gasoline if truck/motorcycle has a hybrid-style engine selected
   useEffect(() => {
+    const isHybridEngine = engine === "petrolAndElectric" || engine === "dieselAndElectric";
     if (vehicleType !== "truck") {
       setWeightClass("");
-    } else {
-      // Trucks only support gasoline, diesel, and electric
-      if (engine === "hybrid") setEngine("gasoline");
+    } else if (isHybridEngine) {
+      // Trucks only support gasoline, diesel, electric
+      setEngine("gasoline");
     }
-    if (vehicleType === "motorcycle") {
-      // Motorcycles only support gasoline, diesel, and electric
-      if (engine === "hybrid") setEngine("gasoline");
+    if (vehicleType === "motorcycle" && isHybridEngine) {
+      // Motorcycles only support gasoline, diesel, electric
+      setEngine("gasoline");
     }
   }, [vehicleType, engine]);
 
@@ -191,9 +203,11 @@ export const ImportCalculator = ({
     }
   }, [engine]);
 
-  // Reset ICE power checkbox when leaving hybrid; user controls it manually when hybrid.
+  // Reset ICE power checkbox when leaving a hybrid-style engine; user controls it manually otherwise.
   useEffect(() => {
-    if (engine !== "hybrid") {
+    const isHybridEngine = engine === "petrolAndElectric" || engine === "dieselAndElectric";
+    if (!isHybridEngine) {
+      debugger
       setIcePowerExceedsElectric(false);
     }
   }, [engine]);
@@ -267,6 +281,12 @@ export const ImportCalculator = ({
       return price;
     };
 
+    if (!user) {
+      // For unauthenticated users, cityPriceMap and cityTaxMap are not used (data is fetched via fetchShippingCitiesPublic which doesn't return price/tax maps), so we skip setting shipping price and tax based on location.
+      setShippingPrice(0);
+      setCityTax(0);
+      return;
+    }
     if (activeTab === "other") {
       const manualPrice = parseFloat(manualShippingPrice) || 0;
       const adjShipping = applyShippingAdjustments(manualPrice);
@@ -361,6 +381,7 @@ export const ImportCalculator = ({
       console.log('[Calculator] Submit values:', { shippingPrice, cityTax, auctionLocation, cityTaxMap: cityTaxMap[auctionLocation] });
       const engineVolumeCm3 =
         engine === "electric" ? 0 : normalizeEngineVolumeToCm3(engineVolume).cm3;
+        debugger
       const params: VehicleCalcParams = {
         vehiclePriceUsd: parseFloat(vehiclePrice),
         auctionFeeUsd: parseFloat(auctionFee),
@@ -374,6 +395,7 @@ export const ImportCalculator = ({
         highGroundClearance,
         weightClass,
         hasReverse,
+        icePowerExceedsElectric,
         eurUsdRate,
       };
 
