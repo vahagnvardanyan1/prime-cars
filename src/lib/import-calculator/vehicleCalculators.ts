@@ -163,10 +163,9 @@ export async function calculatePassengerResult(params: VehicleCalcParams): Promi
   // Backend expects engine volume as an integer cm³ (canonical unit).
   // engineVolumeCm3 should already be normalized via normalizeEngineVolumeToCm3,
   // but Math.round here defends against any non-integer reaching the API.
-  const volumeCm3 = Math.round(engineVolumeCm3);
   const result = await calculateVehicleTaxes({
     price: totalPriceEur,
-    volume: volumeCm3,
+    volume: engineVolumeCm3,
     engineType: mapEngineType(engine),
     date: formatDate({ day, month, year: String(year) }),
     isLegal: importer === "legal" ? 1 : 0,
