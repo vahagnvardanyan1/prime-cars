@@ -89,7 +89,6 @@ export function calculateTruckResult(params: VehicleCalcParams): CalculatorRespo
   const shippingPriceEur = shippingPriceUsd / eurUsdRate;
   truckLog("entry/eur", { vehiclePriceEur, auctionFeeEur, shippingPriceEur, eurUsdRate });
 
-  debugger
   const result = calculateTruckTaxes({
     vehiclePriceEur,
     auctionFeeEur,

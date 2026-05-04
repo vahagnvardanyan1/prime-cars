@@ -141,7 +141,7 @@ export function calculateQuadricycleTaxes(
     hasReverse,
   } = params;
 
-  debugger
+  
   if (hasReverse) {
     return calculateHasReverseTaxes(
       vehiclePriceEur,

@@ -318,7 +318,7 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
     importer,
   } = params;
 
-  debugger
+  
   // Customs duty base differs by importer type
   const includesShippingInCustoms = importer === "legal";
   const customsDutyBase = includesShippingInCustoms

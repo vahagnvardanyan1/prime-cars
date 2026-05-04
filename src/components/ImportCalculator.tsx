@@ -207,7 +207,6 @@ export const ImportCalculator = ({
   useEffect(() => {
     const isHybridEngine = engine === "petrolAndElectric" || engine === "dieselAndElectric";
     if (!isHybridEngine) {
-      debugger
       setIcePowerExceedsElectric(false);
     }
   }, [engine]);
@@ -381,7 +380,6 @@ export const ImportCalculator = ({
       console.log('[Calculator] Submit values:', { shippingPrice, cityTax, auctionLocation, cityTaxMap: cityTaxMap[auctionLocation] });
       const engineVolumeCm3 =
         engine === "electric" ? 0 : normalizeEngineVolumeToCm3(engineVolume).cm3;
-        debugger
       const params: VehicleCalcParams = {
         vehiclePriceUsd: parseFloat(vehiclePrice),
         auctionFeeUsd: parseFloat(auctionFee),

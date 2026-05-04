@@ -16,6 +16,10 @@ Documentation for the Prime Cars website Web Interface Guidelines audit, includi
 - Calculator Page - (To be documented)
 - Partners Page - (To be documented)
 
+### Import Calculator
+- [Overview](./calculator/overview.md) - USD ⇄ EUR flow, units, age formulas, shipping vs cityTax, sublot, engine rules, ICEpower wiring, public vs auth fetch
+- [Truck Calculation](./truck-calculator/truck-calculation.md) - Per‑branch customs duty tables (P1–P9, D1–D12, E1), VAT, env tax
+
 ### Authentication
 - [Sign-In Flow](./auth/sign-in-flow.md) - Login modals, token management, auth hooks
 

@@ -1,5 +1,4 @@
 import { API_BASE_URL } from "@/i18n/config";
-import { authenticatedFetch } from "../auth/token";
 
 export type ShippingData = {
   city: string;
