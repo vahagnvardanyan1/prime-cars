@@ -26,7 +26,7 @@ const shippingFromCities = [
   { name: "Tacoma, WA", coordinates: [-122.44, 47.25] as [number, number] },
   { name: "Kapolei, HI", coordinates: [-158.09, 21.34] as [number, number] },
   { name: "Anchorage, AK", coordinates: [-149.9, 61.22] as [number, number] },
-  { name: "Etobicoke, ON", coordinates: [-79.56, 43.64] as [number, number] },
+  { name: "Toronto, ON", coordinates: [-79.38, 43.65] as [number, number] },
 ];
 
 const shippingToDestinations = [
@@ -39,6 +39,7 @@ const shippingToDestinations = [
   { name: "Sohar, Oman", coordinates: [56.73, 24.36] as [number, number] },
   { name: "Jebel Ali, U.A.E", coordinates: [55.03, 25.01] as [number, number] },
   { name: "Gdynia, Poland", coordinates: [18.54, 54.52] as [number, number] },
+  { name: "Bremerhaven, Germany", coordinates: [8.58, 53.55] as [number, number] },
 ];
 
 function ContainerIcon({ color, scale = 1 }: { color: string; scale?: number }) {
