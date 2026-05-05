@@ -13,33 +13,35 @@ import {
 import { FiPlus, FiMinus } from "react-icons/fi";
 import { useIsMobile } from "@/components/ui/use-mobile";
 
-const USA_GEO_URL = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
+// Land fill colors per theme. Used for default + hover + pressed
+// so react-simple-maps' built-in hover lighten doesn't fire.
+
 const WORLD_GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 const shippingFromCities = [
-  { name: "New York, NY", coordinates: [-74.01, 40.71] as [number, number] },
-  { name: "Norfolk, VA", coordinates: [-76.29, 36.85] as [number, number] },
-  { name: "Savannah, GA", coordinates: [-81.1, 32.08] as [number, number] },
-  { name: "Miami, FL", coordinates: [-80.19, 25.76] as [number, number] },
-  { name: "Houston, TX", coordinates: [-95.37, 29.76] as [number, number] },
-  { name: "Los Angeles, CA", coordinates: [-118.24, 34.05] as [number, number] },
-  { name: "Tacoma, WA", coordinates: [-122.44, 47.25] as [number, number] },
-  { name: "Kapolei, HI", coordinates: [-158.09, 21.34] as [number, number] },
-  { name: "Anchorage, AK", coordinates: [-149.9, 61.22] as [number, number] },
-  { name: "Toronto, ON", coordinates: [-79.38, 43.65] as [number, number] },
+  { name: "New York, NY", coordinates: [-74.04, 40.67] as [number, number] },
+  { name: "Norfolk, VA", coordinates: [-76.33, 36.92] as [number, number] },
+  { name: "Savannah, GA", coordinates: [-81.14, 32.13] as [number, number] },
+  { name: "Miami, FL", coordinates: [-80.16, 25.78] as [number, number] },
+  { name: "Houston, TX", coordinates: [-95.26, 29.72] as [number, number] },
+  { name: "Los Angeles, CA", coordinates: [-118.27, 33.74] as [number, number] },
+  { name: "Tacoma, WA", coordinates: [-122.41, 47.27] as [number, number] },
+  { name: "Kapolei, HI", coordinates: [-158.12, 21.31] as [number, number] },
+  { name: "Anchorage, AK", coordinates: [-149.89, 61.24] as [number, number] },
+  { name: "Toronto, ON", coordinates: [-79.37, 43.64] as [number, number] },
 ];
 
 const shippingToDestinations = [
-  { name: "Gyumri, Armenia", coordinates: [43.84, 40.79] as [number, number] },
-  { name: "Rotterdam, Netherlands", coordinates: [4.48, 51.92] as [number, number] },
-  { name: "Klaipeda, Lithuania", coordinates: [21.14, 55.71] as [number, number] },
-  { name: "Poti, Georgia", coordinates: [41.67, 42.15] as [number, number] },
-  { name: "Aqaba, Jordan", coordinates: [35.01, 29.53] as [number, number] },
-  { name: "Salalah, Oman", coordinates: [54.09, 17.02] as [number, number] },
-  { name: "Sohar, Oman", coordinates: [56.73, 24.36] as [number, number] },
-  { name: "Jebel Ali, U.A.E", coordinates: [55.03, 25.01] as [number, number] },
-  { name: "Gdynia, Poland", coordinates: [18.54, 54.52] as [number, number] },
-  { name: "Bremerhaven, Germany", coordinates: [8.58, 53.55] as [number, number] },
+  { name: "Gyumri, Armenia", coordinates: [43.85, 40.79] as [number, number] },
+  { name: "Rotterdam, Netherlands", coordinates: [4.14, 51.95] as [number, number] },
+  { name: "Klaipeda, Lithuania", coordinates: [21.13, 55.72] as [number, number] },
+  { name: "Poti, Georgia", coordinates: [41.65, 42.15] as [number, number] },
+  { name: "Aqaba, Jordan", coordinates: [35.0, 29.52] as [number, number] },
+  { name: "Salalah, Oman", coordinates: [54.0, 16.94] as [number, number] },
+  { name: "Sohar, Oman", coordinates: [56.62, 24.49] as [number, number] },
+  { name: "Jebel Ali, U.A.E", coordinates: [55.06, 24.98] as [number, number] },
+  { name: "Gdynia, Poland", coordinates: [18.55, 54.54] as [number, number] },
+  { name: "Bremerhaven, Germany", coordinates: [8.57, 53.58] as [number, number] },
 ];
 
 function ContainerIcon({ color, scale = 1 }: { color: string; scale?: number }) {
@@ -66,14 +68,28 @@ function ContainerIcon({ color, scale = 1 }: { color: string; scale?: number }) 
   );
 }
 
+// Per-tab viewport configuration (center + scale).
+// Both tabs render the same world TopoJSON via the same geoEqualEarth projection;
+// only the focus differs. This keeps the two views visually consistent.
+const VIEWPORTS = {
+  from: {
+    desktop: { center: [-105, 38] as [number, number], scale: 400 },
+    mobile: { center: [-105, 38] as [number, number], scale: 220 },
+  },
+  to: {
+    desktop: { center: [33, 38] as [number, number], scale: 700 },
+    mobile: { center: [35, 35] as [number, number], scale: 400 },
+  },
+};
+
 export function ShippingMap() {
   const [tab, setTab] = useState<"from" | "to">("from");
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
   const [hoverTooltip, setHoverTooltip] = useState<{ name: string; x: number; y: number } | null>(null);
   const [zoom, setZoom] = useState(1);
-  const [center, setCenter] = useState<[number, number]>([20, 40]);
+  const [center, setCenter] = useState<[number, number]>(VIEWPORTS.to.desktop.center);
   const [usaZoom, setUsaZoom] = useState(1);
-  const [usaCenter, setUsaCenter] = useState<[number, number]>([-96, 38]);
+  const [usaCenter, setUsaCenter] = useState<[number, number]>(VIEWPORTS.from.desktop.center);
   const containerRef = useRef<HTMLDivElement>(null);
   const t = useTranslations();
   const isMobile = useIsMobile();
@@ -120,21 +136,25 @@ export function ShippingMap() {
   };
   const handleZoomOut = () => {
     if (tab === "from") {
-      setUsaZoom((z) => Math.max(z / 1.5, 1));
+      setUsaZoom((z) => Math.max(z / 1.5, 0.5));
     } else {
-      setZoom((z) => Math.max(z / 1.5, 1));
+      setZoom((z) => Math.max(z / 1.5, 0.5));
     }
   };
 
   const markerScale = isMobile ? 0.9 : 1;
 
-  const usaMapProps = isMobile
-    ? { width: 400, height: 400, projectionConfig: { scale: 450 } }
-    : { width: 800, height: 500, projectionConfig: { scale: 800 } };
+  // Both tabs share dimensions and projection — only viewport (center/scale) differs.
+  const mapDimensions = isMobile
+    ? { width: 400, height: 500 }
+    : { width: 800, height: 500 };
 
-  const worldMapProps = isMobile
-    ? { width: 400, height: 500, projectionConfig: { scale: 400, center: [35, 35] as [number, number] } }
-    : { width: 800, height: 500, projectionConfig: { scale: 350, center: [33, 38] as [number, number] } };
+  const tabViewport = isMobile
+    ? VIEWPORTS[tab].mobile
+    : VIEWPORTS[tab].desktop;
+
+  const markers = tab === "from" ? shippingFromCities : shippingToDestinations;
+  const markerColor = tab === "from" ? "#22c55e" : "#429de6";
 
   // Clear active marker when switching tabs
   const handleTabChange = (newTab: "from" | "to") => {
@@ -206,7 +226,7 @@ export function ShippingMap() {
           <button
             type="button"
             onClick={handleZoomOut}
-            disabled={currentZoom <= 1}
+            disabled={currentZoom <= 0.5}
             className="w-11 h-11 md:w-9 md:h-9 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm disabled:opacity-40"
             aria-label="Zoom out"
           >
@@ -234,95 +254,58 @@ export function ShippingMap() {
           </div>
         )}
 
-        {tab === "from" ? (
-          <ComposableMap
-            projection="geoAlbersUsa"
-            projectionConfig={usaMapProps.projectionConfig}
-            width={usaMapProps.width}
-            height={usaMapProps.height}
-            className="w-full h-auto"
-          >
-            <ZoomableGroup
-              zoom={usaZoom}
-              center={usaCenter}
-              onMoveEnd={({ coordinates, zoom: z }) => {
+        <ComposableMap
+          key={tab}
+          projection="geoEqualEarth"
+          projectionConfig={{
+            center: tabViewport.center,
+            scale: tabViewport.scale,
+          }}
+          width={mapDimensions.width}
+          height={mapDimensions.height}
+          className="w-full h-auto"
+        >
+          <ZoomableGroup
+            zoom={tab === "from" ? usaZoom : zoom}
+            center={tab === "from" ? usaCenter : center}
+            onMoveEnd={({ coordinates, zoom: z }) => {
+              if (tab === "from") {
                 setUsaCenter(coordinates as [number, number]);
                 setUsaZoom(z);
-              }}
-            >
-              <Geographies geography={USA_GEO_URL}>
-                {({ geographies }: { geographies: Array<{ rsmKey: string }> }) =>
-                  geographies.map((geo) => (
-                    <Geography
-                      key={geo.rsmKey}
-                      geography={geo}
-                      fill="#d1d5db"
-                      stroke="#fff"
-                      strokeWidth={0.5}
-                      className="dark:fill-gray-700 dark:stroke-gray-600 outline-none"
-                    />
-                  ))
-                }
-              </Geographies>
-              {shippingFromCities.map((city) => (
-                <Marker
-                  key={city.name}
-                  coordinates={city.coordinates}
-                  onMouseEnter={(e) => handleMarkerHover(city.name, e as unknown as React.MouseEvent)}
-                  onMouseMove={(e) => handleMarkerHover(city.name, e as unknown as React.MouseEvent)}
-                  onMouseLeave={handleMarkerLeave}
-                  onClick={() => handleMarkerClick(city.name)}
-                >
-                  <ContainerIcon color="#22c55e" scale={markerScale} />
-                </Marker>
-              ))}
-            </ZoomableGroup>
-          </ComposableMap>
-        ) : (
-          <ComposableMap
-            projection="geoMercator"
-            projectionConfig={worldMapProps.projectionConfig}
-            width={worldMapProps.width}
-            height={worldMapProps.height}
-            className="w-full h-auto"
-          >
-            <ZoomableGroup
-              zoom={zoom}
-              center={center}
-              onMoveEnd={({ coordinates, zoom: z }) => {
+              } else {
                 setCenter(coordinates as [number, number]);
                 setZoom(z);
-              }}
-            >
-              <Geographies geography={WORLD_GEO_URL}>
-                {({ geographies }: { geographies: Array<{ rsmKey: string }> }) =>
-                  geographies.map((geo) => (
-                    <Geography
-                      key={geo.rsmKey}
-                      geography={geo}
-                      fill="#d1d5db"
-                      stroke="#fff"
-                      strokeWidth={0.5}
-                      className="dark:fill-gray-700 dark:stroke-gray-600 outline-none"
-                    />
-                  ))
-                }
-              </Geographies>
-              {shippingToDestinations.map((country) => (
-                <Marker
-                  key={country.name}
-                  coordinates={country.coordinates}
-                  onMouseEnter={(e) => handleMarkerHover(country.name, e as unknown as React.MouseEvent)}
-                  onMouseMove={(e) => handleMarkerHover(country.name, e as unknown as React.MouseEvent)}
-                  onMouseLeave={handleMarkerLeave}
-                  onClick={() => handleMarkerClick(country.name)}
-                >
-                  <ContainerIcon color="#429de6" scale={markerScale} />
-                </Marker>
-              ))}
-            </ZoomableGroup>
-          </ComposableMap>
-        )}
+              }
+            }}
+          >
+            <Geographies geography={WORLD_GEO_URL}>
+              {({ geographies }: { geographies: Array<{ rsmKey: string }> }) =>
+                geographies.map((geo) => (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill="#d1d5db"
+                    stroke="#fff"
+                    strokeWidth={0.5}
+                    className="dark:fill-gray-700 dark:stroke-gray-600 outline-none"
+                  />
+                ))
+              }
+            </Geographies>
+            {markers.map((m) => (
+              <Marker
+                key={m.name}
+                coordinates={m.coordinates}
+                onMouseEnter={(e) => handleMarkerHover(m.name, e as unknown as React.MouseEvent)}
+                onMouseMove={(e) => handleMarkerHover(m.name, e as unknown as React.MouseEvent)}
+                onMouseLeave={handleMarkerLeave}
+                onClick={() => handleMarkerClick(m.name)}
+              >
+                <ContainerIcon color={markerColor} scale={markerScale} />
+              </Marker>
+            ))}
+          </ZoomableGroup>
+        </ComposableMap>
       </div>
 
       <div className="flex justify-center gap-8 mt-6 text-sm text-gray-600 dark:text-gray-400">
