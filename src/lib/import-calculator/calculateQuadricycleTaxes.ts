@@ -36,8 +36,9 @@ export type QuadricycleTaxResult = {
  *   Individual: (vehiclePrice + auctionFee + customsDuty) × 20%
  *   Legal:      (vehiclePrice + auctionFee + customsDuty + shipping) × 20%
  *
- * Env Tax (same for both importers):
- *   (vehiclePrice + auctionFee) × age rate%
+ * Env Tax:
+ *   Individual: (vehiclePrice + auctionFee) × age rate%
+ *   Legal:      (vehiclePrice + auctionFee + shipping) × age rate%
  */
 function calculateHasReverseTaxes(
   vehiclePriceEur: number,
@@ -62,16 +63,18 @@ function calculateHasReverseTaxes(
       : baseValue + customsDuty;
   const vat = vatBase * QUADRICYCLE_VAT_RATE;
 
-  // Environmental Tax: calendar-year-based age, same for both importers.
-  const environmentalTax = calculateEnvironmentalTax(baseValue, vehicleYear).amount;
+  // Environmental Tax: shipping is included in the base for legal importer
+  // (matches truck behavior).
+  const envTaxBase = importer === "legal" ? baseValue + shippingPriceEur : baseValue;
+  const environmentalTax = calculateEnvironmentalTax(envTaxBase, vehicleYear).amount;
 
   const total = customsDuty + vat + environmentalTax;
 
   return {
-    customsDuty: Math.round(customsDuty),
-    vat: Math.round(vat),
-    environmentalTax: Math.round(environmentalTax),
-    total: Math.round(total),
+    customsDuty: customsDuty,
+    vat: vat,
+    environmentalTax: environmentalTax,
+    total: total,
   };
 }
 
@@ -88,8 +91,9 @@ function calculateHasReverseTaxes(
  *   Individual: (vehiclePrice + auctionFee + customsDuty) × 20%
  *   Legal:      (vehiclePrice + auctionFee + customsDuty + shipping) × 20%
  *
- * Env Tax (same for both importers):
- *   (vehiclePrice + auctionFee) × age rate%
+ * Env Tax:
+ *   Individual: (vehiclePrice + auctionFee) × age rate%
+ *   Legal:      (vehiclePrice + auctionFee + shipping) × age rate%
  */
 function calculateNotReverseTaxes(
   vehiclePriceEur: number,
@@ -114,16 +118,18 @@ function calculateNotReverseTaxes(
       : baseValue + customsDuty;
   const vat = vatBase * QUADRICYCLE_VAT_RATE;
 
-  // Environmental Tax: calendar-year-based age, same for both importers.
-  const environmentalTax = calculateEnvironmentalTax(baseValue, vehicleYear).amount;
+  // Environmental Tax: shipping is included in the base for legal importer
+  // (matches truck behavior).
+  const envTaxBase = importer === "legal" ? baseValue + shippingPriceEur : baseValue;
+  const environmentalTax = calculateEnvironmentalTax(envTaxBase, vehicleYear).amount;
 
   const total = customsDuty + vat + environmentalTax;
 
   return {
-    customsDuty: Math.round(customsDuty),
-    vat: Math.round(vat),
-    environmentalTax: Math.round(environmentalTax),
-    total: Math.round(total),
+    customsDuty,
+    vat,
+    environmentalTax,
+    total,
   };
 }
 

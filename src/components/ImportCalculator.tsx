@@ -38,6 +38,8 @@ import {
 import { normalizeEngineVolumeToCm3 } from "@/lib/import-calculator/normalizeEngineVolume";
 import { CalculatorResults } from "@/components/calculator/CalculatorResults";
 import { fetchShippingCitiesPublic } from "@/lib/import-calculator/fetchShippingCitiesPublic";
+import { useLocationSearch } from "@/components/calculator/useLocationSearch";
+import { NumericInput } from "@/components/calculator/NumericInput";
 
 interface ImportCalculatorProps {
   showNotice?: boolean;
@@ -71,6 +73,7 @@ export const ImportCalculator = ({
   const [icePowerExceedsElectric, setIcePowerExceedsElectric] = useState(false);
   const [outOfAuctionBorders, setOutOfAuctionBorders] = useState(false);
   const [locationSearch, setLocationSearch] = useState("");
+  const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [otherExpenses, setOtherExpenses] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [day, setDay] = useState("");
@@ -181,9 +184,9 @@ export const ImportCalculator = ({
   }, [vehicleType]);
 
   // Reset weight class when switching away from truck
-  // Reset engine to gasoline if truck/motorcycle has a hybrid-style engine selected
+  // Reset engine to gasoline if truck/motorcycle has hybrid selected
   useEffect(() => {
-    const isHybridEngine = engine === "petrolAndElectric" || engine === "dieselAndElectric";
+    const isHybridEngine = engine === "hybrid";
     if (vehicleType !== "truck") {
       setWeightClass("");
     } else if (isHybridEngine) {
@@ -203,15 +206,39 @@ export const ImportCalculator = ({
     }
   }, [engine]);
 
-  // Reset ICE power checkbox when leaving a hybrid-style engine; user controls it manually otherwise.
+  // Reset ICE power checkbox when leaving hybrid; user controls it manually when hybrid.
   useEffect(() => {
-    const isHybridEngine = engine === "petrolAndElectric" || engine === "dieselAndElectric";
-    if (!isHybridEngine) {
+    if (engine !== "hybrid") {
       setIcePowerExceedsElectric(false);
     }
   }, [engine]);
 
+  // City dropdown search + keyboard navigation. See useLocationSearch.
+  const {
+    filteredCities,
+    highlightedIndex,
+    setHighlightedIndex,
+    searchInputRef,
+    highlightedRowRef,
+    handleSearchKeyDown,
+  } = useLocationSearch({
+    availableCities,
+    isOpen: isLocationOpen,
+    search: locationSearch,
+    onSelect: useCallback((city: string) => {
+      setAuctionLocation(city);
+      setLocationSearch("");
+      setIsLocationOpen(false);
+    }, []),
+    onClose: useCallback(() => setIsLocationOpen(false), []),
+  });
+
   // Helper function to get error styling
+  // Snowmobile and jet ski don't use engine type or volume in their tax math.
+  // The engine selector is auto-set to gasoline; engine volume is optional metadata.
+  const needsEngine = vehicleType !== "snowmobile" && vehicleType !== "jetski";
+  const isEngineVolumeRequired = needsEngine && engine !== "electric";
+
   const getErrorClass = (value: string | boolean, isRequired: boolean = true) => {
     if (!showValidation || !isRequired) return "";
     return !value ? "border-red-500 dark:border-red-500" : "";
@@ -326,9 +353,6 @@ export const ImportCalculator = ({
     // Show validation errors
     setShowValidation(true);
 
-    // Snowmobiles don't need engine type or volume
-    const needsEngine = vehicleType !== "snowmobile" && vehicleType !== "jetski";
-    const isEngineVolumeRequired = needsEngine && engine !== "electric";
     if (!vehiclePrice || (needsEngine && !engine) || !day || !month || !year || !auctionLocation || !vehicleType) {
       toast.error(t("calculator.form.validationError") || "Please fill in all required fields");
       return;
@@ -531,15 +555,11 @@ export const ImportCalculator = ({
                     {t("calculator.form.vehiclePrice")} <span className="text-red-500" aria-hidden="true">*</span>
                     <span className="sr-only">({t("calculator.form.required")})</span>
                   </label>
-                  <input
+                  <NumericInput
                     id="vehicle-price"
                     name="vehiclePrice"
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    autoComplete="off"
                     value={vehiclePrice}
-                    onChange={(e) => setVehiclePrice(e.target.value.replace(/[^0-9]/g, ''))}
+                    onChange={setVehiclePrice}
                     aria-required="true"
                     aria-invalid={showValidation && !vehiclePrice}
                     className={`w-full px-4 py-3 bg-transparent border rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] text-gray-900 dark:text-white placeholder:text-gray-400 tabular-nums ${
@@ -553,13 +573,11 @@ export const ImportCalculator = ({
                   <label htmlFor="auction-fee" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                     {t("calculator.form.auctionFee")}
                   </label>
-                  <input
+                  <NumericInput
                     id="auction-fee"
                     name="auctionFee"
-                    type="number"
-                    autoComplete="off"
                     value={auctionFee}
-                    onChange={(e) => setAuctionFee(e.target.value)}
+                    onChange={setAuctionFee}
                     readOnly={activeTab === "copart" || activeTab === "iaai"}
                     aria-readonly={activeTab === "copart" || activeTab === "iaai"}
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-gray-900 dark:text-white placeholder:text-gray-400 tabular-nums ${
@@ -579,6 +597,8 @@ export const ImportCalculator = ({
                     <Select
                       value={auctionLocation}
                       onValueChange={(val) => { setAuctionLocation(val); setLocationSearch(""); }}
+                      open={isLocationOpen}
+                      onOpenChange={setIsLocationOpen}
                       disabled={isLoadingLocations}
                     >
                       <SelectTrigger
@@ -596,28 +616,39 @@ export const ImportCalculator = ({
                           <div className="relative">
                             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                             <input
+                              ref={searchInputRef}
                               type="text"
                               value={locationSearch}
                               onChange={(e) => setLocationSearch(e.target.value)}
-                              onKeyDown={(e) => e.stopPropagation()}
+                              onKeyDown={handleSearchKeyDown}
                               placeholder={t("calculator.form.selectLocation")}
                               className="w-full pl-8 pr-3 py-1.5 text-sm bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 outline-none"
                             />
                           </div>
                         </div>
                         <div className="overflow-y-auto max-h-[260px]">
-                          {availableCities.filter(c => c.toLowerCase().includes(locationSearch.toLowerCase())).length > 0 ? (
-                            availableCities
-                              .filter(c => c.toLowerCase().includes(locationSearch.toLowerCase()))
-                              .map((city) => (
-                                <SelectItem
+                          {filteredCities.length > 0 ? (
+                            filteredCities.map((city, idx) => {
+                              const isHighlighted = idx === highlightedIndex;
+                              return (
+                                <div
                                   key={city}
-                                  value={city}
-                                  className="text-gray-900 dark:text-white hover:bg-[#429de6]/20 hover:text-[#429de6] hover:font-medium dark:hover:bg-[#429de6]/30 dark:hover:text-[#429de6] focus:bg-[#429de6]/20 focus:text-[#429de6] focus:font-medium dark:focus:bg-[#429de6]/30 dark:focus:text-[#429de6] data-[state=checked]:bg-[#429de6]/20 data-[state=checked]:text-[#429de6] data-[state=checked]:font-medium dark:data-[state=checked]:bg-[#429de6]/30 dark:data-[state=checked]:text-[#429de6] transition-colors cursor-pointer"
+                                  ref={isHighlighted ? highlightedRowRef : undefined}
+                                  onMouseEnter={() => setHighlightedIndex(idx)}
                                 >
-                                  {city}
-                                </SelectItem>
-                              ))
+                                  <SelectItem
+                                    value={city}
+                                    className={`text-gray-900 dark:text-white hover:bg-[#429de6]/20 hover:text-[#429de6] hover:font-medium dark:hover:bg-[#429de6]/30 dark:hover:text-[#429de6] focus:bg-[#429de6]/20 focus:text-[#429de6] focus:font-medium dark:focus:bg-[#429de6]/30 dark:focus:text-[#429de6] data-[state=checked]:bg-[#429de6]/20 data-[state=checked]:text-[#429de6] data-[state=checked]:font-medium dark:data-[state=checked]:bg-[#429de6]/30 dark:data-[state=checked]:text-[#429de6] transition-colors cursor-pointer ${
+                                      isHighlighted
+                                        ? "bg-[#429de6]/20 text-[#429de6] font-medium dark:bg-[#429de6]/30 dark:text-[#429de6]"
+                                        : ""
+                                    }`}
+                                  >
+                                    {city}
+                                  </SelectItem>
+                                </div>
+                              );
+                            })
                           ) : (
                             <SelectItem value="no-locations" disabled>
                               {t("calculator.form.noLocationsAvailable") || "No locations available"}
@@ -651,14 +682,11 @@ export const ImportCalculator = ({
                     <label htmlFor="manual-shipping-price" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                       {t("calculator.form.shippingPrice")} <span className="text-red-500" aria-hidden="true">*</span>
                     </label>
-                    <input
+                    <NumericInput
                       id="manual-shipping-price"
                       name="manualShippingPrice"
-                      type="number"
-                      inputMode="decimal"
-                      autoComplete="off"
                       value={manualShippingPrice}
-                      onChange={(e) => setManualShippingPrice(e.target.value)}
+                      onChange={setManualShippingPrice}
                       placeholder={t("calculator.form.enterShippingPrice") || "Enter shipping price"}
                       aria-required="true"
                       aria-invalid={showValidation && !manualShippingPrice}
@@ -674,16 +702,13 @@ export const ImportCalculator = ({
                   <label htmlFor="other-expenses" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                     {t("calculator.form.otherExpenses")}
                   </label>
-                  <input
+                  <NumericInput
                     id="other-expenses"
                     name="otherExpenses"
-                    type="number"
-                    inputMode="decimal"
-                    autoComplete="off"
                     value={otherExpenses}
-                    onChange={(e) => setOtherExpenses(e.target.value)}
+                    onChange={setOtherExpenses}
                     placeholder="0"
-                    className="w-full h-12 px-4 rounded-lg bg-transparent border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 tabular-nums focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus:border-[#429de6] transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full h-12 px-4 rounded-lg bg-transparent border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 tabular-nums focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus:border-[#429de6] transition-colors"
                   />
                 </div>
               </div>
@@ -883,25 +908,23 @@ export const ImportCalculator = ({
                     </Select>
                   </div>
 
-                  {/* Engine Volume - Hidden for electric, snowmobile, jetski */}
-                  {engine !== "electric" && vehicleType !== "snowmobile" && vehicleType !== "jetski" && (
+                  {/* Engine Volume - Hidden only for electric.
+                      Snowmobile / jet ski accept the value as metadata (not used in tax math). */}
+                  {engine !== "electric" && (
                     <div>
                       <label htmlFor="engine-volume" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                        {t("calculator.form.engineVolume")} <span className="text-red-500" aria-hidden="true">*</span>
+                        {t("calculator.form.engineVolume")}
+                        {isEngineVolumeRequired && <span className="text-red-500" aria-hidden="true"> *</span>}
                       </label>
-                      <input
+                      <NumericInput
                         id="engine-volume"
                         name="engineVolume"
-                        type="number"
-                        inputMode="decimal"
-                        autoComplete="off"
-                        step="any"
                         value={engineVolume}
-                        onChange={(e) => setEngineVolume(e.target.value)}
-                        aria-required="true"
-                        aria-invalid={showValidation && !engineVolume}
+                        onChange={setEngineVolume}
+                        aria-required={isEngineVolumeRequired}
+                        aria-invalid={isEngineVolumeRequired && showValidation && !engineVolume}
                         className={`w-full px-4 py-3 bg-transparent border rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] text-gray-900 dark:text-white placeholder:text-gray-400 text-sm sm:text-base tabular-nums ${
-                          getErrorClass(engineVolume) || "border-gray-300 dark:border-gray-700 focus:border-[#429de6]"
+                          getErrorClass(engineVolume, isEngineVolumeRequired) || "border-gray-300 dark:border-gray-700 focus:border-[#429de6]"
                         }`}
                       />
                     </div>

@@ -803,9 +803,6 @@
       "shippingPricesTitle": "Shipping Prices",
       "shippingPricesSubtitle": "Manage city-specific shipping, with a safe global adjustment control.",
       "globalAdjustmentTitle": "Global Price Adjustment",
-      "globalAdjustmentBodyPrefix": "Enter a value to",
-      "globalAdjustmentBodyEmphasis": "add to all city shipping prices",
-      "globalAdjustmentExample": "Example: if all are 100 and you enter 100 → all become 200.",
       "applyToAll": "Apply to All Cities",
       "citiesTitle": "Cities",
       "citiesSubtitle": "Add, update or delete shipping prices per city.",
@@ -817,7 +814,7 @@
       "columns": {
         "city": "City",
         "shipping": "Shipping",
-        "taxes": "Taxes",
+        "taxes": "Control price",
         "actions": "Actions"
       },
       "update": "Update",
@@ -1035,7 +1032,8 @@
         "fieldLabel": "Shipping Price (USD)",
         "fieldLabelTax": "Tax (USD)",
         "cancel": "Cancel",
-        "confirm": "Confirm"
+        "confirm": "Confirm",
+        "updating": "Updating..."
       },
       "addShipping": {
         "title": "Add Shipping City",

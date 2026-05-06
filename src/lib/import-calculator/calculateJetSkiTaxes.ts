@@ -64,9 +64,9 @@ export function calculateJetSkiTaxes(
   const total = customsDuty + vat;
 
   return {
-    customsDuty: Math.round(customsDuty),
-    vat: Math.round(vat),
+    customsDuty,
+    vat,
     environmentalTax: 0,
-    total: Math.round(total),
+    total,
   };
 }

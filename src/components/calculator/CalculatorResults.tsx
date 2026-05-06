@@ -295,10 +295,10 @@ export const CalculatorResults = ({
             {t("calculator.results.engineLabel")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">
               {engine ? t(`calculator.form.${engine}`) : t("calculator.form.gasoline")}
             </span>
-            {engine !== "electric" && vehicleType !== "snowmobile" && vehicleType !== "jetski" && (
+            {engine !== "electric" && (
               <>
                 <span className="text-gray-400 dark:text-white/50 mx-2">/</span>
-                {t("calculator.results.engineVolumeLabel")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">{engineVolume || "1"}</span>
+                {t("calculator.results.engineVolumeLabel")}: <span className="text-[#429de6] dark:text-[#5db3f0] font-semibold">{engineVolume || "—"}</span>
               </>
             )}
             {vehicleType === "truck" && weightClass && (

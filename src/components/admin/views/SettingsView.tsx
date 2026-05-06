@@ -345,21 +345,14 @@ export const SettingsView = ({
 
         <div className="px-4 pb-6 sm:px-6">
           <div className="rounded-2xl border border-[#429de6]/20 bg-[#429de6]/[0.05] p-5 dark:border-[#429de6]/25 dark:bg-[#429de6]/10">
-            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div className="flex flex-col gap-4 lg:grid lg:items-end">
               <div className="min-w-0">
                 <div className="text-sm font-semibold text-gray-900 dark:text-white">
                   {t("admin.settingsView.globalAdjustmentTitle")}
                 </div>
-                <div className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                  {t("admin.settingsView.globalAdjustmentBodyPrefix")}{" "}
-                  <span className="font-medium">
-                    {t("admin.settingsView.globalAdjustmentBodyEmphasis")}
-                  </span>
-                  . {t("admin.settingsView.globalAdjustmentExample")}
-                </div>
               </div>
 
-              <div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
+              <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
                 {/* Auction Category Selector */}
                 <Select
                   value={adjustmentAuction}

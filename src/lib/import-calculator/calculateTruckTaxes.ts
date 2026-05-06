@@ -365,7 +365,8 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
 
   // Environmental tax: calendar-year-based age (vehicleYear → "year 1"), same
   // base for both importers (no customsDuty, no shipping).
-  const envTax = calculateEnvironmentalTax(baseValue, vehicleYear);
+  const envTaxBase = includesShippingInCustoms ? baseValue + shippingPriceEur : baseValue;
+  const envTax = calculateEnvironmentalTax(envTaxBase , vehicleYear);
   const environmentalTax = envTax.amount;
 
   truckLog("env", {
@@ -379,10 +380,10 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
   const total = customsDuty + vat + environmentalTax;
 
   const result: TruckTaxResult = {
-    customsDuty: Math.round(customsDuty),
-    vat: Math.round(vat),
-    environmentalTax: Math.round(environmentalTax),
-    total: Math.round(total),
+    customsDuty,
+    vat,
+    environmentalTax,
+    total,
   };
 
   truckLog("result/eur", { branch: customsOutcome.branch, ...result });

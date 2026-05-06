@@ -43,7 +43,6 @@ export const fetchShippingCities = async (
 
     const result = await response.json();
     const responseData = result.data || result;
-    console.log('[Calculator] Shipping API response sample:', responseData?.[0]);
 
     if (Array.isArray(responseData)) {
       const cities: string[] = [];
@@ -53,7 +52,7 @@ export const fetchShippingCities = async (
       responseData.forEach((item: ShippingData) => {
         if (item.city) {
           cities.push(item.city);
-          priceMap[item.city] = (item.base_price ?? 0) + (item?.base_last_adjustment_amount ?? 0)   + (item?.total_adjustment_amount ?? 0);
+          priceMap[item.city] = (item.base_price ?? 0) + (item?.total_adjustment_amount ?? 0);
           taxMap[item.city] = item.tax ?? 0;
         }
       });

@@ -803,9 +803,6 @@
       "shippingPricesTitle": "Առաքման գներ",
       "shippingPricesSubtitle": "Կառավարեք առաքումը ըստ քաղաքների և կիրառեք անվտանգ գլոբալ ճշգրտում։",
       "globalAdjustmentTitle": "Գլոբալ ճշգրտում",
-      "globalAdjustmentBodyPrefix": "Մուտքագրեք արժեք՝",
-      "globalAdjustmentBodyEmphasis": "բոլոր քաղաքների առաքման գներին ավելացնելու համար",
-      "globalAdjustmentExample": "Օրինակ՝ եթե բոլորն 100 են և մուտքագրեք 100 → կդառնան 200։",
       "applyToAll": "Կիրառել բոլորի համար",
       "citiesTitle": "Քաղաքներ",
       "citiesSubtitle": "Թարմացրեք կամ ջնջեք առաքման գները ըստ քաղաքի։",
@@ -817,7 +814,7 @@
       "columns": {
         "city": "Քաղաք",
         "shipping": "Առաքում",
-        "taxes": "Հարկեր",
+        "taxes": "Հսկիչ գին",
         "actions": "Գործողություններ"
       },
       "update": "Թարմացնել",
@@ -1021,11 +1018,15 @@
       },
       "updateShipping": {
         "title": "Թարմացնել առաքման գինը",
+        "titleTax": "Թարմացնել հարկը",
         "setFor": "Սահմանեք նոր առաքման գին՝ {city}-ի համար։",
+        "setTaxFor": "Սահմանեք նոր հարկ՝ {city}-ի համար։",
         "selectCity": "Ընտրեք քաղաք՝ թարմացնելու համար։",
         "fieldLabel": "Առաքման գին (USD)",
+        "fieldLabelTax": "Հարկ (USD)",
         "cancel": "Չեղարկել",
-        "confirm": "Հաստատել"
+        "confirm": "Հաստատել",
+        "updating": "Թարմացվում է..."
       },
       "addShipping": {
         "title": "Ավելացնել առաքման քաղաք",

@@ -114,9 +114,9 @@ export function calculateMotorcycleTaxes(
   const total = customsDuty + vat + environmentalTax;
 
   return {
-    customsDuty: Math.round(customsDuty),
-    vat: Math.round(vat),
+    customsDuty,
+    vat,
     environmentalTax: 0,
-    total: Math.round(total),
+    total,
   };
 }
