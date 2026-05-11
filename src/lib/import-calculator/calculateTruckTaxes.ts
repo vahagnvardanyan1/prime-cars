@@ -257,13 +257,11 @@ function calculateCustomsDuty(
   const engineCc = engineVolumeCm3;
 
   let outcome: CustomsDutyOutcome;
-  let ccThreshold: number | null = null;
 
   if (engineType === "electric") {
     outcome = calculateElectricCustomsDuty(customsDutyBase);
   } else if (engineType === "petrol") {
     if (weightClass === "under5") {
-      ccThreshold = PETROL_ENGINE_CC_THRESHOLD;
       outcome =
         engineCc < PETROL_ENGINE_CC_THRESHOLD
           ? calculatePetrolUnder5SmallEngine(customsDutyBase, engineCc, age)
@@ -274,7 +272,6 @@ function calculateCustomsDuty(
   } else {
     // diesel
     if (weightClass === "under5") {
-      ccThreshold = DIESEL_ENGINE_CC_THRESHOLD;
       outcome =
         engineCc < DIESEL_ENGINE_CC_THRESHOLD
           ? calculateDieselUnder5SmallEngine(customsDutyBase, engineCc, age)

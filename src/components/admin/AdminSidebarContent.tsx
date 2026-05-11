@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import { logout } from "@/lib/admin/logout";
 import { useUser } from "@/contexts/UserContext";
 
-import type { AdminNavKey } from "@/hooks/admin/useAdminDashboardState";
 import { cn } from "@/components/ui/utils";
 import { Link } from "@/i18n/routing";
 import {
@@ -23,6 +22,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+
+type AdminNavKey = "cars" | "availableCars" | "users" | "settings" | "calculator" | "notifications";
 
 type AdminSidebarContentProps = {
   onRequestClose?: () => void;
