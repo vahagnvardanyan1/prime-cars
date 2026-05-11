@@ -5,7 +5,6 @@ import { API_BASE_URL } from "@/i18n/config";
  */
 const downloadImage = async (url: string, filename: string): Promise<void> => {
   try {
-    console.log(url, 'url');
     
     // Use /files endpoint to proxy the image and avoid CORS issues
     const proxyUrl = `${API_BASE_URL}/files?url=${encodeURIComponent(url)}`;
@@ -52,7 +51,6 @@ export const downloadCarImages = async ({
   if (!images || images.length === 0) {
     return { success: false, downloadedCount: 0, failedCount: 0 };
   }
-  console.log(images, 'images');
 
   // Sanitize car name for filename
   const sanitizedCarName = carName
@@ -105,7 +103,6 @@ export const downloadCarImagesAsZip = async ({
   if (!images || images.length === 0) {
     return { success: false, error: 'No images to download' };
   }
-  console.log(images, 'images');
   
   try {
     // Dynamically import JSZip only when needed

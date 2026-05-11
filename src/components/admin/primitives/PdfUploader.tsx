@@ -163,9 +163,6 @@ export const PdfUploader = ({
             <p className="text-sm font-medium text-gray-900 dark:text-white truncate" title={existingFileName}>
               {existingFileName.length > 30 ? `${existingFileName.slice(0, 27)}...` : existingFileName}
             </p>
-            <p className="text-xs text-green-600 dark:text-green-400 mt-0.5">
-              {translations.currentInvoice}
-            </p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             <a

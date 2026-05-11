@@ -12,7 +12,8 @@
     "error": "Error",
     "warning": "Warning",
     "download": "Download",
-    "downloading": "Downloading"
+    "downloading": "Downloading",
+    "unexpectedError": "An unexpected error occurred."
   },
   "downloadImages": {
     "button": "Download Photos",
@@ -93,13 +94,12 @@
   "home": {
     "hero": {
       "title": "Your reliable partner in the world of cars",
-      "description": "We offer a full range of services — from participating in U.S. auctions to handing over the keys to your vehicle. At the core of our work is not just car delivery, but building long-term partnerships with our clients. Purchasing a car is an important decision, and our goal is to make this process safe, transparent and efficient.",
+      "description": "Purchasing a car is an important decision, and our goal is to make this process safe, transparent and efficient.",
       "primaryCta": "Calculate",
       "heroImageAlt": "Luxury Car"
     },
     "popularDeals": {
-      "title": "Most Popular Car Rental Deals",
-      "description": "Discover unbeatable deals on the most sought-after rental cars. Whether you need a stylish ride for a special occasion or a reliable vehicle for everyday use…",
+      "title": "Available cars",
       "rentalPriceLabel": "Rental Price",
       "priceLabel": "Price",
       "seeTourDetails": "See Tour Details",
@@ -124,8 +124,7 @@
       "description": "Our commitment to providing first-class services is backed by strong and lasting partnerships with leading shipping companies."
     },
     "services": {
-      "title": "Your reliable partner\nin the world of cars",
-      "description": "We offer a full range of services — from participating in U.S. auctions to handing over the keys to your vehicle. At the core of our work is not just car delivery, but building long-term partnerships with our clients. Purchasing a car is an important decision, and our goal is to make this process safe, transparent and efficient.",
+      "description": "We offer a full range of services — from participating in U.S. auctions to handing over the keys to your vehicle. At the core of our work is not just car delivery, but building long-term partnerships with our clients.",
       "items": {
         "contract": {
           "title": "Signing a Cooperation Agreement",
@@ -228,7 +227,8 @@
     },
     "shipping": {
       "title": "Global Shipping Network",
-      "description": "We ship vehicles from the USA and Canada to destinations worldwide through our extensive logistics network.",
+      "description": "Thanks to the strategic location of our ports and offices, we can quickly collect your vehicle from anywhere in the USA and Canada. We operate 10 large warehouses across the USA and Canada, each staffed by more than 100 employees, ensuring safe vehicle storage and efficient order processing.",
+      "citiesInformation": "We ship from New York, Norfolk, Savannah, Miami, Houston, Los Angeles, Seattle, Honolulu, Anchorage, and Toronto to Armenia, Georgia, Poland, Lithuania, Germany, the Netherlands, the UAE, Oman, and other countries worldwide.",
       "from": "Shipping from",
       "to": "Shipping to",
       "warehouses": "Our warehouses",
@@ -332,7 +332,10 @@
       "engine": "Engine",
       "transmission": "Transmission",
       "fuelType": "Fuel Type",
-      "location": "Location"
+      "location": "Location",
+      "mileage": "Mileage",
+      "driveType": "Drive Type",
+      "kmUnit": "km"
     },
     "engineTypes": {
       "GASOLINE": "Gasoline",
@@ -424,6 +427,7 @@
       "selectType": "Select type",
       "passenger": "Passenger",
       "truck": "Truck",
+      "largeTruck": "Large Truck",
       "quadricycle": "Quadricycle",
       "motorcycle": "Motorcycle",
       "snowmobile": "Snowmobile",
@@ -432,7 +436,7 @@
       "sedan": "Sedan",
       "suv": "SUV",
       "sports": "Sports",
-      "engine": "Engine",
+      "engine": "Engine type",
       "selectEngine": "Select engine",
       "gasoline": "Petrol",
       "diesel": "Diesel engine",
@@ -454,6 +458,8 @@
       "outOfAuctionBorders": "Out of auction borders (Offsite, Sublot)",
       "otherExpenses": "Other expenses",
       "calculateCost": "Calculate cost",
+      "loggedInNoticeLabel": "Notice:",
+      "loggedInNotice": "It is necessary to pay attention to the release or manufacturing date of the vehicle (the moment of release), taking into account that the calculation of customs duties may be carried out according to the rates established for the year preceding the manufacture of the given vehicle.",
       "calculating": "Calculating",
       "validationError": "Please fill in all required fields",
       "required": "required",
@@ -595,6 +601,15 @@
       "minLength": "Must be at least {min} characters",
       "maxLength": "Must be no more than {max} characters",
       "phoneInvalid": "Please enter a valid phone number"
+    },
+    "toasts": {
+      "loginSuccessTitle": "Login successful",
+      "loginSuccessDescription": "Welcome back, {username}!",
+      "loginFailedTitle": "Login failed",
+      "invalidCredentials": "Invalid username or password.",
+      "networkError": "Network error occurred.",
+      "loggedOutSuccess": "Logged out successfully",
+      "loggedOutLocally": "Logged out locally"
     }
   },
   "admin": {
@@ -709,6 +724,8 @@
         "engine": "Engine",
         "hp": "HP",
         "transmission": "Transmission",
+        "driveType": "Drive Type",
+        "mileage": "Mileage",
         "description": "Description",
         "actions": "Actions",
         "update": "Update",
@@ -861,6 +878,28 @@
         "confirm": "Confirm Update"
       }
     },
+    "toasts": {
+      "validationError": "Validation Error",
+      "modelRequired": "Model is required",
+      "validYearRequired": "Valid year is required",
+      "validPriceRequired": "Valid price is required",
+      "userCreatedTitle": "User created successfully",
+      "userCreatedDescription": "User {name} has been added to the system.",
+      "userCreateFailedTitle": "Failed to create user",
+      "carCreatedTitle": "Car created successfully",
+      "carCreatedDescription": "Vehicle {model} has been added to the inventory.",
+      "carCreateFailedTitle": "Failed to create car",
+      "carDeletedTitle": "Car deleted",
+      "carDeletedDescription": "Vehicle {model} has been removed.",
+      "carDeleteFailedTitle": "Failed to delete car",
+      "couldNotDeleteCar": "Could not delete the car.",
+      "failedLoadUsers": "Failed to load users",
+      "couldNotFetchUsers": "Could not fetch users from server.",
+      "taxUpdated": "Tax updated",
+      "shippingPriceUpdated": "Shipping price updated",
+      "taxUpdateFailed": "Failed to update tax",
+      "shippingPriceUpdateFailed": "Failed to update shipping price"
+    },
     "modals": {
       "photoUpload": {
         "previewAlt": "Uploaded preview",
@@ -879,6 +918,8 @@
         "selectCity": "Select a city",
         "selectAuctionFirst": "Select auction first",
         "purchaseDate": "Purchase date",
+        "destinationPort": "Destination port",
+        "receiverName": "Receiver name",
         "type": "Type",
         "vehicleTypes": {
           "auto": "Auto",
@@ -1084,8 +1125,7 @@
         "usernameRequired": "Username is required",
         "emailRequired": "Email is required",
         "successMessage": "User updated successfully",
-        "errorMessage": "Failed to update user",
-        "unexpectedError": "An unexpected error occurred"
+        "errorMessage": "Failed to update user"
       },
       "updateCar": {
         "title": "Update Car",
@@ -1108,7 +1148,6 @@
         "pdfOnlyMaxSize": "PDF only, max 10MB",
         "onlyPdfAllowed": "Only PDF files are allowed",
         "fileSizeLimit": "File size must be less than 10MB",
-        "currentInvoice": "Current invoice",
         "viewInvoice": "View",
         "updateInvoice": "Update",
         "newFile": "New file",
@@ -1156,7 +1195,6 @@
         "successTitle": "Car Updated",
         "successDescription": "The car has been successfully updated.",
         "errorTitle": "Update Failed",
-        "unexpectedError": "An unexpected error occurred.",
         "deleteTitle": "Delete Car",
         "deleteDescription": "Are you sure you want to delete {model} ({year})? This action cannot be undone.",
         "deleteCancel": "Cancel",
@@ -1219,7 +1257,6 @@
         "yearPlaceholder": "2024",
         "pricePlaceholder": "e.g., 25000",
         "hpPlaceholder": "HP",
-        "enginePlaceholder": "L",
         "uploadHelp": "Upload up to 50 photos. Click or drag and drop images to upload.",
         "photoRequired": "At least one photo is required",
         "carModel": "Car Model",
@@ -1240,13 +1277,15 @@
         "engineTypeHybrid": "Hybrid",
         "selectEngine": "Select engine type",
         "engineHp": "Engine HP",
-        "engineSize": "Engine Size (L)",
+        "engineSize": "Engine Size",
         "transmission": "Transmission",
         "transmissionPlaceholder": "Select transmission type",
         "transmissionAutomatic": "Automatic",
         "transmissionMechanic": "Mechanic",
         "transmissionVariator": "Variator",
         "transmissionRobot": "Robot",
+        "driveType": "Drive Type",
+        "mileage": "Mileage",
         "description": "Description",
         "descriptionPlaceholder": "Additional information about the car...",
         "cancel": "Cancel",
@@ -1263,11 +1302,9 @@
         "subtitle": "Edit vehicle information and details",
         "existingPhotos": "Existing Photos",
         "modelPlaceholder": "BMW X5",
-        "enginePlaceholder": "e.g., 2.0",
         "fuelTypePlaceholder": "e.g., Gasoline, Diesel",
         "transmissionPlaceholder": "e.g., Automatic, Manual",
         "descriptionPlaceholder": "Enter detailed description of the car...",
-        "existingPhotosCount": "{count} existing {count, plural, one {photo} other {photos}}",
         "photosWillBeDeleted": "{count} {count, plural, one {photo} other {photos}} will be deleted",
         "newPhotos": "New Photos",
         "addNewPhotos": "Add New Photos",
@@ -1291,12 +1328,14 @@
         "engineTypeHybrid": "Hybrid",
         "selectEngine": "Select engine type",
         "engineHp": "Engine HP",
-        "engineSize": "Engine Size (L)",
+        "engineSize": "Engine Size",
         "transmission": "Transmission",
         "transmissionAutomatic": "Automatic",
         "transmissionMechanic": "Mechanic",
         "transmissionVariator": "Variator",
         "transmissionRobot": "Robot",
+        "driveType": "Drive Type",
+        "mileage": "Mileage",
         "description": "Description",
         "cancel": "Cancel",
         "updating": "Updating...",
@@ -1304,8 +1343,7 @@
         "deleteButton": "Delete Car",
         "successTitle": "Car Updated",
         "successDescription": "The car has been successfully updated.",
-        "errorTitle": "Update Failed",
-        "unexpectedError": "An unexpected error occurred."
+        "errorTitle": "Update Failed"
       },
       "deleteAvailableCar": {
         "title": "Delete Car",
@@ -1424,7 +1462,10 @@
     "email": "Email",
     "phone": "Phone Number",
     "submit": "Request Registration",
-    "success": "Your application has been submitted successfully!",
+    "successTitle": "Application submitted",
+    "successDescription": "We've received your request. Our team will reach out shortly.",
+    "errorTitle": "Submission failed",
+    "errorDescription": "Please try again or contact us directly.",
     "required": "Required"
   }
 }

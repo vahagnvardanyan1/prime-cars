@@ -10,6 +10,7 @@ import { formatUsd } from "@/lib/admin/format";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
 import { Pagination } from "@/components/admin/primitives/Pagination";
+import { TextCell } from "@/components/admin/primitives/TextCell";
 import { CarFilters, type CarFiltersState } from "@/components/admin/filters/CarFilters";
 import { Button } from "@/components/ui/button";
 import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
@@ -130,11 +131,8 @@ const CarTableRow = memo(function CarTableRow({
           <div className="w-px self-stretch bg-gray-200 dark:bg-white/10 flex-shrink-0" />
           {/* Year + Model + Lot + VIN */}
           <div className="w-[170px] px-3 py-2 min-w-0 flex flex-col justify-center">
-            <div className="text-xs text-gray-500 dark:text-gray-400">
-              {car.year}
-            </div>
-            <div className="truncate text-sm font-semibold text-gray-900 dark:text-white mt-0.5" title={car.model}>
-              {car.model}
+            <div className="truncate text-sm font-semibold text-gray-900 dark:text-white" title={`${car.year} ${car.model}`}>
+              {car.year} {car.model}
             </div>
             {car.details?.lot && (
               <div className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-gray-700 dark:text-gray-300 mt-0.5">
@@ -167,27 +165,20 @@ const CarTableRow = memo(function CarTableRow({
       </Table.Cell>
 
       {/* Client */}
-      <Table.Cell className="px-3 py-2 min-w-[110px] border-r border-gray-100 dark:border-white/5 max-w-[140px]">
-        <div className="text-sm text-gray-900 dark:text-white font-medium truncate" title={car.client || undefined}>
-          {car.client || "-"}
-        </div>
-      </Table.Cell>
+      <TextCell
+        value={car.client}
+        valueClassName="text-sm text-gray-900 dark:text-white font-medium truncate"
+      />
 
       {/* Destination Port */}
-      <Table.Cell className="px-3 py-2 min-w-[110px] border-r border-gray-100 dark:border-white/5 max-w-[140px]">
-        <div className="text-sm text-gray-900 dark:text-white truncate" title={car.details?.city || undefined}>
-          {car.details?.city || "-"}
-        </div>
-      </Table.Cell>
+      <TextCell value={car.details?.destinationPort} />
 
       {/* Container */}
-      <Table.Cell className="px-3 py-2 min-w-[110px] border-r border-gray-100 dark:border-white/5 max-w-[140px]">
-        <div className="text-sm text-gray-900 dark:text-white font-mono truncate" title={car.details?.containerNumberBooking || undefined}>
-          {car.details?.containerNumberBooking || "-"}
-        </div>
-      </Table.Cell>
+      <TextCell
+        value={car.details?.containerNumberBooking}
+        valueClassName="text-sm text-gray-900 dark:text-white font-mono truncate"
+      />
 
-      {/* Price */}
       {/* Price + Car Invoice download */}
       <Table.Cell className="px-3 py-2 min-w-[130px] border-r border-gray-100 dark:border-white/5">
         <div className="flex items-center gap-2">
@@ -208,12 +199,8 @@ const CarTableRow = memo(function CarTableRow({
         </div>
       </Table.Cell>
 
-      {/* City (Delivered Warehouse) */}
-      <Table.Cell className="px-3 py-2 min-w-[110px] border-r border-gray-100 dark:border-white/5 max-w-[140px]">
-        <div className="text-sm text-gray-900 dark:text-white truncate" title={car.details?.deliveredWarehouse || undefined}>
-          {car.details?.deliveredWarehouse || "-"}
-        </div>
-      </Table.Cell>
+      {/* City */}
+      <TextCell value={car.details?.city} />
 
       {/* Shipping Invoice */}
       <Table.Cell className="px-3 py-2 text-center min-w-[60px] border-r border-gray-100 dark:border-white/5">
@@ -250,19 +237,17 @@ const CarTableRow = memo(function CarTableRow({
       </Table.Cell>
 
       {/* Receiver's Name */}
-      <Table.Cell className="px-3 py-2 min-w-[110px] border-r border-gray-100 dark:border-white/5">
-        <div className="text-sm text-gray-400 dark:text-gray-600">-</div>
-      </Table.Cell>
+      <TextCell
+        value={car.details?.receiverName}
+        cellClassName="px-3 py-2 min-w-[110px] border-r border-gray-100 dark:border-white/5"
+      />
 
       {/* Notes */}
-      <Table.Cell className="px-3 py-2 min-w-[150px] border-r border-gray-100 dark:border-white/5 max-w-[180px]">
-        <div
-          className="text-sm text-gray-900 dark:text-white line-clamp-1"
-          title={car.details?.customerNotes || undefined}
-        >
-          {car.details?.customerNotes || "-"}
-        </div>
-      </Table.Cell>
+      <TextCell
+        value={car.details?.customerNotes}
+        cellClassName="px-3 py-2 min-w-[150px] border-r border-gray-100 dark:border-white/5 max-w-[180px]"
+        valueClassName="text-sm text-gray-900 dark:text-white line-clamp-1"
+      />
 
       {/* Actions */}
       <Table.Cell className="px-3 py-2 text-center pr-4 sm:pr-6 min-w-[120px]">

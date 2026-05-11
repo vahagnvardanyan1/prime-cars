@@ -3,6 +3,7 @@ import type { AdminCar } from "@/lib/admin/types";
 import { API_BASE_URL } from "@/i18n/config";
 
 import { authenticatedFetch } from "@/lib/auth/token";
+import { appendIf, appendDateIf } from "@/lib/admin/formData";
 
 type CreateCarData = {
   userId?: string;
@@ -22,6 +23,8 @@ type CreateCarData = {
   containerNumberBooking?: string;
   promisedPickUpDate?: string;
   deliveredWarehouse?: string;
+  destinationPort?: string;
+  receiverName?: string;
 };
 
 type CreateCarResponse = {
@@ -44,58 +47,33 @@ export const createCar = async ({
   shippingPdfFile?: File | null;
 }): Promise<CreateCarResponse> => {
   try {
-    // Create FormData
     const formData = new FormData();
 
-    // Append required fields
-    if (data.userId) formData.append("client", String(data.userId));
-    formData.append("model", data.model); 
-    formData.append("type", data.type); 
-    formData.append("auction", data.auction); 
-    formData.append("year", data.year.toString());
-    formData.append("autoPrice", data.priceUsd.toString());
-    formData.append("vehicleModel", data.model);
-    formData.append("paid", data.carPaid.toString());
-    formData.append("shippingPaid", data.shippingPaid.toString());
-    formData.append("insurance", data.insurance.toString());
-    
-    // Append optional fields
-    if (data.purchaseDate) {
-      const isoDate = new Date(data.purchaseDate).toISOString();
-      formData.append("purchaseDate", isoDate);
-    }
+    appendIf(formData, "client", data.userId);
+    appendIf(formData, "model", data.model);
+    appendIf(formData, "vehicleModel", data.model);
+    appendIf(formData, "type", data.type);
+    appendIf(formData, "auction", data.auction);
+    appendIf(formData, "year", data.year);
+    appendIf(formData, "autoPrice", data.priceUsd);
+    appendIf(formData, "paid", data.carPaid);
+    appendIf(formData, "shippingPaid", data.shippingPaid);
+    appendIf(formData, "insurance", data.insurance);
+    appendIf(formData, "city", data.city);
+    appendIf(formData, "lot", data.lot);
+    appendIf(formData, "vin", data.vin);
+    appendIf(formData, "customerNotes", data.customerNotes);
+    appendIf(formData, "containerNumberBooking", data.containerNumberBooking);
+    appendIf(formData, "destinationPort", data.destinationPort);
+    appendIf(formData, "receiverName", data.receiverName);
+    appendDateIf(formData, "purchaseDate", data.purchaseDate);
+    appendDateIf(formData, "promisedPickUpDate", data.promisedPickUpDate);
+    appendDateIf(formData, "deliveredWarehouse", data.deliveredWarehouse);
 
-    if (data.city) formData.append("city", data.city);
-    if (data.lot) formData.append("lot", data.lot);
-    if (data.vin) formData.append("vin", data.vin);
-    if (data.customerNotes) formData.append("customerNotes", data.customerNotes);
-    if (data.containerNumberBooking) formData.append("containerNumberBooking", data.containerNumberBooking);
-    if (data.promisedPickUpDate) {
-      const isoDate = new Date(data.promisedPickUpDate).toISOString();
-      formData.append("promisedPickUpDate", isoDate);
-    }
-    if (data.deliveredWarehouse) {
-      const isoDate = new Date(data.deliveredWarehouse).toISOString();
-      formData.append("deliveredWarehouse", isoDate);
-    }
-
-    // Append image files
-    if (images && images.length > 0) {
-      images.forEach((image) => {
-        formData.append("vehiclePhotos", image);
-      });
-    }
-
-    // Append new PDF files
-    if (vehiclePdfFile) {
-      formData.append("vehiclePdf", vehiclePdfFile);
-    }
-    if (insurancePdfFile) {
-      formData.append("insurancePdf", insurancePdfFile);
-    }
-    if (shippingPdfFile) {
-      formData.append("shippingPdf", shippingPdfFile);
-    }
+    images.forEach((image) => formData.append("vehiclePhotos", image));
+    if (vehiclePdfFile) formData.append("vehiclePdf", vehiclePdfFile);
+    if (insurancePdfFile) formData.append("insurancePdf", insurancePdfFile);
+    if (shippingPdfFile) formData.append("shippingPdf", shippingPdfFile);
 
     const response = await authenticatedFetch(`${API_BASE_URL}/vehicles`, {
       method: "POST",
@@ -124,4 +102,3 @@ export const createCar = async ({
     };
   }
 };
-

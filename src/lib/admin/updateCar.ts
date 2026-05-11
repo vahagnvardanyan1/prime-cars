@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "@/i18n/config";
 
 import { authenticatedFetch } from "@/lib/auth/token";
+import { appendIf, appendDateIf } from "@/lib/admin/formData";
 
 type UpdateCarData = {
   client?: string;
@@ -21,6 +22,8 @@ type UpdateCarData = {
   containerNumberBooking?: string;
   promisedPickUpDate?: string;
   deliveredWarehouse?: string;
+  destinationPort?: string;
+  receiverName?: string;
 };
 
 type UpdateCarResponse = {
@@ -48,69 +51,36 @@ export const updateCar = async ({
   photosToDelete?: string[];
 }): Promise<UpdateCarResponse> => {
   try {
-    // Create FormData for multipart/form-data
     const formData = new FormData();
 
-    // Append fields only if they exist
-    if (data.client) formData.append("client", data.client);
-    if (data.type) formData.append("type", data.type);
-    if (data.purchaseDate) {
-      const isoDate = new Date(data.purchaseDate).toISOString();
-      formData.append("purchaseDate", isoDate);
-    }
-    if (data.model) formData.append("model", data.model);
-    if (data.year) formData.append("year", data.year.toString());
-    if (data.vehicleModel) formData.append("vehicleModel", data.vehicleModel);
-    if (data.auction) formData.append("auction", data.auction);
-    if (data.city) formData.append("city", data.city);
-    if (data.lot) formData.append("lot", data.lot);
-    if (data.vin) formData.append("vin", data.vin);
-    if (data.autoPrice !== undefined) formData.append("autoPrice", data.autoPrice.toString());
-    if (data.customerNotes) formData.append("customerNotes", data.customerNotes);
-    if (data.carPaid !== undefined) formData.append("paid", data.carPaid.toString());
-    if (data.shippingPaid !== undefined) formData.append("shippingPaid", data.shippingPaid.toString());
-    if (data.insurance !== undefined) formData.append("insurance", data.insurance.toString());
-    if (data.containerNumberBooking) formData.append("containerNumberBooking", data.containerNumberBooking);
-    if (data.promisedPickUpDate) {
-      const isoDate = new Date(data.promisedPickUpDate).toISOString();
-      formData.append("promisedPickUpDate", isoDate);
-    }
-    if (data.deliveredWarehouse) {
-      const isoDate = new Date(data.deliveredWarehouse).toISOString();
-      formData.append("deliveredWarehouse", isoDate);
-    }
+    appendIf(formData, "client", data.client);
+    appendIf(formData, "type", data.type);
+    appendIf(formData, "model", data.model);
+    appendIf(formData, "vehicleModel", data.vehicleModel);
+    appendIf(formData, "year", data.year);
+    appendIf(formData, "auction", data.auction);
+    appendIf(formData, "city", data.city);
+    appendIf(formData, "lot", data.lot);
+    appendIf(formData, "vin", data.vin);
+    appendIf(formData, "autoPrice", data.autoPrice);
+    appendIf(formData, "customerNotes", data.customerNotes);
+    appendIf(formData, "paid", data.carPaid);
+    appendIf(formData, "shippingPaid", data.shippingPaid);
+    appendIf(formData, "insurance", data.insurance);
+    appendIf(formData, "containerNumberBooking", data.containerNumberBooking);
+    formData.append("destinationPort", data.destinationPort ?? "");
+    formData.append("receiverName", data.receiverName ?? "");
+    appendDateIf(formData, "purchaseDate", data.purchaseDate);
+    appendDateIf(formData, "promisedPickUpDate", data.promisedPickUpDate);
+    appendDateIf(formData, "deliveredWarehouse", data.deliveredWarehouse);
 
-    // Append new PDF files
-    if (vehiclePdfFile) {
-      formData.append("vehiclePdf", vehiclePdfFile);
-    }
-    if (insurancePdfFile) {
-      formData.append("insurancePdf", insurancePdfFile);
-    }
-    if (shippingPdfFile) {
-      formData.append("shippingPdf", shippingPdfFile);
-    }
+    if (vehiclePdfFile) formData.append("vehiclePdf", vehiclePdfFile);
+    if (insurancePdfFile) formData.append("insurancePdf", insurancePdfFile);
+    if (shippingPdfFile) formData.append("shippingPdf", shippingPdfFile);
 
-    // Append reordered existing photo URLs to maintain order
-    if (existingPhotos && existingPhotos.length > 0) {
-      existingPhotos.forEach((photoUrl) => {
-        formData.append("reorderedPhotoUrls", photoUrl);
-      });
-    }
-
-    // Append new photos
-    if (newPhotos && newPhotos.length > 0) {
-      newPhotos.forEach((photo) => {
-        formData.append("vehiclePhotos", photo);
-      });
-    }
-
-    // Mark photos for deletion
-    if (photosToDelete && photosToDelete.length > 0) {
-      photosToDelete.forEach((photo) => {
-        formData.append("deletePhotoUrls", photo);
-      });
-    }
+    existingPhotos?.forEach((url) => formData.append("reorderedPhotoUrls", url));
+    newPhotos?.forEach((photo) => formData.append("vehiclePhotos", photo));
+    photosToDelete?.forEach((url) => formData.append("deletePhotoUrls", url));
 
     const response = await authenticatedFetch(`${API_BASE_URL}/vehicles/${id}`, {
       method: "PATCH",
@@ -125,9 +95,7 @@ export const updateCar = async ({
       };
     }
 
-    return {
-      success: true,
-    };
+    return { success: true };
   } catch (error) {
     console.error("Error updating car:", error);
     return {
@@ -136,4 +104,3 @@ export const updateCar = async ({
     };
   }
 };
-

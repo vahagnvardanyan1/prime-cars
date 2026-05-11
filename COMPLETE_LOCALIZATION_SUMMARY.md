@@ -129,7 +129,6 @@ Successfully localized **ALL** user-facing hardcoded text across the entire Prim
   "yearPlaceholder": "2024",
   "pricePlaceholder": "e.g., 25000",
   "hpPlaceholder": "HP",
-  "enginePlaceholder": "L"
 }
 ```
 
@@ -137,7 +136,6 @@ Successfully localized **ALL** user-facing hardcoded text across the entire Prim
 ```json
 "admin.modals.updateAvailableCar": {
   "modelPlaceholder": "BMW X5",
-  "enginePlaceholder": "e.g., 2.0",
   "fuelTypePlaceholder": "e.g., Gasoline, Diesel",
   "transmissionPlaceholder": "e.g., Automatic, Manual",
   "descriptionPlaceholder": "Enter detailed description of the car..."

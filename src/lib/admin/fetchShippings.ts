@@ -43,7 +43,6 @@ export const fetchShippings = async ({ auction }: { auction?: Auction } = {}): P
     }
 
     const result = (await response.json())?.data;
-    console.log('result', result);
 
     // Transform backend data to ShippingCity format
     const cities: ShippingCity[] = result?.map((shipping: BackendShipping) => ({

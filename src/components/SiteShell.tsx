@@ -29,12 +29,8 @@ export const SiteShell = ({ children }: SiteShellProps) => {
 
   // Handle login success from any page (calculator, home, etc.)
   const handleLoginSuccess = async () => {
-    console.log("✅ Login successful from SiteShell! Fetching user from /auth/me");
-    
     // Fetch user data from API - skip refresh mechanism since we just logged in with fresh token
     await refreshUser();
-    
-    console.log("✅ User data fetched successfully!");
     
     // Close modal
     setIsLoginModalOpen(false);

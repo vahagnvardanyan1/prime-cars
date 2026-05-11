@@ -216,7 +216,6 @@ export const AdminAvailableCarsPage = () => {
   const handleUpdateSuccess = () => {
     setIsUpdateModalOpen(false);
     setSelectedCarForUpdate(null);
-    toast.success(tAvailableCars("carUpdated"));
   };
 
   const handleCreateSuccess = () => {

@@ -26,6 +26,8 @@ export type BackendAvailableCar = {
   engineSize?: number;
   boughtPlace?: string;
   transmission?: string;
+  mileage?: number;
+  driveType?: string;
 };
 
 export type Car = {
@@ -48,6 +50,8 @@ export type Car = {
   description?: string;
   vin?: string;
   engineSize?: number;
+  driveType?: string;
+  mileage?: number;
 };
 
 export type FetchCarsResponse = {

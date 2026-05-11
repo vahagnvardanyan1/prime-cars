@@ -1,5 +1,7 @@
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "../auth/token";
+import { appendIf } from "@/lib/admin/formData";
+
 type UpdateAvailableCarArgs = {
   id: string;
   data: {
@@ -14,6 +16,8 @@ type UpdateAvailableCarArgs = {
     engineSize?: number;
     boughtPlace?: string;
     transmission?: string;
+    driveType?: string;
+    mileage?: number;
   };
   existingPhotos?: string[];
   newPhotos?: File[];
@@ -33,7 +37,7 @@ export const updateAvailableCar = async ({
   photosToDelete = [],
 }: UpdateAvailableCarArgs): Promise<UpdateAvailableCarResponse> => {
   try {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
     if (!token) {
       return {
@@ -44,43 +48,28 @@ export const updateAvailableCar = async ({
 
     const formData = new FormData();
 
-    // Append car data fields
-    if (data.carModel) formData.append("carModel", data.carModel);
-    if (data.carYear) formData.append("carYear", data.carYear.toString());
-    if (data.carVin) formData.append("carVin", data.carVin);
-    if (data.carPrice !== undefined) formData.append("carPrice", data.carPrice.toString());
-    if (data.carCategory) formData.append("carCategory", data.carCategory);
-    if (data.carDescription) formData.append("carDescription", data.carDescription);
-    if (data.engineType && data.engineType !== "") formData.append("engineType", data.engineType);
-    if (data.engineHp !== undefined && data.engineHp > 0) formData.append("engineHp", data.engineHp.toString());
-    if (data.engineSize !== undefined && data.engineSize > 0) formData.append("engineSize", data.engineSize.toString());
-    if (data.boughtPlace) formData.append("boughtPlace", data.boughtPlace);
-    if (data.transmission) formData.append("transmission", data.transmission);
-
-    // Append reordered existing photo URLs to maintain order
-    if (existingPhotos && existingPhotos.length > 0) {
-      existingPhotos.forEach((photoUrl) => {
-        formData.append("reorderedPhotoUrls", photoUrl);
-      });
+    appendIf(formData, "carModel", data.carModel);
+    appendIf(formData, "carYear", data.carYear);
+    appendIf(formData, "carVin", data.carVin);
+    appendIf(formData, "carPrice", data.carPrice);
+    appendIf(formData, "carCategory", data.carCategory);
+    appendIf(formData, "carDescription", data.carDescription);
+    appendIf(formData, "engineType", data.engineType);
+    if (data.engineHp !== undefined && data.engineHp > 0) {
+      formData.append("engineHp", data.engineHp.toString());
     }
-
-    // Append new photos
-    if (newPhotos && newPhotos.length > 0) {
-      newPhotos.forEach((photo) => {
-        formData.append("carPhotos", photo);
-      });
+    if (data.engineSize !== undefined && data.engineSize > 0) {
+      formData.append("engineSize", data.engineSize.toString());
     }
+    appendIf(formData, "boughtPlace", data.boughtPlace);
+    appendIf(formData, "transmission", data.transmission);
+    formData.append("driveType", data.driveType ?? "");
+    formData.append("mileage", data.mileage && data.mileage > 0 ? data.mileage.toString() : "");
 
-    // Mark photos for deletion
-    if (photosToDelete && photosToDelete.length > 0) {
-      photosToDelete.forEach((photo) => {
-        formData.append("deletePhotoUrls", photo);
-      });
-    }
-    
+    existingPhotos.forEach((url) => formData.append("reorderedPhotoUrls", url));
+    newPhotos.forEach((photo) => formData.append("carPhotos", photo));
+    photosToDelete.forEach((url) => formData.append("deletePhotoUrls", url));
 
-
-    
     const response = await authenticatedFetch(`${API_BASE_URL}/available-cars/${id}`, {
       method: "PATCH",
       body: formData,
@@ -88,22 +77,20 @@ export const updateAvailableCar = async ({
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
-      
-      
-      // Handle different error response structures
+
       let errorMessage = `Failed to update car: ${response.statusText}`;
-      
+
       if (errorData) {
-        if (typeof errorData === 'string') {
+        if (typeof errorData === "string") {
           errorMessage = errorData;
         } else if (errorData.message) {
           errorMessage = errorData.message;
         } else if (errorData.error) {
-          errorMessage = typeof errorData.error === 'string' ? errorData.error : JSON.stringify(errorData.error);
+          errorMessage =
+            typeof errorData.error === "string" ? errorData.error : JSON.stringify(errorData.error);
         } else if (Array.isArray(errorData)) {
-          errorMessage = errorData.map(err => err.message || JSON.stringify(err)).join(', ');
+          errorMessage = errorData.map((err) => err.message || JSON.stringify(err)).join(", ");
         } else {
-          // Fallback for unknown object structures
           errorMessage = JSON.stringify(errorData);
         }
       }
@@ -114,9 +101,7 @@ export const updateAvailableCar = async ({
       };
     }
 
-    return {
-      success: true,
-    };
+    return { success: true };
   } catch (error) {
     console.error("Error updating available car:", error);
     return {

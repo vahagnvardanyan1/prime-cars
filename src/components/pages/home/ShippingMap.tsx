@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { TextReveal } from "./TextReveal";
 import {
@@ -74,25 +74,45 @@ function ContainerIcon({ color, scale = 1 }: { color: string; scale?: number }) 
 const VIEWPORTS = {
   from: {
     desktop: { center: [-105, 38] as [number, number], scale: 400 },
-    mobile: { center: [-105, 38] as [number, number], scale: 220 },
+    mobile: { center: [-105, 38] as [number, number], scale: 200 },
   },
   to: {
     desktop: { center: [33, 38] as [number, number], scale: 700 },
-    mobile: { center: [35, 35] as [number, number], scale: 400 },
+    mobile: { center: [35, 35] as [number, number], scale: 320 },
   },
+};
+
+// Default zoom levels — tuned so every marker is visible without zooming.
+// Mobile uses a wider field of view (lower projection scale) at zoom 1 so the
+// 2.45×/1.7× desktop defaults would crop markers.
+const DEFAULT_ZOOM = {
+  from: { desktop: 2.45, mobile: 1 },
+  to: { desktop: 1.7, mobile: 1 },
 };
 
 export function ShippingMap() {
   const [tab, setTab] = useState<"from" | "to">("from");
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
   const [hoverTooltip, setHoverTooltip] = useState<{ name: string; x: number; y: number } | null>(null);
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM.to.desktop);
   const [center, setCenter] = useState<[number, number]>(VIEWPORTS.to.desktop.center);
-  const [usaZoom, setUsaZoom] = useState(1);
+  const [usaZoom, setUsaZoom] = useState(DEFAULT_ZOOM.from.desktop);
   const [usaCenter, setUsaCenter] = useState<[number, number]>(VIEWPORTS.from.desktop.center);
   const containerRef = useRef<HTMLDivElement>(null);
   const t = useTranslations();
   const isMobile = useIsMobile();
+
+  // Reset zoom + pan to the platform's default whenever the breakpoint crosses.
+  // useIsMobile starts false on SSR/first paint, then flips after hydration on
+  // mobile devices — this effect re-syncs the viewport to mobile-appropriate
+  // defaults so all markers stay visible.
+  useEffect(() => {
+    const platform = isMobile ? "mobile" : "desktop";
+    setUsaZoom(DEFAULT_ZOOM.from[platform]);
+    setUsaCenter(VIEWPORTS.from[platform].center);
+    setZoom(DEFAULT_ZOOM.to[platform]);
+    setCenter(VIEWPORTS.to[platform].center);
+  }, [isMobile]);
 
   // Hover tooltip (desktop) — follows cursor
   const handleMarkerHover = (name: string, e: React.MouseEvent) => {
@@ -147,7 +167,7 @@ export function ShippingMap() {
   // Both tabs share dimensions and projection — only viewport (center/scale) differs.
   const mapDimensions = isMobile
     ? { width: 400, height: 500 }
-    : { width: 800, height: 500 };
+    : { width: 1800, height: 1000 };
 
   const tabViewport = isMobile
     ? VIEWPORTS[tab].mobile
@@ -165,7 +185,7 @@ export function ShippingMap() {
 
   return (
     <div>
-      <div className="text-center mb-8">
+      <div className="text-center mb-6">
         <TextReveal
           text={t("home.shipping.title")}
           as="h2"
@@ -207,7 +227,7 @@ export function ShippingMap() {
 
       <div
         ref={containerRef}
-        className="rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] relative"
+        className="rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] relative max-w-[1000px] mx-auto"
         onMouseLeave={() => {
           setHoverTooltip(null);
         }}

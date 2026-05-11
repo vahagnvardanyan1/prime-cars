@@ -5,7 +5,6 @@ import { calculateQuadricycleTaxes } from "./calculateQuadricycleTaxes";
 import { calculateMotorcycleTaxes } from "./calculateMotorcycleTaxes";
 import { calculateSnowmobileTaxes } from "./calculateSnowmobileTaxes";
 import { calculateJetSkiTaxes } from "./calculateJetSkiTaxes";
-import { truckLog, truckWarn } from "./truckDebug";
 
 export type VehicleCalcParams = {
   vehiclePriceUsd: number;
@@ -50,44 +49,12 @@ function applyRateCompensation(
 export function calculateTruckResult(params: VehicleCalcParams): CalculatorResponse {
   const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolumeCm3, weightClass, year, day, month, engine, eurUsdRate, importer } = params;
 
-  truckLog("entry/usd", {
-    vehiclePriceUsd,
-    auctionFeeUsd,
-    shippingPriceUsd,
-    engineVolumeCm3,
-    weightClass,
-    year,
-    month,
-    day,
-    rawEngine: engine,
-    importer,
-    eurUsdRate,
-  });
-
   const engineType: "diesel" | "electric" | "petrol" =
     engine === "diesel" ? "diesel" : engine === "electric" ? "electric" : "petrol";
-  const hybridFallback = engine === "hybrid";
-  const unknownEngineFallback =
-    engine !== "diesel" && engine !== "electric" && engine !== "gasoline" && engine !== "hybrid";
-
-  truckLog("entry/engine-resolved", { rawEngine: engine, engineType, hybridFallback, unknownEngineFallback });
-  if (hybridFallback) {
-    truckWarn("entry/engine-resolved", {
-      message: "Hybrid engine for truck silently mapped to petrol — verify expected behavior.",
-      rawEngine: engine,
-    });
-  }
-  if (unknownEngineFallback) {
-    truckWarn("entry/engine-resolved", {
-      message: "Unknown engine value for truck silently mapped to petrol.",
-      rawEngine: engine,
-    });
-  }
 
   const vehiclePriceEur = vehiclePriceUsd / eurUsdRate;
   const auctionFeeEur = auctionFeeUsd / eurUsdRate;
   const shippingPriceEur = shippingPriceUsd / eurUsdRate;
-  truckLog("entry/eur", { vehiclePriceEur, auctionFeeEur, shippingPriceEur, eurUsdRate });
 
   const result = calculateTruckTaxes({
     vehiclePriceEur,
@@ -102,21 +69,16 @@ export function calculateTruckResult(params: VehicleCalcParams): CalculatorRespo
     importer,
   });
   const usd = applyRateCompensation(result, eurUsdRate, "truck");
-  truckLog("result/usd", { ...usd, eurUsdRate });
   return usd;
 }
 
 export function calculateQuadricycleResult(params: VehicleCalcParams): CalculatorResponse {
   const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolumeCm3, year, eurUsdRate, importer, hasReverse } = params;
-  console.log("[Quadricycle/entry-usd]", {
-    vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, importer, hasReverse, engineVolumeCm3, year, eurUsdRate,
-  });
   const eurInputs = {
     vehiclePriceEur: vehiclePriceUsd / eurUsdRate,
     auctionFeeEur: auctionFeeUsd / eurUsdRate,
     shippingPriceEur: shippingPriceUsd / eurUsdRate,
   };
-  console.log("[Quadricycle/entry-eur]", { ...eurInputs, eurUsdRate });
   const result = calculateQuadricycleTaxes({
     ...eurInputs,
     engineVolumeCm3,
@@ -124,9 +86,7 @@ export function calculateQuadricycleResult(params: VehicleCalcParams): Calculato
     importer,
     hasReverse,
   });
-  console.log("[Quadricycle/result-eur]", result);
   const usd = applyRateCompensation(result, eurUsdRate, "quadricycle");
-  console.log("[Quadricycle/result-usd]", { ...usd, eurUsdRate });
   return usd;
 }
 
@@ -178,23 +138,17 @@ export async function calculatePassengerResult(params: VehicleCalcParams): Promi
 
 export function calculateMotorcycleResult(params: VehicleCalcParams): CalculatorResponse {
   const { vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, engineVolumeCm3, engine, eurUsdRate, importer } = params;
-  console.log("[Motorcycle/entry-usd]", {
-    vehiclePriceUsd, auctionFeeUsd, shippingPriceUsd, importer, engineVolumeCm3, engine, eurUsdRate,
-  });
   const eurInputs = {
     vehiclePriceEur: vehiclePriceUsd / eurUsdRate,
     auctionFeeEur: auctionFeeUsd / eurUsdRate,
     shippingPriceEur: shippingPriceUsd / eurUsdRate,
   };
-  console.log("[Motorcycle/entry-eur]", { ...eurInputs, eurUsdRate });
   const result = calculateMotorcycleTaxes({
     ...eurInputs,
     engineVolumeCm3,
     importer,
     isElectric: engine === "electric",
   });
-  console.log("[Motorcycle/result-eur]", result);
   const usd = applyRateCompensation(result, eurUsdRate, "motorcycle");
-  console.log("[Motorcycle/result-usd]", { ...usd, eurUsdRate });
   return usd;
 }

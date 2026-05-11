@@ -58,20 +58,20 @@ export const AdminCarsPage = () => {
       const result = await deleteCar({ id: carToDelete.id });
 
       if (result.success) {
-        toast.success("Car deleted", {
-          description: `${carToDelete.model} has been removed.`,
+        toast.success(t("admin.toasts.carDeletedTitle"), {
+          description: t("admin.toasts.carDeletedDescription", { model: carToDelete.model }),
         });
         await state.loadCars({ forceRefresh: true });
         setIsDeleteDialogOpen(false);
         setCarToDelete(null);
       } else {
-        toast.error("Failed to delete car", {
-          description: result.error || "Could not delete the car.",
+        toast.error(t("admin.toasts.carDeleteFailedTitle"), {
+          description: result.error || t("admin.toasts.couldNotDeleteCar"),
         });
       }
     } catch (error) {
-      toast.error("Failed to delete car", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred.",
+      toast.error(t("admin.toasts.carDeleteFailedTitle"), {
+        description: error instanceof Error ? error.message : t("common.unexpectedError"),
       });
     } finally {
       setIsDeletingCar(false);

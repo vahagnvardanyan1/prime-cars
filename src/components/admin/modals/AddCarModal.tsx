@@ -97,8 +97,8 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
           } else {
             // Only show error if authenticated (not 401/403 errors)
             if (!result.error?.includes('401') && !result.error?.includes('403') && !result.error?.includes('Unauthorized')) {
-              toast.error("Failed to load users", {
-                description: result.error || "Could not fetch users from server.",
+              toast.error(t("admin.toasts.failedLoadUsers"), {
+                description: result.error || t("admin.toasts.couldNotFetchUsers"),
               });
             }
           }
@@ -106,8 +106,8 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
           // Only show error if it's not an auth error
           const errorMessage = error instanceof Error ? error.message : "";
           if (!errorMessage.includes('401') && !errorMessage.includes('403') && !errorMessage.includes('Unauthorized')) {
-            toast.error("Failed to load users", {
-              description: errorMessage || "An unexpected error occurred.",
+            toast.error(t("admin.toasts.failedLoadUsers"), {
+              description: errorMessage || t("common.unexpectedError"),
             });
           }
         } finally {
@@ -156,6 +156,8 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
           containerNumberBooking: parsed.details.containerNumberBooking,
           promisedPickUpDate: parsed.details.promisedPickUpDate,
           deliveredWarehouse: parsed.details.deliveredWarehouse,
+          destinationPort: parsed.details.destinationPort,
+          receiverName: parsed.details.receiverName,
         },
         images: imageFiles,
         vehiclePdfFile: vehiclePdfFile,
@@ -164,8 +166,8 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
       });
 
       if (result.success) {
-        toast.success("Car created successfully", {
-          description: `${form.fields.model} has been added to the inventory.`,
+        toast.success(t("admin.toasts.carCreatedTitle"), {
+          description: t("admin.toasts.carCreatedDescription", { model: form.fields.model }),
         });
 
         // Create local car object for immediate UI update
@@ -195,13 +197,13 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
         setSelectedUserId("");
         form.actions.reset();
       } else {
-        toast.error("Failed to create car", {
-          description: result.error || "An unexpected error occurred.",
+        toast.error(t("admin.toasts.carCreateFailedTitle"), {
+          description: result.error || t("common.unexpectedError"),
         });
       }
     } catch (error) {
-      toast.error("Failed to create car", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred.",
+      toast.error(t("admin.toasts.carCreateFailedTitle"), {
+        description: error instanceof Error ? error.message : t("common.unexpectedError"),
       });
     } finally {
       setIsSubmitting(false);
@@ -458,6 +460,24 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                   value={form.fields.deliveredWarehouse}
                   onChange={(e) => form.actions.setDeliveredWarehouse({ value: e.target.value })}
                   type="date"
+                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.destinationPort")}</Label>
+                <Input
+                  value={form.fields.destinationPort}
+                  onChange={(e) => form.actions.setDestinationPort({ value: e.target.value })}
+                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.receiverName")}</Label>
+                <Input
+                  value={form.fields.receiverName}
+                  onChange={(e) => form.actions.setReceiverName({ value: e.target.value })}
                   className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
                 />
               </div>

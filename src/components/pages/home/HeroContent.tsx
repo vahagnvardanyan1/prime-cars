@@ -10,7 +10,7 @@ export function HeroContent({ className }: { className?: string }) {
   return (
     <div className={`text-center lg:text-left max-w-full break-words ${className ?? ""}`}>
       <motion.h1
-        className="mb-6 text-gray-900 dark:text-white"
+        className="mb-4 text-gray-900 dark:text-white text-2xl sm:text-3xl lg:text-4xl"
         initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         transition={{

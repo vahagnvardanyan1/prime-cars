@@ -25,6 +25,8 @@ const mapBackendCarToFrontend = (backendCar: BackendAvailableCar): Car => {
     description: backendCar.carDescription,
     vin: backendCar.carVin,
     engineSize: backendCar.engineSize,
+    driveType: backendCar.driveType,
+    mileage: backendCar.mileage,
   };
 };
 
@@ -104,11 +106,9 @@ export const fetchAvailableCarsPaginated = async ({
     const carsArray: BackendAvailableCar[] = dataWrapper?.data || [];
     const meta = dataWrapper?.meta || {};
 
-    console.log(carsArray, "Fetched paginated cars from available-cars/paginated endpoint");
 
     // Map backend cars to frontend Car type
     const cars = carsArray.map(mapBackendCarToFrontend);
-    console.log(cars, "Mapped paginated cars to frontend Car type");
     return {
       success: true,
       cars,
@@ -176,7 +176,6 @@ export const fetchCarsByCategory = async ({
   category: CarCategory;
 }): Promise<FetchCarsResponse> => {
   try {
-    console.log(`🔍 Fetching ${category} cars from available-cars endpoint...`);
     
     const response = await fetch(
       `${API_BASE_URL}/available-cars/by-category?carCategory=${category}`,
@@ -194,23 +193,19 @@ export const fetchCarsByCategory = async ({
     }
 
     const result = await response.json();
-    console.log(`📦 Raw response from available-cars/by-category (${category}):`, result);
     
     // Handle wrapped response: { status: "success", data: [...] }
     const data = result.data || result;
     const backendCars: BackendAvailableCar[] = Array.isArray(data) ? data : data.cars || [];
-    console.log(`🚗 Backend cars count for ${category}:`, backendCars.length);
     
     // Map backend available-cars structure to frontend Car type
     const cars = backendCars.map(mapBackendCarToFrontend);
-    console.log(`✅ Mapped cars for ${category}:`, cars);
 
     return {
       success: true,
       cars,
     };
   } catch (error) {
-    console.error(`❌ Error fetching ${category} cars from available-cars:`, error);
     return {
       success: false,
       cars: [],

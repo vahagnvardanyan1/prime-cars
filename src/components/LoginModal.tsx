@@ -86,8 +86,8 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: "Login failed" }));
-        toast.error("Login failed", {
-          description: errorData.error || "Invalid username or password.",
+        toast.error(t("auth.toasts.loginFailedTitle"), {
+          description: errorData.error || t("auth.toasts.invalidCredentials"),
         });
         setIsSubmitting(false);
         return;
@@ -114,8 +114,8 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
         });
       }
 
-      toast.success("Login successful", {
-        description: `Welcome back, ${username}!`,
+      toast.success(t("auth.toasts.loginSuccessTitle"), {
+        description: t("auth.toasts.loginSuccessDescription", { username }),
       });
 
       setUsername("");
@@ -138,8 +138,8 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
       
       setIsSubmitting(false);
     } catch (error) {
-      toast.error("Login failed", {
-        description: error instanceof Error ? error.message : "Network error occurred.",
+      toast.error(t("auth.toasts.loginFailedTitle"), {
+        description: error instanceof Error ? error.message : t("auth.toasts.networkError"),
       });
       setIsSubmitting(false);
     }

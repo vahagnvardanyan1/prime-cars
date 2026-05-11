@@ -19,7 +19,6 @@ import {
 } from "./truckTaxConstants";
 import { calculateVehicleAge } from "./calculateAge";
 import { calculateEnvironmentalTax } from "./calculateEnvironmentalTax";
-import { truckLog } from "./truckDebug";
 
 export type TruckWeightClass = TruckWeightClassType;
 export type { TruckEngineType };
@@ -287,17 +286,6 @@ function calculateCustomsDuty(
     }
   }
 
-  truckLog("customs/route", {
-    engineType,
-    weightClass,
-    engineCc,
-    age,
-    ccThreshold,
-    customsDutyBase,
-    branch: outcome.branch,
-    customsDuty: outcome.value,
-    ...outcome.details,
-  });
 
   return outcome;
 }
@@ -327,16 +315,6 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
 
   const baseValue = vehiclePriceEur + auctionFeeEur;
 
-  truckLog("bases", {
-    importer,
-    includesShippingInCustoms,
-    vehiclePriceEur,
-    auctionFeeEur,
-    shippingPriceEur,
-    customsDutyBase,
-    baseValue,
-  });
-
   const customsOutcome = calculateCustomsDuty(
     engineType,
     weightClass,
@@ -356,26 +334,11 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
     : customsDuty + baseValue;
   const vat = vatBase * VAT_RATE;
 
-  truckLog("vat", {
-    includesShipping: includesShippingInCustoms,
-    vatBase,
-    vatRate: VAT_RATE,
-    vat,
-  });
-
   // Environmental tax: calendar-year-based age (vehicleYear → "year 1"), same
   // base for both importers (no customsDuty, no shipping).
   const envTaxBase = includesShippingInCustoms ? baseValue + shippingPriceEur : baseValue;
   const envTax = calculateEnvironmentalTax(envTaxBase , vehicleYear);
   const environmentalTax = envTax.amount;
-
-  truckLog("env", {
-    envTaxBase: baseValue,
-    envAge: envTax.envAge,
-    ageCategory: envTax.ageCategory,
-    envTaxRate: envTax.rate,
-    environmentalTax,
-  });
 
   const total = customsDuty + vat + environmentalTax;
 
@@ -385,8 +348,5 @@ export function calculateTruckTaxes(params: TruckTaxParams): TruckTaxResult {
     environmentalTax,
     total,
   };
-
-  truckLog("result/eur", { branch: customsOutcome.branch, ...result });
-
   return result;
 }

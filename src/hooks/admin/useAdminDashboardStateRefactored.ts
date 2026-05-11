@@ -59,7 +59,6 @@ export const useAdminDashboardStateRefactored = () => {
   }) => {
     // This would be handled by a mutation in the actual implementation
     // Placeholder to avoid unused variable warnings
-    console.log('Update city price:', cityId, nextShippingUsd);
     // For now, just refetch
     refetchCities();
   };

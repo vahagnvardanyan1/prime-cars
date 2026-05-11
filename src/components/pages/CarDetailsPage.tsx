@@ -3,9 +3,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
-import { ChevronLeft, MapPin, Gauge, Settings, Calendar, TrendingUp, X, ChevronRight } from "lucide-react";
+import { ChevronLeft, MapPin, Gauge, Settings, Calendar, TrendingUp, X, ChevronRight, Route, Car } from "lucide-react";
 import { useCarDetails } from "@/hooks/useCarDetails";
 import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
+import { Spec } from "@/components/pages/cars/Spec";
 import { translateEngineType, translateTransmission } from "@/lib/utils/translateVehicleSpecs";
 
 export const CarDetailsPage = ({ carId }: { carId: string }) => {
@@ -282,70 +283,34 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
               <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
                 {t("specifications")}
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                {car.year && (
-                  <div className="flex items-start gap-2.5 sm:gap-3">
-                    <div className="p-2 bg-white dark:bg-white/10 rounded-lg flex-shrink-0">
-                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{t("specs.year")}</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">{car.year}</p>
-                    </div>
-                  </div>
-                )}
-
+              <div className="grid grid-cols-2 gap-x-3 gap-y-4 sm:gap-x-4 sm:gap-y-5">
+                {car.year && <Spec icon={Calendar} label={t("specs.year")} value={car.year} />}
                 {car.horsepower && (
-                  <div className="flex items-start gap-2.5 sm:gap-3">
-                    <div className="p-2 bg-white dark:bg-white/10 rounded-lg flex-shrink-0">
-                      <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{t("specs.horsepower")}</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {car.horsepower} {t("horsepowerUnit")}
-                      </p>
-                    </div>
-                  </div>
+                  <Spec
+                    icon={TrendingUp}
+                    label={t("specs.horsepower")}
+                    value={`${car.horsepower} ${t("horsepowerUnit")}`}
+                  />
                 )}
-
                 {car.engine && (
-                  <div className="flex items-start gap-2.5 sm:gap-3">
-                    <div className="p-2 bg-white dark:bg-white/10 rounded-lg flex-shrink-0">
-                      <Gauge className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{t("specs.engine")}</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{translateEngineType(car.engine, t)}</p>
-                    </div>
-                  </div>
+                  <Spec icon={Gauge} label={t("specs.engine")} value={translateEngineType(car.engine, t)} />
                 )}
-
                 {car.transmission && (
-                  <div className="flex items-start gap-2.5 sm:gap-3">
-                    <div className="p-2 bg-white dark:bg-white/10 rounded-lg flex-shrink-0">
-                      <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{t("specs.transmission")}</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {translateTransmission(car.transmission, t)}
-                      </p>
-                    </div>
-                  </div>
+                  <Spec
+                    icon={Settings}
+                    label={t("specs.transmission")}
+                    value={translateTransmission(car.transmission, t)}
+                  />
                 )}
-
-                {car.location && (
-                  <div className="flex items-start gap-2.5 sm:gap-3">
-                    <div className="p-2 bg-white dark:bg-white/10 rounded-lg flex-shrink-0">
-                      <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 dark:text-gray-400" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{t("specs.location")}</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{car.location}</p>
-                    </div>
-                  </div>
+                {car.driveType && <Spec icon={Car} label={t("specs.driveType")} value={car.driveType} />}
+                {Boolean(car.mileage && car.mileage > 0) && (
+                  <Spec
+                    icon={Route}
+                    label={t("specs.mileage")}
+                    value={`${car.mileage} ${t("specs.kmUnit")}`}
+                  />
                 )}
+                {car.location && <Spec icon={MapPin} label={t("specs.location")} value={car.location} />}
               </div>
             </div>
 

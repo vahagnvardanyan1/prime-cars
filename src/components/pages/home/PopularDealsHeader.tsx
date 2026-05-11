@@ -13,12 +13,6 @@ export function PopularDealsHeader() {
         as="h2"
         className="mb-4"
       />
-      <TextReveal
-        text={t("home.popularDeals.description")}
-        as="p"
-        className="max-w-3xl mx-auto"
-        delay={0.3}
-      />
     </div>
   );
 }

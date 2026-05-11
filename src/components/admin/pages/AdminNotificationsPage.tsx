@@ -49,7 +49,6 @@ export const AdminNotificationsPage = () => {
   // Listen for notification changes from popup
   useEffect(() => {
     const unsubscribe = notificationEvents.subscribe(() => {
-      console.log('[AdminNotificationsPage] Notification event received, reloading...');
       if (user) {
         state.loadNotifications({ forceRefresh: true, isAdmin });
       }

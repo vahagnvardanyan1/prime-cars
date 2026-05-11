@@ -12,6 +12,8 @@ export type AdminCarDetails = {
   containerNumberBooking?: string;
   promisedPickUpDate?: string;
   deliveredWarehouse?: string;
+  destinationPort?: string;
+  receiverName?: string;
 };
 
 export type AdminCar = {

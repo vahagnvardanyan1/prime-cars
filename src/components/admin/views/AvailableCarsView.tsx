@@ -9,6 +9,7 @@ import type { Car } from "@/lib/cars/types";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
 import { Pagination } from "@/components/admin/primitives/Pagination";
+import { TextCell } from "@/components/admin/primitives/TextCell";
 import { Button } from "@/components/ui/button";
 import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
 import { Table } from "@radix-ui/themes";
@@ -172,35 +173,46 @@ const AvailableCarTableRow = memo(function AvailableCarTableRow({
       </Table.Cell>
 
       {/* Engine */}
-      <Table.Cell className="px-4 py-3">
-        <div className="text-sm text-gray-900 dark:text-white capitalize">
-          {car.engine?.toLowerCase() || "-"}
-        </div>
-      </Table.Cell>
+      <TextCell
+        value={car.engine?.toLowerCase()}
+        cellClassName="px-4 py-3"
+        valueClassName="text-sm text-gray-900 dark:text-white capitalize"
+      />
 
       {/* Horsepower */}
-      <Table.Cell className="px-4 py-3">
-        <div className="text-sm text-gray-900 dark:text-white">
-          {car.horsepower ? `${car.horsepower} HP` : "-"}
-        </div>
-      </Table.Cell>
+      <TextCell
+        value={car.horsepower ? `${car.horsepower} HP` : undefined}
+        cellClassName="px-4 py-3"
+        valueClassName="text-sm text-gray-900 dark:text-white"
+      />
 
       {/* Transmission */}
-      <Table.Cell className="px-4 py-3">
-        <div className="text-sm text-gray-900 dark:text-white capitalize">
-          {car.transmission?.toLowerCase() || "-"}
-        </div>
-      </Table.Cell>
+      <TextCell
+        value={car.transmission?.toLowerCase()}
+        cellClassName="px-4 py-3"
+        valueClassName="text-sm text-gray-900 dark:text-white capitalize"
+      />
+
+      {/* Drive Type */}
+      <TextCell
+        value={car.driveType}
+        cellClassName="px-4 py-3"
+        valueClassName="text-sm text-gray-900 dark:text-white"
+      />
+
+      {/* Mileage */}
+      <TextCell
+        value={car.mileage && car.mileage > 0 ? `${car.mileage.toLocaleString("en-US")} km` : undefined}
+        cellClassName="px-4 py-3"
+        valueClassName="text-sm text-gray-900 dark:text-white whitespace-nowrap"
+      />
 
       {/* Description */}
-      <Table.Cell className="px-4 py-3">
-        <div
-          className="text-sm text-gray-900 dark:text-white line-clamp-2"
-          title={car.description || "-"}
-        >
-          {car.description || "-"}
-        </div>
-      </Table.Cell>
+      <TextCell
+        value={car.description}
+        cellClassName="px-4 py-3"
+        valueClassName="text-sm text-gray-900 dark:text-white line-clamp-2"
+      />
 
       {/* Actions */}
       {isAdmin && (
@@ -403,6 +415,8 @@ export const AvailableCarsView = memo(function AvailableCarsView({
                 <Table.ColumnHeaderCell className="min-w-[120px]">{t("table.engine")}</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="min-w-[100px]">{t("table.hp")}</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="min-w-[140px]">{t("table.transmission")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[120px]">{t("table.driveType")}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="min-w-[140px]">{t("table.mileage")}</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell className="min-w-[200px]">{t("table.description")}</Table.ColumnHeaderCell>
                 {isAdmin && (
                   <Table.ColumnHeaderCell className="text-center min-w-[160px]">
@@ -414,7 +428,7 @@ export const AvailableCarsView = memo(function AvailableCarsView({
             <Table.Body>
               {isLoading ? (
                 <Table.Row>
-                  <Table.Cell colSpan={isAdmin ? 13 : 12} className="py-12">
+                  <Table.Cell colSpan={isAdmin ? 15 : 14} className="py-12">
                     <div className="flex items-center justify-center">
                       {loadingSpinner}
                     </div>
@@ -422,7 +436,7 @@ export const AvailableCarsView = memo(function AvailableCarsView({
                 </Table.Row>
               ) : !cars || cars.length === 0 ? (
                 <Table.Row>
-                  <Table.Cell colSpan={isAdmin ? 13 : 12} className="py-12">
+                  <Table.Cell colSpan={isAdmin ? 15 : 14} className="py-12">
                     <div className="flex items-center justify-center text-center text-sm text-gray-600 dark:text-gray-400">
                       {t("noCarsFound")}
                     </div>

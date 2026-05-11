@@ -64,6 +64,8 @@ const updateFormSchema = z.object({
   horsepower: z.number({ message: "Horsepower must be a number" }).optional().or(z.literal(0)),
   fuelType: z.enum([EngineType.GASOLINE, EngineType.DIESEL, EngineType.ELECTRIC, EngineType.HYBRID]).optional().or(z.literal("")),
   transmission: z.enum([Transmission.AUTOMATIC, Transmission.MECHANIC, Transmission.VARIATOR, Transmission.ROBOT]).optional().or(z.literal("")),
+  driveType: z.string().max(50, "Drive type must be less than 50 characters").optional().or(z.literal("")),
+  mileage: z.number({ message: "Mileage must be a number" }).optional().or(z.literal(0)),
   description: z.string().max(1000, "Description must be less than 1000 characters").optional().or(z.literal("")),
 });
 
@@ -76,7 +78,8 @@ export const UpdateAvailableCarModal = ({
   onSuccess,
 }: UpdateAvailableCarModalProps) => {
   const t = useTranslations("admin.modals.updateAvailableCar");
-  
+  const tCommon = useTranslations("common");
+
   // Photo management
   const { files, previews: newPreviews, setFileAt, removeFileAt, clearAll, addMultipleFiles, reorderFiles } = usePhotoUploads({ 
     maxFiles: 50, 
@@ -106,6 +109,8 @@ export const UpdateAvailableCarModal = ({
       horsepower: 0,
       fuelType: "",
       transmission: "",
+      driveType: "",
+      mileage: 0,
       description: "",
     },
   });
@@ -118,6 +123,7 @@ export const UpdateAvailableCarModal = ({
   const yearValue = watch("year");
   const priceUsdValue = watch("priceUsd");
   const horsepowerValue = watch("horsepower");
+  const mileageValue = watch("mileage");
 
   useEffect(() => {
     if (isOpen) {
@@ -131,6 +137,8 @@ export const UpdateAvailableCarModal = ({
         horsepower: car.horsepower || 0,
         fuelType: (car.fuelType as typeof EngineType[keyof typeof EngineType]) || "",
         transmission: (car.transmission as typeof Transmission[keyof typeof Transmission]) || "",
+        driveType: car.driveType || "",
+        mileage: car.mileage || 0,
         description: car.description || "",
       });
       
@@ -194,6 +202,8 @@ export const UpdateAvailableCarModal = ({
         engineSize: parseFloat(formData.engine || "0") || 0,
         boughtPlace: formData.location || "",
         transmission: (formData.transmission as UpdateAvailableCarFormData['transmission']) || "",
+        driveType: formData.driveType || "",
+        mileage: formData.mileage || 0,
       };
 
       await updateMutation.mutateAsync({
@@ -204,15 +214,15 @@ export const UpdateAvailableCarModal = ({
         photosToDelete,
       });
 
-      toast.success("Car Updated Successfully", {
-        description: "The car information has been updated.",
+      toast.success(t("successTitle"), {
+        description: t("successDescription"),
       });
 
       onSuccess();
       onClose();
     } catch (error) {
-      toast.error("Failed to Update Car", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
+      toast.error(t("errorTitle"), {
+        description: error instanceof Error ? error.message : tCommon("unexpectedError"),
       });
     }
   };
@@ -311,16 +321,6 @@ export const UpdateAvailableCarModal = ({
               />
             </div>
 
-            <div className="flex items-center justify-between text-xs pt-2 border-t border-gray-200 dark:border-white/10">
-              <p className="text-gray-500 dark:text-gray-400">
-                {existingPhotos.length} existing • {files.filter(f => f !== null).length} new • Up to 25 photos total
-              </p>
-              {photosToDelete.length > 0 && (
-                <p className="text-amber-600 dark:text-amber-400 font-medium">
-                  {photosToDelete.length} photo{photosToDelete.length > 1 ? 's' : ''} will be deleted
-                </p>
-              )}
-            </div>
             {isSubmitted && photoError && (
               <p className="text-xs text-red-500 dark:text-red-400 mt-1">{photoError}</p>
             )}
@@ -328,11 +328,7 @@ export const UpdateAvailableCarModal = ({
 
           {/* Basic Information */}
           <div className="space-y-3 sm:space-y-4">
-            <h3 className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-gray-700 dark:text-white/80">
-              Basic Information
-            </h3>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               <div className="space-y-2">
                 <Label htmlFor="model" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
                   Model <span className="text-red-500 dark:text-red-400">*</span>
@@ -341,7 +337,7 @@ export const UpdateAvailableCarModal = ({
                   id="model"
                   {...register("model")}
                   placeholder={t("modelPlaceholder")}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.model && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
@@ -363,7 +359,7 @@ export const UpdateAvailableCarModal = ({
                     const sanitized = sanitizeNumericInput(e.target.value);
                     setValue("year", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
                   }}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.year && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
@@ -385,7 +381,7 @@ export const UpdateAvailableCarModal = ({
                     const sanitized = sanitizeNumericInput(e.target.value);
                     setValue("priceUsd", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
                   }}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.priceUsd && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
@@ -402,7 +398,7 @@ export const UpdateAvailableCarModal = ({
                   value={category}
                   onValueChange={(value) => setValue("category", value as CarCategory)}
                 >
-                  <SelectTrigger className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
+                  <SelectTrigger className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white dark:bg-[#1a1a1a] border-gray-200 dark:border-white/20">
@@ -425,7 +421,7 @@ export const UpdateAvailableCarModal = ({
                 <Input
                   id="location"
                   {...register("location")}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.location && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
@@ -438,11 +434,7 @@ export const UpdateAvailableCarModal = ({
 
           {/* Engine & Performance */}
           <div className="space-y-3 sm:space-y-4">
-            <h3 className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-gray-700 dark:text-white/80">
-              Engine & Performance
-            </h3>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               <div className="space-y-2">
                 <Label htmlFor="engine"  className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
                   Engine Size 
@@ -451,8 +443,7 @@ export const UpdateAvailableCarModal = ({
                   id="engine"
                   {...register("engine")}
                   type="numeric"
-                  placeholder={t("enginePlaceholder")}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.engine && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
@@ -474,7 +465,7 @@ export const UpdateAvailableCarModal = ({
                     const sanitized = sanitizeNumericInput(e.target.value);
                     setValue("horsepower", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
                   }}
-                  className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {errors.horsepower && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
@@ -491,7 +482,7 @@ export const UpdateAvailableCarModal = ({
                   value={fuelType}
                   onValueChange={(value) => setValue("fuelType", value as typeof EngineType[keyof typeof EngineType])}
                 >
-                  <SelectTrigger id="fuelType" className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
+                  <SelectTrigger id="fuelType" className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
                     <SelectValue placeholder={t("fuelTypePlaceholder")} />
                   </SelectTrigger>
                   <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
@@ -516,7 +507,7 @@ export const UpdateAvailableCarModal = ({
                   value={transmission}
                   onValueChange={(value) => setValue("transmission", value as typeof Transmission[keyof typeof Transmission])}
                 >
-                  <SelectTrigger id="transmission" className="w-full h-[44px] sm:h-[48px] px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
+                  <SelectTrigger id="transmission" className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
                     <SelectValue placeholder={t("transmissionPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
@@ -529,6 +520,44 @@ export const UpdateAvailableCarModal = ({
                 {errors.transmission && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                     {errors.transmission.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="driveType" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+                  {t("driveType")}
+                </Label>
+                <Input
+                  id="driveType"
+                  {...register("driveType")}
+                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                />
+                {errors.driveType && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                    {errors.driveType.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="mileage" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
+                  {t("mileage")}
+                </Label>
+                <Input
+                  id="mileage"
+                  type="text"
+                  inputMode="numeric"
+                  value={mileageValue === 0 ? "" : mileageValue?.toString() || ""}
+                  onChange={(e) => {
+                    const sanitized = sanitizeNumericInput(e.target.value);
+                    setValue("mileage", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
+                  }}
+                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                />
+                {errors.mileage && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                    {errors.mileage.message}
                   </p>
                 )}
               </div>
@@ -546,7 +575,7 @@ export const UpdateAvailableCarModal = ({
                 {...register("description")}
                 placeholder={t("descriptionPlaceholder")}
                 rows={4}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 resize-none bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-[15px] sm:text-[16px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 resize-none bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
               {errors.description && (
                 <p className="text-xs text-red-500 dark:text-red-400 mt-1">
@@ -563,14 +592,14 @@ export const UpdateAvailableCarModal = ({
               variant="outline"
               onClick={onClose}
               disabled={isSubmitting}
-              className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[150px] h-11 sm:h-12 text-[15px] sm:text-[16px] font-medium border-2 border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 hover:dark:border-white/20 text-gray-900 dark:text-white rounded-lg transition-all duration-200"
+              className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[150px] h-11 sm:h-12 text-sm font-medium border-2 border-gray-300 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 hover:dark:border-white/20 text-gray-900 dark:text-white rounded-lg transition-all duration-200"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[150px] h-11 sm:h-12 text-[15px] sm:text-[16px] bg-gradient-to-r from-[#429de6] to-[#3b8ed4] hover:from-[#3a8acc] hover:to-[#3280bb] text-white font-semibold rounded-lg shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[150px] h-11 sm:h-12 text-sm bg-gradient-to-r from-[#429de6] to-[#3b8ed4] hover:from-[#3a8acc] hover:to-[#3280bb] text-white font-semibold rounded-lg shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <div className="flex items-center justify-center gap-2">

@@ -33,6 +33,8 @@ type UseAddCarFormReturn = {
     containerNumberBooking: string;
     promisedPickUpDate: string;
     deliveredWarehouse: string;
+    destinationPort: string;
+    receiverName: string;
   };
   actions: {
     setModel: ({ value }: { value: string }) => void;
@@ -51,6 +53,8 @@ type UseAddCarFormReturn = {
     setContainerNumberBooking: ({ value }: { value: string }) => void;
     setPromisedPickUpDate: ({ value }: { value: string }) => void;
     setDeliveredWarehouse: ({ value }: { value: string }) => void;
+    setDestinationPort: ({ value }: { value: string }) => void;
+    setReceiverName: ({ value }: { value: string }) => void;
     reset: () => void;
     clearError: ({ field }: { field: keyof FormErrors }) => void;
   };
@@ -84,6 +88,8 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
   const [containerNumberBooking, setContainerNumberBooking] = useState("");
   const [promisedPickUpDate, setPromisedPickUpDate] = useState("");
   const [deliveredWarehouse, setDeliveredWarehouse] = useState("");
+  const [destinationPort, setDestinationPort] = useState("");
+  const [receiverName, setReceiverName] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
 
   const isSubmitEnabled = useMemo(() => {
@@ -118,6 +124,8 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       containerNumberBooking: containerNumberBooking.trim().length ? containerNumberBooking : undefined,
       promisedPickUpDate: promisedPickUpDate.trim().length ? promisedPickUpDate : undefined,
       deliveredWarehouse: deliveredWarehouse.trim().length ? deliveredWarehouse : undefined,
+      destinationPort: destinationPort.trim().length ? destinationPort : undefined,
+      receiverName: receiverName.trim().length ? receiverName : undefined,
     };
 
     return {
@@ -131,10 +139,12 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
     containerNumberBooking,
     customerNotes,
     deliveredWarehouse,
+    destinationPort,
     isSubmitEnabled,
     lot,
     promisedPickUpDate,
     purchaseDate,
+    receiverName,
     type,
     vin,
     year,
@@ -205,6 +215,8 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
     setContainerNumberBooking("");
     setPromisedPickUpDate("");
     setDeliveredWarehouse("");
+    setDestinationPort("");
+    setReceiverName("");
     setErrors({});
   }, []);
 
@@ -226,6 +238,8 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       containerNumberBooking,
       promisedPickUpDate,
       deliveredWarehouse,
+      destinationPort,
+      receiverName,
     },
     actions: {
       setModel: ({ value }) => setModel(value),
@@ -244,6 +258,8 @@ export const useAddCarForm = (): UseAddCarFormReturn => {
       setContainerNumberBooking: ({ value }) => setContainerNumberBooking(value),
       setPromisedPickUpDate: ({ value }) => setPromisedPickUpDate(value),
       setDeliveredWarehouse: ({ value }) => setDeliveredWarehouse(value),
+      setDestinationPort: ({ value }) => setDestinationPort(value),
+      setReceiverName: ({ value }) => setReceiverName(value),
       reset,
       clearError,
     },

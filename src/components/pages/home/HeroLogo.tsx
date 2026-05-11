@@ -21,9 +21,9 @@ export function HeroLogo() {
       <Image
         src="/hero-animateds/container.png"
         alt={t("home.hero.heroImageAlt")}
-        className="w-full h-auto max-h-[50vh] lg:max-h-[80vh] object-contain relative z-10"
-        width={600}
-        height={975}
+        className="w-full h-auto max-h-[50vh] lg:max-h-[80vh] object-contain relative z-10 scale-[1.2] origin-center"
+        width={900}
+        height={875}
         priority
       />
     </motion.div>

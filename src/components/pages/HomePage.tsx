@@ -48,7 +48,7 @@ export const HomePage = async () => {
         </Container>
       </section>
 
-      <section id="services" className="section-glow section-glow-blue py-20 lg:py-28 bg-[var(--color-surface)] transition-colors duration-300">
+      <section id="services" className="section-glow section-glow-blue py-12 lg:py-16 bg-[var(--color-surface)] transition-colors duration-300">
         <Container className="relative z-10">
           <ScrollReveal>
             <ServicesSection />
@@ -56,7 +56,7 @@ export const HomePage = async () => {
         </Container>
       </section>
 
-      <section id="shipping" className="section-glow section-glow-emerald py-20 lg:py-28 bg-[var(--color-surface-alt)] transition-colors duration-300">
+      <section id="shipping" className="section-glow section-glow-emerald py-12 lg:py-16 bg-[var(--color-surface-alt)] transition-colors duration-300">
         <Container className="relative z-10">
           <ScrollReveal>
             <ShippingMap />

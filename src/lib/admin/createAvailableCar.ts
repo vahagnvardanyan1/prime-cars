@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
+import { appendIf } from "@/lib/admin/formData";
 import type { CarCategory } from "@/lib/cars/types";
 import type { EngineType } from "@/lib/admin/types";
 
@@ -15,6 +16,8 @@ type CreateAvailableCarData = {
   engineSize?: number;
   boughtPlace?: string;
   transmission?: string;
+  driveType?: string;
+  mileage?: number;
 };
 
 type CreateAvailableCarResponse = {
@@ -38,47 +41,23 @@ export const createAvailableCar = async ({
   photos?: File[];
 }): Promise<CreateAvailableCarResponse> => {
   try {
-    // Create FormData
     const formData = new FormData();
 
-    // Append required fields (matching backend schema exactly)
-    formData.append("carModel", data.carModel);
-    formData.append("carYear", data.carYear.toString());
-    formData.append("carPrice", data.carPrice.toString());
-    formData.append("carCategory", data.carCategory);
-    formData.append("carVin", data.carVin);
-    
-    // Append optional fields (matching backend schema exactly)
-    if (data.carDescription) {
-      formData.append("carDescription", data.carDescription);
-    }
-    
-    if (data.engineType) {
-      formData.append("engineType", data.engineType);
-    }
-    
-    if (data.engineHp) {
-      formData.append("engineHp", data.engineHp.toString());
-    }
-    
-    if (data.engineSize) {
-      formData.append("engineSize", data.engineSize.toString());
-    }
-    
-    if (data.boughtPlace) {
-      formData.append("boughtPlace", data.boughtPlace);
-    }
-    
-    if (data.transmission) {
-      formData.append("transmission", data.transmission);
-    }
+    appendIf(formData, "carModel", data.carModel);
+    appendIf(formData, "carYear", data.carYear);
+    appendIf(formData, "carPrice", data.carPrice);
+    appendIf(formData, "carCategory", data.carCategory);
+    appendIf(formData, "carVin", data.carVin);
+    appendIf(formData, "carDescription", data.carDescription);
+    appendIf(formData, "engineType", data.engineType);
+    appendIf(formData, "engineHp", data.engineHp);
+    appendIf(formData, "engineSize", data.engineSize);
+    appendIf(formData, "boughtPlace", data.boughtPlace);
+    appendIf(formData, "transmission", data.transmission);
+    appendIf(formData, "driveType", data.driveType);
+    appendIf(formData, "mileage", data.mileage);
 
-    // Append photo files
-    if (photos && photos.length > 0) {
-      photos.forEach((photo) => {
-        formData.append("carPhotos", photo);
-      });
-    }
+    photos.forEach((photo) => formData.append("carPhotos", photo));
 
     const response = await authenticatedFetch(`${API_BASE_URL}/available-cars`, {
       method: "POST",
@@ -86,8 +65,8 @@ export const createAvailableCar = async ({
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ 
-        error: "Failed to create available car" 
+      const errorData = await response.json().catch(() => ({
+        error: "Failed to create available car",
       }));
       return {
         success: false,

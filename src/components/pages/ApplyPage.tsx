@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 export const ApplyPage = () => {
   const t = useTranslations("applyPage");
+  const tCommon = useTranslations("common");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     carsPerMonth: "",
@@ -25,12 +26,30 @@ export const ApplyPage = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // TODO: integrate with API
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch("/api/registration-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    toast.success(t("success"));
-    setFormData({ carsPerMonth: "", fullName: "", email: "", phone: "" });
-    setIsSubmitting(false);
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        toast.error(t("errorTitle"), {
+          description: data?.error || t("errorDescription"),
+        });
+        return;
+      }
+
+      toast.success(t("successTitle"), { description: t("successDescription") });
+      setFormData({ carsPerMonth: "", fullName: "", email: "", phone: "" });
+    } catch (error) {
+      toast.error(t("errorTitle"), {
+        description: error instanceof Error ? error.message : tCommon("unexpectedError"),
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const carsOptions = [

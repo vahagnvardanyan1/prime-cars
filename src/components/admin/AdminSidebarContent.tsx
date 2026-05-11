@@ -61,10 +61,10 @@ export const AdminSidebarContent = ({
     try {
       await logout();
       clearUser();
-      toast.success("Logged out successfully");
+      toast.success(t("auth.toasts.loggedOutSuccess"));
     } catch {
       clearUser();
-      toast.warning("Logged out locally");
+      toast.warning(t("auth.toasts.loggedOutLocally"));
     } finally {
       setIsLoggingOut(false);
       window.location.href = "/";

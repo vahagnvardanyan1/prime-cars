@@ -131,24 +131,22 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
       });
 
       if (result.success) {
-        toast.success("User created successfully", {
-          description: `${firstName} ${lastName} has been added to the system.`,
+        toast.success(t("admin.toasts.userCreatedTitle"), {
+          description: t("admin.toasts.userCreatedDescription", { name: `${firstName} ${lastName}` }),
         });
-        
         if (onUserCreated) {
           onUserCreated();
         }
-        
         close();
         resetForm();
       } else {
-        toast.error("Failed to create user", {
-          description: result.error || "An unexpected error occurred.",
+        toast.error(t("admin.toasts.userCreateFailedTitle"), {
+          description: result.error || t("common.unexpectedError"),
         });
       }
     } catch (error) {
-      toast.error("Failed to create user", {
-        description: error instanceof Error ? error.message : "An unexpected error occurred.",
+      toast.error(t("admin.toasts.userCreateFailedTitle"), {
+        description: error instanceof Error ? error.message : t("common.unexpectedError"),
       });
     } finally {
       setIsSubmitting(false);

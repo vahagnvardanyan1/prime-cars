@@ -45,8 +45,6 @@ export const fetchHomeCars = async ({
   category: CarCategory;
 }): Promise<FetchHomeCarsResponse> => {
   try {
-    console.log(`🏠 Fetching ${category} cars for home page...`);
-    
     // Map home category to backend category
     const backendCategory = mapCategoryToBackend(category);
     
@@ -66,25 +64,20 @@ export const fetchHomeCars = async ({
     }
 
     const result = await response.json();
-    console.log(`📦 Raw response for home ${category}:`, result);
     
     // Handle wrapped response: { status: "success", data: [...] }
     const data = result.data || result;
-    console.log('Extracted data:', data);
     
     const backendCars: BackendAvailableCar[] = Array.isArray(data) ? data : data.cars || [];
-    console.log(`🚗 Backend cars count for home ${category}:`, backendCars.length);
     
     // Map backend cars to home page format
     const cars = backendCars.map(car => mapBackendCarToHomeCar(car, category));
-    console.log(`✅ Mapped ${category} cars for home (${cars.length} cars):`, cars);
 
     return {
       success: true,
       cars,
     };
   } catch (error) {
-    console.error(`❌ Error fetching ${category} cars:`, error);
     return {
       success: false,
       cars: [],

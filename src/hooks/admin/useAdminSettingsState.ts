@@ -107,7 +107,6 @@ export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) =
         });
         // Clear cache for the affected auction
         citiesCache.delete(auction);
-        console.log(`🧹 Cleared ${auction} cities cache after price adjustment`);
         await loadCities({ forceRefresh: true, auction: currentAuction || undefined });
         // Reload global adjustment to get the updated value
         await loadGlobalAdjustment(auction);
@@ -141,7 +140,6 @@ export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) =
     if (!forceRefresh && auction && isCitiesCacheValid({ auction })) {
       const cached = citiesCache.get(auction);
       if (cached) {
-        console.log(`✅ Using cached cities for ${auction}`);
         // Ensure cached data is also sorted (in case cache was created before sorting was added)
         const sortedCached = [...cached.data].sort((a, b) => {
           return a.city.localeCompare(b.city, undefined, { sensitivity: 'base' });
@@ -154,7 +152,6 @@ export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) =
 
     setIsLoadingCities(true);
     try {
-      console.log(`🔄 Fetching cities from API for ${auction || 'all'}`);
       const result = await fetchShippings({ auction });
       
       if (result.success && result.cities) {
@@ -172,7 +169,6 @@ export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) =
             data: sortedCities,
             timestamp: Date.now(),
           });
-          console.log(`💾 Cached ${sortedCities.length} cities for ${auction}`);
         }
       } else {
         if (!result.error?.includes('401') && !result.error?.includes('403') && !result.error?.includes('Unauthorized')) {
@@ -213,7 +209,6 @@ export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) =
           data: updatedCities,
           timestamp: cached.timestamp,
         });
-        console.log(`💾 Updated cache for ${currentAuction} after price change`);
       }
     }
   };

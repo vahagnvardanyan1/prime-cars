@@ -78,6 +78,19 @@ export const availableCarSchema = z.object({
     })
     .optional()
     .or(z.literal("")),
+
+  driveType: z
+    .string()
+    .max(50, "Drive type must be less than 50 characters")
+    .optional()
+    .or(z.literal("")),
+
+  mileage: z
+    .number()
+    .int("Mileage must be a whole number")
+    .min(0, "Mileage cannot be negative")
+    .max(2_000_000, "Mileage seems unrealistic")
+    .catch(0),
 });
 
 // Schema for updating available car (all fields optional except ID)
@@ -152,6 +165,21 @@ export const updateAvailableCarSchema = z.object({
     .enum([Transmission.AUTOMATIC, Transmission.MECHANIC, Transmission.VARIATOR, Transmission.ROBOT])
     .optional()
     .or(z.literal("")),
+
+  driveType: z
+    .string()
+    .max(50, "Drive type must be less than 50 characters")
+    .optional()
+    .or(z.literal("")),
+
+  mileage: z
+    .union([
+      z.number().int("Mileage must be a whole number").min(0, "Mileage cannot be negative").max(2_000_000, "Mileage seems unrealistic"),
+      z.literal(0),
+      z.nan().transform(() => 0),
+    ])
+    .optional()
+    .default(0),
 });
 
 // Photo validation schema

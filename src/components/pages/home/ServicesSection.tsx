@@ -46,12 +46,7 @@ export function ServicesSection() {
 
   return (
     <div>
-      <div className="text-center mb-16 max-w-3xl mx-auto">
-        <TextReveal
-          text={t("home.services.title")}
-          as="h2"
-          className="mb-4"
-        />
+      <div className="text-center mb-10 max-w-4xl mx-auto">
         <TextReveal
           text={t("home.services.description")}
           as="p"

@@ -59,20 +59,20 @@ export const UpdateShippingPriceModal = ({
       });
 
       if (result.success) {
-        toast.success(isTaxMode ? "Tax updated" : "Shipping price updated", {
-          description: `${city.city} ${isTaxMode ? "tax" : "shipping price"} updated to $${nextValue}.`,
+        toast.success(t(isTaxMode ? "admin.toasts.taxUpdated" : "admin.toasts.shippingPriceUpdated"), {
+          description: `${city.city} → $${nextValue}`,
         });
         onConfirm({ cityId: city.id, nextValue });
         onSuccess?.();
         close();
       } else {
-        toast.error(`Failed to update ${isTaxMode ? "tax" : "shipping price"}`, {
-          description: result.error || "Could not update the value.",
+        toast.error(t(isTaxMode ? "admin.toasts.taxUpdateFailed" : "admin.toasts.shippingPriceUpdateFailed"), {
+          description: result.error || t("common.unexpectedError"),
         });
       }
     } catch (error) {
-      toast.error(`Failed to update ${isTaxMode ? "tax" : "shipping price"}`, {
-        description: error instanceof Error ? error.message : "An unexpected error occurred.",
+      toast.error(t(isTaxMode ? "admin.toasts.taxUpdateFailed" : "admin.toasts.shippingPriceUpdateFailed"), {
+        description: error instanceof Error ? error.message : t("common.unexpectedError"),
       });
     } finally {
       setIsSubmitting(false);

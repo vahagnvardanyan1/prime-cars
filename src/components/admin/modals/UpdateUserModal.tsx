@@ -35,6 +35,7 @@ export const UpdateUserModal = ({
 }: UpdateUserModalProps) => {
   const t = useTranslations("admin.modals.updateUser");
   const tValidation = useTranslations("auth.validation");
+  const tCommon = useTranslations("common");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -153,7 +154,7 @@ export const UpdateUserModal = ({
         toast.error(result.error || t("errorMessage"));
       }
     } catch (error) {
-      toast.error(t("unexpectedError"));
+      toast.error(tCommon("unexpectedError"));
       console.error("Error updating user:", error);
     } finally {
       setIsSubmitting(false);

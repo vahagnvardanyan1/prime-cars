@@ -62,9 +62,6 @@ export const NotificationPopup = ({ userId }: NotificationPopupProps) => {
       (n) => n.id !== notificationId
     );
     
-    console.log('[NotificationPopup] Marking as read:', notificationId);
-    console.log('[NotificationPopup] Remaining:', remainingNotifications.length);
-    
     if (remainingNotifications.length > 0) {
       setUnreadNotifications(remainingNotifications);
       setCurrentNotification(remainingNotifications[0]);
@@ -77,7 +74,6 @@ export const NotificationPopup = ({ userId }: NotificationPopupProps) => {
     // Make API call in background
     try {
       await markNotificationAsRead({ notificationId });
-      console.log('[NotificationPopup] Successfully marked as read');
       
       // Clear the admin notifications cache so it refreshes when viewing the list
       clearNotificationsCache();
