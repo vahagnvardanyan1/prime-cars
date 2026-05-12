@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
@@ -29,6 +29,17 @@ type LocaleLayoutProps = {
 export const generateStaticParams = () => locales.map((locale) => ({ locale }));
 
 export const dynamicParams = false;
+
+// Explicit viewport so iOS Safari uses the device's physical width as the
+// breakpoint reference (otherwise it falls back to a 980px virtual viewport,
+// which makes Tailwind's `md:` utilities apply on phones — collapsing
+// responsive `text-base md:text-sm` to 14px and triggering auto-zoom on inputs).
+// `maximumScale`/`userScalable` intentionally left at browser defaults so users
+// can still pinch-zoom for accessibility.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
 
 // Layout-level metadata handles root-of-tree concerns ONLY: metadataBase,
 // title.template, favicons, and the manifest. Page-specific title, description,
