@@ -6,7 +6,10 @@ const config = {
   theme: {
     extend: {
       colors: {
-        primary: "#429de6",
+        primary: {
+          DEFAULT: "#429de6",
+          hover: "#3a8acc",
+        },
         accent: "#da565b",
       },
       keyframes: {
