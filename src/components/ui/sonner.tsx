@@ -14,7 +14,7 @@ export const Toaster = (props: ToasterProps) => {
       position="bottom-right"
       closeButton
       expand
-      duration={4000}
+      duration={2000}
       {...props}
     />
   );

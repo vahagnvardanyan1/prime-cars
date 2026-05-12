@@ -444,6 +444,24 @@ input[type="number"] {
   appearance: textfield;
 }
 
+/* Mobile-only floor on form-input font-size to defeat iOS Safari's
+ * auto-zoom-on-focus, which kicks in whenever an input/textarea/select
+ * (or ARIA combobox) has a computed font-size < 16px. Sits in @layer base
+ * so Tailwind utilities (text-sm, text-xs) on individual inputs still win
+ * on desktop — this only fires when there's NO explicit smaller class. */
+@layer base {
+  @media (max-width: 767px) {
+    input,
+    textarea,
+    select,
+    [role="combobox"],
+    [role="textbox"],
+    [role="searchbox"] {
+      font-size: 16px;
+    }
+  }
+}
+
 /* Respect users who have requested reduced motion at the OS level.
  * Collapses animations + transitions to near-zero duration globally,
  * which neutralizes Framer Motion / CSS transitions / scroll-snap effects
