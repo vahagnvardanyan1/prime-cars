@@ -68,8 +68,7 @@ src/
     └── admin/
         ├── modals/
         │   ├── AddCarModalFormik.tsx
-        │   ├── CreateUserModalFormik.tsx
-        │   └── CreateNotificationModalFormik.tsx
+        │   └── CreateUserModalFormik.tsx
         └── pages/
             └── AdminUsersPageRefactored.tsx
 ```

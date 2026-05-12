@@ -22,7 +22,6 @@ export function ContactSection() {
           as="p"
           className="text-gray-600 dark:text-gray-400"
           delay={0.3}
-          wordDelay={0.03}
         />
       </div>
 

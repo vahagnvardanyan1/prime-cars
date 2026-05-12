@@ -607,9 +607,7 @@
       "loginSuccessDescription": "Welcome back, {username}!",
       "loginFailedTitle": "Login failed",
       "invalidCredentials": "Invalid username or password.",
-      "networkError": "Network error occurred.",
-      "loggedOutSuccess": "Logged out successfully",
-      "loggedOutLocally": "Logged out locally"
+      "networkError": "Network error occurred."
     }
   },
   "admin": {
@@ -743,7 +741,6 @@
       "create": "Create",
       "loading": "Loading notifications...",
       "noNotifications": "No notifications found",
-      "status": "Status",
       "message": "Message",
       "description": "Description",
       "reason": "Reason",
@@ -752,19 +749,15 @@
       "delete": "Delete",
       "markAsRead": "Mark as Read",
       "later": "Later",
-      "view": "View",
       "close": "Close",
-      "newNotification": "New Notification",
-      "deleteTitle": "Delete Notification",
-      "deleteDescription": "Are you sure you want to delete this notification? This action cannot be undone.",
-      "cancel": "Cancel",
-      "confirm": "Delete",
-      "deleting": "Deleting...",
       "justNow": "Just now",
       "minutesAgo": "{minutes}m ago",
       "hoursAgo": "{hours}h ago",
       "daysAgo": "{days}d ago",
-      "viewReadReceipts": "View read receipts"
+      "viewReadReceipts": "View read receipts",
+      "loadFailedTitle": "Failed to load notifications",
+      "loadFailedDescription": "Could not fetch notifications from server.",
+      "moreWaiting": "{count, plural, one {# more notification waiting} other {# more notifications waiting}}"
     },
     "headers": {
       "carsTitle": "Cars",
@@ -1148,11 +1141,6 @@
         "pdfOnlyMaxSize": "PDF only, max 10MB",
         "onlyPdfAllowed": "Only PDF files are allowed",
         "fileSizeLimit": "File size must be less than 10MB",
-        "viewInvoice": "View",
-        "updateInvoice": "Update",
-        "newFile": "New file",
-        "willReplaceCurrent": "Will replace current",
-        "cancelUpdate": "Cancel update",
         "model": "Model",
         "modelPlaceholder": "e.g., BMW X5",
         "year": "Year",
@@ -1195,15 +1183,11 @@
         "successTitle": "Car Updated",
         "successDescription": "The car has been successfully updated.",
         "errorTitle": "Update Failed",
-        "deleteTitle": "Delete Car",
-        "deleteDescription": "Are you sure you want to delete {model} ({year})? This action cannot be undone.",
-        "deleteCancel": "Cancel",
-        "deleteConfirm": "Delete",
-        "deleting": "Deleting...",
-        "deleteSuccess": "Car deleted",
-        "deleteSuccessDescription": "{model} has been removed.",
-        "deleteError": "Failed to delete car",
-        "deleteErrorDescription": "Could not delete the car."
+        "viewInvoice": "View",
+        "updateInvoice": "Update",
+        "newFile": "New file",
+        "willReplaceCurrent": "Will replace current",
+        "cancelUpdate": "Cancel update"
       },
       "deleteUser": {
         "title": "Delete User",
@@ -1351,8 +1335,7 @@
         "cancel": "Cancel",
         "confirm": "Delete",
         "deleting": "Deleting...",
-        "success": "Car deleted successfully",
-        "error": "Failed to delete car"
+        "success": "Car deleted successfully"
       },
       "changePassword": {
         "title": "Change Password",

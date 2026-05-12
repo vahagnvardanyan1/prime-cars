@@ -1,7 +1,7 @@
 "use client";
 
 import { Bell, Calendar, CheckCircle2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -15,14 +15,20 @@ type ViewNotificationModalProps = {
   canMarkAsRead?: boolean;
 };
 
-const formatDate = (dateString: string) => {
+const LOCALE_TO_BCP47: Record<string, string> = {
+  en: "en-US",
+  hy: "hy-AM",
+  ru: "ru-RU",
+};
+
+const formatDate = (dateString: string, locale: string) => {
   const date = new Date(dateString);
-  return date.toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  return date.toLocaleString(LOCALE_TO_BCP47[locale] ?? "en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 };
 
@@ -34,6 +40,7 @@ export const ViewNotificationModal = ({
   canMarkAsRead = false,
 }: ViewNotificationModalProps) => {
   const t = useTranslations("admin.notifications");
+  const locale = useLocale();
 
   if (!notification) return null;
 
@@ -65,7 +72,7 @@ export const ViewNotificationModal = ({
               </DialogTitle>
               <div className="flex items-center gap-2 mt-2 text-sm text-gray-500 dark:text-gray-400">
                 <Calendar className="h-4 w-4 flex-shrink-0" />
-                <time>{formatDate(notification.createdAt)}</time>
+                <time>{formatDate(notification.createdAt, locale)}</time>
               </div>
             </div>
           </div>

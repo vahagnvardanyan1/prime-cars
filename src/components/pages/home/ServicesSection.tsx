@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { motion } from "motion/react";
+import { motion, type Variants } from "motion/react";
 import { TextReveal } from "./TextReveal";
 import { type IconType } from "react-icons";
 import {
@@ -21,6 +21,16 @@ import {
   FiFilm,
 } from "react-icons/fi";
 import { MdFlight, MdLocalShipping } from "react-icons/md";
+
+const GRID_VARIANTS: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.05 } },
+};
+
+const CARD_VARIANTS: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+};
 
 const services: { key: string; icon: IconType }[] = [
   { key: "contract", icon: FiFileText },
@@ -52,20 +62,22 @@ export function ServicesSection() {
           as="p"
           className="text-lg text-gray-600 dark:text-gray-400"
           delay={0.3}
-          wordDelay={0.03}
         />
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {services.map((service, index) => {
+      <motion.div
+        className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+        variants={GRID_VARIANTS}
+      >
+        {services.map((service) => {
           const Icon = service.icon;
           return (
             <motion.div
               key={service.key}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.4, delay: index * 0.05, ease: "easeOut" }}
+              variants={CARD_VARIANTS}
               className="group p-5 rounded-2xl border border-gray-200 dark:border-white/[0.08] hover:border-[#429de6]/30 dark:hover:border-[#429de6]/30 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5"
             >
               <div className="w-14 h-14 rounded-lg bg-[#429de6]/10 flex items-center justify-center mb-3 group-hover:bg-[#429de6]/20 transition-colors">
@@ -80,7 +92,7 @@ export function ServicesSection() {
             </motion.div>
           );
         })}
-      </div>
+      </motion.div>
     </div>
   );
 }

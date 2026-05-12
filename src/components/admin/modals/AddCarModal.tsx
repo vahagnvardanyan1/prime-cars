@@ -117,7 +117,7 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
 
       loadUsers();
     }
-  }, [open]);
+  }, [open, t]);
 
   const close = () => {
     onOpenChange({ open: false });

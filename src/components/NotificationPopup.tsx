@@ -158,7 +158,7 @@ export const NotificationPopup = ({ userId }: NotificationPopupProps) => {
               <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
                 <Bell aria-hidden="true" className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span className="tabular-nums">
-                  {unreadNotifications.length - 1} more notification{unreadNotifications.length - 1 !== 1 ? 's' : ''} waiting
+                  {t("moreWaiting", { count: unreadNotifications.length - 1 })}
                 </span>
               </p>
             </div>

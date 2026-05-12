@@ -607,9 +607,7 @@
       "loginSuccessDescription": "С возвращением, {username}!",
       "loginFailedTitle": "Не удалось войти",
       "invalidCredentials": "Неверное имя пользователя или пароль.",
-      "networkError": "Произошла сетевая ошибка.",
-      "loggedOutSuccess": "Выход выполнен",
-      "loggedOutLocally": "Локальный выход выполнен"
+      "networkError": "Произошла сетевая ошибка."
     }
   },
   "admin": {
@@ -743,7 +741,6 @@
       "create": "Создать",
       "loading": "Загрузка уведомлений...",
       "noNotifications": "Уведомления не найдены",
-      "status": "Статус",
       "message": "Сообщение",
       "description": "Описание",
       "reason": "Причина",
@@ -752,19 +749,15 @@
       "delete": "Удалить",
       "markAsRead": "Отметить прочитанным",
       "later": "Позже",
-      "view": "Просмотр",
       "close": "Закрыть",
-      "newNotification": "Новое уведомление",
-      "deleteTitle": "Удалить уведомление",
-      "deleteDescription": "Вы уверены, что хотите удалить это уведомление? Это действие нельзя отменить.",
-      "cancel": "Отмена",
-      "confirm": "Удалить",
-      "deleting": "Удаление...",
       "justNow": "Только что",
       "minutesAgo": "{minutes}м назад",
       "hoursAgo": "{hours}ч назад",
       "daysAgo": "{days}д назад",
-      "viewReadReceipts": "Посмотреть подтверждения прочтения"
+      "viewReadReceipts": "Посмотреть подтверждения прочтения",
+      "loadFailedTitle": "Не удалось загрузить уведомления",
+      "loadFailedDescription": "Не удалось получить уведомления с сервера.",
+      "moreWaiting": "{count, plural, one {Ещё # уведомление ждёт} few {Ещё # уведомления ждут} many {Ещё # уведомлений ждут} other {Ещё # уведомлений ждут}}"
     },
     "headers": {
       "carsTitle": "Авто",
@@ -1139,11 +1132,6 @@
         "pdfOnlyMaxSize": "Только PDF, макс. 10МБ",
         "onlyPdfAllowed": "Разрешены только PDF файлы",
         "fileSizeLimit": "Размер файла должен быть меньше 10МБ",
-        "viewInvoice": "Открыть",
-        "updateInvoice": "Заменить",
-        "newFile": "Новый файл",
-        "willReplaceCurrent": "Заменит текущий",
-        "cancelUpdate": "Отменить замену",
         "model": "Модель",
         "modelPlaceholder": "напр., BMW X5",
         "year": "Год",
@@ -1186,15 +1174,11 @@
         "successTitle": "Автомобиль обновлен",
         "successDescription": "Автомобиль успешно обновлен.",
         "errorTitle": "Ошибка обновления",
-        "deleteTitle": "Удалить автомобиль",
-        "deleteDescription": "Вы уверены, что хотите удалить {model} ({year})? Это действие нельзя отменить.",
-        "deleteCancel": "Отмена",
-        "deleteConfirm": "Удалить",
-        "deleting": "Удаление...",
-        "deleteSuccess": "Автомобиль удален",
-        "deleteSuccessDescription": "{model} был удален.",
-        "deleteError": "Не удалось удалить автомобиль",
-        "deleteErrorDescription": "Не удалось удалить автомобиль."
+        "viewInvoice": "Просмотр",
+        "updateInvoice": "Обновить",
+        "newFile": "Новый файл",
+        "willReplaceCurrent": "Заменит текущий",
+        "cancelUpdate": "Отменить обновление"
       },
       "deleteUser": {
         "title": "Удалить пользователя",
@@ -1343,8 +1327,7 @@
         "cancel": "Отмена",
         "confirm": "Удалить",
         "deleting": "Удаление...",
-        "success": "Автомобиль успешно удален",
-        "error": "Не удалось удалить автомобиль"
+        "success": "Автомобиль успешно удален"
       },
       "changePassword": {
         "title": "Изменить пароль",

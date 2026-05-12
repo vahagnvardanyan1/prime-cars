@@ -35,7 +35,6 @@ export function PartnersStrip() {
         as="p"
         className="max-w-2xl mx-auto mb-12 text-gray-600 dark:text-gray-400"
         delay={0.3}
-        wordDelay={0.03}
       />
 
       <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">

@@ -85,9 +85,8 @@ export const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps)
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: "Login failed" }));
         toast.error(t("auth.toasts.loginFailedTitle"), {
-          description: errorData.error || t("auth.toasts.invalidCredentials"),
+          description: t("auth.toasts.invalidCredentials"),
         });
         setIsSubmitting(false);
         return;

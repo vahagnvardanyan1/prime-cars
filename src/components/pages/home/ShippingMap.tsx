@@ -47,8 +47,12 @@ const shippingToDestinations = [
 function ContainerIcon({ color, scale = 1 }: { color: string; scale?: number }) {
   const dark = color === "#22c55e" ? "#16a34a" : "#2563eb";
   const light = color === "#22c55e" ? "#4ade80" : "#60a5fa";
+  // The icon's natural anchor is at internal (12, 10). Translate by `-12*scale,
+  // -10*scale` (matching the post-scale magnitude) so the anchor lands at the
+  // Marker's origin (0,0) at any scale — without this the icon visibly drifts
+  // off its city dot when the scale != 1 (e.g., zoom-counter-scaling).
   return (
-    <g transform={`translate(-12, -10) scale(${scale})`} className="cursor-pointer">
+    <g transform={`translate(${-12 * scale}, ${-10 * scale}) scale(${scale})`} className="cursor-pointer">
       {/* Invisible tap/click target */}
       <rect x="-4" y="-6" width="40" height="28" fill="transparent" />
       {/* Top face (parallelogram) */}
@@ -164,6 +168,16 @@ export function ShippingMap() {
 
   const markerScale = isMobile ? 0.9 : 1;
 
+  // Anchor the marker's visual size to the DEFAULT zoom for the current tab.
+  // - At the default zoom: icon renders at its original size (no change vs. before).
+  // - Zooming IN past default: icon counter-scales so it stops growing.
+  // - Zooming OUT below default: icon scales down with the map (original behavior).
+  // Clamping the divisor at the default achieves all three with one expression.
+  const MARKER_ZOOM_GROWTH = 0.5;     
+  const defaultZoomForTab = isMobile ? DEFAULT_ZOOM[tab].mobile : DEFAULT_ZOOM[tab].desktop;                                                                     
+  const counterRatio = defaultZoomForTab / Math.max(currentZoom, defaultZoomForTab);                                                                           
+  const effectiveMarkerScale = markerScale * Math.pow(counterRatio, 1 - MARKER_ZOOM_GROWTH);
+
   // Both tabs share dimensions and projection — only viewport (center/scale) differs.
   const mapDimensions = isMobile
     ? { width: 400, height: 500 }
@@ -194,9 +208,14 @@ export function ShippingMap() {
         <TextReveal
           text={t("home.shipping.description")}
           as="p"
-          className="text-gray-600 dark:text-gray-400 mb-8"
+          className="text-gray-600 dark:text-gray-400 mb-3"
           delay={0.3}
-          wordDelay={0.03}
+        />
+        <TextReveal
+          text={t("home.shipping.citiesInformation")}
+          as="p"
+          className="text-gray-600 dark:text-gray-400 mb-8"
+          delay={0.4}
         />
 
         <div className="inline-flex rounded-full bg-gray-200 dark:bg-white/[0.08] p-1">
@@ -321,7 +340,7 @@ export function ShippingMap() {
                 onMouseLeave={handleMarkerLeave}
                 onClick={() => handleMarkerClick(m.name)}
               >
-                <ContainerIcon color={markerColor} scale={markerScale} />
+                <ContainerIcon color={markerColor} scale={effectiveMarkerScale} />
               </Marker>
             ))}
           </ZoomableGroup>

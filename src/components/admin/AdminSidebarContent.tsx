@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 
 import { Calculator, CarFront, Settings, Users, Bell, Car, LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { toast } from "sonner";
 
 import { logout } from "@/lib/admin/logout";
 import { useUser } from "@/contexts/UserContext";
@@ -59,17 +58,10 @@ export const AdminSidebarContent = ({
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
-    try {
       await logout();
       clearUser();
-      toast.success(t("auth.toasts.loggedOutSuccess"));
-    } catch {
-      clearUser();
-      toast.warning(t("auth.toasts.loggedOutLocally"));
-    } finally {
       setIsLoggingOut(false);
       window.location.href = "/";
-    }
   };
 
   // Determine active nav from pathname

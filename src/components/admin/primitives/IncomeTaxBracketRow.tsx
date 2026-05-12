@@ -37,7 +37,7 @@ export const IncomeTaxBracketRow = ({
           type="number"
           value={bracket.min}
           onChange={(e) => handleFieldChange("min", e.target.value)}
-          className="w-full h-8 text-xs text-center rounded border border-gray-200 dark:border-white/10 bg-transparent text-gray-900 dark:text-white focus:outline-none focus:border-[#429de6] px-1"
+          className="w-full h-8 text-base md:text-xs text-center rounded border border-gray-200 dark:border-white/10 bg-transparent text-gray-900 dark:text-white focus:outline-none focus:border-[#429de6] px-1"
         />
       </td>
       <td className="py-0.5 px-0.5">
@@ -46,7 +46,7 @@ export const IncomeTaxBracketRow = ({
           value={bracket.max ?? ""}
           onChange={(e) => handleFieldChange("max", e.target.value)}
           placeholder="∞"
-          className="w-full h-8 text-xs text-center rounded border border-gray-200 dark:border-white/10 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:border-[#429de6] px-1"
+          className="w-full h-8 text-base md:text-xs text-center rounded border border-gray-200 dark:border-white/10 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:border-[#429de6] px-1"
         />
       </td>
       <td className="py-0.5 px-0.5">
@@ -54,7 +54,7 @@ export const IncomeTaxBracketRow = ({
           type="number"
           value={bracket.tax}
           onChange={(e) => handleFieldChange("tax", e.target.value)}
-          className="w-full h-8 text-xs text-center rounded border border-gray-200 dark:border-white/10 bg-transparent text-gray-900 dark:text-white focus:outline-none focus:border-[#429de6] px-1"
+          className="w-full h-8 text-base md:text-xs text-center rounded border border-gray-200 dark:border-white/10 bg-transparent text-gray-900 dark:text-white focus:outline-none focus:border-[#429de6] px-1"
         />
       </td>
       <td className="py-0.5 px-0.5 w-10">

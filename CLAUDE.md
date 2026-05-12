@@ -39,7 +39,7 @@ No test framework is configured — there is no `jest`, `vitest`, or `playwright
 | UI primitives | Radix UI + shadcn patterns | `src/components/ui/` (~50 files) |
 | Styling | Tailwind CSS, class-based dark mode | `tailwind.config.ts`, `src/app/globals.css` |
 | Forms (new) | `react-hook-form` + `zod` | `src/lib/validation/schemas.ts` |
-| Forms (legacy) | Formik — **don't add new Formik code** | `*Formik.tsx` files |
+| Forms (deprecated) | Formik — fully removed from src/ as of cleanup; `formik` and `zod-formik-adapter` are still in `package.json` but unused. **Do not reintroduce.** | (no files) |
 | Toasts | `sonner` | `src/components/ui/sonner.tsx` + globals.css block |
 | Theme | **Homegrown context, NOT `next-themes`** | `src/components/ThemeContext.tsx` |
 | Maps | `react-simple-maps` + world-atlas CDN | `src/components/pages/home/ShippingMap.tsx` |
@@ -99,7 +99,7 @@ src/
 │
 ├── hooks/
 │   ├── useCarDetails.ts  useCarsPage.ts  useMediaQuery.ts  useSortedCars.ts
-│   └── admin/                 # 12 admin form/state hooks (some have *Refactored.ts duplicates)
+│   └── admin/                 # 7 admin form/state hooks (Cars/Users/Settings/Notifications + 3 misc)
 │
 ├── contexts/                  # UserContext, QueryProvider
 ├── messages/                  # en.json, hy.json, ru.json — ~1,330 keys each, KEEP IN SYNC

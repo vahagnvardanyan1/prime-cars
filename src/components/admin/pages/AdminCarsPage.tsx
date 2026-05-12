@@ -76,7 +76,7 @@ export const AdminCarsPage = () => {
     } finally {
       setIsDeletingCar(false);
     }
-  }, [carToDelete, state]);
+  }, [carToDelete, state, t]);
 
   // Stable callback references to avoid re-renders
   const handleRefresh = useCallback(() => state.loadCars({ forceRefresh: true }), [state]);

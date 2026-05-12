@@ -32,7 +32,6 @@ export const logout = async (): Promise<LogoutResponse> => {
       success: true,
     };
   } catch (error) {
-    console.error("Error during logout:", error);
     
     removeTokens();
     

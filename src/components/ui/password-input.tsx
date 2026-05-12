@@ -3,6 +3,8 @@
 import * as React from "react";
 import { Eye, EyeOff } from "lucide-react";
 
+import { cn } from "./utils";
+
 const PasswordInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className, ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false);
@@ -11,7 +13,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttribut
       <div className="relative w-full">
         <input
           type={showPassword ? "text" : "password"}
-          className={className}
+          className={cn("text-base md:text-sm", className)}
           ref={ref}
           {...props}
         />

@@ -49,26 +49,6 @@ All placeholders also use translation keys:
 - `t("admin.modals.createUser.companyNamePlaceholder")` → "e.g. Acme Inc."
 - `t("admin.modals.createUser.passportPlaceholder")` → "AA1234567"
 
-### 3. ✅ CreateNotificationModalFormik.tsx
-
-**Before:** Hardcoded strings like "Create Notification", "Send a notification to a user or all users", "User (Optional - leave empty to send to all users)", "Message", "Description", "Reason", "Sending...", "Send Notification"
-
-**After:** Using translation keys:
-- `t("admin.modals.createNotification.title")` → "Create Notification"
-- `t("admin.modals.createNotification.subtitle")` → "Send a notification to all users."
-- `t("admin.modals.addCar.user")` → "User"
-- `t("admin.modals.createNotification.message")` → "Message"
-- `t("admin.modals.createNotification.description")` → "Description"
-- `t("admin.modals.createNotification.reason")` → "Reason"
-- `t("admin.modals.createNotification.cancel")` → "Cancel"
-- `t("admin.modals.createNotification.submit")` → "Send to All"
-- `t("admin.modals.createNotification.submitting")` → "Sending..."
-
-All placeholders use translation keys:
-- `t("admin.modals.createNotification.messagePlaceholder")` → "System Update"
-- `t("admin.modals.createNotification.descriptionPlaceholder")` → "The system will undergo maintenance on Saturday."
-- `t("admin.modals.createNotification.reasonPlaceholder")` → "Scheduled maintenance for performance improvements"
-
 ## Translation Keys Available
 
 All translation keys are defined in:

@@ -21,6 +21,7 @@ import {
   getUniqueCities,
 } from "@/lib/import-calculator/fetchShippingPrices";
 
+import { createKeyedTTLCache } from "@/lib/utils/cache";
 import { calculateAuctionFees } from "@/lib/import-calculator/auctionFees";
 import { fetchUserIncomeTax } from "@/lib/admin/fetchUserIncomeTax";
 import type { IncomeTaxBracket } from "@/lib/admin/types";
@@ -40,6 +41,17 @@ import { CalculatorResults } from "@/components/calculator/CalculatorResults";
 import { fetchShippingCitiesPublic } from "@/lib/import-calculator/fetchShippingCitiesPublic";
 import { useLocationSearch } from "@/components/calculator/useLocationSearch";
 import { NumericInput } from "@/components/calculator/NumericInput";
+import { AuctionTabButton } from "@/components/calculator/AuctionTabButton";
+import { cn } from "@/components/ui/utils";
+
+// Public (anonymous) city lists keyed by auction category (copart/iaai/manheim).
+// Module-scoped so it survives component remounts within the TTL window. Only
+// used for unauthenticated users — logged-in users always re-fetch because
+// their priceMap/taxMap is per-user and admin-updatable. 1-hour TTL is safe
+// here because the public city list is identity-free and rarely changes.
+const publicCitiesCache = createKeyedTTLCache<string, string[]>({
+  ttlMs: 60 * 60 * 1000, // 1 hour
+});
 
 interface ImportCalculatorProps {
   showNotice?: boolean;
@@ -134,13 +146,32 @@ export const ImportCalculator = ({
   // so the calculator falls back to the manual "Other" tab for shipping input.
   useEffect(() => {
     const loadCities = async () => {
-      setIsLoadingLocations(true);
-      setAuctionLocation(""); // Reset selection when tab changes
-      setManualShippingPrice(""); // Reset manual price when tab changes
+      // Tab change is a fresh form action — clear stale selection, manual
+      // shipping input, and any validation errors carried over from a prior
+      // submit attempt (otherwise the cleared auctionLocation re-paints red).
+      setAuctionLocation("");
+      setManualShippingPrice("");
+      setShowValidation(false);
 
+      // For "Other", we still need a city list — fetch Copart cities but
+      // ignore the priceMap (the user enters shipping manually).
+      const categoryToFetch = activeTab === "other" ? "copart" : activeTab;
+
+      // Anonymous-only cache: public city lists don't vary per user and rarely
+      // change. Logged-in users always re-fetch because their priceMap/taxMap
+      // is per-user and admin-updatable. TTL handled by createKeyedTTLCache.
+      if (!user) {
+        const cached = publicCitiesCache.get(categoryToFetch);
+        if (cached) {
+          setAvailableCities(cached);
+          setCityPriceMap({});
+          setCityTaxMap({});
+          return;
+        }
+      }
+
+      setIsLoadingLocations(true);
       try {
-        // For "Other", fetch Copart cities
-        const categoryToFetch = activeTab === "other" ? "copart" : activeTab;
         const result = user
           ? await fetchShippingCities({ category: categoryToFetch })
           : await fetchShippingCitiesPublic({ category: categoryToFetch });
@@ -152,7 +183,8 @@ export const ImportCalculator = ({
           return;
         }
 
-        setAvailableCities(getUniqueCities(result.cities));
+        const cities = getUniqueCities(result.cities);
+        setAvailableCities(cities);
 
         // Manual "Other" tab — user enters shipping by hand, ignore any maps.
         // Public endpoint — no priceMap/taxMap returned; clear state.
@@ -162,6 +194,12 @@ export const ImportCalculator = ({
         } else {
           setCityPriceMap(result.priceMap);
           setCityTaxMap(result.taxMap);
+        }
+
+        // Cache the cities list for anonymous users so subsequent tab toggles
+        // don't re-hit the network within the TTL window.
+        if (!user) {
+          publicCitiesCache.set(categoryToFetch, cities);
         }
       } catch {
         setAvailableCities([]);
@@ -184,13 +222,16 @@ export const ImportCalculator = ({
   }, [vehicleType]);
 
   // Reset weight class when switching away from truck
-  // Reset engine to gasoline if truck/motorcycle has hybrid selected
+  // Reset engine to gasoline if truck/largeTruck/motorcycle has hybrid selected;
+  // also clear weight class when leaving any truck-class type. Switching between
+  // truck and largeTruck preserves the weight-class selection.
   useEffect(() => {
     const isHybridEngine = engine === "hybrid";
-    if (vehicleType !== "truck") {
+    const isTruckClass = vehicleType === "truck" || vehicleType === "largeTruck";
+    if (!isTruckClass) {
       setWeightClass("");
     } else if (isHybridEngine) {
-      // Trucks only support gasoline, diesel, electric
+      // Truck-class vehicles only support gasoline, diesel, electric
       setEngine("gasoline");
     }
     if (vehicleType === "motorcycle" && isHybridEngine) {
@@ -300,6 +341,8 @@ export const ImportCalculator = ({
         price = price * 0.5;
       } else if (vehicleType === "truck") {
         price = price + 500;
+      } else if (vehicleType === "largeTruck") {
+        price = price * 2;
       }
       if (outOfAuctionBorders) {
         price = price + 50;
@@ -328,7 +371,7 @@ export const ImportCalculator = ({
       setShippingPrice(0);
       setCityTax(0);
     }
-  }, [auctionLocation, cityPriceMap, cityTaxMap, vehicleType, activeTab, manualShippingPrice, outOfAuctionBorders]);
+  }, [auctionLocation, cityPriceMap, cityTaxMap, vehicleType, activeTab, manualShippingPrice, outOfAuctionBorders, user]);
 
   // Calculate insurance: (Shipping Price + Auction Fee) * 1%
   useEffect(() => {
@@ -363,8 +406,8 @@ export const ImportCalculator = ({
       return;
     }
 
-    // Validation for weight class when truck is selected
-    if (vehicleType === "truck" && !weightClass) {
+    // Validation for weight class when truck or largeTruck is selected
+    if ((vehicleType === "truck" || vehicleType === "largeTruck") && !weightClass) {
       toast.error(t("calculator.form.validationError") || "Please fill in all required fields");
       return;
     }
@@ -394,6 +437,7 @@ export const ImportCalculator = ({
 
       const vehicleCalculators: Record<string, (p: VehicleCalcParams) => CalculatorResponse | Promise<CalculatorResponse>> = {
         truck: calculateTruckResult,
+        largeTruck: calculateTruckResult, // same tax math as truck; only shipping pre-processing differs (handled in applyShippingAdjustments)
         quadricycle: calculateQuadricycleResult,
         snowmobile: calculateSnowmobileResult,
         jetski: calculateJetSkiResult,
@@ -441,105 +485,40 @@ export const ImportCalculator = ({
           <div className="bg-white dark:bg-[#111111] rounded-2xl border border-gray-300 dark:border-white/10 overflow-hidden transition-colors duration-300">
             {/* Tabs */}
             <div role="tablist" aria-label={t("calculator.form.auctionTabsAriaLabel")} className="flex border-b border-gray-300 dark:border-white/10 overflow-x-auto scrollbar-hide">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === "copart"}
-                aria-controls="calculator-form"
-                onClick={() => setActiveTab("copart")}
-                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-inset ${
-                  activeTab === "copart"
-                    ? "border-b-2 border-[#429de6]"
-                    : "opacity-60 hover:opacity-80"
-                }`}
-              >
+              <AuctionTabButton isActive={activeTab === "copart"} onClick={() => setActiveTab("copart")}>
                 <div className="flex items-center justify-center gap-3">
-                  <Image
-                    src={copart_logo}
-                    alt="Copart"
-                    width={120}
-                    height={40}
-                    className="h-10 w-auto"
-                  />
+                  <Image src={copart_logo} alt="Copart" width={120} height={40} className="h-10 w-auto" />
                 </div>
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === "iaai"}
-                aria-controls="calculator-form"
-                onClick={() => setActiveTab("iaai")}
-                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-inset ${
-                  activeTab === "iaai"
-                    ? "border-b-2 border-[#429de6]"
-                    : "opacity-60 hover:opacity-80"
-                }`}
-              >
+              </AuctionTabButton>
+              <AuctionTabButton isActive={activeTab === "iaai"} onClick={() => setActiveTab("iaai")}>
                 <div className="flex items-center justify-center gap-3">
-                  <Image
-                    src={iaai_logo}
-                    alt="IAAI"
-                    width={120}
-                    height={40}
-                    className="h-16 w-auto"
-                  />
+                  <Image src={iaai_logo} alt="IAAI" width={120} height={40} className="h-16 w-auto" />
                 </div>
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === "manheim"}
-                aria-controls="calculator-form"
-                onClick={() => setActiveTab("manheim")}
-                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-inset ${
-                  activeTab === "manheim"
-                    ? "border-b-2 border-[#429de6]"
-                    : "opacity-60 hover:opacity-80"
-                }`}
-              >
+              </AuctionTabButton>
+              <AuctionTabButton isActive={activeTab === "manheim"} onClick={() => setActiveTab("manheim")}>
                 <div className="flex items-center justify-center gap-3">
-                  <Image
-                    src={manheim_logo}
-                    alt="Manheim"
-                    width={120}
-                    height={40}
-                    className="h-10 w-auto"
-                  />
+                  <Image src={manheim_logo} alt="Manheim" width={120} height={40} className="h-10 w-auto" />
                 </div>
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === "other"}
-                aria-controls="calculator-form"
-                onClick={() => setActiveTab("other")}
-                className={`flex-1 min-w-[140px] py-6 px-4 sm:px-8 transition-colors bg-black whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6] focus-visible:ring-inset ${
-                  activeTab === "other"
-                    ? "border-b-2 border-[#429de6]"
-                    : "opacity-60 hover:opacity-80"
-                }`}
-              >
+              </AuctionTabButton>
+              <AuctionTabButton isActive={activeTab === "other"} onClick={() => setActiveTab("other")}>
                 <div className="flex items-center justify-center gap-2">
-                  <span className={`text-base sm:text-lg font-semibold transition-colors duration-300 ${
-                    activeTab === "other"
-                      ? "text-white"
-                      : "text-white/90"
-                  }`}>
+                  <span className={cn(
+                    "text-base sm:text-lg font-semibold transition-colors duration-300",
+                    activeTab === "other" ? "text-gray-900 dark:text-white" : "text-gray-700 dark:text-white/90",
+                  )}>
                     {t("calculator.form.other")}
                   </span>
-                  <div className={`p-2 rounded-lg transition-colors duration-300 ${
-                    activeTab === "other"
-                      ? "bg-[#429de6]/20"
-                      : "bg-white/10"
-                  }`}>
-                    <MoreHorizontal aria-hidden="true" className={`w-5 h-5 transition-colors duration-300 ${
-                      activeTab === "other"
-                        ? "text-[#429de6]"
-                        : "text-white"
-                    }`} />
+                  <div className={cn(
+                    "p-2 rounded-lg transition-colors duration-300",
+                    activeTab === "other" ? "bg-[#429de6]/20" : "bg-gray-200 dark:bg-white/10",
+                  )}>
+                    <MoreHorizontal aria-hidden="true" className={cn(
+                      "w-5 h-5 transition-colors duration-300",
+                      activeTab === "other" ? "text-[#429de6]" : "text-gray-600 dark:text-white",
+                    )} />
                   </div>
                 </div>
-              </button>
+              </AuctionTabButton>
             </div>
 
             {/* Form */}
@@ -622,7 +601,7 @@ export const ImportCalculator = ({
                               onChange={(e) => setLocationSearch(e.target.value)}
                               onKeyDown={handleSearchKeyDown}
                               placeholder={t("calculator.form.selectLocation")}
-                              className="w-full pl-8 pr-3 py-1.5 text-sm bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 outline-none"
+                              className="w-full pl-8 pr-3 py-1.5 text-base md:text-sm bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 outline-none"
                             />
                           </div>
                         </div>
@@ -839,6 +818,7 @@ export const ImportCalculator = ({
                     <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
                       <SelectItem value="passenger">{t("calculator.form.passenger")}</SelectItem>
                       <SelectItem value="truck">{t("calculator.form.truck")}</SelectItem>
+                      <SelectItem value="largeTruck">{t("calculator.form.largeTruck")}</SelectItem>
                       <SelectItem value="quadricycle">{t("calculator.form.quadricycle")}</SelectItem>
                       <SelectItem value="motorcycle">{t("calculator.form.motorcycle")}</SelectItem>
                       <SelectItem value="snowmobile">{t("calculator.form.snowmobile")}</SelectItem>
@@ -847,8 +827,8 @@ export const ImportCalculator = ({
                   </Select>
                 </div>
 
-                {/* Weight Class - Only for Trucks */}
-                {vehicleType === "truck" && (
+                {/* Weight Class - For Trucks and Large Trucks */}
+                {(vehicleType === "truck" || vehicleType === "largeTruck") && (
                   <div>
                     <label id="weight-class-label" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                       {t("calculator.form.weightClass")} <span className="text-red-500" aria-hidden="true">*</span>
@@ -857,9 +837,9 @@ export const ImportCalculator = ({
                       <SelectTrigger
                         aria-labelledby="weight-class-label"
                         aria-required="true"
-                        aria-invalid={showValidation && vehicleType === "truck" && !weightClass}
+                        aria-invalid={showValidation && (vehicleType === "truck" || vehicleType === "largeTruck") && !weightClass}
                         className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
-                          (showValidation && vehicleType === "truck" && !weightClass) ? "border-red-500 dark:border-red-500" : "border-gray-300 dark:border-gray-700"
+                          (showValidation && (vehicleType === "truck" || vehicleType === "largeTruck") && !weightClass) ? "border-red-500 dark:border-red-500" : "border-gray-300 dark:border-gray-700"
                         }`}
                       >
                         <SelectValue placeholder={t("calculator.form.selectWeightClass")} />
@@ -902,7 +882,7 @@ export const ImportCalculator = ({
                         <SelectItem value="diesel">{t("calculator.form.diesel")}</SelectItem>
                         <SelectItem value="electric">{t("calculator.form.electric")}</SelectItem>
                         {vehicleType !== "motorcycle" && (
-                          <SelectItem value="hybrid" disabled={vehicleType === "truck"}>{t("calculator.form.hybrid")}</SelectItem>
+                          <SelectItem value="hybrid" disabled={vehicleType === "truck" || vehicleType === "largeTruck"}>{t("calculator.form.hybrid")}</SelectItem>
                         )}
                       </SelectContent>
                     </Select>
@@ -994,7 +974,7 @@ export const ImportCalculator = ({
             </div>
 
             {/* Calculate Button */}
-            <div className="mt-8 flex justify-center">
+            <div className="mt-8 flex flex-col items-center gap-8">
               <button
                 type="submit"
                 disabled={isCalculating}
@@ -1004,6 +984,16 @@ export const ImportCalculator = ({
                 {isCalculating ? `${t("calculator.form.calculating") || "Calculating"}…` : t("calculator.form.calculateCost")}
                 <span aria-hidden="true">›</span>
               </button>
+              {user && (
+                <p className="self-stretch text-[12px] text-left">
+                  <strong className="font-semibold text-gray-900 dark:text-white">
+                    {t("calculator.form.loggedInNoticeLabel")}
+                  </strong>{" "}
+                  <span className="text-gray-600 dark:text-gray-400">
+                    {t("calculator.form.loggedInNotice")}
+                  </span>
+                </p>
+              )}
             </div>
           </form>
             </div>

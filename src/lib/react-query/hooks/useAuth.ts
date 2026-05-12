@@ -147,8 +147,6 @@ export const useLogout = () => {
     onSuccess: () => {
       // Clear all queries
       queryClient.clear();
-      
-      toast.success("Logged out successfully");
     },
   });
 };

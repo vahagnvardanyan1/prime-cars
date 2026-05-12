@@ -17,12 +17,12 @@ export function ApplySection() {
         <input
           type="text"
           placeholder={t("home.apply.namePlaceholder")}
-          className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
+          className="flex-1 px-4 py-3 text-base md:text-sm rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
         />
         <input
           type="tel"
           placeholder={t("home.apply.phonePlaceholder")}
-          className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
+          className="flex-1 px-4 py-3 text-base md:text-sm rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
         />
         <button
           type="submit"

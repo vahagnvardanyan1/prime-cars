@@ -115,7 +115,7 @@ export const ApplyPage = () => {
                 value={formData.fullName}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-white/20 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-colors"
+                className="w-full px-4 py-3 text-base md:text-sm rounded-lg border border-gray-300 dark:border-white/20 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-colors"
               />
 
               {/* Email */}
@@ -125,7 +125,7 @@ export const ApplyPage = () => {
                 placeholder={t("email")}
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-white/20 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-colors"
+                className="w-full px-4 py-3 text-base md:text-sm rounded-lg border border-gray-300 dark:border-white/20 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-colors"
               />
 
               {/* Phone */}
@@ -136,7 +136,7 @@ export const ApplyPage = () => {
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-white/20 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-colors"
+                className="w-full px-4 py-3 text-base md:text-sm rounded-lg border border-gray-300 dark:border-white/20 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-colors"
               />
 
               {/* Submit */}
