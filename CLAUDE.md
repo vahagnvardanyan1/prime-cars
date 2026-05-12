@@ -11,6 +11,7 @@ Every line must answer "would removing this cause Claude to make a mistake?" If 
 3. **The hook verifies every edit.** `.claude/hooks/post-edit.sh` runs `tsc` (project) + `eslint --quiet` (just the edited file). For non-trivial diffs, ask the `frontend-reviewer` subagent to review.
 4. **Stop when done.** Never write a "what I implemented" summary file.
 5. **If you correct yourself twice on the same issue, `/clear` and restart** with a better prompt.
+6. **For multi-file changes**, re-read [`docs/patterns/recipes.md`](docs/patterns/recipes.md) before declaring done — long sessions drop earlier instructions. For diffs > 50 lines, invoke the `frontend-reviewer` subagent.
 
 ## MUST NOT
 

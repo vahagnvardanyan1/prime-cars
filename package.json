@@ -9,8 +9,16 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "type-check": "tsc --noEmit --project tsconfig.lint.json",
-    "lint-fix": "eslint 'src/**/*.{js,ts,tsx,jsx}' --quiet --fix"
+    "type-check": "tsc --noEmit --project tsconfig.json",
+    "lint-fix": "eslint 'src/**/*.{js,ts,tsx,jsx}' --quiet --fix",
+    "i18n:check": "node scripts/find-unused-i18n-keys.mjs",
+    "i18n:apply": "node scripts/find-unused-i18n-keys.mjs --apply",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx,js,jsx}": [
+      "eslint --quiet --max-warnings 0"
+    ]
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -79,6 +87,8 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.22",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
     "postcss": "^8.5.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3"

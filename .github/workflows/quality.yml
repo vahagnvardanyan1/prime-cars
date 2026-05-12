@@ -1,0 +1,32 @@
+name: Quality
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  type-check-and-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check (project-wide, strict flags from tsconfig.json)
+        run: npx tsc --noEmit --project tsconfig.json
+
+      - name: Lint
+        run: npx eslint --ext .ts,.tsx,.js,.jsx src --max-warnings 1000
+        # max-warnings is a soft ceiling — adjust downward as legacy warnings get cleaned up.
+        # Hard errors will always fail the job regardless of this number.
+
+      - name: i18n key check
+        run: npm run i18n:check

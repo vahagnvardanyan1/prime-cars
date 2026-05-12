@@ -4,19 +4,10 @@
     "description": "Looks like the page isn’t available. Let’s head back home.",
     "backHome": "Back to Home"
   },
-  "meta": {
-    "localeName": "English"
-  },
   "common": {
-    "success": "Success",
-    "error": "Error",
-    "warning": "Warning",
-    "download": "Download",
-    "downloading": "Downloading",
     "unexpectedError": "An unexpected error occurred."
   },
   "downloadImages": {
-    "button": "Download Photos",
     "buttonShort": "Download Images",
     "downloading": "Downloading...",
     "downloadAll": "Download All ({count})",
@@ -100,24 +91,8 @@
     },
     "popularDeals": {
       "title": "Available cars",
-      "rentalPriceLabel": "Rental Price",
       "priceLabel": "Price",
-      "seeTourDetails": "See Tour Details",
-      "periodPerDay": "/day",
-      "noCars": "No cars available at the moment",
-      "specs": {
-        "automatic": "Automatic",
-        "coupe": "Coupe",
-        "sedan": "Sedan",
-        "sports": "Sports",
-        "suv": "SUV",
-        "petrol": "Petrol",
-        "electric": "Electric"
-      }
-    },
-    "importCosts": {
-      "title": "Calculate Your Import Costs",
-      "description": "Get an instant estimate of all costs involved in importing your dream vehicle. Our comprehensive calculator includes shipping, customs, duties, and all associated fees."
+      "noCars": "No cars available at the moment"
     },
     "ourPartners": {
       "title": "Our Partners",
@@ -218,13 +193,6 @@
       "workingDays": "Monday – Friday",
       "workingTime": "10:00 – 22:00"
     },
-    "apply": {
-      "title": "Apply Now",
-      "description": "Fill out the form and we will get back to you.",
-      "namePlaceholder": "Your name",
-      "phonePlaceholder": "Phone number",
-      "submit": "Submit"
-    },
     "shipping": {
       "title": "Global Shipping Network",
       "description": "Thanks to the strategic location of our ports and offices, we can quickly collect your vehicle from anywhere in the USA and Canada. We operate 10 large warehouses across the USA and Canada, each staffed by more than 100 employees, ensuring safe vehicle storage and efficient order processing.",
@@ -233,34 +201,6 @@
       "to": "Shipping to",
       "warehouses": "Our warehouses",
       "destinations": "Delivery destinations"
-    }
-  },
-  "cars": {
-    "title": "Premium Inventory",
-    "subtitle": "Browse our curated collection of luxury and performance vehicles from around the world",
-    "filters": {
-      "title": "Filters",
-      "searchLabel": "Search",
-      "searchPlaceholder": "Brand or model…",
-      "brandLabel": "Brand",
-      "allBrands": "All Brands",
-      "priceRangeLabel": "Price Range",
-      "allPrices": "All Prices",
-      "under100k": "Under $100k",
-      "between100And150": "$100k - $150k",
-      "over150k": "Over $150k",
-      "reset": "Reset Filters"
-    },
-    "results": {
-      "found": "{count, plural, one {# vehicle found} other {# vehicles found}}",
-      "noResults": "No vehicles match your filters. Try adjusting your search criteria.",
-      "viewDetails": "View Details",
-      "sort": {
-        "priceLowToHigh": "Price: Low to High",
-        "priceHighToLow": "Price: High to Low",
-        "yearNewest": "Year: Newest First",
-        "yearOldest": "Year: Oldest First"
-      }
     }
   },
   "carsPage": {
@@ -323,15 +263,12 @@
       "arriving": "In Transit",
       "order": "Order Available"
     },
-    "shippingProgress": "Shipping Progress",
-    "estimatedArrival": "Estimated Arrival",
     "specifications": "Specifications",
     "specs": {
       "year": "Year",
       "horsepower": "Horsepower",
       "engine": "Engine",
       "transmission": "Transmission",
-      "fuelType": "Fuel Type",
       "location": "Location",
       "mileage": "Mileage",
       "driveType": "Drive Type",
@@ -374,14 +311,6 @@
       "description": "The car you're looking for doesn't exist or has been removed.",
       "backButton": "Back to Cars"
     },
-    "racing": {
-      "title": "Experience The Speed",
-      "subtitle": "Feel the power and performance",
-      "horsepower": "Horsepower",
-      "acceleration": "mph in 3.5s",
-      "model": "Model Year",
-      "cta": "Ready to take it for a spin?"
-    },
     "lightbox": {
       "close": "Close",
       "previous": "Previous",
@@ -395,11 +324,6 @@
     "horsepowerUnit": "HP"
   },
   "calculator": {
-    "loading": "Loading...",
-    "page": {
-      "title": "Import Cost Calculator",
-      "description": "Get an accurate estimate of all costs involved in importing your vehicle. Our calculator includes shipping, customs duties, inspection fees, and more."
-    },
     "form": {
       "vehicleInfo": "Vehicle Information",
       "purchasePriceLabel": "Vehicle Purchase Price (USD)",
@@ -488,39 +412,6 @@
         "electric": "Electric Vehicle"
       }
     },
-    "breakdown": {
-      "title": "Cost Breakdown",
-      "empty": "Enter vehicle details and calculate to see your cost breakdown",
-      "rows": {
-        "base": {
-          "title": "Vehicle Purchase Price",
-          "subtitle": "Auction or dealer price"
-        },
-        "shipping": {
-          "title": "International Shipping",
-          "subtitle": "Ocean freight & handling"
-        },
-        "customs": {
-          "title": "Customs & Duties",
-          "subtitle": "Import taxes & VAT"
-        },
-        "inspection": {
-          "title": "Inspection & Certification",
-          "subtitle": "Safety & emissions testing"
-        },
-        "docs": {
-          "title": "Documentation Fees",
-          "subtitle": "Title, registration & paperwork"
-        },
-        "serviceFee": {
-          "title": "Prime Cars Service Fee",
-          "subtitle": "Concierge & support"
-        },
-        "estimatedTotal": "Estimated Total Cost",
-        "requestQuote": "Request Detailed Quote",
-        "total": "Total"
-      }
-    },
     "results": {
       "customsDuty": "Customs duty",
       "vat": "VAT",
@@ -537,9 +428,7 @@
       "importantTitle": "Important",
       "importantNotice": "All Transactions with companies and citizens of the Republic of Armenia are made exclusively in Armenian currency (Dram / AMD). Note: customs fees are calculated at the exchange rate set by the Central Bank of Armenia as of the given day.",
       "backToCalculator": "Back to Calculator",
-      "costBreakdown": "Cost breakdown",
-      "restrictedDataTitle": "Full cost breakdown available for partners",
-      "becomePartner": "Become a Partner to see all details"
+      "costBreakdown": "Cost breakdown"
     }
   },
   "partners": {
@@ -567,25 +456,12 @@
   },
   "auth": {
     "closeAria": "Close",
-    "welcomeBack": "Welcome back",
-    "subtitle": "Sign in to access your account",
     "username": "Username",
     "usernamePlaceholder": "Enter your username",
-    "email": "Email",
-    "phone": "Phone",
-    "emailAddress": "Email address",
-    "phoneNumber": "Phone number",
     "password": "Password",
     "passwordPlaceholder": "Enter your password",
-    "rememberMe": "Remember me",
-    "forgotPassword": "Forgot password?",
     "signIn": "Sign in",
     "signingIn": "Signing in...",
-    "orContinueWith": "or continue with",
-    "google": "Google",
-    "github": "GitHub",
-    "noAccount": "Don't have an account?",
-    "signUp": "Sign up",
     "validation": {
       "usernameRequired": "Username is required",
       "usernameMinLength": "Username must be at least 3 characters",
@@ -611,12 +487,6 @@
     }
   },
   "admin": {
-    "roles": {
-      "admin": "Admin",
-      "manager": "Manager",
-      "support": "Support",
-      "viewer": "Viewer"
-    },
     "loadingUser": "Loading user data...",
     "refresh": "Refresh",
     "pagination": {
@@ -632,14 +502,10 @@
       "searchCars": "Search by model, client, VIN, lot or container...",
       "country": "Country",
       "allCountries": "All Countries",
-      "role": "Role",
-      "allRoles": "All Roles",
       "type": "Type",
       "allTypes": "All Types",
       "auction": "Auction",
       "allAuctions": "All Auctions",
-      "status": "Status",
-      "allStatuses": "All Statuses",
       "carPaid": "Car Payment",
       "shippingPaid": "Shipping Payment",
       "insuranceFilter": "Insurance",
@@ -656,17 +522,13 @@
       }
     },
     "topbar": {
-      "searchPlaceholder": "Search (visual only)",
-      "quickSettings": "Quick Settings",
       "openNavAria": "Open navigation",
       "preferencesAria": "Preferences",
       "languageLabel": "Language",
       "themeLabel": "Appearance",
       "lightMode": "Light mode",
       "darkMode": "Dark mode",
-      "activeLabel": "Active",
-      "logout": "Logout",
-      "loggingOut": "Logging out..."
+      "activeLabel": "Active"
     },
     "preferences": {
       "logout": "Logout"
@@ -679,11 +541,7 @@
     },
     "sidebar": {
       "consoleLabel": "Admin Console",
-      "addCar": "Add Car",
-      "createUser": "Create User",
       "navigation": "Navigation",
-      "internalAdmin": "Internal Admin",
-      "internalNote": "Frontend-only prototype. All actions are local to the browser.",
       "nav": {
         "cars": "Cars",
         "availableCars": "Selling Cars",
@@ -697,8 +555,7 @@
       "searchUserPlaceholder": "Search by name, username, email, or company...",
       "searchCityPlaceholder": "Search cities...",
       "adjustmentPlaceholder": "100",
-      "applying": "Applying...",
-      "coefficientPlaceholder": "100"
+      "applying": "Applying..."
     },
     "availableCars": {
       "title": "Selling Cars",
@@ -707,8 +564,6 @@
       "searchPlaceholder": "Search by brand, model, year, location...",
       "searchResults": "Found {count} {count, plural, one {car} other {cars}} matching \"{query}\"",
       "noResults": "No results for \"{query}\"",
-      "clearSearch": "Clear search",
-      "showingTitle": "Selling Cars",
       "showing": "Showing {count} {count, plural, =0 {cars} one {car} other {cars}}",
       "table": {
         "number": "#",
@@ -729,9 +584,7 @@
         "update": "Update",
         "delete": "Delete"
       },
-      "loading": "Loading selling cars...",
-      "noCarsFound": "No cars found",
-      "carUpdated": "Car updated successfully"
+      "noCarsFound": "No cars found"
     },
     "notifications": {
       "title": "Notifications",
@@ -760,27 +613,10 @@
       "moreWaiting": "{count, plural, one {# more notification waiting} other {# more notifications waiting}}"
     },
     "headers": {
-      "carsTitle": "Cars",
-      "carsSubtitle": "Manage inventory listings with calm, table-first clarity.",
-      "usersTitle": "Users",
-      "usersSubtitle": "Internal access control and role visibility (frontend-only).",
-      "notificationsTitle": "Notifications",
-      "notificationsSubtitle": "Manage system notifications and announcements for all users.",
       "calculatorTitle": "Import Calculator",
-      "calculatorSubtitle": "Estimate customs, taxes, and total import costs for vehicles.",
-      "settingsTitle": "Settings",
-      "settingsSubtitle": "Shipping price management with safe, powerful controls."
+      "calculatorSubtitle": "Estimate customs, taxes, and total import costs for vehicles."
     },
     "carsView": {
-      "title": "Inventory",
-      "subtitle": "Table-style rows with strong alignment and calm density.",
-      "columns": {
-        "car": "Car",
-        "price": "Price",
-        "status": "Status",
-        "updated": "Updated"
-      },
-      "updatedToday": "Today",
       "noCarsFound": "No cars found",
       "loadingCars": "Loading cars...",
       "deleteCar": {
@@ -791,31 +627,14 @@
         "deleting": "Deleting..."
       }
     },
-    "usersView": {
-      "searchPlaceholder": "Search users...",
-      "deleting": "Deleting...",
-      "title": "Users",
-      "subtitle": "Clean table layout with avatar, email and role.",
-      "columns": {
-        "user": "User",
-        "email": "Email",
-        "role": "Role",
-        "status": "Status"
-      },
-      "statusActive": "Active",
-      "noUsersFound": "No users found",
-      "loadingUsers": "Loading users..."
-    },
     "settingsView": {
       "shippingTab": "Shipping & Cities",
       "usersTab": "User Coefficients",
       "changePassword": "Change Password",
       "shippingPricesTitle": "Shipping Prices",
-      "shippingPricesSubtitle": "Manage city-specific shipping, with a safe global adjustment control.",
       "globalAdjustmentTitle": "Global Price Adjustment",
       "applyToAll": "Apply to All Cities",
       "citiesTitle": "Cities",
-      "citiesSubtitle": "Add, update or delete shipping prices per city.",
       "addCity": "Add City",
       "loadingCities": "Loading shipping cities...",
       "noCitiesFound": "No cities found for {auction}",
@@ -824,27 +643,20 @@
       "columns": {
         "city": "City",
         "shipping": "Shipping",
-        "taxes": "Control price",
-        "actions": "Actions"
+        "taxes": "Control price"
       },
-      "update": "Update",
-      "delete": "Delete",
       "deleteTitle": "Delete {city}?",
       "deleteBody": "This will remove the city from shipping price management. This action can't be undone.",
       "cancel": "Cancel",
       "confirmDelete": "Confirm Delete",
       "userCoefficientsTitle": "User Coefficients",
       "userCoefficientsDescription": "Set calculation coefficients and auction preferences for each user. Supports positive and negative values.",
-      "coefficientLabel": "Coefficient",
       "currentCoefficient": "Current coefficient",
       "coefficientPlaceholder": "+/- 100",
-      "adjustmentAmountPlaceholder": "+/-",
-      "auctionLabel": "Auction",
       "auctionPlaceholder": "Select auction",
       "auctionNone": "None",
       "cancelButton": "Cancel",
       "applyButton": "Update Coefficient",
-      "applyingButton": "Updating...",
       "coefficientDialog": {
         "title": "Update User Settings",
         "description": "Are you sure you want to update settings for",
@@ -930,34 +742,6 @@
         },
         "model": "Model",
         "modelPlaceholder": "e.g. BMW X5",
-        "vehicleModels": {
-          "bmw": "BMW",
-          "mercedes": "Mercedes-Benz",
-          "audi": "Audi",
-          "toyota": "Toyota",
-          "honda": "Honda",
-          "ford": "Ford",
-          "chevrolet": "Chevrolet",
-          "nissan": "Nissan",
-          "lexus": "Lexus",
-          "porsche": "Porsche",
-          "tesla": "Tesla",
-          "volkswagen": "Volkswagen",
-          "hyundai": "Hyundai",
-          "kia": "Kia",
-          "mazda": "Mazda",
-          "subaru": "Subaru",
-          "jeep": "Jeep",
-          "ram": "Ram",
-          "gmc": "GMC",
-          "cadillac": "Cadillac",
-          "infiniti": "Infiniti",
-          "acura": "Acura",
-          "volvo": "Volvo",
-          "landRover": "Land Rover",
-          "jaguar": "Jaguar",
-          "other": "Other"
-        },
         "year": "Year",
         "yearPlaceholder": "2024",
         "auction": "Auction",
@@ -969,19 +753,12 @@
           "other": "Other"
         },
         "city": "City",
-        "cityPlaceholder": "e.g. New York",
         "lot": "LOT",
         "lotPlaceholder": "e.g. 12345678",
-        "paymentToAuction": "Payment to auction (USD)",
-        "paymentToAuctionPlaceholder": "e.g. 2500",
         "vin": "VIN",
         "vinPlaceholder": "e.g. 1HGCM82633A004352",
         "price": "Price (USD)",
         "pricePlaceholder": "189500",
-        "status": "Status",
-        "statusPending": "Pending Review",
-        "statusActive": "Active",
-        "statusDraft": "Draft",
         "customerNotes": "Customer notes",
         "customerNotesPlaceholder": "Optional notes for the customer or internal team…",
         "paymentsAndDocuments": "Payments & Documents",
@@ -992,8 +769,6 @@
         "notPaid": "Not Paid",
         "exists": "Exists",
         "notExists": "Not Exists",
-        "invoiceLabel": "Invoice (PDF)",
-        "dragDropInvoice": "Drag and drop your invoice",
         "vehiclePdfLabel": "Vehicle Document (PDF)",
         "dragDropVehiclePdf": "Drag and drop vehicle document",
         "insurancePdfLabel": "Insurance Document (PDF)",
@@ -1005,16 +780,6 @@
         "pdfOnlyMaxSize": "PDF only, max 10MB",
         "onlyPdfAllowed": "Only PDF files are allowed",
         "fileSizeLimit": "File size must be less than 10MB",
-        "currentInvoice": "Current invoice",
-        "viewInvoice": "View",
-        "updateInvoice": "Update",
-        "newFile": "New file",
-        "willReplaceCurrent": "Will replace current",
-        "cancelUpdate": "Cancel update",
-        "uploadInvoice": "Upload Invoice",
-        "format": "Format: PDF",
-        "dropToUpload": "Drop to upload",
-        "invalidFormat": "Invalid file format. Please upload a PDF file only.",
         "containerNumberBooking": "Container Number Booking",
         "containerNumberBookingPlaceholder": "e.g. MAEU1234567",
         "promisedPickUpDate": "Promised Pick Up Date",
@@ -1026,7 +791,6 @@
       "createUser": {
         "title": "Create User",
         "subtitle": "Minimal, high-clarity form layout with a strict input hierarchy.",
-        "photosLabel": "User Photos",
         "country": "Country",
         "selectCountry": "Select country",
         "countries": {
@@ -1054,8 +818,7 @@
         "passwordPlaceholder": "Enter password (min 6 characters)",
         "cancel": "Cancel",
         "submit": "Save",
-        "submitting": "Saving...",
-        "invalidEmail": "Please enter a valid email address"
+        "submitting": "Saving..."
       },
       "updateShipping": {
         "title": "Update Shipping Price",
@@ -1077,8 +840,6 @@
         "selectAuction": "Select auction",
         "shippingPrice": "Shipping Price (USD)",
         "shippingPlaceholder": "100",
-        "taxPrice": "Tax (USD)",
-        "taxPlaceholder": "0",
         "cancel": "Cancel",
         "submit": "Add City",
         "submitting": "Adding...",
@@ -1112,24 +873,16 @@
         "cancel": "Cancel",
         "submit": "Update User",
         "submitting": "Updating...",
-        "required": "is required",
-        "firstNameRequired": "First name is required",
-        "lastNameRequired": "Last name is required",
-        "usernameRequired": "Username is required",
-        "emailRequired": "Email is required",
         "successMessage": "User updated successfully",
         "errorMessage": "Failed to update user"
       },
       "updateCar": {
         "title": "Update Car",
         "subtitle": "Edit vehicle information and details",
-        "existingPhotos": "Existing Photos",
         "addNewPhotos": "Add New Photos",
         "loadingCities": "Loading cities...",
         "selectCity": "Select a city",
         "selectAuctionFirst": "Select auction first",
-        "invoiceLabel": "Invoice (PDF)",
-        "dragDropInvoice": "Drag and drop your invoice",
         "vehiclePdfLabel": "Vehicle Document (PDF)",
         "dragDropVehiclePdf": "Drag and drop vehicle document",
         "insurancePdfLabel": "Insurance Document (PDF)",
@@ -1153,7 +906,6 @@
         "auctionPlaceholder": "Select auction",
         "purchaseDate": "Purchase Date",
         "city": "City",
-        "cityPlaceholder": "e.g., New York",
         "lotNumber": "Lot Number",
         "lotPlaceholder": "e.g., 12345678",
         "vin": "VIN",
@@ -1278,53 +1030,29 @@
         "successTitle": "Available Car Created",
         "successDescription": "The car has been successfully added to the available inventory.",
         "errorTitle": "Failed to Create Car",
-        "errorDescription": "An unexpected error occurred. Please try again.",
         "networkError": "Network error occurred"
       },
       "updateAvailableCar": {
         "title": "Update Available Car",
         "subtitle": "Edit vehicle information and details",
-        "existingPhotos": "Existing Photos",
         "modelPlaceholder": "BMW X5",
         "fuelTypePlaceholder": "e.g., Gasoline, Diesel",
         "transmissionPlaceholder": "e.g., Automatic, Manual",
         "descriptionPlaceholder": "Enter detailed description of the car...",
-        "photosWillBeDeleted": "{count} {count, plural, one {photo} other {photos}} will be deleted",
-        "newPhotos": "New Photos",
         "addNewPhotos": "Add New Photos",
-        "addPhotos": "Add photos (up to {max} total)",
         "photoRequired": "At least one photo is required",
-        "carModel": "Car Model",
-        "year": "Year",
-        "vin": "VIN",
-        "vinPlaceholder": "17 character VIN",
-        "priceUsd": "Price (USD)",
-        "category": "Category",
-        "categoryAvailable": "Available",
-        "categoryOnRoad": "On Road",
-        "categoryTransit": "Transit",
-        "boughtPlace": "Bought Place",
-        "boughtPlacePlaceholder": "e.g. Los Angeles",
-        "engineType": "Engine Type",
         "engineTypeGasoline": "Gasoline",
         "engineTypeDiesel": "Diesel",
         "engineTypeElectric": "Electric",
         "engineTypeHybrid": "Hybrid",
-        "selectEngine": "Select engine type",
-        "engineHp": "Engine HP",
-        "engineSize": "Engine Size",
-        "transmission": "Transmission",
         "transmissionAutomatic": "Automatic",
         "transmissionMechanic": "Mechanic",
         "transmissionVariator": "Variator",
         "transmissionRobot": "Robot",
         "driveType": "Drive Type",
         "mileage": "Mileage",
-        "description": "Description",
-        "cancel": "Cancel",
         "updating": "Updating...",
         "updateButton": "Update Car",
-        "deleteButton": "Delete Car",
         "successTitle": "Car Updated",
         "successDescription": "The car has been successfully updated.",
         "errorTitle": "Update Failed"
@@ -1342,7 +1070,6 @@
         "description": "Set a new password for your admin account.",
         "username": "Username",
         "usernamePlaceholder": "Enter your username",
-        "usernameNotFound": "Username not found. Please check and try again.",
         "newPassword": "New Password",
         "newPasswordPlaceholder": "Enter new password (min. 8 characters)",
         "confirmPassword": "Confirm New Password",
@@ -1352,7 +1079,6 @@
         "changing": "Changing...",
         "successTitle": "Password Changed",
         "successDescription": "Your password has been updated successfully.",
-        "errorTitle": "Change Failed",
         "errorDescription": "Could not change your password. Please try again."
       },
       "readUsers": {
@@ -1360,20 +1086,12 @@
         "loading": "Loading...",
         "noReads": "No one has read this notification yet",
         "read": "Read",
-        "totalReads": "{count} {count, plural, one {person} other {people}} read this notification",
-        "justNow": "Just now",
-        "minutesAgo": "{minutes}m ago",
-        "hoursAgo": "{hours}h ago",
-        "daysAgo": "{days}d ago"
+        "totalReads": "{count} {count, plural, one {person} other {people}} read this notification"
       }
     },
     "actions": {
       "update": "Update",
-      "delete": "Delete",
-      "cancel": "Cancel",
-      "save": "Save",
-      "submit": "Submit",
-      "close": "Close"
+      "delete": "Delete"
     }
   },
   "carsTable": {
@@ -1383,31 +1101,15 @@
     "car": "Car",
     "client": "Client",
     "price": "Price",
-    "type": "Type",
     "auction": "Auction",
     "city": "City",
-    "lot": "Lot",
-    "vin": "VIN",
-    "purchaseDate": "Purchase Date",
-    "containerNumberBooking": "Container #",
-    "promisedPickUpDate": "Promised Pick Up",
-    "deliveredWarehouse": "Delivered Warehouse",
     "notes": "Notes",
-    "status": "Status",
-    "carPaid": "Car Payment",
-    "vehiclePdf": "Vehicle PDF",
-    "shippingPaid": "Shipping Payment",
-    "shippingPdf": "Shipping PDF",
     "insurance": "Insurance",
-    "insurancePdf": "Insurance PDF",
-    "created": "Created",
-    "invoice": "Invoice",
     "download": "Download",
     "actions": "Actions",
     "saleDate": "Sale Date",
     "destinationPort": "Destination Port",
     "container": "Container",
-    "carInvoice": "Car Invoice",
     "shippingInvoice": "Shipping Invoice",
     "receiverName": "Receiver's Name",
     "showing": "Showing",
@@ -1427,7 +1129,6 @@
     "actions": "Actions",
     "loadingUsers": "Loading users...",
     "noUsersFound": "No users found",
-    "noUsersMatchSearch": "No users match your search",
     "showing": "Showing",
     "user": "user",
     "users": "users"
@@ -1448,7 +1149,6 @@
     "successTitle": "Application submitted",
     "successDescription": "We've received your request. Our team will reach out shortly.",
     "errorTitle": "Submission failed",
-    "errorDescription": "Please try again or contact us directly.",
-    "required": "Required"
+    "errorDescription": "Please try again or contact us directly."
   }
 }
