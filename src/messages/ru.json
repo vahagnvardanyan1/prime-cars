@@ -13,7 +13,8 @@
     "warning": "Предупреждение",
     "download": "Скачать",
     "downloading": "Загрузка",
-    "unexpectedError": "Произошла непредвиденная ошибка."
+    "unexpectedError": "Произошла непредвиденная ошибка.",
+    "dismiss": "Закрыть"
   },
   "downloadImages": {
     "button": "Скачать фото",
@@ -1319,7 +1320,8 @@
         "deleteButton": "Удалить автомобиль",
         "successTitle": "Автомобиль обновлен",
         "successDescription": "Автомобиль успешно обновлен.",
-        "errorTitle": "Ошибка обновления"
+        "errorTitle": "Ошибка обновления",
+        "photoFormatNotSupported": "Формат файла не поддерживается. Разрешены только JPG, PNG и WEBP."
       },
       "deleteAvailableCar": {
         "title": "Удалить автомобиль",

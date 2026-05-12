@@ -2,12 +2,29 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+// MIME types of the formats the admin photo flow accepts. Pinned to the four
+// the backend image pipeline supports — anything else is silently rejected at
+// the hook boundary and surfaced via `invalidFiles` for the consumer to render.
+export const ALLOWED_PHOTO_TYPES = [
+  "image/jpeg", // covers .jpg and .jpeg
+  "image/png",
+  "image/webp",
+] as const;
+
+const isAllowedPhoto = (file: File, allowedTypes: readonly string[]): boolean =>
+  allowedTypes.includes(file.type);
+
 type UsePhotoUploadsArgs = {
   maxFiles?: number;
   initialSlots?: number;
+  allowedTypes?: readonly string[];
 };
 
-export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsArgs) => {
+export const usePhotoUploads = ({
+  maxFiles,
+  initialSlots = 1,
+  allowedTypes = ALLOWED_PHOTO_TYPES,
+}: UsePhotoUploadsArgs) => {
   // Use lazy state initialization to avoid creating arrays on every render
   const [files, setFiles] = useState<(File | null)[]>(() =>
     Array.from({ length: initialSlots }, () => null)
@@ -18,6 +35,10 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
     Array.from({ length: initialSlots }, () => null)
   );
   const fileToUrlMap = useRef<Map<File, string>>(new Map());
+
+  // Files the user attempted to add but were rejected because their MIME type
+  // is not in `allowedTypes`. Consumers render an inline error from this.
+  const [invalidFiles, setInvalidFiles] = useState<File[]>([]);
 
   // Update previews only when files actually change
   useEffect(() => {
@@ -60,18 +81,23 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
   }, []);
 
   const setFileAt = useCallback(({ index, file }: { index: number; file: File | null }) => {
+    if (file && !isAllowedPhoto(file, allowedTypes)) {
+      setInvalidFiles([file]);
+      return;
+    }
+    setInvalidFiles([]);
     setFiles((prev) => {
       const updated = prev.map((p, i) => (i === index ? file : p));
-      
+
       // If we're setting a file at the last index and it's not null,
       // and we haven't reached maxFiles limit, add a new empty slot
       if (file && index === prev.length - 1 && (!maxFiles || prev.length < maxFiles)) {
         return [...updated, null];
       }
-      
+
       return updated;
     });
-  }, [maxFiles]);
+  }, [maxFiles, allowedTypes]);
 
   const removeFileAt = useCallback(({ index }: { index: number }) => {
     setFiles((prev) => {
@@ -94,16 +120,32 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
 
   const clearAll = useCallback(() => {
     setFiles(Array.from({ length: initialSlots }, () => null));
+    setInvalidFiles([]);
   }, [initialSlots]);
 
-  const addMultipleFiles = useCallback((newFiles: File[]) => {
+  const clearInvalidFiles = useCallback(() => {
+    setInvalidFiles([]);
+  }, []);
+
+  const addMultipleFiles = useCallback((incoming: File[]) => {
+    const allowed = incoming.filter((file) => isAllowedPhoto(file, allowedTypes));
+    const rejected = incoming.filter((file) => !isAllowedPhoto(file, allowedTypes));
+
+    if (rejected.length > 0) {
+      setInvalidFiles(rejected);
+    } else if (allowed.length > 0) {
+      setInvalidFiles([]);
+    }
+
+    if (allowed.length === 0) return;
+
     setFiles((prev) => {
       // Find the first empty slot index
       const firstEmptyIndex = prev.findIndex(f => f === null);
       
       if (firstEmptyIndex === -1) {
         // No empty slots, append all new files
-        const allFiles = [...prev.filter(f => f !== null), ...newFiles];
+        const allFiles = [...prev.filter(f => f !== null), ...allowed];
         // Respect maxFiles limit
         const limitedFiles = maxFiles ? allFiles.slice(0, maxFiles) : allFiles;
         // Add one empty slot at the end if under the limit
@@ -117,17 +159,17 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
       const updated = [...prev];
       let fileIndex = 0;
       
-      for (let i = firstEmptyIndex; i < updated.length && fileIndex < newFiles.length; i++) {
+      for (let i = firstEmptyIndex; i < updated.length && fileIndex < allowed.length; i++) {
         if (updated[i] === null) {
-          updated[i] = newFiles[fileIndex];
+          updated[i] = allowed[fileIndex];
           fileIndex++;
         }
       }
       
       // Add remaining files if any
-      while (fileIndex < newFiles.length) {
+      while (fileIndex < allowed.length) {
         if (!maxFiles || updated.length < maxFiles) {
-          updated.push(newFiles[fileIndex]);
+          updated.push(allowed[fileIndex]);
           fileIndex++;
         } else {
           break;
@@ -141,7 +183,7 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
       
       return updated;
     });
-  }, [maxFiles]);
+  }, [maxFiles, allowedTypes]);
 
   const reorderFiles = useCallback((fromIndex: number, toIndex: number) => {
     setFiles((prev) => {
@@ -162,7 +204,17 @@ export const usePhotoUploads = ({ maxFiles, initialSlots = 1 }: UsePhotoUploadsA
     });
   }, []);
 
-  return { files, previews, setFileAt, removeFileAt, clearAll, addMultipleFiles, reorderFiles };
+  return {
+    files,
+    previews,
+    setFileAt,
+    removeFileAt,
+    clearAll,
+    addMultipleFiles,
+    reorderFiles,
+    invalidFiles,
+    clearInvalidFiles,
+  };
 };
 
 

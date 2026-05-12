@@ -13,7 +13,8 @@
     "warning": "Warning",
     "download": "Download",
     "downloading": "Downloading",
-    "unexpectedError": "An unexpected error occurred."
+    "unexpectedError": "An unexpected error occurred.",
+    "dismiss": "Dismiss"
   },
   "downloadImages": {
     "button": "Download Photos",
@@ -1327,7 +1328,8 @@
         "deleteButton": "Delete Car",
         "successTitle": "Car Updated",
         "successDescription": "The car has been successfully updated.",
-        "errorTitle": "Update Failed"
+        "errorTitle": "Update Failed",
+        "photoFormatNotSupported": "File format not supported. Only JPG, PNG, and WEBP are allowed."
       },
       "deleteAvailableCar": {
         "title": "Delete Car",

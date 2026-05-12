@@ -319,13 +319,13 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => onOpenChange({ open: isOpen })}>
-      <DialogContent className="w-[calc(100vw-20px)] sm:w-[calc(100vw-40px)] lg:w-[95vw] lg:min-w-[1400px] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0b0f14] border border-gray-200 dark:border-white/10 shadow-2xl rounded-2xl sm:rounded-3xl p-0">
-        <DialogHeader className="px-4 sm:px-8 lg:px-16 pt-5 sm:pt-6 lg:pt-7 pb-4 sm:pb-5 border-b border-gray-200 dark:border-white/10">
+      <DialogContent className="flex flex-col gap-0 top-0 left-0 translate-x-0 translate-y-0 sm:top-[50%] sm:left-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] w-screen sm:w-[calc(100vw-40px)] lg:w-[95vw] lg:min-w-[1400px] max-w-none h-[100dvh] sm:h-auto max-h-none sm:max-h-[90vh] overflow-hidden rounded-none sm:rounded-3xl bg-white dark:bg-[#0b0f14] border-0 sm:border sm:border-gray-200 sm:dark:border-white/10 shadow-2xl p-0">
+        <DialogHeader className="flex-shrink-0 px-4 sm:px-8 lg:px-16 pt-[max(env(safe-area-inset-top),1.25rem)] sm:pt-6 lg:pt-7 pb-4 sm:pb-5 border-b border-gray-200 dark:border-white/10 bg-white dark:bg-[#0b0f14]">
           <DialogTitle className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">{t("title")}</DialogTitle>
           <p className="text-sm sm:text-base text-gray-500 dark:text-white/60 mt-1 sm:mt-2">{t("subtitle")}</p>
         </DialogHeader>
 
-        <div className="px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-8 space-y-4 sm:space-y-5 lg:space-y-6 bg-gray-50/50 dark:bg-[#0b0f14]">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-8 space-y-4 sm:space-y-5 lg:space-y-6 bg-gray-50/50 dark:bg-[#0b0f14]">
           {/* Car Photos */}
           <div className="space-y-3">
             <Label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
@@ -354,7 +354,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                         handleReorderExistingPhotos(fromIndex, index);
                       }
                     }}
-                    className="group relative h-[140px] sm:h-[160px] overflow-hidden rounded-2xl border border-solid border-gray-200 dark:border-white/10 cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-[#429de6] transition-all"
+                    className="group relative h-[100px] sm:h-[160px] overflow-hidden rounded-2xl border border-solid border-gray-200 dark:border-white/10 cursor-grab active:cursor-grabbing hover:ring-2 hover:ring-[#429de6] transition-all"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -396,7 +396,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 onRemoveFile={removeFileAt}
                 onPickMultipleFiles={addMultipleFiles}
                 onReorder={reorderFiles}
-                tileClassName="h-[140px] sm:h-[160px]"
+                tileClassName="h-[100px] sm:h-[160px]"
               />
             </div>
 
@@ -414,7 +414,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 onChange={(e) => setModel(e.target.value)}
                 placeholder={t("modelPlaceholder")}
                 required
-                className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
             </div>
 
@@ -430,7 +430,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 onChange={(e) => setYear(sanitizeNumericInput(e.target.value))}
                 placeholder={t("yearPlaceholder")}
                 required
-                className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
             </div>
 
@@ -446,7 +446,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 onChange={(e) => setPriceUsd(sanitizeNumericInput(e.target.value))}
                 placeholder={t("pricePlaceholder")}
                 required
-                className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
             </div>
 
@@ -455,7 +455,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 {t("vehicleType")}
               </Label>
               <Select value={vehicleType || "none"} onValueChange={(value) => setVehicleType(value === "none" ? "" : value)}>
-                <SelectTrigger id="type" className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
+                <SelectTrigger id="type" className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
                   <SelectValue placeholder={t("typePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
@@ -474,7 +474,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 {t("auction")}
               </Label>
               <Select value={auction || "none"} onValueChange={(value) => setAuction(value === "none" ? "" : value)}>
-                <SelectTrigger id="auction" className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
+                <SelectTrigger id="auction" className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
                   <SelectValue placeholder={t("auctionPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
@@ -500,7 +500,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 type="date"
                 value={purchaseDate}
                 onChange={(e) => setPurchaseDate(e.target.value)}
-                className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
               />
             </div>
 
@@ -513,7 +513,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 onValueChange={setCity}
                 disabled={loadingCities || !auction || isSubmitting}
               >
-                <SelectTrigger className="w-full h-9 sm:h-10 bg-white dark:bg-[#161b22] hover:bg-gray-50 hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/50 focus:border-blue-500 dark:focus:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                <SelectTrigger className="w-full h-11 sm:h-10 bg-white dark:bg-[#161b22] hover:bg-gray-50 hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/50 focus:border-blue-500 dark:focus:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
                   <SelectValue placeholder={
                     loadingCities
                       ? t("loadingCities")
@@ -545,7 +545,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 value={lot}
                 onChange={(e) => setLot(e.target.value)}
                 placeholder={t("lotPlaceholder")}
-                className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
             </div>
 
@@ -559,7 +559,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 onChange={(e) => setVin(e.target.value)}
                 placeholder={t("vinPlaceholder")}
                 maxLength={17}
-                className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
             </div>
 
@@ -568,7 +568,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 {t("client")}
               </Label>
               <Select value={selectedUserId || "none"} onValueChange={(value) => setSelectedUserId(value === "none" ? "" : value)}>
-                <SelectTrigger id="client" disabled={loadingUsers} className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                <SelectTrigger id="client" disabled={loadingUsers} className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
                   <SelectValue placeholder={loadingUsers ? t("loadingUsers") : t("noClient")} />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl max-h-[300px]">
@@ -594,7 +594,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 value={containerNumberBooking}
                 onChange={(e) => setContainerNumberBooking(e.target.value)}
                 placeholder={t("containerNumberBookingPlaceholder")}
-                className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
             </div>
 
@@ -607,7 +607,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 type="date"
                 value={promisedPickUpDate}
                 onChange={(e) => setPromisedPickUpDate(e.target.value)}
-                className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
               />
             </div>
 
@@ -620,7 +620,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 type="date"
                 value={deliveredWarehouse}
                 onChange={(e) => setDeliveredWarehouse(e.target.value)}
-                className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
               />
             </div>
 
@@ -632,7 +632,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 id="destinationPort"
                 value={destination.port}
                 onChange={(e) => updateDestination({ port: e.target.value })}
-                className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
             </div>
 
@@ -644,7 +644,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 id="receiverName"
                 value={destination.receiver}
                 onChange={(e) => updateDestination({ receiver: e.target.value })}
-                className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
             </div>
           </div>
@@ -875,7 +875,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
           </div>
         </div>
 
-        <DialogFooter className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-7 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-[#0b0f14]">
+        <DialogFooter className="flex-shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 px-4 sm:px-8 lg:px-16 pt-5 pb-[max(env(safe-area-inset-bottom),1.25rem)] sm:pt-6 sm:pb-6 lg:pt-7 lg:pb-7 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-[#0b0f14]">
           <Button
             type="button"
             variant="outline"

@@ -13,7 +13,8 @@
     "warning": "Զգուշացում",
     "download": "Ներբեռնել",
     "downloading": "Ներբեռնում",
-    "unexpectedError": "Անսպասելի սխալ տեղի ունեցավ։"
+    "unexpectedError": "Անսպասելի սխալ տեղի ունեցավ։",
+    "dismiss": "Փակել"
   },
   "downloadImages": {
     "button": "Ներբեռնել նկարները",
@@ -1319,7 +1320,8 @@
         "deleteButton": "Ջնջել մեքենան",
         "successTitle": "Մեքենան թարմացվեց",
         "successDescription": "Մեքենան հաջողությամբ թարմացվեց։",
-        "errorTitle": "Թարմացումը ձախողվեց"
+        "errorTitle": "Թարմացումը ձախողվեց",
+        "photoFormatNotSupported": "Ֆայլի ձևաչափը չի աջակցվում: Թույլատրված են միայն JPG, PNG և WEBP:"
       },
       "deleteAvailableCar": {
         "title": "Ջնջել մեքենան",

@@ -94,7 +94,7 @@ const CarTableRow = memo(function CarTableRow({
       <Table.Cell className="sticky left-0 z-10 bg-white dark:bg-[#0b0f14] p-0">
         <div className="flex items-stretch h-full w-full">
           {/* Photo + download icon */}
-          <div className="w-[124px] px-3 py-2 flex-shrink-0 flex items-center gap-3">
+          <div className="w-[72px] sm:w-[124px] px-2 sm:px-3 py-2 flex-shrink-0 flex items-center gap-2 sm:gap-3">
             {car.imageUrl && (
               <button
                 onClick={handlePhotoClick}
@@ -123,24 +123,24 @@ const CarTableRow = memo(function CarTableRow({
                 useZip={true}
                 showCount={false}
                 compactText={true}
-                className="h-8 w-8 p-0 flex-shrink-0 rounded-lg text-gray-500 dark:text-gray-400 hover:text-[#429de6] dark:hover:text-[#429de6] hover:bg-gray-100 dark:hover:bg-white/10 transition-colors [&_span]:!hidden [&_svg]:!mr-0"
+                className="hidden sm:inline-flex h-8 w-8 p-0 flex-shrink-0 rounded-lg text-gray-500 dark:text-gray-400 hover:text-[#429de6] dark:hover:text-[#429de6] hover:bg-gray-100 dark:hover:bg-white/10 transition-colors [&_span]:!hidden [&_svg]:!mr-0"
               />
             )}
           </div>
           {/* Divider between Photos and Car */}
           <div className="w-px self-stretch bg-gray-200 dark:bg-white/10 flex-shrink-0" />
           {/* Year + Model + Lot + VIN */}
-          <div className="w-[170px] px-3 py-2 min-w-0 flex flex-col justify-center">
-            <div className="truncate text-sm font-semibold text-gray-900 dark:text-white" title={`${car.year} ${car.model}`}>
+          <div className="w-[124px] sm:w-[170px] px-2 sm:px-3 py-2 min-w-0 flex flex-col justify-center">
+            <div className="break-words sm:truncate text-sm font-semibold text-gray-900 dark:text-white" title={`${car.year} ${car.model}`}>
               {car.year} {car.model}
             </div>
             {car.details?.lot && (
-              <div className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-gray-700 dark:text-gray-300 mt-0.5">
+              <div className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 text-gray-700 dark:text-gray-300 mt-0.5 break-all sm:break-normal" title={car.details.lot}>
                 {car.details.lot}
               </div>
             )}
             {car.details?.vin && (
-              <div className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 font-mono text-gray-600 dark:text-gray-400 mt-0.5 truncate" title={car.details.vin}>
+              <div className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 font-mono text-gray-600 dark:text-gray-400 mt-0.5 break-all sm:break-normal sm:truncate" title={car.details.vin}>
                 {car.details.vin}
               </div>
             )}
@@ -430,9 +430,9 @@ export const CarsView = memo(function CarsView({
               <Table.Row className="bg-gray-50 hover:bg-gray-50 dark:bg-[#0b0f14] dark:hover:bg-[#0b0f14]">
                 <Table.ColumnHeaderCell className="sticky left-0 z-40 bg-gray-50 dark:bg-[#0b0f14] p-0">
                   <div className="flex items-stretch h-full w-full">
-                    <div className="w-[124px] px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{tTable("photos")}</div>
+                    <div className="w-[72px] sm:w-[124px] px-2 sm:px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{tTable("photos")}</div>
                     <div className="w-px self-stretch bg-gray-200 dark:bg-white/10 flex-shrink-0" />
-                    <div className="w-[170px] px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{tTable("car")}</div>
+                    <div className="w-[124px] sm:w-[170px] px-2 sm:px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{tTable("car")}</div>
                     <div className="w-px self-stretch bg-gray-200 dark:bg-white/10 flex-shrink-0" />
                   </div>
                 </Table.ColumnHeaderCell>

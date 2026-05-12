@@ -39,6 +39,7 @@ import { Transmission } from "@/lib/cars/types";
 import { EngineType } from "@/lib/admin/types";
 import { usePhotoUploads } from "@/hooks/admin/usePhotoUploads";
 import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
+import { InvalidPhotoAlert } from "@/components/admin/modals/InvalidPhotoAlert";
 import type { UpdateAvailableCarFormData } from "@/lib/admin/schemas/availableCar.schema";
 import { useUpdateAvailableCar } from "@/hooks/admin/useAvailableCars";
 
@@ -81,9 +82,19 @@ export const UpdateAvailableCarModal = ({
   const tCommon = useTranslations("common");
 
   // Photo management
-  const { files, previews: newPreviews, setFileAt, removeFileAt, clearAll, addMultipleFiles, reorderFiles } = usePhotoUploads({ 
-    maxFiles: 50, 
-    initialSlots: 1 
+  const {
+    files,
+    previews: newPreviews,
+    setFileAt,
+    removeFileAt,
+    clearAll,
+    addMultipleFiles,
+    reorderFiles,
+    invalidFiles,
+    clearInvalidFiles,
+  } = usePhotoUploads({
+    maxFiles: 50,
+    initialSlots: 1,
   });
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
   const [photosToDelete, setPhotosToDelete] = useState<string[]>([]);
@@ -243,10 +254,6 @@ export const UpdateAvailableCarModal = ({
           <div className="px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-8 space-y-4 sm:space-y-5 lg:space-y-6 bg-gray-50/50 dark:bg-[#0b0f14]">
           {/* Car Photos */}
           <div className="space-y-3">
-            <Label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-              Existing Car Photos {existingPhotos.length > 0 && `(${existingPhotos.length})`}
-            </Label>
-            
             {/* Existing Photos - Reorderable and deletable */}
             {existingPhotos.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -318,6 +325,13 @@ export const UpdateAvailableCarModal = ({
                 onPickMultipleFiles={addMultipleFiles}
                 onReorder={reorderFiles}
                 tileClassName="h-[140px] sm:h-[160px]"
+              />
+
+              <InvalidPhotoAlert
+                files={invalidFiles}
+                title={t("photoFormatNotSupported")}
+                dismissLabel={tCommon("dismiss")}
+                onDismiss={clearInvalidFiles}
               />
             </div>
 
