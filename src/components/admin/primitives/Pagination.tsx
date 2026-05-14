@@ -5,13 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
 
 type PaginationProps = {
   currentPage: number;
@@ -45,6 +39,11 @@ export const Pagination = memo(function Pagination({
     canGoNext: currentPage < totalPages,
   }), [currentPage, pageSize, totalItems, totalPages]);
 
+  const pageSizeFormOptions = useMemo<FormSelectOption[]>(
+    () => pageSizeOptions.map((n) => ({ value: String(n), label: String(n) })),
+    [pageSizeOptions]
+  );
+
   // Stable callbacks
   const handlePrevPage = useCallback(() => onPageChange(currentPage - 1), [onPageChange, currentPage]);
   const handleNextPage = useCallback(() => onPageChange(currentPage + 1), [onPageChange, currentPage]);
@@ -59,25 +58,13 @@ export const Pagination = memo(function Pagination({
         </span>
         <div className="flex items-center gap-2">
           <span>{t("itemsPerPage")}:</span>
-          <Select
+          <FormSelect
             value={pageSize.toString()}
             onValueChange={handlePageSizeChange}
-          >
-            <SelectTrigger className="h-8 w-[80px] bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10">
-              {pageSizeOptions.map((size) => (
-                <SelectItem 
-                  key={size} 
-                  value={size.toString()}
-                  className="cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5"
-                >
-                  {size}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            options={pageSizeFormOptions}
+            size="compact"
+            className="w-[80px]"
+          />
         </div>
       </div>
 

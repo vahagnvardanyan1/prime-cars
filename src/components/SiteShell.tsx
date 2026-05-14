@@ -38,7 +38,7 @@ export const SiteShell = ({ children }: SiteShellProps) => {
 
   if (isAdminRoute) {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#0a0a0a] transition-colors duration-300">
+      <div className="min-h-dvh bg-white dark:bg-[#0a0a0a] transition-colors duration-300">
         {children}
       </div>
     );

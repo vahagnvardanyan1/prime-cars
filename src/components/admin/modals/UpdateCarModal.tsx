@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -26,13 +26,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
 import { PdfUploader } from "@/components/admin/primitives/PdfUploader";
 import { usePhotoUploads } from "@/hooks/admin/usePhotoUploads";
 import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
@@ -65,6 +59,28 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const vehicleTypeOptions = useMemo<FormSelectOption[]>(
+    () => [
+      { value: "none", label: t("noType") },
+      ...Object.values(VehicleType).map((type) => ({
+        value: type,
+        label: type.charAt(0).toUpperCase() + type.slice(1),
+      })),
+    ],
+    [t]
+  );
+
+  const auctionOptions = useMemo<FormSelectOption[]>(
+    () => [
+      { value: "none", label: t("noAuction") },
+      ...Object.values(Auction).map((auctionValue) => ({
+        value: auctionValue,
+        label: auctionValue.toUpperCase(),
+      })),
+    ],
+    [t]
+  );
+
   // Photo management
   const { files, previews: newPreviews, setFileAt, removeFileAt, clearAll, addMultipleFiles, reorderFiles } = usePhotoUploads({ 
     maxFiles: 25, 
@@ -87,6 +103,23 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
   const { data: cities = [], isLoading: loadingCities } = useShippingPrices(
     auction as Auction | undefined
   );
+
+  const cityOptions = useMemo<FormSelectOption[]>(
+    () => cities.map((cityItem) => ({ value: cityItem.city, label: cityItem.city })),
+    [cities]
+  );
+
+  const clientOptions = useMemo<FormSelectOption[]>(
+    () => [
+      { value: "none", label: t("noClient") },
+      ...users.map((user) => ({
+        value: user.id,
+        label: `${user.firstName} ${user.lastName}`,
+      })),
+    ],
+    [t, users]
+  );
+
   const [lot, setLot] = useState("");
   const [vin, setVin] = useState("");
   const [customerNotes, setCustomerNotes] = useState("");
@@ -319,13 +352,13 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => onOpenChange({ open: isOpen })}>
-      <DialogContent className="flex flex-col gap-0 top-0 left-0 translate-x-0 translate-y-0 sm:top-[50%] sm:left-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] w-screen sm:w-[calc(100vw-40px)] lg:w-[95vw] lg:min-w-[1400px] max-w-none h-[100dvh] sm:h-auto max-h-none sm:max-h-[90vh] overflow-hidden rounded-none sm:rounded-3xl bg-white dark:bg-[#0b0f14] border-0 sm:border sm:border-gray-200 sm:dark:border-white/10 shadow-2xl p-0">
+      <DialogContent className="flex flex-col gap-0 top-0 left-0 translate-x-0 translate-y-0 sm:top-[50%] sm:left-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] w-screen sm:w-[calc(100vw-40px)] max-w-none sm:max-w-[1400px] h-[100dvh] sm:h-auto max-h-none sm:max-h-[90vh] overflow-hidden rounded-none sm:rounded-3xl bg-white dark:bg-[#0b0f14] border-0 sm:border sm:border-gray-200 sm:dark:border-white/10 shadow-2xl p-0">
         <DialogHeader className="flex-shrink-0 px-4 sm:px-8 lg:px-16 pt-[max(env(safe-area-inset-top),1.25rem)] sm:pt-6 lg:pt-7 pb-4 sm:pb-5 border-b border-gray-200 dark:border-white/10 bg-white dark:bg-[#0b0f14]">
           <DialogTitle className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">{t("title")}</DialogTitle>
           <p className="text-sm sm:text-base text-gray-500 dark:text-white/60 mt-1 sm:mt-2">{t("subtitle")}</p>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-8 space-y-4 sm:space-y-5 lg:space-y-6 bg-gray-50/50 dark:bg-[#0b0f14]">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-8 space-y-4 sm:space-y-5 lg:space-y-6 bg-gray-50/50 dark:bg-[#0b0f14]">
           {/* Car Photos */}
           <div className="space-y-3">
             <Label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
@@ -451,41 +484,29 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="type" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                {t("vehicleType")}
-              </Label>
-              <Select value={vehicleType || "none"} onValueChange={(value) => setVehicleType(value === "none" ? "" : value)}>
-                <SelectTrigger id="type" className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
-                  <SelectValue placeholder={t("typePlaceholder")} />
-                </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
-                  <SelectItem value="none" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("noType")}</SelectItem>
-                  {Object.values(VehicleType).map((type) => (
-                    <SelectItem key={type} value={type} className="capitalize text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormSelect
+                id="type"
+                value={vehicleType || "none"}
+                onValueChange={(value) => setVehicleType(value === "none" ? "" : value)}
+                options={vehicleTypeOptions}
+                placeholder={t("typePlaceholder")}
+                label={t("vehicleType")}
+                labelClassName="text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide"
+                className="w-full"
+              />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="auction" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                {t("auction")}
-              </Label>
-              <Select value={auction || "none"} onValueChange={(value) => setAuction(value === "none" ? "" : value)}>
-                <SelectTrigger id="auction" className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
-                  <SelectValue placeholder={t("auctionPlaceholder")} />
-                </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
-                  <SelectItem value="none" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("noAuction")}</SelectItem>
-                  {Object.values(Auction).map((auctionValue) => (
-                    <SelectItem key={auctionValue} value={auctionValue} className="uppercase text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">
-                      {auctionValue}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormSelect
+                id="auction"
+                value={auction || "none"}
+                onValueChange={(value) => setAuction(value === "none" ? "" : value)}
+                options={auctionOptions}
+                placeholder={t("auctionPlaceholder")}
+                label={t("auction")}
+                labelClassName="text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide"
+                className="w-full"
+              />
             </div>
           </div>
 
@@ -500,40 +521,28 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 type="date"
                 value={purchaseDate}
                 onChange={(e) => setPurchaseDate(e.target.value)}
-                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark] appearance-none"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="city" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                {t("city")}
-              </Label>
-              <Select
+              <FormSelect
+                id="city"
                 value={city}
                 onValueChange={setCity}
+                options={cityOptions}
                 disabled={loadingCities || !auction || isSubmitting}
-              >
-                <SelectTrigger className="w-full h-11 sm:h-10 bg-white dark:bg-[#161b22] hover:bg-gray-50 hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/50 focus:border-blue-500 dark:focus:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
-                  <SelectValue placeholder={
-                    loadingCities
-                      ? t("loadingCities")
-                      : !auction
-                        ? t("selectAuctionFirst")
-                        : t("selectCity")
-                  } />
-                </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-[#1c2128] border border-gray-200 dark:border-white/10 rounded-lg shadow-lg max-h-[300px] overflow-auto z-[100]">
-                  {cities.map((cityItem) => (
-                    <SelectItem
-                      key={cityItem.id}
-                      value={cityItem.city}
-                      className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10 text-gray-900 dark:text-white px-3 py-2 text-sm"
-                    >
-                      {cityItem.city}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                placeholder={
+                  loadingCities
+                    ? t("loadingCities")
+                    : !auction
+                      ? t("selectAuctionFirst")
+                      : t("selectCity")
+                }
+                label={t("city")}
+                labelClassName="text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide"
+                className="w-full"
+              />
             </div>
 
             <div className="space-y-2">
@@ -564,22 +573,17 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="client" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                {t("client")}
-              </Label>
-              <Select value={selectedUserId || "none"} onValueChange={(value) => setSelectedUserId(value === "none" ? "" : value)}>
-                <SelectTrigger id="client" disabled={loadingUsers} className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
-                  <SelectValue placeholder={loadingUsers ? t("loadingUsers") : t("noClient")} />
-                </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl max-h-[300px]">
-                  <SelectItem value="none" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("noClient")}</SelectItem>
-                  {users.map((user) => (
-                    <SelectItem key={user.id} value={user.id} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">
-                      {user.firstName} {user.lastName} 
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormSelect
+                id="client"
+                value={selectedUserId || "none"}
+                onValueChange={(value) => setSelectedUserId(value === "none" ? "" : value)}
+                options={clientOptions}
+                placeholder={loadingUsers ? t("loadingUsers") : t("noClient")}
+                disabled={loadingUsers}
+                label={t("client")}
+                labelClassName="text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide"
+                className="w-full"
+              />
             </div>
           </div>
 
@@ -607,7 +611,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 type="date"
                 value={promisedPickUpDate}
                 onChange={(e) => setPromisedPickUpDate(e.target.value)}
-                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark] appearance-none"
               />
             </div>
 
@@ -620,7 +624,7 @@ export const UpdateCarModal = ({ open, car, onOpenChange, onCarUpdated }: Update
                 type="date"
                 value={deliveredWarehouse}
                 onChange={(e) => setDeliveredWarehouse(e.target.value)}
-                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark]"
+                className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 [color-scheme:dark] appearance-none"
               />
             </div>
 

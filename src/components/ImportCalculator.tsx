@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Info, MoreHorizontal, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -15,6 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
+import { MobileLocationPicker } from "@/components/calculator/MobileLocationPicker";
 import type { CalculatorResponse } from "@/lib/import-calculator/calculateVehicleTaxes";
 import {
   fetchShippingCities,
@@ -52,6 +54,28 @@ import { cn } from "@/components/ui/utils";
 const publicCitiesCache = createKeyedTTLCache<string, string[]>({
   ttlMs: 60 * 60 * 1000, // 1 hour
 });
+
+const DAY_OPTIONS: FormSelectOption[] = Array.from({ length: 31 }, (_, i) => ({
+  value: String(i + 1),
+  label: String(i + 1),
+}));
+
+const MONTH_OPTIONS: FormSelectOption[] = Array.from({ length: 12 }, (_, i) => ({
+  value: String(i + 1),
+  label: String(i + 1),
+}));
+
+const VEHICLE_TYPE_VALUES = [
+  "passenger",
+  "truck",
+  "largeTruck",
+  "quadricycle",
+  "motorcycle",
+  "snowmobile",
+  "jetski",
+] as const;
+
+const WEIGHT_CLASS_VALUES = ["under5", "5to20", "above20"] as const;
 
 interface ImportCalculatorProps {
   showNotice?: boolean;
@@ -100,6 +124,51 @@ export const ImportCalculator = ({
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
   const [showValidation, setShowValidation] = useState(false);
   const [userBrackets, setUserBrackets] = useState<IncomeTaxBracket[] | null>(null);
+
+  const yearOptions = useMemo<FormSelectOption[]>(
+    () =>
+      Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((y) => ({
+        value: String(y),
+        label: String(y),
+      })),
+    []
+  );
+
+  const vehicleTypeOptions = useMemo<FormSelectOption[]>(
+    () =>
+      VEHICLE_TYPE_VALUES.map((value) => ({
+        value,
+        label: t(`calculator.form.${value}`),
+      })),
+    [t]
+  );
+
+  const weightClassOptions = useMemo<FormSelectOption[]>(
+    () =>
+      WEIGHT_CLASS_VALUES.map((value) => ({
+        value,
+        label: t(
+          `calculator.form.weightClass${value.charAt(0).toUpperCase()}${value.slice(1)}`
+        ),
+      })),
+    [t]
+  );
+
+  const engineOptions = useMemo<FormSelectOption[]>(() => {
+    const opts: FormSelectOption[] = [
+      { value: "gasoline", label: t("calculator.form.gasoline") },
+      { value: "diesel", label: t("calculator.form.diesel") },
+      { value: "electric", label: t("calculator.form.electric") },
+    ];
+    if (vehicleType !== "motorcycle") {
+      opts.push({
+        value: "hybrid",
+        label: t("calculator.form.hybrid"),
+        disabled: vehicleType === "truck" || vehicleType === "largeTruck",
+      });
+    }
+    return opts;
+  }, [t, vehicleType]);
 
   // Fetch user's income tax brackets if logged in
   useEffect(() => {
@@ -573,6 +642,23 @@ export const ImportCalculator = ({
                     <label id="auction-location-label" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
                       {t("calculator.form.auctionLocation")} <span className="text-red-500" aria-hidden="true">*</span>
                     </label>
+                    {/* Mobile: bottom sheet picker — avoids Radix Select popover + virtual keyboard conflict on Android */}
+                    <MobileLocationPicker
+                      value={auctionLocation}
+                      onChange={(val) => { setAuctionLocation(val); setLocationSearch(""); }}
+                      cities={availableCities}
+                      loading={isLoadingLocations}
+                      placeholder={t("calculator.form.selectLocation")}
+                      loadingLabel={t("calculator.form.loadingLocations") || "Loading"}
+                      title={t("calculator.form.auctionLocation")}
+                      searchPlaceholder={t("calculator.form.searchLocationPlaceholder")}
+                      noResultsLabel={t("calculator.form.noLocationsAvailable") || "No locations available"}
+                      hasError={!!getErrorClass(auctionLocation)}
+                      ariaLabelledBy="auction-location-label"
+                      closeLabel={t("common.dismiss")}
+                    />
+
+                    {/* Desktop: searchable Radix Select (unchanged) */}
                     <Select
                       value={auctionLocation}
                       onValueChange={(val) => { setAuctionLocation(val); setLocationSearch(""); }}
@@ -584,14 +670,12 @@ export const ImportCalculator = ({
                         aria-labelledby="auction-location-label"
                         aria-required="true"
                         aria-invalid={showValidation && !auctionLocation}
-                        className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
-                          getErrorClass(auctionLocation) || "border-gray-300 dark:border-gray-700"
-                        }`}
+                        className="text-gray-900 dark:text-white hidden md:flex w-full"
                       >
                         <SelectValue placeholder={isLoadingLocations ? `${t("calculator.form.loadingLocations") || "Loading"}…` : t("calculator.form.selectLocation")} />
                       </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[340px] p-0">
-                        <div className="sticky top-0 z-10 bg-white dark:bg-[#111111] px-2 py-2 border-b border-gray-200 dark:border-white/10">
+                      <SelectContent className="max-h-[340px] p-0">
+                        <div className="sticky top-0 z-10 bg-white dark:bg-[#0b0f14] px-2 py-2 border-b border-gray-200 dark:border-white/10">
                           <div className="relative">
                             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                             <input
@@ -617,11 +701,11 @@ export const ImportCalculator = ({
                                 >
                                   <SelectItem
                                     value={city}
-                                    className={`text-gray-900 dark:text-white hover:bg-[#429de6]/20 hover:text-[#429de6] hover:font-medium dark:hover:bg-[#429de6]/30 dark:hover:text-[#429de6] focus:bg-[#429de6]/20 focus:text-[#429de6] focus:font-medium dark:focus:bg-[#429de6]/30 dark:focus:text-[#429de6] data-[state=checked]:bg-[#429de6]/20 data-[state=checked]:text-[#429de6] data-[state=checked]:font-medium dark:data-[state=checked]:bg-[#429de6]/30 dark:data-[state=checked]:text-[#429de6] transition-colors cursor-pointer ${
+                                    className={
                                       isHighlighted
-                                        ? "bg-[#429de6]/20 text-[#429de6] font-medium dark:bg-[#429de6]/30 dark:text-[#429de6]"
+                                        ? "bg-[#429de6]/10 text-[#429de6] font-medium dark:bg-[#429de6]/20 dark:text-[#5db3f0]"
                                         : ""
-                                    }`}
+                                    }
                                   >
                                     {city}
                                   </SelectItem>
@@ -736,156 +820,80 @@ export const ImportCalculator = ({
                 <fieldset>
                   <legend className="sr-only">{t("calculator.form.vehicleYear")} <span className="text-red-500" aria-hidden="true">*</span></legend>
                   <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <label id="day-label" className="sr-only">{t("calculator.form.day")}</label>
-                      <Select value={day} onValueChange={setDay}>
-                        <SelectTrigger
-                          aria-labelledby="day-label"
-                          aria-required="true"
-                          aria-invalid={showValidation && !day}
-                          className={`h-12 bg-transparent text-gray-900 dark:text-white tabular-nums ${
-                            getErrorClass(day) || "border-gray-300 dark:border-gray-700"
-                          }`}
-                        >
-                          <SelectValue placeholder={t("calculator.form.day")} />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px]">
-                          {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                            <SelectItem key={d} value={String(d)} className="tabular-nums">{d}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <label id="month-label" className="sr-only">{t("calculator.form.month")}</label>
-                      <Select value={month} onValueChange={setMonth}>
-                        <SelectTrigger
-                          aria-labelledby="month-label"
-                          aria-required="true"
-                          aria-invalid={showValidation && !month}
-                          className={`h-12 bg-transparent text-gray-900 dark:text-white tabular-nums ${
-                            getErrorClass(month) || "border-gray-300 dark:border-gray-700"
-                          }`}
-                        >
-                          <SelectValue placeholder={t("calculator.form.month")} />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px]">
-                          {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                            <SelectItem key={m} value={String(m)} className="tabular-nums">{m}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <label id="year-label" className="sr-only">{t("calculator.form.year")}</label>
-                      <Select value={year} onValueChange={setYear}>
-                        <SelectTrigger
-                          aria-labelledby="year-label"
-                          aria-required="true"
-                          aria-invalid={showValidation && !year}
-                          className={`h-12 bg-transparent text-gray-900 dark:text-white tabular-nums ${
-                            getErrorClass(year) || "border-gray-300 dark:border-gray-700"
-                          }`}
-                        >
-                          <SelectValue placeholder={t("calculator.form.year")} />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700 max-h-[300px]">
-                          {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                            <SelectItem key={y} value={String(y)} className="tabular-nums">{y}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    <FormSelect
+                      value={day}
+                      onValueChange={setDay}
+                      options={DAY_OPTIONS}
+                      placeholder={t("calculator.form.day")}
+                      invalid={showValidation && !day}
+                      label={t("calculator.form.day")}
+                      labelClassName="sr-only"
+                      className="w-full tabular-nums"
+                    />
+                    <FormSelect
+                      value={month}
+                      onValueChange={setMonth}
+                      options={MONTH_OPTIONS}
+                      placeholder={t("calculator.form.month")}
+                      invalid={showValidation && !month}
+                      label={t("calculator.form.month")}
+                      labelClassName="sr-only"
+                      className="w-full tabular-nums"
+                    />
+                    <FormSelect
+                      value={year}
+                      onValueChange={setYear}
+                      options={yearOptions}
+                      placeholder={t("calculator.form.year")}
+                      invalid={showValidation && !year}
+                      label={t("calculator.form.year")}
+                      labelClassName="sr-only"
+                      className="w-full tabular-nums"
+                    />
                   </div>
                 </fieldset>
 
                 {/* Vehicle Type */}
-                <div>
-                  <label id="vehicle-type-label" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                    {t("calculator.form.vehicleType")} <span className="text-red-500" aria-hidden="true">*</span>
-                  </label>
-                  <Select value={vehicleType} onValueChange={setVehicleType}>
-                    <SelectTrigger
-                      aria-labelledby="vehicle-type-label"
-                      aria-required="true"
-                      aria-invalid={showValidation && !vehicleType}
-                      className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
-                        getErrorClass(vehicleType) || "border-gray-300 dark:border-gray-700"
-                      }`}
-                    >
-                      <SelectValue placeholder={t("calculator.form.selectType")} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
-                      <SelectItem value="passenger">{t("calculator.form.passenger")}</SelectItem>
-                      <SelectItem value="truck">{t("calculator.form.truck")}</SelectItem>
-                      <SelectItem value="largeTruck">{t("calculator.form.largeTruck")}</SelectItem>
-                      <SelectItem value="quadricycle">{t("calculator.form.quadricycle")}</SelectItem>
-                      <SelectItem value="motorcycle">{t("calculator.form.motorcycle")}</SelectItem>
-                      <SelectItem value="snowmobile">{t("calculator.form.snowmobile")}</SelectItem>
-                      <SelectItem value="jetski">{t("calculator.form.jetski")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <FormSelect
+                  value={vehicleType}
+                  onValueChange={setVehicleType}
+                  options={vehicleTypeOptions}
+                  placeholder={t("calculator.form.selectType")}
+                  invalid={showValidation && !vehicleType}
+                  label={<>{t("calculator.form.vehicleType")} <span className="text-red-500" aria-hidden="true">*</span></>}
+                  labelClassName="text-gray-600 dark:text-gray-400 text-sm"
+                  className="w-full"
+                />
 
                 {/* Weight Class - For Trucks and Large Trucks */}
                 {(vehicleType === "truck" || vehicleType === "largeTruck") && (
-                  <div>
-                    <label id="weight-class-label" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                      {t("calculator.form.weightClass")} <span className="text-red-500" aria-hidden="true">*</span>
-                    </label>
-                    <Select value={weightClass} onValueChange={(value) => setWeightClass(value as TruckWeightClass)}>
-                      <SelectTrigger
-                        aria-labelledby="weight-class-label"
-                        aria-required="true"
-                        aria-invalid={showValidation && (vehicleType === "truck" || vehicleType === "largeTruck") && !weightClass}
-                        className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
-                          (showValidation && (vehicleType === "truck" || vehicleType === "largeTruck") && !weightClass) ? "border-red-500 dark:border-red-500" : "border-gray-300 dark:border-gray-700"
-                        }`}
-                      >
-                        <SelectValue placeholder={t("calculator.form.selectWeightClass")} />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
-                        <SelectItem value="under5">{t("calculator.form.weightClassUnder5")}</SelectItem>
-                        <SelectItem value="5to20">{t("calculator.form.weightClass5to20")}</SelectItem>
-                        <SelectItem value="above20">{t("calculator.form.weightClassAbove20")}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <FormSelect
+                    value={weightClass}
+                    onValueChange={(value) => setWeightClass(value as TruckWeightClass)}
+                    options={weightClassOptions}
+                    placeholder={t("calculator.form.selectWeightClass")}
+                    invalid={showValidation && (vehicleType === "truck" || vehicleType === "largeTruck") && !weightClass}
+                    label={<>{t("calculator.form.weightClass")} <span className="text-red-500" aria-hidden="true">*</span></>}
+                    labelClassName="text-gray-600 dark:text-gray-400 text-sm"
+                    className="w-full"
+                  />
                 )}
 
                 {/* Engine and Engine Volume Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Engine - Disabled for quadricycle, snowmobile, jetski */}
                   <div className={engine === "electric" ? "sm:col-span-2" : ""}>
-                    <label id="engine-type-label" className="block text-gray-600 dark:text-gray-400 text-sm mb-2">
-                      {t("calculator.form.engine")} <span className="text-red-500" aria-hidden="true">*</span>
-                    </label>
-                    <Select
+                    <FormSelect
                       value={engine}
                       onValueChange={setEngine}
+                      options={engineOptions}
+                      placeholder={t("calculator.form.selectEngine")}
                       disabled={vehicleType === "quadricycle" || vehicleType === "snowmobile" || vehicleType === "jetski"}
-                    >
-                      <SelectTrigger
-                        aria-labelledby="engine-type-label"
-                        aria-required="true"
-                        aria-invalid={showValidation && !engine}
-                        className={`w-full h-12 bg-transparent text-gray-900 dark:text-white ${
-                          vehicleType === "quadricycle" || vehicleType === "snowmobile" || vehicleType === "jetski"
-                            ? "cursor-not-allowed opacity-60 border-gray-300 dark:border-gray-700"
-                            : getErrorClass(engine) || "border-gray-300 dark:border-gray-700"
-                        }`}
-                      >
-                        <SelectValue placeholder={t("calculator.form.selectEngine")} />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[#111111] border-gray-300 dark:border-gray-700">
-                        <SelectItem value="gasoline">{t("calculator.form.gasoline")}</SelectItem>
-                        <SelectItem value="diesel">{t("calculator.form.diesel")}</SelectItem>
-                        <SelectItem value="electric">{t("calculator.form.electric")}</SelectItem>
-                        {vehicleType !== "motorcycle" && (
-                          <SelectItem value="hybrid" disabled={vehicleType === "truck" || vehicleType === "largeTruck"}>{t("calculator.form.hybrid")}</SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
+                      invalid={showValidation && !engine && vehicleType !== "quadricycle" && vehicleType !== "snowmobile" && vehicleType !== "jetski"}
+                      label={<>{t("calculator.form.engine")} <span className="text-red-500" aria-hidden="true">*</span></>}
+                      labelClassName="text-gray-600 dark:text-gray-400 text-sm"
+                      className="w-full"
+                    />
                   </div>
 
                   {/* Engine Volume - Hidden only for electric.

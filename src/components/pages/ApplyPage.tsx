@@ -1,9 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+
+import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
+
+const CARS_PER_MONTH_VALUES = ["upTo5", "5to20", "moreThan20"] as const;
 
 export const ApplyPage = () => {
   const t = useTranslations("applyPage");
@@ -17,9 +21,13 @@ export const ApplyPage = () => {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleCarsPerMonthChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, carsPerMonth: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,14 +60,13 @@ export const ApplyPage = () => {
     }
   };
 
-  const carsOptions = [
-    { value: "upTo5", label: t("carsOptions.upTo5") },
-    { value: "5to20", label: t("carsOptions.5to20") },
-    { value: "moreThan20", label: t("carsOptions.moreThan20") },
-  ];
+  const carsOptions = useMemo<FormSelectOption[]>(
+    () => CARS_PER_MONTH_VALUES.map((value) => ({ value, label: t(`carsOptions.${value}`) })),
+    [t]
+  );
 
   return (
-    <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
+    <div className="pt-14 sm:pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
       <div className="grid lg:grid-cols-2 min-h-[calc(100vh-5rem)]">
         {/* Left: Image */}
         <div className="relative hidden lg:block">
@@ -85,27 +92,16 @@ export const ApplyPage = () => {
 
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Cars per month */}
-              <div>
-                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  {t("carsPerMonth")}
-                </label>
-                <select
-                  name="carsPerMonth"
-                  value={formData.carsPerMonth}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 text-base md:text-sm rounded-lg border border-gray-300 dark:border-white/20 bg-transparent text-gray-900 dark:text-white focus:outline-none focus:border-[#429de6] dark:focus:border-[#429de6] transition-colors appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%239ca3af%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M4.646%206.646a.5.5%200%200%201%20.708%200L8%209.293l2.646-2.647a.5.5%200%200%201%20.708.708l-3%203a.5.5%200%200%201-.708%200l-3-3a.5.5%200%200%201%200-.708z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem] bg-[right_0.75rem_center] bg-no-repeat"
-                >
-                  <option value="" disabled>
-                    —
-                  </option>
-                  {carsOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value} className="text-gray-900">
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <FormSelect
+                name="carsPerMonth"
+                value={formData.carsPerMonth}
+                onValueChange={handleCarsPerMonthChange}
+                options={carsOptions}
+                placeholder="—"
+                label={t("carsPerMonth")}
+                labelClassName="text-sm text-gray-600 dark:text-gray-400"
+                className="w-full"
+              />
 
               {/* Full name */}
               <input

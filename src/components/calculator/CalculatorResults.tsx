@@ -224,9 +224,9 @@ export const CalculatorResults = ({
   }, [onBack]);
 
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black rounded-2xl border border-gray-300 dark:border-gray-800 shadow-xl">
-      {/* Back Button - Sticky */}
-      <div className="sticky top-0 z-10 backdrop-blur-md bg-gray-100/90 dark:bg-black/80 border-b border-gray-300 dark:border-gray-800 rounded-t-2xl px-4 sm:px-6 py-3">
+    <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black rounded-2xl border border-gray-300 dark:border-gray-800 shadow-xl overflow-hidden">
+      {/* Desktop: full sticky back bar (mobile uses system back / swipe-back) */}
+      <div className="hidden sm:block sticky top-0 z-10 backdrop-blur-md bg-gray-100/90 dark:bg-black/80 border-b border-gray-300 dark:border-gray-800 rounded-t-2xl px-4 sm:px-6 py-2 sm:py-3">
         <button
           onClick={handleBack}
           className="inline-flex items-center gap-2 min-h-[44px] -my-1 text-[#429de6] dark:text-[#5db3f0] hover:text-[#3a8acc] dark:hover:text-[#6fc0f5] transition-colors group"
@@ -247,8 +247,30 @@ export const CalculatorResults = ({
       </div>
 
       {/* Exchange Rates */}
-      <div className="bg-gray-100 dark:bg-black/40 border-b border-gray-300 dark:border-gray-800 py-4 sm:py-6 md:py-8 px-4 sm:px-6">
-        <div className="flex justify-center items-center gap-6 md:gap-12 flex-wrap">
+      <div className="bg-gray-100 dark:bg-black/40 border-b border-gray-300 dark:border-gray-800 py-3 sm:py-6 md:py-8 px-4 sm:px-6">
+        {/* Mobile: single inline row */}
+        <div className="flex sm:hidden flex-wrap justify-center items-baseline gap-x-3 gap-y-1 text-sm tabular-nums">
+          <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
+            <span className="text-gray-600 dark:text-white/70">1 USD</span>
+            <span className="text-[#429de6] dark:text-[#5db3f0] font-bold">
+              {isLoadingRates ? "..." : `${displayRates.usd} AMD`}
+            </span>
+          </span>
+          <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
+            <span className="text-gray-600 dark:text-white/70">1 EUR</span>
+            <span className="text-[#429de6] dark:text-[#5db3f0] font-bold">
+              {isLoadingRates ? "..." : `${displayRates.eur} AMD`}
+            </span>
+          </span>
+          <span className="inline-flex items-baseline gap-1 whitespace-nowrap">
+            <span className="text-gray-600 dark:text-white/70">EUR/USD</span>
+            <span className="text-[#429de6] dark:text-[#5db3f0] font-bold">
+              {isLoadingRates ? "..." : eurUsdRate}
+            </span>
+          </span>
+        </div>
+        {/* Desktop: original 3-box layout */}
+        <div className="hidden sm:flex justify-center items-center gap-6 md:gap-12 flex-wrap">
           <div className="text-center">
             <div className="text-gray-600 dark:text-white/70 text-xs md:text-sm mb-1.5">1 USD</div>
             <div className="text-[#429de6] dark:text-[#5db3f0] font-bold text-lg md:text-xl">
@@ -273,7 +295,7 @@ export const CalculatorResults = ({
       </div>
 
       {/* Calculation Summary */}
-      <div className="bg-gradient-to-r from-[#429de6]/10 to-transparent dark:from-[#429de6]/10 dark:to-transparent border-b border-gray-300 dark:border-gray-800 py-4 sm:py-6 px-4 sm:px-6">
+      <div className="bg-gradient-to-r from-[#429de6]/10 to-transparent dark:from-[#429de6]/10 dark:to-transparent border-b border-gray-300 dark:border-gray-800 py-2 sm:py-6 px-4 sm:px-6">
         <div className="text-center max-w-4xl mx-auto">
           {/* Desktop heading: importer / vehicleType */}
           <p className="hidden sm:block text-[#429de6] dark:text-[#5db3f0] text-sm md:text-base mb-2">
@@ -324,7 +346,6 @@ export const CalculatorResults = ({
           <MobileResultsSummary
             importer={importer}
             vehicleType={vehicleType}
-            currentDateTime={currentDateTime}
             activeTab={activeTab}
             auctionLocation={auctionLocation}
             dateDisplay={dateDisplay}
@@ -516,12 +537,12 @@ export const CalculatorResults = ({
         )}
 
         {/* Important Notice */}
-        <div className="mt-4 sm:mt-6 mb-6 bg-gradient-to-br from-red-50 via-red-100/50 to-white dark:from-red-900/20 dark:via-red-800/10 dark:to-transparent border border-red-300 dark:border-red-800/50 rounded-xl p-4 sm:p-6 shadow-md">
+        <div className="mt-3 sm:mt-6 mb-4 sm:mb-6 bg-gradient-to-br from-red-50 via-red-100/50 to-white dark:from-red-900/20 dark:via-red-800/10 dark:to-transparent border border-red-300 dark:border-red-800/50 rounded-xl p-4 sm:p-6 shadow-md">
           <h3 className="text-red-600 dark:text-red-400 font-bold mb-2 sm:mb-3 text-center text-base sm:text-lg md:text-xl flex items-center justify-center gap-2">
-            <span aria-hidden="true" className="text-xl sm:text-2xl">⚠</span>
+            <span aria-hidden="true" className="text-lg sm:text-2xl">⚠</span>
             {t("calculator.results.importantTitle")}
           </h3>
-          <p className="text-gray-800 dark:text-white/90 text-xs sm:text-sm md:text-base leading-relaxed text-center">
+          <p className="text-gray-800 dark:text-white/90 text-sm sm:text-sm md:text-base leading-snug sm:leading-relaxed text-center">
             {t("calculator.results.importantNotice")}
           </p>
         </div>

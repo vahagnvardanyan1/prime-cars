@@ -9,7 +9,7 @@ export const PartnersPage = () => {
   const t = useTranslations();
 
   return (
-    <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
+    <div className="pt-14 sm:pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
       {/* Hero Section */}
       <section className="relative overflow-hidden transition-colors duration-300">
         <Container className="py-20">

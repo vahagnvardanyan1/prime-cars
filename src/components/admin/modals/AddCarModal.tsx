@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { useTranslations } from "next-intl";
 import { CheckCircle2, XCircle } from "lucide-react";
@@ -23,13 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
 import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
 import { PdfUploader } from "@/components/admin/primitives/PdfUploader";
 import { useAddCarForm } from "@/hooks/admin/useAddCarForm";
@@ -38,6 +32,36 @@ import { fetchUsers } from "@/lib/admin/fetchUsers";
 import { createCar } from "@/lib/admin/createCar";
 import { useShippingPrices } from "@/lib/react-query/hooks/useShipping";
 import { toast } from "sonner";
+
+const VEHICLE_TYPE_VALUES = [
+  VehicleType.AUTO,
+  VehicleType.MOTORCYCLE,
+  VehicleType.LIMOUSINE,
+  VehicleType.BOAT,
+  VehicleType.TRAILER,
+  VehicleType.TRUCK,
+  VehicleType.OVERSIZED_TRUCK,
+  VehicleType.JETSKI,
+  VehicleType.ATV,
+  VehicleType.MOPED,
+  VehicleType.SCOOTER,
+  VehicleType.OTHER,
+] as const;
+
+const VEHICLE_TYPE_TRANSLATION_KEYS: Record<(typeof VEHICLE_TYPE_VALUES)[number], string> = {
+  [VehicleType.AUTO]: "auto",
+  [VehicleType.MOTORCYCLE]: "motorcycle",
+  [VehicleType.LIMOUSINE]: "limousine",
+  [VehicleType.BOAT]: "boat",
+  [VehicleType.TRAILER]: "trailer",
+  [VehicleType.TRUCK]: "truck",
+  [VehicleType.OVERSIZED_TRUCK]: "oversizedTruck",
+  [VehicleType.JETSKI]: "jetski",
+  [VehicleType.ATV]: "atv",
+  [VehicleType.MOPED]: "moped",
+  [VehicleType.SCOOTER]: "scooter",
+  [VehicleType.OTHER]: "other",
+};
 
 type AddCarModalProps = {
   open: boolean;
@@ -69,6 +93,38 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
   // Fetch cities using React Query (cached automatically)
   const { data: cities = [], isLoading: loadingCities } = useShippingPrices(
     form.fields.auction as Auction | undefined
+  );
+
+  const userOptions = useMemo<FormSelectOption[]>(
+    () =>
+      users.map((user) => ({
+        value: user.id,
+        label: `${user.firstName} ${user.lastName} (${user.email})`,
+      })),
+    [users]
+  );
+
+  const vehicleTypeOptions = useMemo<FormSelectOption[]>(
+    () =>
+      VEHICLE_TYPE_VALUES.map((value) => ({
+        value,
+        label: t(`admin.modals.addCar.vehicleTypes.${VEHICLE_TYPE_TRANSLATION_KEYS[value]}`),
+      })),
+    [t]
+  );
+
+  const auctionOptions = useMemo<FormSelectOption[]>(
+    () =>
+      Object.values(Auction).map((value) => ({
+        value,
+        label: value.toUpperCase(),
+      })),
+    []
+  );
+
+  const cityOptions = useMemo<FormSelectOption[]>(
+    () => cities.map((city) => ({ value: city.city, label: city.city })),
+    [cities]
   );
 
   // Fetch users from backend
@@ -247,24 +303,16 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t("admin.modals.addCar.user")}
-                </Label>
-                <select
+                <FormSelect
                   value={selectedUserId}
-                  onChange={(e) => setSelectedUserId(e.target.value)}
+                  onValueChange={setSelectedUserId}
+                  options={userOptions}
+                  placeholder={loadingUsers ? t("admin.modals.addCar.loadingUsers") : t("admin.modals.addCar.selectUser")}
                   disabled={loadingUsers}
-                  className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white pl-4 pr-10 text-base md:text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6] dark:bg-black dark:text-white disabled:opacity-50 disabled:cursor-not-allowed appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iI0Q1RDdEQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[length:16px_16px] bg-[center_right_0.75rem] bg-no-repeat [&>option]:py-1 [&>option]:px-2"
-                >
-                  <option value="">
-                    {loadingUsers ? t("admin.modals.addCar.loadingUsers") : t("admin.modals.addCar.selectUser")}
-                  </option>
-                  {users.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.firstName} {user.lastName} ({user.email})
-                    </option>
-                  ))}
-                </select>
+                  label={t("admin.modals.addCar.user")}
+                  labelClassName="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="w-full"
+                />
               </div>
 
               <div className="space-y-2">
@@ -278,7 +326,7 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                     form.actions.clearError({ field: "purchaseDate" });
                   }}
                   type="date"
-                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
+                  className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white appearance-none ${
                     form.errors.purchaseDate
                       ? 'border-red-500 dark:border-red-500 focus-visible:ring-red-500'
                       : 'border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]'
@@ -290,27 +338,14 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t("admin.modals.addCar.type")}
-                </Label>
-                <select
+                <FormSelect
                   value={form.fields.type}
-                  onChange={(e) => form.actions.setType({ value: e.target.value })}
-                  className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white pl-4 pr-10 text-base md:text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6] dark:bg-black dark:text-white appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iI0Q1RDdEQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[length:16px_16px] bg-[center_right_0.75rem] bg-no-repeat"
-                >
-                  <option value={VehicleType.AUTO}>{t("admin.modals.addCar.vehicleTypes.auto")}</option>
-                  <option value={VehicleType.MOTORCYCLE}>{t("admin.modals.addCar.vehicleTypes.motorcycle")}</option>
-                  <option value={VehicleType.LIMOUSINE}>{t("admin.modals.addCar.vehicleTypes.limousine")}</option>
-                  <option value={VehicleType.BOAT}>{t("admin.modals.addCar.vehicleTypes.boat")}</option>
-                  <option value={VehicleType.TRAILER}>{t("admin.modals.addCar.vehicleTypes.trailer")}</option>
-                  <option value={VehicleType.TRUCK}>{t("admin.modals.addCar.vehicleTypes.truck")}</option>
-                  <option value={VehicleType.OVERSIZED_TRUCK}>{t("admin.modals.addCar.vehicleTypes.oversizedTruck")}</option>
-                  <option value={VehicleType.JETSKI}>{t("admin.modals.addCar.vehicleTypes.jetski")}</option>
-                  <option value={VehicleType.ATV}>{t("admin.modals.addCar.vehicleTypes.atv")}</option>
-                  <option value={VehicleType.MOPED}>{t("admin.modals.addCar.vehicleTypes.moped")}</option>
-                  <option value={VehicleType.SCOOTER}>{t("admin.modals.addCar.vehicleTypes.scooter")}</option>
-                  <option value={VehicleType.OTHER}>{t("admin.modals.addCar.vehicleTypes.other")}</option>
-                </select>
+                  onValueChange={(value) => form.actions.setType({ value })}
+                  options={vehicleTypeOptions}
+                  label={t("admin.modals.addCar.type")}
+                  labelClassName="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="w-full"
+                />
               </div>
 
               <div className="space-y-2">
@@ -359,48 +394,33 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.auction")}</Label>
-                <select
+                <FormSelect
                   value={form.fields.auction}
-                  onChange={(e) => form.actions.setAuction({ value: e.target.value })}
-                  className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white pl-4 pr-10 text-base md:text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6] dark:bg-black dark:text-white appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iI0Q1RDdEQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[length:16px_16px] bg-[center_right_0.75rem] bg-no-repeat"
-                >
-                  {Object.values(Auction).map((auction) => (
-                    <option key={auction} value={auction}>
-                      {auction.toUpperCase()}
-                    </option>
-                  ))}
-                </select>
+                  onValueChange={(value) => form.actions.setAuction({ value })}
+                  options={auctionOptions}
+                  label={t("admin.modals.addCar.auction")}
+                  labelClassName="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="w-full"
+                />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("admin.modals.addCar.city")}</Label>
-                <Select
+                <FormSelect
                   value={form.fields.city}
                   onValueChange={(value) => form.actions.setCity({ value })}
+                  options={cityOptions}
+                  placeholder={
+                    loadingCities
+                      ? t("admin.modals.addCar.loadingCities")
+                      : !form.fields.auction
+                        ? t("admin.modals.addCar.selectAuctionFirst")
+                        : t("admin.modals.addCar.selectCity")
+                  }
                   disabled={loadingCities || !form.fields.auction}
-                >
-                  <SelectTrigger className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white dark:bg-black text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-[#1c2128] focus:ring-2 focus:ring-[#429de6] focus:border-[#429de6] disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                    <SelectValue placeholder={
-                      loadingCities 
-                        ? t("admin.modals.addCar.loadingCities") 
-                        : !form.fields.auction 
-                          ? t("admin.modals.addCar.selectAuctionFirst")
-                          : t("admin.modals.addCar.selectCity")
-                    } />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#1c2128] border border-gray-200 dark:border-white/10 rounded-lg shadow-lg max-h-[300px] overflow-auto">
-                    {cities.map((city) => (
-                      <SelectItem 
-                        key={city.id} 
-                        value={city.city}
-                        className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 focus:bg-gray-100 dark:focus:bg-white/10 text-gray-900 dark:text-white px-3 py-2"
-                      >
-                        {city.city}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  label={t("admin.modals.addCar.city")}
+                  labelClassName="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  className="w-full"
+                />
               </div>
 
               <div className="space-y-2">
@@ -450,7 +470,7 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                   value={form.fields.promisedPickUpDate}
                   onChange={(e) => form.actions.setPromisedPickUpDate({ value: e.target.value })}
                   type="date"
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white appearance-none"
                 />
               </div>
 
@@ -460,7 +480,7 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
                   value={form.fields.deliveredWarehouse}
                   onChange={(e) => form.actions.setDeliveredWarehouse({ value: e.target.value })}
                   type="date"
-                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white"
+                  className="h-11 rounded-xl border-gray-300 dark:border-white/20 bg-white text-gray-900 focus-visible:ring-2 focus-visible:ring-[#429de6] dark:bg-black dark:text-white appearance-none"
                 />
               </div>
 

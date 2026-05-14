@@ -37,9 +37,12 @@ export function useLocationSearch({
   const highlightedRowRef = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
 
   // Auto-focus search input when the dropdown opens (delay so Radix's own focus
-  // management runs first).
+  // management runs first). Skip on touch devices: focusing the input opens the
+  // virtual keyboard, which on Android causes Radix Select to detect a viewport
+  // change and immediately close the popover.
   useEffect(() => {
     if (!isOpen) return;
+    if (typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches) return;
     const id = setTimeout(() => searchInputRef.current?.focus(), 50);
     return () => clearTimeout(id);
   }, [isOpen]);

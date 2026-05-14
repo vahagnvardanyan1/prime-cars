@@ -190,12 +190,12 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
         }`}
       >
         <Container>
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-14 sm:h-20">
             <Link href="/" className="flex items-center gap-3 group">
               <Image
                 src="/logo.png"
                 alt={t("header.logoAlt")}
-                className="h-10 w-auto"
+                className="h-8 sm:h-10 w-auto"
                 width={90}
                 height={40}
                 priority
@@ -282,7 +282,7 @@ export const Header = ({ onLoginClick }: HeaderProps) => {
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between h-20 px-6 border-b border-gray-200 dark:border-white/10">
+        <div className="flex items-center justify-between h-14 sm:h-20 px-6 border-b border-gray-200 dark:border-white/10">
           <Link href="/" className="block">
             <Image
               src="/logo.png"

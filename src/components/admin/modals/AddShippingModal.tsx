@@ -14,15 +14,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
 import { createShipping } from "@/lib/admin/createShipping";
 import { Auction } from "@/lib/admin/types";
+
+const AUCTION_OPTIONS: FormSelectOption[] = Object.values(Auction).map((value) => ({
+  value,
+  label: value.toUpperCase(),
+}));
 
 type AddShippingModalProps = {
   isOpen: boolean;
@@ -164,14 +163,8 @@ export const AddShippingModal = ({
 
             {/* Auction Category */}
             <div className="space-y-2">
-              <Label
-                htmlFor="auction"
-                className="text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                {t("admin.modals.addShipping.auctionCategory")}{" "}
-                <span className="text-red-500">*</span>
-              </Label>
-              <Select
+              <FormSelect
+                id="auction"
                 value={auction}
                 onValueChange={(value) => {
                   setAuction(value as Auction);
@@ -179,27 +172,14 @@ export const AddShippingModal = ({
                     setErrors({ ...errors, auction: undefined });
                   }
                 }}
+                options={AUCTION_OPTIONS}
+                placeholder={t("admin.modals.addShipping.selectAuction")}
                 disabled={isSubmitting}
-              >
-                <SelectTrigger className={`h-11 rounded-xl bg-white text-gray-900 focus-visible:ring-2 dark:bg-black dark:text-white ${
-                  errors.auction
-                    ? "border-red-500 dark:border-red-500 focus-visible:ring-red-500"
-                    : "border-gray-300 dark:border-white/20 focus-visible:ring-[#429de6]"
-                }`}>
-                  <SelectValue placeholder={t("admin.modals.addShipping.selectAuction")} />
-                </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-                  {Object.values(Auction).map((auctionOption) => (
-                    <SelectItem
-                      key={auctionOption}
-                      value={auctionOption}
-                      className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5"
-                    >
-                      {auctionOption.toUpperCase()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                invalid={!!errors.auction}
+                label={<>{t("admin.modals.addShipping.auctionCategory")} <span className="text-red-500">*</span></>}
+                labelClassName="text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="w-full"
+              />
               {errors.auction && (
                 <p className="text-sm text-red-500 dark:text-red-400">{errors.auction}</p>
               )}

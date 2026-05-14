@@ -7,11 +7,17 @@ import { toast } from "sonner";
 
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
 import { createUser } from "@/lib/admin/createUser";
 import { Country } from "@/lib/admin/types";
+
+const COUNTRY_OPTIONS: FormSelectOption[] = Object.values(Country).map((value) => ({
+  value: value as string,
+  label: value as string,
+}));
 
 type CreateUserModalProps = {
   open: boolean;
@@ -170,23 +176,15 @@ export const CreateUserModal = ({ open, onOpenChange, onUserCreated }: CreateUse
 
           <div className="px-8 py-6 max-h-[calc(85vh-180px)] space-y-6 overflow-y-auto">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t("admin.modals.createUser.country")}
-                </Label>
-                <select
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  className="h-11 w-full rounded-xl border border-gray-300 dark:border-white/20 bg-white pl-4 pr-10 text-base md:text-sm text-gray-900 outline-none focus:ring-2 focus:ring-[#429de6] dark:bg-black dark:text-white appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQgNkw4IDEwTDEyIDYiIHN0cm9rZT0iI0Q1RDdEQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==')] bg-[length:16px_16px] bg-[center_right_0.75rem] bg-no-repeat [&>option]:py-1 [&>option]:px-2"
-                >
-                  <option value="">{t("admin.modals.createUser.selectCountry")}</option>
-                  {Object.values(Country).map((countryValue: string) => (
-                    <option key={countryValue} value={countryValue}>
-                      {countryValue}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <FormSelect
+                value={country}
+                onValueChange={setCountry}
+                options={COUNTRY_OPTIONS}
+                placeholder={t("admin.modals.createUser.selectCountry")}
+                label={t("admin.modals.createUser.country")}
+                labelClassName="text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="w-full"
+              />
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">

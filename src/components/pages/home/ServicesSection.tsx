@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { motion, type Variants } from "motion/react";
 import { TextReveal } from "./TextReveal";
 import { type IconType } from "react-icons";
 import {
@@ -21,16 +20,6 @@ import {
   FiFilm,
 } from "react-icons/fi";
 import { MdFlight, MdLocalShipping } from "react-icons/md";
-
-const GRID_VARIANTS: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.05 } },
-};
-
-const CARD_VARIANTS: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
-};
 
 const services: { key: string; icon: IconType }[] = [
   { key: "contract", icon: FiFileText },
@@ -65,19 +54,12 @@ export function ServicesSection() {
         />
       </div>
 
-      <motion.div
-        className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
-        variants={GRID_VARIANTS}
-      >
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {services.map((service) => {
           const Icon = service.icon;
           return (
-            <motion.div
+            <div
               key={service.key}
-              variants={CARD_VARIANTS}
               className="group p-5 rounded-2xl border border-gray-200 dark:border-white/[0.08] hover:border-[#429de6]/30 dark:hover:border-[#429de6]/30 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5"
             >
               <div className="w-14 h-14 rounded-lg bg-[#429de6]/10 flex items-center justify-center mb-3 group-hover:bg-[#429de6]/20 transition-colors">
@@ -89,10 +71,10 @@ export function ServicesSection() {
               <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
                 {t(`home.services.items.${service.key}.description`)}
               </p>
-            </motion.div>
+            </div>
           );
         })}
-      </motion.div>
+      </div>
     </div>
   );
 }

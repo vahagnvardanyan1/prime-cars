@@ -18,7 +18,7 @@ export const HomePage = async () => {
   const cars = result.success ? result.cars || [] : [];
 
   return (
-    <div className="pt-20 overflow-x-hidden">
+    <div className="pt-14 sm:pt-20 overflow-x-hidden">
       {/* Noise grain texture for dark mode depth */}
       <div className="noise-overlay" aria-hidden="true" />
 

@@ -12,7 +12,7 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminSidebarContent } from "@/components/admin/AdminSidebarContent";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useUser } from "@/contexts/UserContext";
 import { LoginModal } from "@/components/LoginModal";
 import { NotificationPopup } from "@/components/NotificationPopup";
@@ -101,7 +101,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <Theme appearance="inherit">
-    <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-[#0a0a0a]" suppressHydrationWarning>
+    <div className="flex h-dvh overflow-hidden bg-gray-50 dark:bg-[#0a0a0a]" suppressHydrationWarning>
       {/* Show notification popup only for non-admin users */}
       {user && !isAdmin && <NotificationPopup userId={user.id} />}
       
@@ -118,9 +118,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
                 <SheetTrigger asChild>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="icon"
-                    className="md:hidden text-gray-900 dark:text-white"
+                    className="h-9 w-9 md:hidden rounded-xl border-gray-200 bg-white p-0 text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5"
                     aria-label={t("admin.topbar.openNavAria")}
                   >
                     <Menu className="h-5 w-5" />
@@ -130,6 +130,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   side="left"
                   className="w-[320px] border-gray-200 bg-white p-0 dark:border-white/10 dark:bg-[#0b0f14]"
                 >
+                  <SheetTitle className="sr-only">
+                    {t("admin.topbar.openNavAria")}
+                  </SheetTitle>
                   <div className="h-full">
                     <AdminSidebarContent
                       onRequestClose={() => setIsMobileNavOpen(false)}

@@ -6,13 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +26,8 @@ type UserCoefficientRowProps = {
   user: AdminUser;
   onUpdateCoefficient: ({ userId, coefficient, category, adjustmentAmount }: { userId: string; coefficient: number; category?: Auction; adjustmentAmount?: number }) => Promise<void>;
 };
+
+const AUCTION_OPTION_VALUES = ["none", Auction.IAAI, Auction.COPART, Auction.MANHEIM] as const;
 
 export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficientRowProps) => {
   const t = useTranslations("admin.settingsView");
@@ -85,6 +81,16 @@ export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficien
     const currentAuctionValue = user.category || "none";
     return coefficient !== currentCoefficientValue || auction !== currentAuctionValue || adjustmentAmount.trim() !== "";
   }, [coefficient, auction, adjustmentAmount, user.coefficient, user.category]);
+
+  const auctionOptions = useMemo<FormSelectOption[]>(
+    () =>
+      AUCTION_OPTION_VALUES.map((v) =>
+        v === "none"
+          ? { value: "none", label: t("auctionNone") }
+          : { value: v, label: v.toUpperCase() }
+      ),
+    [t]
+  );
 
   const canApply = useMemo(() => {
     if (!hasChanged) return false;
@@ -227,17 +233,14 @@ export const UserCoefficientRow = ({ user, onUpdateCoefficient }: UserCoefficien
             )}
           </div>
 
-          <Select value={auction} onValueChange={(value) => setAuction(value as Auction | "none")} disabled={isUpdating}>
-            <SelectTrigger className="w-[120px] h-9 bg-white dark:bg-[#161b22] border-gray-300 dark:border-white/10 text-gray-900 dark:text-white">
-              <SelectValue placeholder={t("auctionPlaceholder")} />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-              <SelectItem value="none">{t("auctionNone")}</SelectItem>
-              <SelectItem value={Auction.IAAI}>IAAI</SelectItem>
-              <SelectItem value={Auction.COPART}>COPART</SelectItem>
-              <SelectItem value={Auction.MANHEIM}>MANHEIM</SelectItem>
-            </SelectContent>
-          </Select>
+          <FormSelect
+            value={auction}
+            onValueChange={(value) => setAuction(value as Auction | "none")}
+            options={auctionOptions}
+            placeholder={t("auctionPlaceholder")}
+            disabled={isUpdating}
+            className="w-[120px]"
+          />
 
           {hasChanged && (
             <>

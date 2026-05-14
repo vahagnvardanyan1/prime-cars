@@ -446,19 +446,22 @@ input[type="number"] {
 
 /* Mobile-only floor on form-input font-size to defeat iOS Safari's
  * auto-zoom-on-focus, which kicks in whenever an input/textarea/select
- * (or ARIA combobox) has a computed font-size < 16px. Sits in @layer base
- * so Tailwind utilities (text-sm, text-xs) on individual inputs still win
- * on desktop — this only fires when there's NO explicit smaller class. */
-@layer base {
-  @media (max-width: 767px) {
-    input,
-    textarea,
-    select,
-    [role="combobox"],
-    [role="textbox"],
-    [role="searchbox"] {
-      font-size: 16px;
-    }
+ * (or ARIA combobox) has a computed font-size < 16px. The `[class]`
+ * attribute selector lifts specificity to (0,1,1) — above Tailwind's
+ * `.text-sm`/`.text-xs` utilities (0,1,0) — so this rule wins on mobile
+ * even when individual inputs carry a smaller text utility. Outside
+ * @layer base on purpose: the layered version got beaten by utilities
+ * regardless of where it sat, so the layer wrapper added nothing.
+ * Users can still pinch-zoom for accessibility — we don't lock
+ * `maximumScale` on the viewport meta. */
+@media (max-width: 767px) {
+  input[class],
+  textarea[class],
+  select[class],
+  [role="combobox"][class],
+  [role="textbox"][class],
+  [role="searchbox"][class] {
+    font-size: 16px;
   }
 }
 

@@ -1,17 +1,12 @@
 "use client";
 
+import { useMemo } from "react";
 import { Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
 
 export type UserFiltersState = {
   search: string;
@@ -40,6 +35,17 @@ export const UserFilters = ({ filters, onFiltersChange, onClearFilters }: UserFi
     onFiltersChange({ ...filters, country });
   };
 
+  const countryOptions = useMemo<FormSelectOption[]>(
+    () => [
+      { value: "all", label: t("allCountries") },
+      ...COUNTRY_KEYS.map((countryKey) => ({
+        value: tCountries(countryKey),
+        label: tCountries(countryKey),
+      })),
+    ],
+    [t, tCountries]
+  );
+
   return (
     <div className="px-6 py-4 border-b border-gray-200 dark:border-white/10">
       <div className="flex flex-col gap-4">
@@ -57,19 +63,13 @@ export const UserFilters = ({ filters, onFiltersChange, onClearFilters }: UserFi
           </div>
 
           {/* Country Filter */}
-          <Select value={filters.country} onValueChange={handleCountryChange}>
-            <SelectTrigger className="w-full sm:w-[180px] h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-              <SelectValue placeholder={t("country")} />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-              <SelectItem value="all">{t("allCountries")}</SelectItem>
-              {COUNTRY_KEYS.map((countryKey) => (
-                <SelectItem key={countryKey} value={tCountries(countryKey)}>
-                  {tCountries(countryKey)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <FormSelect
+            value={filters.country}
+            onValueChange={handleCountryChange}
+            options={countryOptions}
+            placeholder={t("country")}
+            className="w-full sm:w-[180px]"
+          />
 
           {/* Clear Filters Button */}
           {hasActiveFilters && (

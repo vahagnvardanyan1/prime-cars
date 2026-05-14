@@ -422,6 +422,7 @@
       "autoCalculated": "Auto-calculated",
       "auctionLocation": "Auction location",
       "selectLocation": "Select location",
+      "searchLocationPlaceholder": "Search…",
       "shippingPrice": "Shipping price",
       "enterShippingPrice": "Enter shipping price (USD)",
       "other": "Other",
@@ -649,6 +650,9 @@
       "allInsurance": "All Insurance",
       "purchaseDateRange": "Purchase Date Range",
       "clearFilters": "Clear Filters",
+      "mobileFilterTrigger": "Filter",
+      "mobileFilterApply": "Done",
+      "mobileFilterTitle": "Filter cars",
       "dateRangePicker": {
         "from": "FROM",
         "to": "TO",

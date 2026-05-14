@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
@@ -27,13 +27,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
 import type { Car, CarCategory } from "@/lib/cars/types";
 import { Transmission } from "@/lib/cars/types";
 import { EngineType } from "@/lib/admin/types";
@@ -42,6 +36,40 @@ import { PhotoUploadGrid } from "@/components/admin/modals/PhotoUploadGrid";
 import { InvalidPhotoAlert } from "@/components/admin/modals/InvalidPhotoAlert";
 import type { UpdateAvailableCarFormData } from "@/lib/admin/schemas/availableCar.schema";
 import { useUpdateAvailableCar } from "@/hooks/admin/useAvailableCars";
+
+const CAR_CATEGORY_OPTIONS: FormSelectOption[] = [
+  { value: "AVAILABLE", label: "Available" },
+  { value: "ONROAD", label: "On Road" },
+  { value: "TRANSIT", label: "Transit" },
+];
+
+const ENGINE_TYPE_VALUES = [
+  EngineType.GASOLINE,
+  EngineType.DIESEL,
+  EngineType.ELECTRIC,
+  EngineType.HYBRID,
+] as const;
+
+const TRANSMISSION_VALUES = [
+  Transmission.AUTOMATIC,
+  Transmission.MECHANIC,
+  Transmission.VARIATOR,
+  Transmission.ROBOT,
+] as const;
+
+const ENGINE_TYPE_TRANSLATION_KEYS: Record<(typeof ENGINE_TYPE_VALUES)[number], string> = {
+  [EngineType.GASOLINE]: "engineTypeGasoline",
+  [EngineType.DIESEL]: "engineTypeDiesel",
+  [EngineType.ELECTRIC]: "engineTypeElectric",
+  [EngineType.HYBRID]: "engineTypeHybrid",
+};
+
+const TRANSMISSION_TRANSLATION_KEYS: Record<(typeof TRANSMISSION_VALUES)[number], string> = {
+  [Transmission.AUTOMATIC]: "transmissionAutomatic",
+  [Transmission.MECHANIC]: "transmissionMechanic",
+  [Transmission.VARIATOR]: "transmissionVariator",
+  [Transmission.ROBOT]: "transmissionRobot",
+};
 
 type UpdateAvailableCarModalProps = {
   isOpen: boolean;
@@ -80,6 +108,16 @@ export const UpdateAvailableCarModal = ({
 }: UpdateAvailableCarModalProps) => {
   const t = useTranslations("admin.modals.updateAvailableCar");
   const tCommon = useTranslations("common");
+
+  const fuelTypeOptions = useMemo<FormSelectOption[]>(
+    () => ENGINE_TYPE_VALUES.map((value) => ({ value, label: t(ENGINE_TYPE_TRANSLATION_KEYS[value]) })),
+    [t]
+  );
+
+  const transmissionOptions = useMemo<FormSelectOption[]>(
+    () => TRANSMISSION_VALUES.map((value) => ({ value, label: t(TRANSMISSION_TRANSLATION_KEYS[value]) })),
+    [t]
+  );
 
   // Photo management
   const {
@@ -405,22 +443,16 @@ export const UpdateAvailableCarModal = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="category" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  Category <span className="text-red-500 dark:text-red-400">*</span>
-                </Label>
-                <Select
+                <FormSelect
+                  id="category"
                   value={category}
                   onValueChange={(value) => setValue("category", value as CarCategory)}
-                >
-                  <SelectTrigger className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#1a1a1a] border-gray-200 dark:border-white/20">
-                    <SelectItem value="AVAILABLE" className="text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10">Available</SelectItem>
-                    <SelectItem value="ONROAD" className="text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10">On Road</SelectItem>
-                    <SelectItem value="TRANSIT" className="text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10">Transit</SelectItem>
-                  </SelectContent>
-                </Select>
+                  options={CAR_CATEGORY_OPTIONS}
+                  invalid={!!errors.category}
+                  label={<>Category <span className="text-red-500 dark:text-red-400">*</span></>}
+                  labelClassName="text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide"
+                  className="w-full"
+                />
                 {errors.category && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                     {errors.category.message}
@@ -489,23 +521,17 @@ export const UpdateAvailableCarModal = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="fuelType" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  Fuel Type
-                </Label>
-                <Select
+                <FormSelect
+                  id="fuelType"
                   value={fuelType}
                   onValueChange={(value) => setValue("fuelType", value as typeof EngineType[keyof typeof EngineType])}
-                >
-                  <SelectTrigger id="fuelType" className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
-                    <SelectValue placeholder={t("fuelTypePlaceholder")} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
-                    <SelectItem value={EngineType.GASOLINE} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("engineTypeGasoline")}</SelectItem>
-                    <SelectItem value={EngineType.DIESEL} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("engineTypeDiesel")}</SelectItem>
-                    <SelectItem value={EngineType.ELECTRIC} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("engineTypeElectric")}</SelectItem>
-                    <SelectItem value={EngineType.HYBRID} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("engineTypeHybrid")}</SelectItem>
-                  </SelectContent>
-                </Select>
+                  options={fuelTypeOptions}
+                  placeholder={t("fuelTypePlaceholder")}
+                  invalid={!!errors.fuelType}
+                  label="Fuel Type"
+                  labelClassName="text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide"
+                  className="w-full"
+                />
                 {errors.fuelType && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                     {errors.fuelType.message}
@@ -514,23 +540,17 @@ export const UpdateAvailableCarModal = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="transmission" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  Transmission
-                </Label>
-                <Select
+                <FormSelect
+                  id="transmission"
                   value={transmission}
                   onValueChange={(value) => setValue("transmission", value as typeof Transmission[keyof typeof Transmission])}
-                >
-                  <SelectTrigger id="transmission" className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
-                    <SelectValue placeholder={t("transmissionPlaceholder")} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
-                    <SelectItem value={Transmission.AUTOMATIC} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("transmissionAutomatic")}</SelectItem>
-                    <SelectItem value={Transmission.MECHANIC} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("transmissionMechanic")}</SelectItem>
-                    <SelectItem value={Transmission.VARIATOR} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("transmissionVariator")}</SelectItem>
-                    <SelectItem value={Transmission.ROBOT} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("transmissionRobot")}</SelectItem>
-                  </SelectContent>
-                </Select>
+                  options={transmissionOptions}
+                  placeholder={t("transmissionPlaceholder")}
+                  invalid={!!errors.transmission}
+                  label="Transmission"
+                  labelClassName="text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide"
+                  className="w-full"
+                />
                 {errors.transmission && (
                   <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                     {errors.transmission.message}
@@ -587,7 +607,6 @@ export const UpdateAvailableCarModal = ({
               <textarea
                 id="description"
                 {...register("description")}
-                placeholder={t("descriptionPlaceholder")}
                 rows={4}
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 resize-none bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-base md:text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />

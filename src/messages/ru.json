@@ -422,6 +422,7 @@
       "autoCalculated": "Авто-расчет",
       "auctionLocation": "Расположение аукциона",
       "selectLocation": "Выберите расположение",
+      "searchLocationPlaceholder": "Поиск…",
       "shippingPrice": "Стоимость доставки",
       "enterShippingPrice": "Введите стоимость доставки (USD)",
       "other": "Другое",
@@ -649,6 +650,9 @@
       "allInsurance": "Все страхования",
       "purchaseDateRange": "Диапазон дат покупки",
       "clearFilters": "Очистить фильтры",
+      "mobileFilterTrigger": "Фильтр",
+      "mobileFilterApply": "Готово",
+      "mobileFilterTitle": "Фильтр машин",
       "dateRangePicker": {
         "from": "С",
         "to": "По",

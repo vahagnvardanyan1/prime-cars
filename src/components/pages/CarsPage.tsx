@@ -277,7 +277,7 @@ export const CarsPage = () => {
   };
 
   return (
-    <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
+    <div className="pt-14 sm:pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
 
       {/* Tabs Section */}
       <Container className="pt-6 sm:pt-8 lg:pt-10 pb-6 sm:pb-8">

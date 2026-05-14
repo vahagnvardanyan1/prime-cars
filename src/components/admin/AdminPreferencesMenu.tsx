@@ -41,7 +41,7 @@ export const AdminPreferencesMenu = () => {
         <Button
           type="button"
           variant="outline"
-          className="h-10 w-10 rounded-xl border-gray-200 bg-white p-0 text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5"
+          className="h-9 w-9 rounded-xl border-gray-200 bg-white p-0 text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#0b0f14] dark:text-white dark:hover:bg-white/5"
           aria-label={t("admin.topbar.preferencesAria")}
         >
           <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />

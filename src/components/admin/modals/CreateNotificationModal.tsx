@@ -156,7 +156,6 @@ export const CreateNotificationModal = ({
                   setErrors({ ...errors, description: undefined });
                 }
               }}
-              placeholder={t("descriptionPlaceholder")}
               disabled={isSubmitting}
               rows={3}
               className={`bg-white dark:bg-[#161b22] text-gray-900 dark:text-white ${

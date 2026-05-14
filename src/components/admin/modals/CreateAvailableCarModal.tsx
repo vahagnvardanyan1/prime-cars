@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
@@ -30,13 +30,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
 import type { CarCategory } from "@/lib/cars/types";
 import { Transmission } from "@/lib/cars/types";
 import { usePhotoUploads } from "@/hooks/admin/usePhotoUploads";
@@ -47,6 +41,39 @@ import { useCreateAvailableCar } from "@/hooks/admin/useAvailableCars";
 import type { z } from "zod";
 
 type AvailableCarFormData = z.infer<typeof availableCarSchema>;
+
+const CAR_CATEGORY_VALUES = ["AVAILABLE", "ONROAD", "TRANSIT"] as const;
+const CAR_CATEGORY_TRANSLATION_KEYS: Record<(typeof CAR_CATEGORY_VALUES)[number], string> = {
+  AVAILABLE: "categoryAvailable",
+  ONROAD: "categoryOnRoad",
+  TRANSIT: "categoryTransit",
+};
+
+const ENGINE_TYPE_VALUES = [
+  EngineType.GASOLINE,
+  EngineType.DIESEL,
+  EngineType.ELECTRIC,
+  EngineType.HYBRID,
+] as const;
+const ENGINE_TYPE_TRANSLATION_KEYS: Record<(typeof ENGINE_TYPE_VALUES)[number], string> = {
+  [EngineType.GASOLINE]: "engineTypeGasoline",
+  [EngineType.DIESEL]: "engineTypeDiesel",
+  [EngineType.ELECTRIC]: "engineTypeElectric",
+  [EngineType.HYBRID]: "engineTypeHybrid",
+};
+
+const TRANSMISSION_VALUES = [
+  Transmission.AUTOMATIC,
+  Transmission.MECHANIC,
+  Transmission.VARIATOR,
+  Transmission.ROBOT,
+] as const;
+const TRANSMISSION_TRANSLATION_KEYS: Record<(typeof TRANSMISSION_VALUES)[number], string> = {
+  [Transmission.AUTOMATIC]: "transmissionAutomatic",
+  [Transmission.MECHANIC]: "transmissionMechanic",
+  [Transmission.VARIATOR]: "transmissionVariator",
+  [Transmission.ROBOT]: "transmissionRobot",
+};
 
 type CreateAvailableCarModalProps = {
   isOpen: boolean;
@@ -60,6 +87,21 @@ export const CreateAvailableCarModal = ({
   onSuccess,
 }: CreateAvailableCarModalProps) => {
   const t = useTranslations("admin.modals.createAvailableCar");
+
+  const categoryOptions = useMemo<FormSelectOption[]>(
+    () => CAR_CATEGORY_VALUES.map((value) => ({ value, label: t(CAR_CATEGORY_TRANSLATION_KEYS[value]) })),
+    [t]
+  );
+
+  const engineTypeOptions = useMemo<FormSelectOption[]>(
+    () => ENGINE_TYPE_VALUES.map((value) => ({ value, label: t(ENGINE_TYPE_TRANSLATION_KEYS[value]) })),
+    [t]
+  );
+
+  const transmissionOptions = useMemo<FormSelectOption[]>(
+    () => TRANSMISSION_VALUES.map((value) => ({ value, label: t(TRANSMISSION_TRANSLATION_KEYS[value]) })),
+    [t]
+  );
   const [photoError, setPhotoError] = useState(false);
   const { files, previews, setFileAt, removeFileAt, clearAll, addMultipleFiles, reorderFiles } = usePhotoUploads({ 
     maxFiles: 50, 
@@ -220,8 +262,8 @@ export const CreateAvailableCarModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="w-[calc(100vw-20px)] sm:w-[calc(100vw-40px)] lg:w-[95vw] lg:min-w-[1400px] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0b0f14] border border-gray-200 dark:border-white/10 shadow-2xl rounded-2xl sm:rounded-3xl p-0">
-        <DialogHeader className="px-4 sm:px-8 lg:px-16 pt-5 sm:pt-6 lg:pt-7 pb-4 sm:pb-5 border-b border-gray-200 dark:border-white/10">
+      <DialogContent className="top-0 left-0 translate-x-0 translate-y-0 sm:top-[50%] sm:left-[50%] sm:-translate-x-1/2 sm:-translate-y-1/2 w-screen h-dvh max-w-none sm:w-[calc(100vw-40px)] sm:h-auto sm:max-h-[90dvh] sm:max-w-lg lg:w-[95vw] lg:min-w-[1400px] flex flex-col bg-white dark:bg-[#0b0f14] border border-gray-200 dark:border-white/10 shadow-2xl rounded-none sm:rounded-3xl p-0">
+        <DialogHeader className="flex-shrink-0 px-4 sm:px-8 lg:px-16 pt-5 sm:pt-6 lg:pt-7 pb-4 sm:pb-5 border-b border-gray-200 dark:border-white/10">
           <DialogTitle className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
             {t("title")}
           </DialogTitle>
@@ -230,8 +272,8 @@ export const CreateAvailableCarModal = ({
           </p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-0">
-          <div className="px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-8 space-y-4 sm:space-y-5 lg:space-y-6 bg-gray-50/50 dark:bg-[#0b0f14]">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-8 space-y-4 sm:space-y-5 lg:space-y-6 bg-gray-50/50 dark:bg-[#0b0f14]">
             {/* Car Photos */}
             <div className="space-y-3">
               <Label className={`block text-xs sm:text-sm font-semibold uppercase tracking-wide ${photoError ? 'text-red-500 dark:text-red-400' : 'text-gray-700 dark:text-white/90'}`}>
@@ -277,7 +319,7 @@ export const CreateAvailableCarModal = ({
                   id="model"
                   {...register("carModel")}
                   placeholder={t("modelPlaceholder")}
-                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.carModel && (
                   <p className="text-xs text-red-500 mt-1">{errors.carModel.message}</p>
@@ -298,7 +340,7 @@ export const CreateAvailableCarModal = ({
                     setValue("carYear", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
                   }}
                   placeholder={t("yearPlaceholder")}
-                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.carYear && (
                   <p className="text-xs text-red-500 mt-1">{errors.carYear.message}</p>
@@ -314,7 +356,7 @@ export const CreateAvailableCarModal = ({
                   {...register("carVin")}
                   placeholder={t("vinPlaceholder")}
                   maxLength={17}
-                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 font-mono uppercase"
+                  className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200 font-mono uppercase"
                 />
                 {isSubmitted && errors.carVin && (
                   <p className="text-xs text-red-500 mt-1">{errors.carVin.message}</p>
@@ -335,7 +377,7 @@ export const CreateAvailableCarModal = ({
                     setValue("carPrice", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
                   }}
                   placeholder={t("pricePlaceholder")}
-                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.carPrice && (
                   <p className="text-xs text-red-500 mt-1">{errors.carPrice.message}</p>
@@ -343,22 +385,15 @@ export const CreateAvailableCarModal = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="category" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  {t("category")} <span className="text-red-500">*</span>
-                </Label>
-                <Select
+                <FormSelect
+                  id="category"
                   value={formValues.carCategory}
                   onValueChange={(value) => setValue("carCategory", value as CarCategory, { shouldValidate: true, shouldDirty: true })}
-                >
-                  <SelectTrigger id="category" className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
-                    <SelectItem value="AVAILABLE" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("categoryAvailable")}</SelectItem>
-                    <SelectItem value="ONROAD" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("categoryOnRoad")}</SelectItem>
-                    <SelectItem value="TRANSIT" className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("categoryTransit")}</SelectItem>
-                  </SelectContent>
-                </Select>
+                  options={categoryOptions}
+                  label={<>{t("category")} <span className="text-red-500">*</span></>}
+                  labelClassName="text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide"
+                  className="w-full"
+                />
               </div>
 
               <div className="space-y-2">
@@ -369,7 +404,7 @@ export const CreateAvailableCarModal = ({
                   id="boughtPlace"
                   {...register("boughtPlace")}
                   placeholder={t("boughtPlacePlaceholder")}
-                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
               </div>
             </div>
@@ -377,23 +412,17 @@ export const CreateAvailableCarModal = ({
             {/* Row 2: Engine Type, Horsepower, Engine Size, Transmission, Drive Type, Mileage */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               <div className="space-y-2">
-                <Label htmlFor="engineType" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  {t("engineType")} <span className="text-red-500">*</span>
-                </Label>
-                <Select
+                <FormSelect
+                  id="engineType"
                   value={formValues.engineType}
                   onValueChange={(value) => setValue("engineType", value as typeof EngineType[keyof typeof EngineType], { shouldValidate: true, shouldDirty: true })}
-                >
-                  <SelectTrigger id="engineType" className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
-                    <SelectValue placeholder={t("selectEngine")} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
-                    <SelectItem value={EngineType.GASOLINE} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("engineTypeGasoline")}</SelectItem>
-                    <SelectItem value={EngineType.DIESEL} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("engineTypeDiesel")}</SelectItem>
-                    <SelectItem value={EngineType.ELECTRIC} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("engineTypeElectric")}</SelectItem>
-                    <SelectItem value={EngineType.HYBRID} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("engineTypeHybrid")}</SelectItem>
-                  </SelectContent>
-                </Select>
+                  options={engineTypeOptions}
+                  placeholder={t("selectEngine")}
+                  invalid={isSubmitted && !!errors.engineType}
+                  label={<>{t("engineType")} <span className="text-red-500">*</span></>}
+                  labelClassName="text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide"
+                  className="w-full"
+                />
                 {isSubmitted && errors.engineType && (
                   <p className="text-xs text-red-500 mt-1">{errors.engineType.message}</p>
                 )}
@@ -413,7 +442,7 @@ export const CreateAvailableCarModal = ({
                     setValue("engineHp", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
                   }}
                   placeholder={t("hpPlaceholder")}
-                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.engineHp && (
                   <p className="text-xs text-red-500 mt-1">{errors.engineHp.message}</p>
@@ -433,7 +462,7 @@ export const CreateAvailableCarModal = ({
                     const sanitized = sanitizeNumericInput(e.target.value);
                     setValue("engineSize", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
                   }}
-                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.engineSize && (
                   <p className="text-xs text-red-500 mt-1">{errors.engineSize.message}</p>
@@ -441,23 +470,17 @@ export const CreateAvailableCarModal = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="transmission" className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide">
-                  {t("transmission")}
-                </Label>
-                <Select
+                <FormSelect
+                  id="transmission"
                   value={formValues.transmission}
                   onValueChange={(value) => setValue("transmission", value as typeof Transmission[keyof typeof Transmission], { shouldValidate: true, shouldDirty: true })}
-                >
-                  <SelectTrigger id="transmission" className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 transition-all duration-200">
-                    <SelectValue placeholder={t("transmissionPlaceholder")} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#161b22] border-gray-200 dark:border-white/10 shadow-xl">
-                    <SelectItem value={Transmission.AUTOMATIC} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("transmissionAutomatic")}</SelectItem>
-                    <SelectItem value={Transmission.MECHANIC} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("transmissionMechanic")}</SelectItem>
-                    <SelectItem value={Transmission.VARIATOR} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("transmissionVariator")}</SelectItem>
-                    <SelectItem value={Transmission.ROBOT} className="text-gray-900 dark:text-white focus:bg-gray-100 dark:focus:bg-white/10 rounded-md">{t("transmissionRobot")}</SelectItem>
-                  </SelectContent>
-                </Select>
+                  options={transmissionOptions}
+                  placeholder={t("transmissionPlaceholder")}
+                  invalid={isSubmitted && !!errors.transmission}
+                  label={t("transmission")}
+                  labelClassName="text-xs sm:text-sm font-semibold text-gray-700 dark:text-white/90 uppercase tracking-wide"
+                  className="w-full"
+                />
                 {isSubmitted && errors.transmission && (
                   <p className="text-xs text-red-500 mt-1">{errors.transmission.message}</p>
                 )}
@@ -470,7 +493,7 @@ export const CreateAvailableCarModal = ({
                 <Input
                   id="driveType"
                   {...register("driveType")}
-                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.driveType && (
                   <p className="text-xs text-red-500 mt-1">{errors.driveType.message}</p>
@@ -490,7 +513,7 @@ export const CreateAvailableCarModal = ({
                     const sanitized = sanitizeNumericInput(e.target.value);
                     setValue("mileage", sanitized ? parseInt(sanitized, 10) : 0, { shouldValidate: true, shouldDirty: true });
                   }}
-                  className="w-full h-9 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
+                  className="w-full h-11 sm:h-10 px-3 sm:px-4 bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
                 />
                 {isSubmitted && errors.mileage && (
                   <p className="text-xs text-red-500 mt-1">{errors.mileage.message}</p>
@@ -506,14 +529,13 @@ export const CreateAvailableCarModal = ({
               <Textarea
                 id="description"
                 {...register("carDescription")}
-                placeholder={t("descriptionPlaceholder")}
                 rows={3}
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 resize-none bg-white dark:bg-[#161b22] hover:dark:bg-[#1c2128] border border-gray-300 dark:border-white/10 hover:dark:border-white/20 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 focus-visible:ring-2 focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400/50 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 focus-visible:dark:bg-[#1c2128] transition-all duration-200"
               />
             </div>
           </div>
 
-          <DialogFooter className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-7 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-[#0b0f14]">
+          <DialogFooter className="flex-shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 px-4 sm:px-8 lg:px-16 py-5 sm:py-6 lg:py-7 border-t border-gray-200 dark:border-white/10 bg-white dark:bg-[#0b0f14]">
             <Button
               type="button"
               variant="outline"

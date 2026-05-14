@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
 import { AddShippingModal } from "@/components/admin/modals/AddShippingModal";
 import { ChangePasswordModal } from "@/components/admin/modals/ChangePasswordModal";
 import { Surface } from "@/components/admin/primitives/Surface";
@@ -21,6 +21,12 @@ import { Auction } from "@/lib/admin/types";
 import { API_BASE_URL } from "@/i18n/config";
 import { authenticatedFetch } from "@/lib/auth/token";
 import { Table } from "@radix-ui/themes";
+
+const ADJUSTMENT_AUCTION_OPTIONS: FormSelectOption[] = [
+  { value: Auction.COPART, label: "COPART" },
+  { value: Auction.IAAI, label: "IAAI" },
+  { value: Auction.MANHEIM, label: "MANHEIM" },
+];
 
 type SettingsViewProps = {
   cities: ShippingCity[];
@@ -354,26 +360,13 @@ export const SettingsView = ({
 
               <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
                 {/* Auction Category Selector */}
-                <Select
+                <FormSelect
                   value={adjustmentAuction}
                   onValueChange={(value) => setAdjustmentAuction(value as Auction)}
+                  options={ADJUSTMENT_AUCTION_OPTIONS}
                   disabled={isApplying}
-                >
-                  <SelectTrigger className="h-12 w-full sm:w-[180px] rounded-2xl border border-gray-200/60 dark:border-white/10 bg-white dark:bg-[#1a1f2e] text-gray-900 dark:text-white font-medium shadow-sm hover:border-gray-300 dark:hover:border-white/20 focus-visible:ring-2 focus-visible:ring-[#429de6]/20 transition-all px-4">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#1a1f2e] border-gray-200 dark:border-white/10 rounded-xl">
-                    <SelectItem value={Auction.COPART} className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 focus:bg-gray-100 dark:focus:bg-white/5">
-                      COPART
-                    </SelectItem>
-                    <SelectItem value={Auction.IAAI} className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 focus:bg-gray-100 dark:focus:bg-white/5">
-                      IAAI
-                    </SelectItem>
-                    <SelectItem value={Auction.MANHEIM} className="cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 focus:bg-gray-100 dark:focus:bg-white/5">
-                      MANHEIM
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                  className="w-full sm:w-[180px]"
+                />
 
                 {/* Amount Input */}
                 <div className="relative w-full sm:w-[180px]">

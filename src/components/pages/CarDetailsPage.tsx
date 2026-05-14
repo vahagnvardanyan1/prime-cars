@@ -69,7 +69,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="pt-20 min-h-screen bg-white dark:bg-black flex flex-col items-center justify-center px-4">
+      <div className="pt-14 sm:pt-20 min-h-screen bg-white dark:bg-black flex flex-col items-center justify-center px-4">
         <div className="text-center max-w-md">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">
             {t("loading.title")}
@@ -92,7 +92,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
   // Not found state
   if (!car) {
     return (
-      <div className="pt-20 min-h-screen bg-white dark:bg-black flex items-center justify-center px-4">
+      <div className="pt-14 sm:pt-20 min-h-screen bg-white dark:bg-black flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
             {t("notFound.title")}
@@ -193,7 +193,7 @@ export const CarDetailsPage = ({ carId }: { carId: string }) => {
   };
 
   return (
-    <div className="pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
+    <div className="pt-14 sm:pt-20 min-h-screen bg-white dark:bg-black transition-colors duration-300">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 py-4 sm:py-5 lg:py-6">
         {/* Back Button */}
         <button
