@@ -25,6 +25,7 @@ import { useAdminCarsState } from "@/hooks/admin/useAdminCarsState";
 import { deleteCar } from "@/lib/admin/deleteCar";
 import { AddCarModal } from "@/components/admin/modals/AddCarModal";
 import { UpdateCarModal } from "@/components/admin/modals/UpdateCarModal";
+import { ViewCarModal } from "@/components/admin/modals/ViewCarModal";
 import { CarsView } from "@/components/admin/views/CarsView";
 
 export const AdminCarsPage = () => {
@@ -33,6 +34,8 @@ export const AdminCarsPage = () => {
   const { user, isAdmin } = useUser();
   const [selectedCarForUpdate, setSelectedCarForUpdate] = useState<AdminCar | null>(null);
   const [isUpdateCarModalOpen, setIsUpdateCarModalOpen] = useState(false);
+  const [selectedCarForView, setSelectedCarForView] = useState<AdminCar | null>(null);
+  const [isViewCarModalOpen, setIsViewCarModalOpen] = useState(false);
   const [carToDelete, setCarToDelete] = useState<AdminCar | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeletingCar, setIsDeletingCar] = useState(false);
@@ -86,6 +89,15 @@ export const AdminCarsPage = () => {
     setIsUpdateCarModalOpen(true);
   }, []);
 
+  const handleViewCar = useCallback((car: AdminCar) => {
+    setSelectedCarForView(car);
+    setIsViewCarModalOpen(true);
+  }, []);
+
+  const handleViewCarModalChange = useCallback(({ open }: { open: boolean }) => {
+    setIsViewCarModalOpen(open);
+  }, []);
+
   const handleAddCarModalChange = useCallback(({ open }: { open: boolean }) => {
     if (open) {
       state.openAddCar();
@@ -109,6 +121,7 @@ export const AdminCarsPage = () => {
         onAddCar={state.openAddCar}
         onUpdateCar={handleUpdateCar}
         onDeleteCar={handleDeleteCarClick}
+        onViewCar={handleViewCar}
         isAdmin={isAdmin}
         filters={state.filters}
         onFiltersChange={state.updateFilters}
@@ -119,6 +132,12 @@ export const AdminCarsPage = () => {
         totalItems={state.totalItems}
         onPageChange={state.changePage}
         onPageSizeChange={state.changePageSize}
+      />
+
+      <ViewCarModal
+        open={isViewCarModalOpen}
+        car={selectedCarForView}
+        onOpenChange={handleViewCarModalChange}
       />
 
       {isAdmin && (

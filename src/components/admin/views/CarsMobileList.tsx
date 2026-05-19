@@ -13,6 +13,7 @@ type CarsMobileListProps = {
   onPhotoClick: (photos: string[] | undefined, e: React.MouseEvent) => void;
   onUpdateCar?: (car: AdminCar) => void;
   onDeleteCar?: (car: AdminCar) => void;
+  onViewCar?: (car: AdminCar) => void;
 };
 
 const loadingSpinner = (
@@ -29,6 +30,7 @@ export const CarsMobileList = memo(function CarsMobileList({
   onPhotoClick,
   onUpdateCar,
   onDeleteCar,
+  onViewCar,
 }: CarsMobileListProps) {
   const t = useTranslations();
 
@@ -61,6 +63,7 @@ export const CarsMobileList = memo(function CarsMobileList({
           onPhotoClick={onPhotoClick}
           onUpdateCar={onUpdateCar}
           onDeleteCar={onDeleteCar}
+          onViewCar={onViewCar}
         />
       ))}
     </ul>

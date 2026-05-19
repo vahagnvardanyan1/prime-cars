@@ -23,6 +23,7 @@ type CarsViewProps = {
   onAddCar?: () => void;
   onUpdateCar?: (car: AdminCar) => void;
   onDeleteCar?: (car: AdminCar) => void;
+  onViewCar?: (car: AdminCar) => void;
   isAdmin?: boolean;
   filters?: CarFiltersState;
   onFiltersChange?: (filters: CarFiltersState) => void;
@@ -55,6 +56,7 @@ export const CarsView = memo(function CarsView({
   onAddCar,
   onUpdateCar,
   onDeleteCar,
+  onViewCar,
   isAdmin = false,
   filters,
   onFiltersChange,
@@ -169,6 +171,7 @@ export const CarsView = memo(function CarsView({
             onPhotoClick={handlePhotoClick}
             onUpdateCar={onUpdateCar}
             onDeleteCar={onDeleteCar}
+            onViewCar={onViewCar}
           />
         </div>
 

@@ -14,6 +14,7 @@ type AdminCarMobileCardProps = {
   onPhotoClick: (photos: string[] | undefined, e: React.MouseEvent) => void;
   onUpdateCar?: (car: AdminCar) => void;
   onDeleteCar?: (car: AdminCar) => void;
+  onViewCar?: (car: AdminCar) => void;
 };
 
 export const AdminCarMobileCard = memo(function AdminCarMobileCard({
@@ -22,20 +23,56 @@ export const AdminCarMobileCard = memo(function AdminCarMobileCard({
   onPhotoClick,
   onUpdateCar,
   onDeleteCar,
+  onViewCar,
 }: AdminCarMobileCardProps) {
   const t = useTranslations();
 
-  const handleUpdate = useCallback(() => onUpdateCar?.(car), [onUpdateCar, car]);
-  const handleDelete = useCallback(() => onDeleteCar?.(car), [onDeleteCar, car]);
+  const handleUpdate = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onUpdateCar?.(car);
+    },
+    [onUpdateCar, car]
+  );
+  const handleDelete = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onDeleteCar?.(car);
+    },
+    [onDeleteCar, car]
+  );
+  const handleView = useCallback(() => onViewCar?.(car), [onViewCar, car]);
+  const handleCardKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!onViewCar) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onViewCar(car);
+      }
+    },
+    [onViewCar, car]
+  );
   const handlePhotoClick = useCallback(
     (e: React.MouseEvent) => onPhotoClick(car.photos, e),
     [onPhotoClick, car.photos]
   );
 
   const extraPhotos = car.photos && car.photos.length > 1 ? car.photos.length - 1 : 0;
+  const isInteractive = Boolean(onViewCar);
 
   return (
-    <li className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#0b0f14] p-3 shadow-sm">
+    <li
+      onClick={isInteractive ? handleView : undefined}
+      onKeyDown={isInteractive ? handleCardKeyDown : undefined}
+      role={isInteractive ? "button" : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
+      aria-label={isInteractive ? `${car.year} ${car.model} — ${t("admin.actions.view")}` : undefined}
+      className={`rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#0b0f14] p-3 shadow-sm transition-colors ${
+        isInteractive
+          ? "cursor-pointer hover:border-blue-300 dark:hover:border-blue-900/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#429de6]"
+          : ""
+      }`}
+    >
       <div className="flex items-start gap-3">
         {car.imageUrl ? (
           <button

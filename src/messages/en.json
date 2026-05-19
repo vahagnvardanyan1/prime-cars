@@ -1128,6 +1128,7 @@
       "updateCar": {
         "title": "Update Car",
         "subtitle": "Edit vehicle information and details",
+        "viewTitle": "Car Details",
         "existingPhotos": "Existing Photos",
         "addNewPhotos": "Add New Photos",
         "loadingCities": "Loading cities...",
@@ -1220,7 +1221,8 @@
         "success": "Notification created",
         "successDescription": "The notification has been sent to all users.",
         "error": "Failed to create notification",
-        "errorDescription": "Could not create the notification."
+        "errorDescription": "Could not create the notification.",
+        "fillRequired": "Please fill in all required fields."
       },
       "deleteNotification": {
         "title": "Delete Notification",
@@ -1379,12 +1381,14 @@
       "cancel": "Cancel",
       "save": "Save",
       "submit": "Submit",
-      "close": "Close"
+      "close": "Close",
+      "view": "View"
     }
   },
   "carsTable": {
     "title": "Cars",
     "addCar": "Add Car",
+    "containerNumberBookingPlaceholder": "e.g. MAEU1234567",
     "photos": "Photos",
     "car": "Car",
     "client": "Client",

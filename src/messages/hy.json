@@ -843,6 +843,7 @@
       "coefficientLabel": "Գործակից",
       "currentCoefficient": "Ընթացիկ գործակից",
       "coefficientPlaceholder": "+/- 100",
+      "adjustmentAmountPlaceholder": "+/-",
       "auctionLabel": "Աճուրդ",
       "auctionPlaceholder": "Ընտրեք աճուրդը",
       "auctionNone": "Չընտրված",
@@ -1119,6 +1120,7 @@
       "updateCar": {
         "title": "Թարմացնել մեքենան",
         "subtitle": "Խմբագրել տրանսպորտային միջոցի տեղեկատվությունը և մանրամասները",
+        "viewTitle": "Մեքենայի մանրամասներ",
         "existingPhotos": "Առկա լուսանկարներ",
         "addNewPhotos": "Ավելացնել նոր լուսանկարներ",
         "loadingCities": "Քաղաքներ բեռնվում են...",
@@ -1370,7 +1372,8 @@
       "cancel": "Չեղարկել",
       "save": "Պահպանել",
       "submit": "Ուղարկել",
-      "close": "Փակել"
+      "close": "Փակել",
+      "view": "Դիտել"
     }
   },
   "carsTable": {
