@@ -6,9 +6,8 @@ import { useState } from "react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { LoginModal } from "@/components/LoginModal";
-import { useUser } from "@/contexts/UserContext";
 import { locales } from "@/i18n/config";
-import { usePathname } from "@/i18n/routing";
+import { usePathname, useRouter } from "@/i18n/routing";
 
 type SiteShellProps = {
   children: ReactNode;
@@ -17,7 +16,7 @@ type SiteShellProps = {
 export const SiteShell = ({ children }: SiteShellProps) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const pathname = usePathname();
-  const { refreshUser } = useUser();
+  const router = useRouter();
 
   const segments = pathname.split("/").filter(Boolean);
   const first = segments[0] ?? "";
@@ -27,13 +26,9 @@ export const SiteShell = ({ children }: SiteShellProps) => {
     ? second === "admin"
     : first === "admin";
 
-  // Handle login success from any page (calculator, home, etc.)
-  const handleLoginSuccess = async () => {
-    // Fetch user data from API - skip refresh mechanism since we just logged in with fresh token
-    await refreshUser();
-    
-    // Close modal
+  const handleLoginSuccess = () => {
     setIsLoginModalOpen(false);
+    router.push("/admin");
   };
 
   if (isAdminRoute) {
@@ -52,7 +47,7 @@ export const SiteShell = ({ children }: SiteShellProps) => {
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
-        onLoginSuccess={handleLoginSuccess}
+        onSuccess={handleLoginSuccess}
       />
     </div>
   );

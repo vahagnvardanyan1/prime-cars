@@ -1,293 +1,176 @@
 # CLAUDE.md
 
-Guidance for AI agents (Claude Code, Cursor, Aider, Codex CLI, etc.) working in this repository. Read this top-to-bottom before making changes — it captures the conventions and gotchas that aren't obvious from the code alone.
+AI-agent guide for this repo. Read top to bottom before edits. For non-Claude tools, `AGENTS.md` redirects here. Operational rules: [`.claude/AI_AGENT_OPS.md`](./.claude/AI_AGENT_OPS.md).
 
-For non-Claude tools, `AGENTS.md` redirects here.
-
----
-
-## 1. Project at a glance
-
-- **What**: `primecars.am` — Armenian vehicle-import platform. Public marketing site + import-cost calculator + customer-facing car listings, plus a full RBAC-protected admin panel for managing cars, users, shipping prices, and notifications.
-- **Stack**: Next.js 14 (App Router) + TanStack Query + next-intl (`hy`/`en`/`ru`, default `hy`) + Tailwind + Radix/shadcn UI + sonner toasts.
-- **Where it runs**: Frontend on **Vercel** (DNS via `ns{1,2}.vercel-dns.com`). Backend (auth, cars, users, shipping) on **Google Cloud Run** (me-west1). Image hosting on Railway + Google Cloud Storage. Email via Resend.
+@.claude/AI_AGENT_OPS.md
 
 ---
 
-## 2. Build & development commands
+## 1. What this is
+
+`primecars.am` — Armenian vehicle-import platform. Marketing site + import-cost calculator + customer car listings + RBAC-protected admin panel. Frontend: Vercel. Backend: Google Cloud Run (me-west1). Stack visible from `package.json` (Next.js 14 App Router, TanStack Query, next-intl, Tailwind, Radix/shadcn, sonner, react-hook-form + zod, resend).
+
+---
+
+## 2. Commands
 
 ```bash
-npm run dev          # Start dev server (http://localhost:3000)
-npm run build        # Production build (also runs next-sitemap postbuild)
-npm run start        # Serve production build
+npm run dev          # http://localhost:3000
+npm run build        # production (next-sitemap postbuild)
 npm run lint         # ESLint
-npm run lint:fix     # ESLint with auto-fix
-npm run type-check   # TypeScript check, no emit
+npm run lint:fix     # ESLint --fix
+npm run type-check   # TypeScript --noEmit
 ```
 
-No test framework is configured — there is no `jest`, `vitest`, or `playwright` setup. Manual verification = `npm run type-check && npm run lint` plus a browser smoke test.
+No tests. Verification = `type-check && lint` + browser smoke.
 
 ---
 
-## 3. Tech stack (libraries you'll actually touch)
+## 3. Non-obvious choices
 
-| Concern | Library | Where |
-|---|---|---|
-| Framework | `next@14` App Router | `src/app/[locale]/**` |
-| i18n | `next-intl` | `src/i18n/`, `src/messages/{en,hy,ru}.json` |
-| Server state | `@tanstack/react-query` | `src/lib/react-query/` |
-| UI primitives | Radix UI + shadcn patterns | `src/components/ui/` (~50 files) |
-| Styling | Tailwind CSS, class-based dark mode | `tailwind.config.ts`, `src/app/globals.css` |
-| Forms (new) | `react-hook-form` + `zod` | `src/lib/validation/schemas.ts` |
-| Forms (deprecated) | Formik — fully removed from src/ as of cleanup; `formik` and `zod-formik-adapter` are still in `package.json` but unused. **Do not reintroduce.** | (no files) |
-| Toasts | `sonner` | `src/components/ui/sonner.tsx` + globals.css block |
-| Theme | **Homegrown context, NOT `next-themes`** | `src/components/ThemeContext.tsx` |
-| Maps | `react-simple-maps` + world-atlas CDN | `src/components/pages/home/ShippingMap.tsx` |
-| Email | `resend` | `src/app/api/registration-request/route.ts` |
-| Icons | `lucide-react`, `react-icons` | scattered |
-
-Import alias: `@/*` resolves to `src/*`.
+- Theme: **homegrown context** at `src/components/ThemeContext.tsx`, NOT `next-themes`.
+- Sonner CSS specificity (0,3,0) in `globals.css` `.app-toaster` is deliberately tuned to beat sonner's runtime styles — never use `!important`.
+- `formik` and `zod-formik-adapter` remain in `package.json` but are removed from `src/`. Do not reintroduce.
+- Default locale: `hy`. All routes locale-prefixed.
+- Import alias: `@/*` → `src/*`.
 
 ---
 
-## 4. Project structure
+## 4. Where things live
 
-```
-src/
-├── app/
-│   ├── [locale]/              # All user-facing routes are locale-prefixed
-│   │   ├── (home page)        # LandingPage
-│   │   ├── cars/              # Public listing
-│   │   ├── cars/[id]/         # Public car detail
-│   │   ├── calculator/        # Import-cost calculator
-│   │   ├── apply/             # Customer registration form
-│   │   ├── partners/          # Partners page
-│   │   └── admin/             # 7 RBAC-protected admin pages:
-│   │                          #   /, cars, available-cars, users,
-│   │                          #   notifications, settings, calculator
-│   └── api/
-│       └── registration-request/route.ts   # Resend-backed email POST
-│
-├── components/
-│   ├── ui/                    # ~50 Radix/shadcn primitives + ErrorMessage, sonner.tsx
-│   ├── admin/
-│   │   ├── cards/  filters/  modals/  pages/  primitives/  views/
-│   │   ├── AdminSidebar.tsx  AdminSidebarContent.tsx
-│   │   ├── AdminTopbar.tsx   AdminPreferencesMenu.tsx
-│   ├── pages/                 # HomePage, CarsPage, CarDetailsPage, CalculatorPage, ApplyPage, PartnersPage
-│   │   ├── cars/              # Page-local components (e.g., Spec.tsx)
-│   │   └── home/              # Home subsections (HeroSection, ServicesSection, ShippingMap, …)
-│   ├── layouts/               # Container (max-w-1440 + px-12), SectionHeader
-│   ├── calculator/            # Calculator-specific UI
-│   ├── rbac/                  # Access-gating wrappers
-│   ├── ThemeContext.tsx       # Theme state — DON'T replace with next-themes
-│   ├── LoginModal.tsx         # Auth entry point
-│   └── ...
-│
-├── lib/
-│   ├── admin/                 # 28 admin API functions (CRUD via authenticatedFetch)
-│   ├── auth/                  # Token storage + auto-refresh (token.ts)
-│   ├── cars/                  # Public car-list fetchers
-│   ├── react-query/           # client.ts (defaults), keys.ts, hooks/ (useAuth, useCars, useUsers, useShipping)
-│   ├── rbac/                  # Roles + permission matrix
-│   ├── validation/            # Zod schemas
-│   ├── import-calculator/     # 18 files: tax engines + COPART fee/shipping data
-│   ├── seo/                   # SEO metadata helpers
-│   ├── theme/                 # Theme helpers
-│   ├── utils/                 # General utilities
-│   └── public/                # Public fetchers (e.g., fetchHomeCars)
-│
-├── hooks/
-│   ├── useCarDetails.ts  useCarsPage.ts  useMediaQuery.ts  useSortedCars.ts
-│   └── admin/                 # 7 admin form/state hooks (Cars/Users/Settings/Notifications + 3 misc)
-│
-├── contexts/                  # UserContext, QueryProvider
-├── messages/                  # en.json, hy.json, ru.json — ~1,330 keys each, KEEP IN SYNC
-└── i18n/                      # next-intl: config.ts (incl. API_BASE_URL), routing.ts, request.ts
-```
+- Routes: `src/app/[locale]/**` (admin under `/admin/`). Next API: `src/app/api/`.
+- Components: `src/components/{ui,layouts,admin,pages,calculator,rbac}/`.
+- Data layer: `src/lib/react-query/hooks/`, `src/lib/admin/`, `src/lib/cars/`, `src/lib/public/` (SSR).
+- Business logic: `src/lib/{auth,rbac,validation,import-calculator,seo,utils}/`.
+- i18n: `src/messages/{en,hy,ru}.json`, `src/i18n/config.ts`.
 
-Top-level config files: `next.config.js`, `tailwind.config.ts`, `tsconfig.json` (`@/*` alias, strict mode, ES2022), `postcss.config.js`, `eslint.config.json` (extends `next/core-web-vitals` + `next/typescript`), `next-sitemap.config.js`. No `vercel.json` — zero-config Next.js deploy. No Prettier or `.editorconfig`.
-
-Deep-dive markdown docs live in `docs/`:
-- `docs/AUTHENTICATION_SYSTEM.md` — auth flows + token refresh
-- `docs/TOKEN_REFRESH_GUIDE.md` — refresh internals
-- `docs/COMPLETE_LOCALIZATION_SUMMARY.md` — i18n migration history
-- `docs/MASTER_REFACTORING_SUMMARY.md` — refactor history
-- `docs/QUICK_START.md` — onboarding for humans
+Deep-dive docs in `docs/`. Scoped CLAUDE.md files: see §13.
 
 ---
 
-## 5. Provider hierarchy
+## 5. Providers
 
-Defined in `src/app/[locale]/layout.tsx`:
-```
-NextIntlClientProvider → QueryProvider → ThemeProvider → UserProvider → SiteShell
-```
-`useTheme`, `useUser`, `useTranslations`, and React Query hooks all require this hierarchy.
+`src/app/[locale]/layout.tsx`: `NextIntlClientProvider → QueryProvider → ThemeProvider → UserProvider → SiteShell`. All `useTheme`/`useUser`/`useTranslations`/React Query hooks require this hierarchy.
 
 ---
 
-## 6. Critical patterns (DO / DON'T)
+## 6. Rules
 
 ### Theme
-- ✅ `import { useTheme } from "@/components/ThemeContext"` → returns `{ theme: "light" | "dark", toggleTheme, setTheme }`.
-- ❌ Don't `import { useTheme } from "next-themes"`. This repo never uses next-themes; it has its own localStorage-backed context. `useTheme()` throws if called outside `<ThemeProvider>`.
+- `useTheme` from `@/components/ThemeContext` → `{ theme, toggleTheme, setTheme }`. Throws outside `<ThemeProvider>`. (Hook blocks `next-themes` imports.)
 
 ### Toasts (sonner)
-- ✅ `import { toast } from "sonner"`. Title as first arg, description in options: `toast.success(t("...Title"), { description: t("...Description") })`.
-- ✅ Translation keys live under `auth.toasts.*`, `admin.toasts.*`, or `applyPage.*`. Generic fallback: `common.unexpectedError`.
-- ✅ Sonner's CSS is anchored on `.app-toaster` in `src/app/globals.css` and scoped via `[data-sonner-theme="light"|"dark"]` so we beat sonner's runtime-injected styles. The `<Toaster>` in `src/components/ui/sonner.tsx` syncs `theme` from `useTheme()`.
-- ❌ **Don't double-fire.** If a mutation hook (`useCreateCar`, `useUpdateAvailableCar`, etc.) fires a toast in `onSuccess`, the calling page/modal must NOT also fire one. Single source of truth per action. Recent example fix: `AdminAvailableCarsPage` used to fire `toast.success(carUpdated)` while the modal already did — caused a visible double toast.
+- `toast.success(t("...Title"), { description: t("...Description") })`.
+- **Mutation hook owns the toast** — parent/modal does NOT also fire one for the same action.
+- Keys: `auth.toasts.*`, `admin.toasts.*`, `applyPage.*`. Fallback: `common.unexpectedError`.
 
 ### i18n
-- ✅ `const t = useTranslations("admin.toasts")`. Default locale is `hy`. All routes are locale-prefixed (`/hy/...`, `/en/...`, `/ru/...`).
-- ✅ **Sync all 3 locales** (`en.json`, `hy.json`, `ru.json`) when adding a key. Missing translations break renders.
-- ⚠️ Armenian definite article `-ն` (after vowel) vs `-ը` (after consonant) depends on the noun. If a string concatenates a placeholder like `{name}-ը`, the suffix will be wrong for any name ending in a vowel. **Fix by attaching the article to a surrounding fixed noun** (e.g., `"{name} օգտատերը …"` — article on `օգտատեր`, not on `name`).
-- ⚠️ Russian past-tense and participles agree on grammatical gender. Avoid per-user gendering by restructuring around a masculine noun (e.g., `"Пользователь {name} добавлен"` — the participle agrees with `Пользователь`, gender-neutral for any actual person).
+- `const t = useTranslations("namespace"); t("yourKey")`. Default locale `hy`.
+- Keys must exist in all 3 of `src/messages/{en,hy,ru}.json`. (Hook enforces.)
+- Morphology rules → `src/messages/CLAUDE.md`.
 
 ### Auth + API
-- ✅ Use `authenticatedFetch(url, options)` from `src/lib/auth/token.ts` for any backend call. It injects the Bearer token, intercepts 401, calls `refreshAccessToken()`, and retries.
-- ✅ Token storage is `localStorage` (`access_token`, `refresh_token`).
-- ✅ Refresh is debounced (a single in-flight refresh — concurrent 401s wait for it). Don't simplify this lock.
-- ❌ Don't use bare `fetch` for backend calls — you'll get silent 401s and won't trigger refresh.
-- API base URL: `src/i18n/config.ts` → `API_BASE_URL = "https://prime-auto-backend-622391373915.me-west1.run.app"` (Google Cloud Run me-west1). Most call sites `import { API_BASE_URL } from "@/i18n/config"`. One outlier: `src/lib/public/fetchHomeCars.ts` reads `process.env.NEXT_PUBLIC_API_BASE_URL || ""` instead.
-
-### React Query
-- ✅ Query keys live in `src/lib/react-query/keys.ts` as a factory: `queryKeys.cars.admin.list(filters)`.
-- ✅ Defaults in `src/lib/react-query/client.ts`: `staleTime: 15min`, `gcTime: 30min`, **no retry on 401/403/404**, `refetchOnWindowFocus: false`, `refetchOnReconnect: true`, mutations don't retry.
-- ✅ Mutations invalidate on success: `queryClient.invalidateQueries({ queryKey: queryKeys.cars.all })`.
-- ❌ Don't bake retries onto a 401 — token refresh already handles that.
-
-### RBAC
-- 5 roles: `ADMIN`, `MANAGER`, `SUPPORT`, `VIEWER`, `USER`. Matrix in `src/lib/rbac/permissions.ts`.
-- ✅ Use helpers: `hasPermission({ role, permission })`, `canAccessAdminPanel({ role })`, `isAdmin({ role })`.
-- ✅ Role strings are case-insensitive — the helpers normalize. Don't compare strings yourself.
-- Hooks: `usePermission()`, `useRole()`, `useCanAccessAdminPanel()`.
+- `authenticatedFetch` from `src/lib/auth/token.ts` for backend calls. Exceptions: login bootstrap, public listings, Next API routes, the auth machinery itself.
+- Don't simplify the single-flight refresh lock in `token.ts` — it prevents thundering-herd 401s.
+- `API_BASE_URL` from `@/i18n/config`. Outlier: `src/lib/public/fetchHomeCars.ts` reads `process.env.NEXT_PUBLIC_API_BASE_URL`.
 
 ### Forms
-- ✅ New forms: `react-hook-form` + `zod`. Schemas live in `src/lib/validation/schemas.ts`. Example: `UpdateAvailableCarModal.tsx`.
-- ✅ Plain `useState` is acceptable for ≤4-field forms (e.g., `ApplyPage.tsx`).
-- ❌ Don't add new Formik. Legacy `*Formik.tsx` files exist and should not grow.
+- `react-hook-form` + `zod`. Schemas in `src/lib/validation/schemas.ts`. Plain `useState` OK for ≤4-field forms.
 
 ### Modals
-Typical shape:
-```ts
-type Props = { isOpen: boolean; onClose: () => void; onSuccess?: () => void; /* + entity */ };
-```
-- ✅ Modal calls a mutation hook. The hook handles the toast and query invalidation.
-- ✅ Modal calls `onClose()` and the optional `onSuccess()` callback after the mutation resolves.
-- ❌ Don't manage open state inside the modal — parent owns it.
-- ❌ Don't toast in the parent if the hook (or modal) already does.
+- Props: `{ isOpen, onClose, onSuccess?, ...entity }`. Parent owns open state. Mutation hook owns toast.
+
+### RBAC
+- 5 roles: `ADMIN`, `MANAGER`, `SUPPORT`, `VIEWER`, `USER`. Matrix: `src/lib/rbac/permissions.ts`.
+- Use helpers: `hasPermission`, `isAdmin`, `canAccessAdminPanel`. They normalize case.
+
+### React Query
+- Keys from `src/lib/react-query/keys.ts` factory (`queryKeys.cars.admin.list(filters)`).
+- Defaults: `staleTime: 15min`, `gcTime: 30min`, no retry on 401/403/404.
+- Mutations `invalidateQueries({ queryKey: queryKeys.<scope>.all })` on success.
 
 ---
 
-## 7. External integrations
+## 7. Integrations
 
-| Service | Purpose | Where configured |
-|---|---|---|
-| Google Cloud Run (me-west1) | Primary backend (auth, cars, users, shipping, calculator) | `src/i18n/config.ts:15` |
-| Resend | Apply-page registration emails | `src/app/api/registration-request/route.ts` |
-| Railway storage + GCS | Car/image hosting | `next.config.js` `images.remotePatterns` |
-| Unsplash | Demo/fallback images | `next.config.js` `images.remotePatterns` |
-| world-atlas CDN (`cdn.jsdelivr.net/npm/world-atlas@2`) | ShippingMap topology | `src/components/pages/home/ShippingMap.tsx:19` |
-| next-sitemap | Post-build sitemap generation | `next-sitemap.config.js` |
+Backend: Google Cloud Run (me-west1) via `src/i18n/config.ts`. Email: Resend. Images: Railway + GCS in `next.config.js` `remotePatterns`. Maps: world-atlas CDN in ShippingMap. Sitemap: `next-sitemap.config.js`. Env vars: `docs/ENV.md`.
 
 ---
 
-## 8. Environment variables
+## 8. Fragile areas — explicit confirmation required before edits
 
-`.env.local` is git-ignored; `.env.local.example` documents the shape.
-
-**Resend (email)** — required for the Apply form to actually send mail; route returns 503 otherwise:
-- `RESEND_API_KEY` — required.
-- `REGISTRATION_NOTIFICATION_EMAIL` — defaults to `geghamsimonyan08@gmail.com`.
-- `RESEND_FROM_EMAIL` — defaults to `onboarding@resend.dev` (Resend's shared test sender). Swap to a verified-domain sender (e.g., `team@primecars.am`) in production via Resend's auto-configure → Vercel integration.
-
-**Public (`NEXT_PUBLIC_*`)** — exposed to browser:
-- `NEXT_PUBLIC_API_BASE_URL` — only read by `src/lib/public/fetchHomeCars.ts` (every other call site imports `API_BASE_URL` from `@/i18n/config`).
-- `NEXT_PUBLIC_SITE_URL` — defaults to `https://primecars.am`; affects SEO + sitemap.
-- `NEXT_PUBLIC_MAINTENANCE_MODE` — set to `"true"` to enable maintenance gating.
-
-Set production values in Vercel project settings (Production + Preview + Development) and redeploy — Vercel reads env vars at build time.
+- `src/components/pages/home/ShippingMap.tsx` — viewport/zoom/projection tuned across all origin/destination markers.
+- `src/components/ui/sonner.tsx` + sonner block in `src/app/globals.css` — CSS specificity tuned to beat sonner runtime.
+- `src/lib/auth/token.ts` — refresh lock.
+- `src/lib/import-calculator/**` — interdependent tax math. See scoped CLAUDE.md.
 
 ---
 
-## 9. Hardcoded data
+## 9. Pitfalls (real bugs not caught by hooks)
 
-`src/lib/import-calculator/` contains the tax/fee/shipping math. Most data is **fallback** — live values come from the backend, hardcoded data exists for offline / pre-API-call estimates.
+1. Double-firing toasts (modal AND mutation hook). Mutation hook owns.
+2. Bare `fetch` to backend bypasses token refresh.
+3. Editing `ShippingMap.tsx` mobile zoom without re-checking markers.
+4. `--no-verify` / `--no-gpg-sign` — never unless explicitly authorized.
 
-| File | What |
-|---|---|
-| `copartShippingData.ts` | COPART US/Canada → Gyumri shipping prices (via Houston/LA/NY/Savannah/Seattle-Poti/Toronto-Poti) — fallback only |
-| `auctionFees.ts` | COPART + IAAI gate/bid/title/environmental fee tiers |
-| `truckTaxConstants.ts`, `quadricycleTaxConstants.ts` | Per-vehicle-type tax tiers |
-| `calculate{Vehicle,Truck,Motorcycle,JetSki,Snowmobile,Quadricycle}Taxes.ts` | Vehicle-type-specific tax engines |
-| `calculateAge.ts`, `calculateEnvironmentalTax.ts`, `normalizeEngineVolume.ts` | Shared math (engine volume normalizes to **cm³** — critical for tax tier math) |
-| `vehicleCalculators.ts` | Dispatch by vehicle category |
-| `fetchExchangeRates.ts`, `fetchShippingPrices.ts`, `fetchShippingCitiesPublic.ts` | Live data |
+Imports of `next-themes`/Formik and locale-parity drift are blocked by hooks; no prose enforcement needed.
 
 ---
 
-## 10. Fragile / recently tuned areas
+## 10. Refactor discipline
 
-Touch with care; verify visually before committing.
+- Refactor changes structure, not behavior. New features → separate branch.
+- One concern per commit. Order: data → business → UI.
+- `type-check && lint` after every commit. Visual smoke before merge.
+- Fragile areas (§8) require user confirmation.
+- Don't propagate patterns in `.claude/TECH_DEBT.md`. Implement correctly and flag existing copies.
+- PR cap 400 LOC (`/pre-pr`). Override with `--allow-large` only when atomic.
 
-- **`src/components/pages/home/ShippingMap.tsx`** — Two tabs ("from"/"to") each have separate desktop and mobile viewports (`VIEWPORTS` const) plus separate default zooms (`DEFAULT_ZOOM` const). The `useEffect` that depends on `isMobile` re-syncs zoom + center when the breakpoint crosses so all markers stay visible. Changing any of `mapDimensions`, projection `scale`, `center`, or `DEFAULT_ZOOM` requires re-verifying all 10 origins ("from" tab) and 10 destinations ("to" tab) stay inside the visible viewBox at default zoom.
-- **`src/components/ui/sonner.tsx` + `src/app/globals.css` (sonner block)** — CSS specificity tuned to (0,3,0) via `.app-toaster[data-sonner-toaster][data-sonner-theme="..."]` to beat sonner's (0,2,0) runtime-injected styles. The close-button position uses sonner's CSS vars (`--toast-close-button-start/end/transform`), not raw `left`/`right`. Don't shortcut with `!important`.
-- **`src/lib/auth/token.ts`** — Debounced refresh prevents thundering-herd 401s. The `pendingRefresh` promise lock matters.
-- **`src/lib/import-calculator/*`** — 18 interdependent files; engine volume in cm³ feeds every tier check.
-- **`src/messages/{en,hy,ru}.json`** — Armenian morphology / Russian gender bugs reappear when keys are translated mechanically. See section 6 for the safe patterns.
-
----
-
-## 11. Common pitfalls
-
-Distilled from real bugs in this repo:
-
-1. **Importing `useTheme` from `next-themes`** — wrong; use `@/components/ThemeContext`. `resolvedTheme` will be `undefined`.
-2. **Double-firing toasts** — modal + parent both calling `toast.success`. Make one party authoritative.
-3. **Updating only `en.json`** — missing `hy.json` / `ru.json` entries break renders in those locales.
-4. **Using bare `fetch` for backend calls** — bypasses token refresh; 401s become silent failures.
-5. **`{name}-ը` in Armenian strings** — produces wrong suffix when `name` ends in a vowel. Move the article onto a surrounding noun.
-6. **Adding Formik to a new form** — use `react-hook-form` + `zod` instead.
-7. **Editing ShippingMap mobile zoom without re-checking markers** — drops Rotterdam (4°E) or Salalah (17°N) outside the viewport.
-8. **Adding a `toast.success` after a mutation hook that already toasts** — see #2.
-9. **Skipping a hook (`--no-verify`, `--no-gpg-sign`)** — never do this unless the user explicitly asks.
-10. **Creating a new `docs/` markdown for a feature you implemented** — only create docs when asked; CLAUDE.md is the entry point.
+Procedures: `.claude/skills/extract-from-mixed-file/`, `.claude/skills/dedupe/`. Run `recon` on files over 100 LOC.
 
 ---
 
-## 12. Conventions
+## 11. Next.js 14 patterns
 
-- Edit existing files; don't create new ones unless required.
-- No comments unless WHY is non-obvious. Don't restate what the code says.
-- No backwards-compat shims, `// removed for X` placeholders, or unused `_var` renames. Delete what's unused.
-- Skeleton components for loading states live in `src/components/ui/skeletons/`.
-- API responses generally use `{ data: {...} }` shape; unwrap consistently.
-- Admin routes gated by wrappers in `src/components/rbac/`.
-- All locale-prefixed paths must round-trip cleanly through next-intl's `Link`.
+- Server Components by default. `"use client"` only when state/effects/refs/handlers/browser APIs or hooks like `useUser`/`useTheme`/`useTranslations` require it.
+- All routes under `src/app/[locale]/`.
+- Data: SSR via `src/lib/public/`. Auth CRUD via React Query hooks + `authenticatedFetch`.
+- `next/image` for images. `Link` from next-intl (not `next/link`).
+- Metadata via `generateMetadata`; helpers in `src/lib/seo/`.
+- Co-located `loading.tsx` / `error.tsx` per route segment.
+- Server Components render Client Components, not the reverse. Pass via `children`/props.
 
 ---
 
-## 13. Quick recipes
+## 12. Reusable components
 
-**Adding a new translation key:**
-1. Add to `src/messages/en.json` under the appropriate namespace.
-2. Add equivalent keys to `hy.json` and `ru.json` — watch morphology/gender.
-3. Use via `const t = useTranslations("namespace"); t("yourKey")`.
+Rule of three: pattern in 3+ places → extract. 2 copies → leave alone.
 
-**Adding a new admin API call:**
-1. Create `src/lib/admin/yourAction.ts` that imports `API_BASE_URL` + `authenticatedFetch` and returns `{ data }` or throws.
-2. Add a hook in `src/lib/react-query/hooks/` that wraps it with `useMutation`/`useQuery` and invalidates relevant `queryKeys.*` on success.
-3. Add the toast inside the hook's `onSuccess`/`onError`, not in the calling component.
+Grep `src/components/` before creating a new component.
 
-**Adding a new modal:**
-1. Create `src/components/admin/modals/YourModal.tsx` with `{ isOpen, onClose, onSuccess? }` props.
-2. Use `react-hook-form` + `zod` for the form.
-3. Call the mutation hook from step 2 of the previous recipe. Don't fire toasts manually.
+Location:
+- Generic primitive → `src/components/ui/`
+- Layout → `src/components/layouts/`
+- Domain-shared → `src/components/<domain>/` or `pages/<scope>/`
+- Admin-shared → `src/components/admin/{primitives,cards,filters}/`
+- Route-local → `src/components/pages/<route>/`
 
-**Adding a new public page:**
-1. Create `src/app/[locale]/your-route/page.tsx`.
-2. Implement the page component under `src/components/pages/YourPage.tsx`.
-3. Add nav entry in `src/lib/site-nav.ts` if user-facing.
-4. Add metadata via `generateMetadata` for SEO.
+Constraints:
+- PascalCase. File name = component name. `<Name>Props` at top.
+- Does NOT fetch data; does NOT own URL/locale state.
+- Prop count ≤ 7. No `any`. No `useEffect` for derived state — `useMemo`.
+
+When refactoring an oversized file, extract INTO an existing component if one fits.
+
+---
+
+## 13. Scoped memory
+
+Auto-load (directory-level):
+- `src/lib/import-calculator/CLAUDE.md` — tax engine internals, engine-volume rule.
+- `src/messages/CLAUDE.md` — Armenian/Russian morphology, namespaces.
+
+On-demand (skills or by request):
+- `.claude/RECIPES.md` — feature scaffolding recipes.
+- `.claude/TECH_DEBT.md` — live debt registry.
+- `docs/ENV.md` — env vars.

@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { API_BASE_URL } from "@/i18n/config";
@@ -18,7 +19,7 @@ type User = {
 };
 
 type LoginParams = {
-  email: string;
+  username: string;
   password: string;
 };
 
@@ -62,18 +63,17 @@ const fetchMe = async (): Promise<User> => {
 };
 
 // Login
-const login = async ({ email, password }: LoginParams): Promise<LoginResponse> => {
+const login = async ({ username, password }: LoginParams): Promise<LoginResponse> => {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ username, password }),
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: "Login failed" }));
-    throw new Error(error.error || error.message || "Invalid credentials");
+    throw new Error("invalid_credentials");
   }
 
   const data = (await response.json())?.data;
@@ -111,26 +111,27 @@ export const useMe = () => {
 // Hook for login mutation
 export const useLogin = () => {
   const queryClient = useQueryClient();
+  const t = useTranslations("auth.toasts");
 
   return useMutation({
     mutationFn: login,
-    onSuccess: (data) => {
-      // Store tokens
+    onSuccess: (data, variables) => {
       setTokens({
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
       });
 
-      // Set user data in cache
       queryClient.setQueryData(queryKeys.auth.me, data.user);
 
-      toast.success("Login successful", {
-        description: `Welcome back, ${data.user.firstName || data.user.email}!`,
+      toast.success(t("loginSuccessTitle"), {
+        description: t("loginSuccessDescription", { username: variables.username }),
       });
     },
     onError: (error: Error) => {
-      toast.error("Login failed", {
-        description: error.message || "Invalid credentials",
+      const isNetworkError =
+        error.name === "TypeError" || error.message === "Failed to fetch";
+      toast.error(t("loginFailedTitle"), {
+        description: t(isNetworkError ? "networkError" : "invalidCredentials"),
       });
     },
   });
