@@ -72,7 +72,7 @@ Deep-dive docs in `docs/`. Scoped CLAUDE.md files: see §13.
 ### Auth + API
 - `authenticatedFetch` from `src/lib/auth/token.ts` for backend calls. Exceptions: login bootstrap, public listings, Next API routes, the auth machinery itself.
 - Don't simplify the single-flight refresh lock in `token.ts` — it prevents thundering-herd 401s.
-- `API_BASE_URL` from `@/i18n/config`. Outlier: `src/lib/public/fetchHomeCars.ts` reads `process.env.NEXT_PUBLIC_API_BASE_URL`.
+- `API_BASE_URL` from `@/i18n/config`.
 
 ### Forms
 - `react-hook-form` + `zod`. Schemas in `src/lib/validation/schemas.ts`. Plain `useState` OK for ≤4-field forms.
