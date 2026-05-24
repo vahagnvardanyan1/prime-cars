@@ -4,20 +4,11 @@
     "description": "Похоже, страница недоступна. Вернёмся на главную.",
     "backHome": "Вернуться на главную"
   },
-  "meta": {
-    "localeName": "Русский"
-  },
   "common": {
-    "success": "Успех",
-    "error": "Ошибка",
-    "warning": "Предупреждение",
-    "download": "Скачать",
-    "downloading": "Загрузка",
     "unexpectedError": "Произошла непредвиденная ошибка.",
     "dismiss": "Закрыть"
   },
   "downloadImages": {
-    "button": "Скачать фото",
     "buttonShort": "Скачать изображения",
     "downloading": "Загрузка...",
     "downloadAll": "Скачать все ({count})",
@@ -101,24 +92,8 @@
     },
     "popularDeals": {
       "title": "Доступные автомобили",
-      "rentalPriceLabel": "Цена аренды",
       "priceLabel": "Цена",
-      "seeTourDetails": "Подробнее",
-      "periodPerDay": "/день",
-      "noCars": "В данный момент автомобилей нет",
-      "specs": {
-        "automatic": "Автомат",
-        "coupe": "Купе",
-        "sedan": "Седан",
-        "sports": "Спорт",
-        "suv": "SUV",
-        "petrol": "Бензин",
-        "electric": "Электро"
-      }
-    },
-    "importCosts": {
-      "title": "Рассчитайте стоимость импорта",
-      "description": "Получите мгновенную оценку всех затрат на импорт автомобиля. Наш калькулятор включает доставку, пошлины, сборы и сопутствующие расходы."
+      "noCars": "В данный момент автомобилей нет"
     },
     "ourPartners": {
       "title": "Наши партнёры",
@@ -219,13 +194,6 @@
       "workingDays": "Понедельник – Пятница",
       "workingTime": "10:00 – 22:00"
     },
-    "apply": {
-      "title": "Подать заявку",
-      "description": "Заполните форму и мы свяжемся с вами.",
-      "namePlaceholder": "Ваше имя",
-      "phonePlaceholder": "Номер телефона",
-      "submit": "Отправить"
-    },
     "shipping": {
       "title": "Международная сеть доставки",
       "description": "Благодаря удобному расположению портов и офисов, мы можем быстро забрать ваш автомобиль из любой точки США и Канады. У нас 10 крупных складов в США и Канаде, на каждом из которых работает более 100 человек, что обеспечивает безопасное хранение автомобилей и быструю обработку заказов.",
@@ -234,34 +202,13 @@
       "to": "Доставка в",
       "warehouses": "Наши склады",
       "destinations": "Направления доставки"
-    }
-  },
-  "cars": {
-    "title": "Премиальный каталог",
-    "subtitle": "Изучите нашу подборку люксовых и спортивных автомобилей со всего мира",
-    "filters": {
-      "title": "Фильтры",
-      "searchLabel": "Поиск",
-      "searchPlaceholder": "Марка или модель…",
-      "brandLabel": "Марка",
-      "allBrands": "Все марки",
-      "priceRangeLabel": "Диапазон цены",
-      "allPrices": "Все цены",
-      "under100k": "До $100k",
-      "between100And150": "$100k - $150k",
-      "over150k": "Свыше $150k",
-      "reset": "Сбросить фильтры"
     },
-    "results": {
-      "found": "{count, plural, one {Найден # автомобиль} few {Найдено # автомобиля} many {Найдено # автомобилей} other {Найдено # автомобилей}}",
-      "noResults": "Нет автомобилей по выбранным фильтрам. Попробуйте изменить параметры поиска.",
-      "viewDetails": "Смотреть детали",
-      "sort": {
-        "priceLowToHigh": "Цена: по возрастанию",
-        "priceHighToLow": "Цена: по убыванию",
-        "yearNewest": "Год: сначала новые",
-        "yearOldest": "Год: сначала старые"
-      }
+    "carSections": {
+      "eta": "Ожидается",
+      "price": "Цена",
+      "requestCta": "Заказать автомобиль",
+      "startingFrom": "От",
+      "viewCta": "Подробнее"
     }
   },
   "carsPage": {
@@ -310,7 +257,29 @@
       "arrivingTitle": "Нет авто в пути",
       "arrivingDescription": "Сейчас нет авто в доставке. Смотрите наличие или сделайте индивидуальный заказ для авто мечты.",
       "orderTitle": "Индивидуальный заказ доступен",
-      "orderDescription": "Не нашли нужное? Свяжитесь с нами для поиска любого авто на международных аукционах под ваши требования."
+      "orderDescription": "Не нашли нужное? Свяжитесь с нами для поиска любого авто на международных аукционах под ваши требования.",
+      "gridViewAriaLabel": "Сетка",
+      "listViewAriaLabel": "Список",
+      "sort": "Сортировать",
+      "sortAriaLabel": "Параметры сортировки",
+      "sortOptions": {
+        "priceAsc": "Цена: по возрастанию",
+        "priceDesc": "Цена: по убыванию",
+        "yearNewest": "Год: сначала новые",
+        "yearOldest": "Год: сначала старые"
+      },
+      "tabs": {
+        "all": "Все автомобили",
+        "allShort": "Все",
+        "arriving": "Скоро прибудут",
+        "arrivingShort": "В пути",
+        "current": "В наличии",
+        "currentShort": "Наличие",
+        "order": "Под заказ",
+        "orderShort": "Заказ"
+      },
+      "viewCta": "Подробнее",
+      "viewToggleAriaLabel": "Переключить вид"
     }
   },
   "carDetails": {
@@ -324,15 +293,12 @@
       "arriving": "В пути",
       "order": "Доступно под заказ"
     },
-    "shippingProgress": "Прогресс доставки",
-    "estimatedArrival": "Ожидаемое прибытие",
     "specifications": "Характеристики",
     "specs": {
       "year": "Год",
       "horsepower": "Мощность",
       "engine": "Двигатель",
       "transmission": "Коробка передач",
-      "fuelType": "Тип топлива",
       "location": "Местоположение",
       "mileage": "Пробег",
       "driveType": "Привод",
@@ -375,14 +341,6 @@
       "description": "Автомобиль, который вы ищете, не существует или был удален.",
       "backButton": "Вернуться к автомобилям"
     },
-    "racing": {
-      "title": "Почувствуйте скорость",
-      "subtitle": "Ощутите мощь и производительность",
-      "horsepower": "Лошадиных сил",
-      "acceleration": "км/ч за 3.5с",
-      "model": "Модельный год",
-      "cta": "Готовы прокатиться?"
-    },
     "lightbox": {
       "close": "Закрыть",
       "previous": "Предыдущее",
@@ -396,11 +354,6 @@
     "horsepowerUnit": "л.с."
   },
   "calculator": {
-    "loading": "Загрузка...",
-    "page": {
-      "title": "Калькулятор стоимости импорта",
-      "description": "Получите точную оценку всех расходов на импорт автомобиля. Калькулятор включает доставку, пошлины, инспекцию и другое."
-    },
     "form": {
       "vehicleInfo": "Данные автомобиля",
       "purchasePriceLabel": "Цена покупки (USD)",
@@ -490,39 +443,6 @@
         "electric": "Электро"
       }
     },
-    "breakdown": {
-      "title": "Структура затрат",
-      "empty": "Введите параметры и нажмите расчёт, чтобы увидеть структуру затрат",
-      "rows": {
-        "base": {
-          "title": "Цена покупки",
-          "subtitle": "Аукцион или дилер"
-        },
-        "shipping": {
-          "title": "Международная доставка",
-          "subtitle": "Фрахт и обработка"
-        },
-        "customs": {
-          "title": "Таможня и пошлины",
-          "subtitle": "Налоги и НДС"
-        },
-        "inspection": {
-          "title": "Инспекция и сертификация",
-          "subtitle": "Тесты безопасности и экологии"
-        },
-        "docs": {
-          "title": "Документы",
-          "subtitle": "Регистрация и оформление"
-        },
-        "serviceFee": {
-          "title": "Сервисный сбор Prime Cars",
-          "subtitle": "Консьерж и поддержка"
-        },
-        "estimatedTotal": "Оценка итого",
-        "requestQuote": "Запросить подробный расчёт",
-        "total": "Итого"
-      }
-    },
     "results": {
       "customsDuty": "Таможенная пошлина",
       "vat": "НДС",
@@ -539,9 +459,7 @@
       "importantTitle": "Важно",
       "importantNotice": "Все сделки с компаниями и гражданами Республики Армения осуществляются исключительно в армянской валюте (драм / AMD). Примечание: таможенные сборы рассчитываются по обменному курсу, установленному Центральным банком Армении на данный день.",
       "backToCalculator": "Вернуться к калькулятору",
-      "costBreakdown": "Разбивка стоимости",
-      "restrictedDataTitle": "Полная разбивка стоимости доступна для партнёров",
-      "becomePartner": "Станьте партнёром, чтобы увидеть все детали"
+      "costBreakdown": "Разбивка стоимости"
     }
   },
   "partners": {
@@ -568,26 +486,12 @@
     }
   },
   "auth": {
-    "closeAria": "Закрыть",
-    "welcomeBack": "С возвращением",
-    "subtitle": "Войдите, чтобы получить доступ к аккаунту",
     "username": "Имя пользователя",
     "usernamePlaceholder": "Введите имя пользователя",
-    "email": "Email",
-    "phone": "Телефон",
-    "emailAddress": "Email",
-    "phoneNumber": "Номер телефона",
     "password": "Пароль",
     "passwordPlaceholder": "Введите пароль",
-    "rememberMe": "Запомнить меня",
-    "forgotPassword": "Забыли пароль?",
     "signIn": "Войти",
     "signingIn": "Вход...",
-    "orContinueWith": "или продолжить через",
-    "google": "Google",
-    "github": "GitHub",
-    "noAccount": "Нет аккаунта?",
-    "signUp": "Регистрация",
     "validation": {
       "usernameRequired": "Имя пользователя обязательно",
       "usernameMinLength": "Имя пользователя должно быть не менее 3 символов",
@@ -613,12 +517,6 @@
     }
   },
   "admin": {
-    "roles": {
-      "admin": "Админ",
-      "manager": "Менеджер",
-      "support": "Поддержка",
-      "viewer": "Просмотр"
-    },
     "loadingUser": "Загрузка данных пользователя...",
     "refresh": "Обновить",
     "pagination": {
@@ -634,14 +532,10 @@
       "searchCars": "Поиск по модели, клиенту, VIN, лоту или контейнеру...",
       "country": "Страна",
       "allCountries": "Все страны",
-      "role": "Роль",
-      "allRoles": "Все роли",
       "type": "Тип",
       "allTypes": "Все типы",
       "auction": "Аукцион",
       "allAuctions": "Все аукционы",
-      "status": "Статус",
-      "allStatuses": "Все статусы",
       "carPaid": "Оплата авто",
       "shippingPaid": "Оплата доставки",
       "insuranceFilter": "Страхование",
@@ -661,16 +555,12 @@
       }
     },
     "topbar": {
-      "searchPlaceholder": "Поиск (только визуально)",
-      "quickSettings": "Быстрые настройки",
       "openNavAria": "Открыть навигацию",
       "languageLabel": "Язык",
       "themeLabel": "Тема",
       "lightMode": "Светлая",
       "darkMode": "Тёмная",
       "activeLabel": "Активно",
-      "logout": "Выход",
-      "loggingOut": "Выход...",
       "preferencesAria": "Предпочтения"
     },
     "preferences": {
@@ -684,11 +574,7 @@
     },
     "sidebar": {
       "consoleLabel": "Админ‑консоль",
-      "addCar": "Добавить авто",
-      "createUser": "Создать пользователя",
       "navigation": "Навигация",
-      "internalAdmin": "Внутренняя панель",
-      "internalNote": "Прототип без бэкенда. Все действия локальны в браузере.",
       "nav": {
         "cars": "Авто",
         "availableCars": "Продаваемые авто",
@@ -702,8 +588,7 @@
       "searchUserPlaceholder": "Поиск по имени, имени пользователя, email или компании...",
       "searchCityPlaceholder": "Поиск городов...",
       "adjustmentPlaceholder": "100",
-      "applying": "Применение...",
-      "coefficientPlaceholder": "100"
+      "applying": "Применение..."
     },
     "availableCars": {
       "title": "Продаваемые автомобили",
@@ -712,8 +597,6 @@
       "searchPlaceholder": "Поиск по марке, модели, году, местоположению...",
       "searchResults": "Найдено {count} {count, plural, one {автомобиль} other {автомобилей}} по запросу \"{query}\"",
       "noResults": "Нет результатов для \"{query}\"",
-      "clearSearch": "Очистить поиск",
-      "showingTitle": "Продаваемые автомобили",
       "showing": "Показано {count} {count, plural, =0 {автомобилей} one {автомобиль} other {автомобилей}}",
       "table": {
         "number": "#",
@@ -734,9 +617,7 @@
         "update": "Обновить",
         "delete": "Удалить"
       },
-      "loading": "Загрузка доступных автомобилей...",
-      "noCarsFound": "Автомобили не найдены",
-      "carUpdated": "Автомобиль успешно обновлен"
+      "noCarsFound": "Автомобили не найдены"
     },
     "notifications": {
       "title": "Уведомления",
@@ -764,28 +645,7 @@
       "loadFailedDescription": "Не удалось получить уведомления с сервера.",
       "moreWaiting": "{count, plural, one {Ещё # уведомление ждёт} few {Ещё # уведомления ждут} many {Ещё # уведомлений ждут} other {Ещё # уведомлений ждут}}"
     },
-    "headers": {
-      "carsTitle": "Авто",
-      "carsSubtitle": "Управляйте объявлениями в спокойном табличном формате.",
-      "usersTitle": "Пользователи",
-      "usersSubtitle": "Доступы и роли (только фронтенд).",
-      "notificationsTitle": "Уведомления",
-      "notificationsSubtitle": "Управление системными уведомлениями и объявлениями для всех пользователей.",
-      "calculatorTitle": "Калькулятор импорта",
-      "calculatorSubtitle": "Рассчитайте таможню, налоги и полную стоимость импорта авто.",
-      "settingsTitle": "Настройки",
-      "settingsSubtitle": "Управление доставкой с безопасными, мощными инструментами."
-    },
     "carsView": {
-      "title": "Инвентарь",
-      "subtitle": "Табличные строки с чётким выравниванием и спокойной плотностью.",
-      "columns": {
-        "car": "Авто",
-        "price": "Цена",
-        "status": "Статус",
-        "updated": "Обновлено"
-      },
-      "updatedToday": "Сегодня",
       "noCarsFound": "Автомобили не найдены",
       "loadingCars": "Загрузка автомобилей...",
       "deleteCar": {
@@ -796,31 +656,14 @@
         "deleting": "Удаление..."
       }
     },
-    "usersView": {
-      "searchPlaceholder": "Поиск пользователей...",
-      "deleting": "Удаление...",
-      "title": "Пользователи",
-      "subtitle": "Чистая таблица: аватар, email и роль.",
-      "columns": {
-        "user": "Пользователь",
-        "email": "Email",
-        "role": "Роль",
-        "status": "Статус"
-      },
-      "statusActive": "Активен",
-      "noUsersFound": "Пользователи не найдены",
-      "loadingUsers": "Загрузка пользователей..."
-    },
     "settingsView": {
       "shippingTab": "Доставка и города",
       "usersTab": "Коэффициенты пользователей",
       "changePassword": "Изменить пароль",
       "shippingPricesTitle": "Цены доставки",
-      "shippingPricesSubtitle": "Управляйте доставкой по городам и применяйте безопасную глобальную корректировку.",
       "globalAdjustmentTitle": "Глобальная корректировка",
       "applyToAll": "Применить ко всем",
       "citiesTitle": "Города",
-      "citiesSubtitle": "Обновляйте или удаляйте цену доставки для каждого города.",
       "addCity": "Добавить город",
       "loadingCities": "Загрузка городов доставки...",
       "noCitiesFound": "Городов не найдено для {auction}",
@@ -829,26 +672,20 @@
       "columns": {
         "city": "Город",
         "shipping": "Доставка",
-        "taxes": "Контрольная цена",
-        "actions": "Действия"
+        "taxes": "Контрольная цена"
       },
-      "update": "Изменить",
-      "delete": "Удалить",
       "deleteTitle": "Удалить {city}?",
       "deleteBody": "Город будет удалён из управления доставкой. Действие нельзя отменить.",
       "cancel": "Отмена",
       "confirmDelete": "Подтвердить удаление",
       "userCoefficientsTitle": "Коэффициенты пользователей",
       "userCoefficientsDescription": "Установите расчетные коэффициенты и предпочтения аукциона для каждого пользователя. Поддерживает положительные и отрицательные значения.",
-      "coefficientLabel": "Коэффициент",
       "currentCoefficient": "Текущий коэффициент",
       "coefficientPlaceholder": "+/- 100",
-      "auctionLabel": "Аукцион",
       "auctionPlaceholder": "Выберите аукцион",
       "auctionNone": "Не выбран",
       "cancelButton": "Отмена",
       "applyButton": "Обновить коэффициент",
-      "applyingButton": "Обновление...",
       "coefficientDialog": {
         "title": "Обновить настройки пользователя",
         "description": "Вы уверены, что хотите обновить настройки для",
@@ -873,7 +710,10 @@
         "bracketCount": "{count, plural, one {# ставка} few {# ставки} many {# ставок} other {# ставки}} будут сохранены",
         "cancel": "Отмена",
         "confirm": "Подтвердить обновление"
-      }
+      },
+      "loadingUsers": "Загрузка пользователей…",
+      "noUsersFound": "Пользователи не найдены",
+      "noUsersMatchSearch": "Нет пользователей по запросу"
     },
     "toasts": {
       "validationError": "Ошибка валидации",
@@ -938,34 +778,6 @@
         },
         "model": "Модель",
         "modelPlaceholder": "напр., BMW X5",
-        "vehicleModels": {
-          "bmw": "BMW",
-          "mercedes": "Mercedes-Benz",
-          "audi": "Audi",
-          "toyota": "Toyota",
-          "honda": "Honda",
-          "ford": "Ford",
-          "chevrolet": "Chevrolet",
-          "nissan": "Nissan",
-          "lexus": "Lexus",
-          "porsche": "Porsche",
-          "tesla": "Tesla",
-          "volkswagen": "Volkswagen",
-          "hyundai": "Hyundai",
-          "kia": "Kia",
-          "mazda": "Mazda",
-          "subaru": "Subaru",
-          "jeep": "Jeep",
-          "ram": "Ram",
-          "gmc": "GMC",
-          "cadillac": "Cadillac",
-          "infiniti": "Infiniti",
-          "acura": "Acura",
-          "volvo": "Volvo",
-          "landRover": "Land Rover",
-          "jaguar": "Jaguar",
-          "other": "Другое"
-        },
         "year": "Год",
         "yearPlaceholder": "2024",
         "auction": "Аукцион",
@@ -977,19 +789,12 @@
           "other": "Другой"
         },
         "city": "Город",
-        "cityPlaceholder": "например, Нью‑Йорк",
         "lot": "LOT",
         "lotPlaceholder": "например, 12345678",
-        "paymentToAuction": "Платёж аукциону (USD)",
-        "paymentToAuctionPlaceholder": "например, 2500",
         "vin": "VIN",
         "vinPlaceholder": "например, 1HGCM82633A004352",
         "price": "Цена (USD)",
         "pricePlaceholder": "189500",
-        "status": "Статус",
-        "statusPending": "На проверке",
-        "statusActive": "Активно",
-        "statusDraft": "Черновик",
         "customerNotes": "Заметки",
         "customerNotesPlaceholder": "Дополнительные заметки для клиента или команды…",
         "paymentsAndDocuments": "Платежи и документы",
@@ -1000,8 +805,6 @@
         "notPaid": "Не оплачено",
         "exists": "Есть",
         "notExists": "Нет",
-        "invoiceLabel": "Инвойс (PDF)",
-        "dragDropInvoice": "Перетащите ваш инвойс",
         "vehiclePdfLabel": "Документ автомобиля (PDF)",
         "dragDropVehiclePdf": "Перетащите документ автомобиля",
         "insurancePdfLabel": "Документ страхования (PDF)",
@@ -1013,10 +816,6 @@
         "pdfOnlyMaxSize": "Только PDF, макс. 10МБ",
         "onlyPdfAllowed": "Разрешены только PDF файлы",
         "fileSizeLimit": "Размер файла должен быть меньше 10МБ",
-        "uploadInvoice": "Загрузить счёт",
-        "format": "Формат: PDF",
-        "dropToUpload": "Отпустите для загрузки",
-        "invalidFormat": "Неверный формат файла. Пожалуйста, загрузите только PDF файл.",
         "cancel": "Отмена",
         "submit": "Сохранить",
         "submitting": "Отправка..."
@@ -1024,7 +823,6 @@
       "createUser": {
         "title": "Создать пользователя",
         "subtitle": "Минимальная форма с чёткой иерархией полей.",
-        "photosLabel": "Фото пользователя",
         "country": "Страна",
         "selectCountry": "Выберите страну",
         "countries": {
@@ -1052,8 +850,7 @@
         "passwordPlaceholder": "Введите пароль (минимум 6 символов)",
         "cancel": "Отмена",
         "submit": "Сохранить",
-        "submitting": "Сохранение...",
-        "invalidEmail": "Пожалуйста, введите действительный адрес электронной почты"
+        "submitting": "Сохранение..."
       },
       "updateShipping": {
         "title": "Изменить цену доставки",
@@ -1108,11 +905,6 @@
         "cancel": "Отмена",
         "submit": "Обновить пользователя",
         "submitting": "Обновление...",
-        "required": "обязательно",
-        "firstNameRequired": "Имя обязательно",
-        "lastNameRequired": "Фамилия обязательна",
-        "usernameRequired": "Имя пользователя обязательно",
-        "emailRequired": "Электронная почта обязательна",
         "successMessage": "Пользователь успешно обновлен",
         "errorMessage": "Не удалось обновить пользователя"
       },
@@ -1125,8 +917,6 @@
         "loadingCities": "Загрузка городов...",
         "selectCity": "Выберите город",
         "selectAuctionFirst": "Сначала выберите аукцион",
-        "invoiceLabel": "Инвойс (PDF)",
-        "dragDropInvoice": "Перетащите ваш инвойс",
         "vehiclePdfLabel": "Документ автомобиля (PDF)",
         "dragDropVehiclePdf": "Перетащите документ автомобиля",
         "insurancePdfLabel": "Документ страхования (PDF)",
@@ -1150,7 +940,6 @@
         "auctionPlaceholder": "Выберите аукцион",
         "purchaseDate": "Дата покупки",
         "city": "Город",
-        "cityPlaceholder": "напр., Нью-Йорк",
         "lotNumber": "Номер лота",
         "lotPlaceholder": "напр., 12345678",
         "vin": "VIN",
@@ -1184,7 +973,8 @@
         "updateInvoice": "Обновить",
         "newFile": "Новый файл",
         "willReplaceCurrent": "Заменит текущий",
-        "cancelUpdate": "Отменить обновление"
+        "cancelUpdate": "Отменить обновление",
+        "currentInvoice": "Текущий счёт"
       },
       "deleteUser": {
         "title": "Удалить пользователя",
@@ -1203,7 +993,6 @@
         "message": "Заголовок",
         "messagePlaceholder": "Обновление системы",
         "description": "Сообщение",
-        "descriptionPlaceholder": "Система будет находиться на обслуживании в субботу...",
         "reason": "Причина (необязательно)",
         "reasonPlaceholder": "Плановое обслуживание для улучшения производительности",
         "cancel": "Отмена",
@@ -1212,8 +1001,7 @@
         "success": "Уведомление отправлено",
         "successDescription": "Все пользователи получат это уведомление.",
         "error": "Не удалось отправить",
-        "errorDescription": "Не удалось отправить уведомление.",
-        "fillRequired": "Пожалуйста, заполните все обязательные поля."
+        "errorDescription": "Не удалось отправить уведомление."
       },
       "deleteNotification": {
         "title": "Удалить уведомление",
@@ -1341,7 +1129,6 @@
         "description": "Установите новый пароль для вашей учётной записи администратора.",
         "username": "Имя пользователя",
         "usernamePlaceholder": "Введите ваше имя пользователя",
-        "usernameNotFound": "Имя пользователя не найдено. Пожалуйста, проверьте и попробуйте снова.",
         "newPassword": "Новый пароль",
         "newPasswordPlaceholder": "Введите новый пароль (мин. 8 символов)",
         "confirmPassword": "Подтвердите новый пароль",
@@ -1351,7 +1138,6 @@
         "changing": "Изменение...",
         "successTitle": "Пароль изменен",
         "successDescription": "Ваш пароль успешно обновлён.",
-        "errorTitle": "Ошибка изменения",
         "errorDescription": "Не удалось изменить пароль. Попробуйте еще раз."
       },
       "readUsers": {
@@ -1359,19 +1145,12 @@
         "loading": "Загрузка...",
         "noReads": "Никто еще не прочитал это уведомление",
         "read": "Прочитано",
-        "totalReads": "{count} {count, plural, one {человек прочитал} few {человека прочитали} other {человек прочитали}} это уведомление",
-        "justNow": "Только что",
-        "minutesAgo": "{minutes}м назад",
-        "hoursAgo": "{hours}ч назад",
-        "daysAgo": "{days}д назад"
+        "totalReads": "{count} {count, plural, one {человек прочитал} few {человека прочитали} other {человек прочитали}} это уведомление"
       }
     },
     "actions": {
       "update": "Обновить",
       "delete": "Удалить",
-      "cancel": "Отмена",
-      "save": "Сохранить",
-      "submit": "Отправить",
       "close": "Закрыть",
       "view": "Просмотр"
     }
@@ -1383,32 +1162,15 @@
     "car": "Автомобиль",
     "client": "Клиент",
     "price": "Цена",
-    "type": "Тип",
     "auction": "Аукцион",
     "city": "Город",
-    "lot": "Лот",
-    "vin": "VIN",
-    "purchaseDate": "Дата покупки",
-    "containerNumberBooking": "Бронирование номера контейнера",
-    "containerNumberBookingPlaceholder": "например, MAEU1234567",
-    "promisedPickUpDate": "Обещанная дата забора",
-    "deliveredWarehouse": "Доставлено на склад",
     "notes": "Заметки",
-    "status": "Статус",
-    "carPaid": "Оплата авто",
-    "vehiclePdf": "PDF автомобиля",
-    "shippingPaid": "Оплата доставки",
-    "shippingPdf": "PDF доставки",
     "insurance": "Страхование",
-    "insurancePdf": "PDF страхования",
-    "created": "Создано",
-    "invoice": "Счет",
     "download": "Скачать",
     "actions": "Действия",
     "saleDate": "Дата продажи",
     "destinationPort": "Порт назначения",
     "container": "Контейнер",
-    "carInvoice": "Инвойс авто",
     "shippingInvoice": "Инвойс доставки",
     "receiverName": "Имя получателя",
     "showing": "Показано",
@@ -1428,7 +1190,6 @@
     "actions": "Действия",
     "loadingUsers": "Загрузка пользователей...",
     "noUsersFound": "Пользователи не найдены",
-    "noUsersMatchSearch": "Пользователи не соответствуют вашему запросу",
     "showing": "Показано",
     "user": "пользователь",
     "users": "пользователей"
@@ -1449,7 +1210,6 @@
     "successTitle": "Заявка отправлена",
     "successDescription": "Мы получили ваш запрос. Наша команда скоро свяжется с вами.",
     "errorTitle": "Не удалось отправить",
-    "errorDescription": "Пожалуйста, попробуйте ещё раз или свяжитесь с нами напрямую.",
-    "required": "Обязательно"
+    "errorDescription": "Пожалуйста, попробуйте ещё раз или свяжитесь с нами напрямую."
   }
 }

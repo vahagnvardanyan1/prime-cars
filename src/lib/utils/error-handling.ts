@@ -21,16 +21,3 @@ export const isAuthenticated = (): boolean => {
   if (typeof window === 'undefined') return false;
   return !!localStorage.getItem('access_token');
 };
-
-/**
- * Safely extracts error message from an unknown error
- */
-export const getErrorMessage = ({ error, fallback = "An unexpected error occurred" }: { error: unknown; fallback?: string }): string => {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  if (typeof error === 'string') {
-    return error;
-  }
-  return fallback;
-};

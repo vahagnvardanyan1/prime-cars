@@ -4,20 +4,11 @@
     "description": "Կարծես էջը հասանելի չէ։ Վերադառնանք գլխավոր էջ։",
     "backHome": "Վերադառնալ գլխավոր էջ"
   },
-  "meta": {
-    "localeName": "Հայերեն"
-  },
   "common": {
-    "success": "Հաջողություն",
-    "error": "Սխալ",
-    "warning": "Զգուշացում",
-    "download": "Ներբեռնել",
-    "downloading": "Ներբեռնում",
     "unexpectedError": "Անսպասելի սխալ տեղի ունեցավ։",
     "dismiss": "Փակել"
   },
   "downloadImages": {
-    "button": "Ներբեռնել նկարները",
     "buttonShort": "Ներբեռնել նկարները",
     "downloading": "Ներբեռնվում է...",
     "downloadAll": "Ներբեռնել բոլորը ({count})",
@@ -101,24 +92,8 @@
     },
     "popularDeals": {
       "title": "Հասանելի ավտոմեքենաներ",
-      "rentalPriceLabel": "Վարձակալության գին",
       "priceLabel": "Գին",
-      "seeTourDetails": "Մանրամասներ",
-      "periodPerDay": "/օր",
-      "noCars": "Այս պահին մեքենաներ հասանելի չեն",
-      "specs": {
-        "automatic": "Ավտոմատ",
-        "coupe": "Կուպե",
-        "sedan": "Սեդան",
-        "sports": "Սպորտ",
-        "suv": "SUV",
-        "petrol": "Բենզին",
-        "electric": "Էլեկտրական"
-      }
-    },
-    "importCosts": {
-      "title": "Հաշվեք ներմուծման ծախսերը",
-      "description": "Ստացեք ակնթարթային գնահատում ներմուծման բոլոր ծախսերի համար։ Մեր հաշվիչը ներառում է առաքում, մաքսային վճարներ և այլ ծախսեր։"
+      "noCars": "Այս պահին մեքենաներ հասանելի չեն"
     },
     "ourPartners": {
       "title": "Մեր գործընկերները",
@@ -219,13 +194,6 @@
       "workingDays": "Երկուշաբթի - Ուրբաթ",
       "workingTime": "10:00 - 22:00"
     },
-    "apply": {
-      "title": "Դիմել հիմա",
-      "description": "Լրացրեք ձևաթերթիկը և մենք կկապվենք ձեզ հետ։",
-      "namePlaceholder": "Անունը",
-      "phonePlaceholder": "Հեռախոսի համարը",
-      "submit": "Ուղարկել"
-    },
     "shipping": {
       "title": "Միջազգային առաքման ցանց",
       "description": "Նավահանգիստների և գրասենյակների հարմար տեղակայման շնորհիվ մենք կարող ենք արագորեն վերցնել ձեր տրանսպորտային միջոցը ԱՄՆ-ի և Կանադաի ցանկացած վայրից։ Մենք ԱՄՆ-ում Կանադայում ունենք 10 խոշոր պահեստ, որոնցից յուրաքանչյուրում աշխատում է ավելի քան 100 աշխատակից, որոնք ապահովում են տրանսպորտային միջոցների անվտանգ տեղակայումը և պատվերի արագ մշակումը։",
@@ -234,34 +202,13 @@
       "to": "Առաքում դեպի",
       "warehouses": "Մեր պահեստները",
       "destinations": "Առաքման ուղղություններ"
-    }
-  },
-  "cars": {
-    "title": "Պրեմիում ընտրանի",
-    "subtitle": "Դիտեք մեր ընտրված լյուքս և սպորտային ավտոմեքենաները աշխարհի տարբեր երկրներից",
-    "filters": {
-      "title": "Ֆիլտրեր",
-      "searchLabel": "Որոնում",
-      "searchPlaceholder": "Ապրանքանիշ կամ մոդել…",
-      "brandLabel": "Ապրանքանիշ",
-      "allBrands": "Բոլոր ապրանքանիշերը",
-      "priceRangeLabel": "Գների միջակայք",
-      "allPrices": "Բոլոր գները",
-      "under100k": "Մինչև $100k",
-      "between100And150": "$100k - $150k",
-      "over150k": "$150k-ից բարձր",
-      "reset": "Վերականգնել ֆիլտրերը"
     },
-    "results": {
-      "found": "{count, plural, one {Գտնվեց # մեքենա} other {Գտնվեց # մեքենա}}",
-      "noResults": "Ֆիլտրերին համապատասխան մեքենա չկա։ Փորձեք փոխել որոնման չափանիշները։",
-      "viewDetails": "Դիտել մանրամասները",
-      "sort": {
-        "priceLowToHigh": "Գին՝ ցածրից բարձր",
-        "priceHighToLow": "Գին՝ բարձրից ցածր",
-        "yearNewest": "Տարի՝ նորերը առաջ",
-        "yearOldest": "Տարի՝ հները առաջ"
-      }
+    "carSections": {
+      "eta": "Սպասվում է",
+      "price": "Գին",
+      "requestCta": "Պատվիրել մեքենա",
+      "startingFrom": "Սկսած",
+      "viewCta": "Մանրամասներ"
     }
   },
   "carsPage": {
@@ -310,7 +257,29 @@
       "arrivingTitle": "Ճանապարհին ավտոմեքենաներ չկան",
       "arrivingDescription": "Ներկայումս ճանապարհին ավտոմեքենաներ չկան։ Դիտեք մեր առկա ընտրանին կամ կատարեք անհատական պատվեր։",
       "orderTitle": "Անհատական պատվեր հասանելի է",
-      "orderDescription": "Չե՞ք գտնում ձեր փնտրածը։ Կապվեք մեզ հետ՝ ցանկացած ավտոմեքենա միջազգային աճուրդներից ձեր պահանջներին համապատասխան գտնելու համար։"
+      "orderDescription": "Չե՞ք գտնում ձեր փնտրածը։ Կապվեք մեզ հետ՝ ցանկացած ավտոմեքենա միջազգային աճուրդներից ձեր պահանջներին համապատասխան գտնելու համար։",
+      "gridViewAriaLabel": "Ցանցային տեսք",
+      "listViewAriaLabel": "Ցուցակի տեսք",
+      "sort": "Տեսակավորել",
+      "sortAriaLabel": "Տեսակավորման տարբերակներ",
+      "sortOptions": {
+        "priceAsc": "Գին՝ ցածրից բարձր",
+        "priceDesc": "Գին՝ բարձրից ցածր",
+        "yearNewest": "Տարի՝ նորից հին",
+        "yearOldest": "Տարի՝ հնից նոր"
+      },
+      "tabs": {
+        "all": "Բոլոր մեքենաները",
+        "allShort": "Բոլորը",
+        "arriving": "Շուտով կժամանեն",
+        "arrivingShort": "Ճանապարհին",
+        "current": "Առկա",
+        "currentShort": "Առկա",
+        "order": "Պատվերով",
+        "orderShort": "Պատվեր"
+      },
+      "viewCta": "Մանրամասներ",
+      "viewToggleAriaLabel": "Փոխել տեսքը"
     }
   },
   "carDetails": {
@@ -324,15 +293,12 @@
       "arriving": "Ճանապարհին է",
       "order": "Կարելի է պատվիրել"
     },
-    "shippingProgress": "Առաքման ընթացք",
-    "estimatedArrival": "Ակնկալվող ժամանում",
     "specifications": "Բնութագրեր",
     "specs": {
       "year": "Տարի",
       "horsepower": "Հզորություն",
       "engine": "Շարժիչ տեսակը",
       "transmission": "Փոխանցման տուփ",
-      "fuelType": "Վառելիքի տեսակ",
       "location": "Գտնվելու վայր",
       "mileage": "Վազքը",
       "driveType": "Քարշակ",
@@ -375,14 +341,6 @@
       "description": "Ձեր փնտրած մեքենան գոյություն չունի կամ հեռացվել է։",
       "backButton": "Վերադառնալ մեքենաներ"
     },
-    "racing": {
-      "title": "Զգացեք արագությունը",
-      "subtitle": "Զգացեք հզորությունը և կատարողականությունը",
-      "horsepower": "Ձիաուժ",
-      "acceleration": "կմ/ժ 3.5վ",
-      "model": "Մոդելային տարի",
-      "cta": "Պատրա՞ստ եք փորձելու համար:"
-    },
     "lightbox": {
       "close": "Փակել",
       "previous": "Նախորդ",
@@ -396,11 +354,6 @@
     "horsepowerUnit": "ՁՈ"
   },
   "calculator": {
-    "loading": "Բեռնվում է...",
-    "page": {
-      "title": "Ներմուծման արժեքի հաշվիչ",
-      "description": "Ստացեք ճշգրիտ գնահատում ներմուծման բոլոր ծախսերի համար։ Հաշվիչը ներառում է առաքում, մաքսային վճարներ, ստուգումներ և այլն։"
-    },
     "form": {
       "vehicleInfo": "Մեքենայի տվյալներ",
       "purchasePriceLabel": "Գնման արժեքը (USD)",
@@ -490,39 +443,6 @@
         "electric": "Էլեկտրական"
       }
     },
-    "breakdown": {
-      "title": "Ծախսերի բաժանում",
-      "empty": "Մուտքագրեք տվյալները և հաշվեք՝ ծախսերի բաժանումը տեսնելու համար",
-      "rows": {
-        "base": {
-          "title": "Գնման արժեքը",
-          "subtitle": "Աճուրդ կամ վաճառող"
-        },
-        "shipping": {
-          "title": "Միջազգային առաքում",
-          "subtitle": "Ծովային բեռնում և սպասարկում"
-        },
-        "customs": {
-          "title": "Մաքս և վճարներ",
-          "subtitle": "Հարկեր և ԱԱՀ"
-        },
-        "inspection": {
-          "title": "Ստուգում և սերտիֆիկացում",
-          "subtitle": "Անվտանգության և արտանետումների ստուգում"
-        },
-        "docs": {
-          "title": "Փաստաթղթերի վճարներ",
-          "subtitle": "Գրանցում և փաստաթղթավորում"
-        },
-        "serviceFee": {
-          "title": "Prime Cars սպասարկման վճար",
-          "subtitle": "Կոնսյերժ և աջակցություն"
-        },
-        "estimatedTotal": "Գնահատված ընդհանուր արժեքը",
-        "requestQuote": "Պահանջել մանրամասն առաջարկ",
-        "total": "Ընդհանուր"
-      }
-    },
     "results": {
       "customsDuty": "Մաքսատուրք",
       "vat": "ԱԱՀ",
@@ -539,9 +459,7 @@
       "importantTitle": "Կարևոր",
       "importantNotice": "Հայաստանի Հանրապետության ընկերությունների և քաղաքացիների հետ բոլոր գործարքները իրականացվում են բացառապես հայկական արժույթով (Դրամ / ՀՀԴ)։ Նշում՝ մաքսային վճարները հաշվարկվում են Հայաստանի Կենտրոնական Բանկի կողմից սահմանված փոխարժեքով՝ տվյալ օրվա դրությամբ։",
       "backToCalculator": "Վերադառնալ հաշվիչ",
-      "costBreakdown": "Ծախսերի բաժանում",
-      "restrictedDataTitle": "Delays amboxjakan cakhseri bazhanumэ hasaneli э gorцэnkernerin",
-      "becomePartner": "Darцek gorцэnker՝ bolorэ tesnelu hamar"
+      "costBreakdown": "Ծախսերի բաժանում"
     }
   },
   "partners": {
@@ -568,26 +486,12 @@
     }
   },
   "auth": {
-    "closeAria": "Փակել",
-    "welcomeBack": "Բարի վերադարձ",
-    "subtitle": "Մուտք գործեք՝ ձեր հաշիվը հասանելի դարձնելու համար",
     "username": "Օգտանուն",
     "usernamePlaceholder": "Մուտքագրեք օգտանունը",
-    "email": "Էլ. փոստ",
-    "phone": "Հեռախոս",
-    "emailAddress": "Էլ. փոստ",
-    "phoneNumber": "Հեռախոսի համար",
     "password": "Գաղտնաբառ",
     "passwordPlaceholder": "Մուտքագրեք գաղտնաբառը",
-    "rememberMe": "Հիշել ինձ",
-    "forgotPassword": "Մոռացե՞լ եք գաղտնաբառը",
     "signIn": "Մուտք",
     "signingIn": "Մուտք է գործվում...",
-    "orContinueWith": "կամ շարունակել՝",
-    "google": "Google",
-    "github": "GitHub",
-    "noAccount": "Չունե՞ք հաշիվ",
-    "signUp": "Գրանցվել",
     "validation": {
       "usernameRequired": "Օգտանունը պարտադիր է",
       "usernameMinLength": "Օգտանունը պետք է լինի առնվազն 3 նիշ",
@@ -613,12 +517,6 @@
     }
   },
   "admin": {
-    "roles": {
-      "admin": "Ադմին",
-      "manager": "Մենեջեր",
-      "support": "Աջակցություն",
-      "viewer": "Դիտող"
-    },
     "loadingUser": "Օգտատիրոջ տվյալների բեռնում...",
     "refresh": "Թարմացնել",
     "pagination": {
@@ -634,14 +532,10 @@
       "searchCars": "Որոնել ըստ մոդելի, հաճախորդի, VIN, լոտի կամ կոնտեյների...",
       "country": "Երկիր",
       "allCountries": "Երկրներ",
-      "role": "Դեր",
-      "allRoles": "Դերեր",
       "type": "Տեսակ",
       "allTypes": "Տեսակներ",
       "auction": "Աճուրդ",
       "allAuctions": "Աճուրդներ",
-      "status": "Կարգավիճակ",
-      "allStatuses": "Կարգավիճակներ",
       "carPaid": "Մեքենա",
       "shippingPaid": "Առաքում",
       "insuranceFilter": "Ապահովագրություն",
@@ -661,17 +555,13 @@
       }
     },
     "topbar": {
-      "searchPlaceholder": "Որոնում (տեսողական)",
-      "quickSettings": "Արագ կարգավորումներ",
       "openNavAria": "Բացել նավիգացիան",
       "preferencesAria": "Նախընտրանքներ",
       "languageLabel": "Լեզու",
       "themeLabel": "Տեսք",
       "lightMode": "Բաց",
       "darkMode": "Մուգ",
-      "activeLabel": "Ակտիվ",
-      "logout": "Ելք",
-      "loggingOut": "Դուրս գալիս..."
+      "activeLabel": "Ակտիվ"
     },
     "preferences": {
       "logout": "Ելք"
@@ -684,11 +574,7 @@
     },
     "sidebar": {
       "consoleLabel": "Ադմին վահանակ",
-      "addCar": "Ավելացնել մեքենանա",
-      "createUser": "Ստեղծել օգտատեր",
       "navigation": "Նավիգացիա",
-      "internalAdmin": "Ներքին ադմին",
-      "internalNote": "Միայն ֆրոնթենդ պրոտոտիպ։ Բոլոր գործողությունները տեղային են բրաուզերում։",
       "nav": {
         "cars": "Ավտոմեքենաներ",
         "availableCars": "Վաճառք",
@@ -702,8 +588,7 @@
       "searchUserPlaceholder": "Որոնել ըստ անվան, օգտանուն, էլ․ փոստի կամ ընկերության...",
       "searchCityPlaceholder": "Որոնել քաղաքներ...",
       "adjustmentPlaceholder": "100",
-      "applying": "Կիրառվում է...",
-      "coefficientPlaceholder": "100"
+      "applying": "Կիրառվում է..."
     },
     "availableCars": {
       "title": "Վաճառվող մեքենաներ",
@@ -712,8 +597,6 @@
       "searchPlaceholder": "Որոնում ըստ բրենդի, մոդելի, տարվա, վայրի...",
       "searchResults": "Գտնվել է {count} {count, plural, one {մեքենա} other {մեքենա}} \"{query}\" հարցմամբ",
       "noResults": "Արդյունքներ չկան \"{query}\" հարցմամբ",
-      "clearSearch": "Մաքրել որոնումը",
-      "showingTitle": "Վաճառվող մեքենաներ",
       "showing": "Ցուցադրվում է {count} {count, plural, =0 {մեքենա} one {մեքենա} other {մեքենա}}",
       "table": {
         "number": "#",
@@ -734,9 +617,7 @@
         "update": "Թարմացնել",
         "delete": "Ջնջել"
       },
-      "loading": "Բեռնվում են վաճառվող մեքենաներ...",
-      "noCarsFound": "Մեքենաներ չեն գտնվել",
-      "carUpdated": "Մեքենան հաջողությամբ թարմացվեց"
+      "noCarsFound": "Մեքենաներ չեն գտնվել"
     },
     "notifications": {
       "title": "Ծանուցումներ",
@@ -764,28 +645,7 @@
       "loadFailedDescription": "Չհաջողվեց ստանալ ծանուցումները սերվերից։",
       "moreWaiting": "{count, plural, one {Եւս # ծանուցում սպասում է} other {Եւս # ծանուցում սպասում է}}"
     },
-    "headers": {
-      "carsTitle": "Ավտոմեքենաներ",
-      "carsSubtitle": "Կառավարեք հայտարարությունները՝ հանգիստ, աղյուսակային հստակությամբ։",
-      "usersTitle": "Օգտատերեր",
-      "usersSubtitle": "Մուտքերի կառավարում և դերեր (միայն ֆրոնթենդ)։",
-      "notificationsTitle": "Ծանուցումներ",
-      "notificationsSubtitle": "Կառավարել համակարգային ծանուցումները և հայտարարությունները բոլոր օգտատերերի համար։",
-      "calculatorTitle": "Ներմուծման հաշվիչ",
-      "calculatorSubtitle": "Հաշվարկեք մաքսավճարները, հարկերը և ավտոմեքենայի ներմուծման ընդհանուր արժեքը։",
-      "settingsTitle": "Կարգավորումներ",
-      "settingsSubtitle": "Առաքման գների կառավարում՝ անվտանգ և հզոր գործիքներով։"
-    },
     "carsView": {
-      "title": "Ընտրանի",
-      "subtitle": "Աղյուսակային տողեր՝ հստակ հավասարեցմամբ և հանգիստ խտությամբ։",
-      "columns": {
-        "car": "Մեքենա",
-        "price": "Գին",
-        "status": "Կարգավիճակ",
-        "updated": "Թարմացում"
-      },
-      "updatedToday": "Այսօր",
       "noCarsFound": "Ավտոմեքենաներ չեն գտնվել",
       "loadingCars": "Բեռնվում է...",
       "deleteCar": {
@@ -796,31 +656,14 @@
         "deleting": "Ջնջվում է..."
       }
     },
-    "usersView": {
-      "searchPlaceholder": "Փնտրել օգտատերեր...",
-      "deleting": "Ջնջվում է...",
-      "title": "Օգտատերեր",
-      "subtitle": "Մաքուր աղյուսակ՝ ավատար, email և դեր։",
-      "columns": {
-        "user": "Օգտատեր",
-        "email": "Էլ. փոստ",
-        "role": "Դեր",
-        "status": "Կարգավիճակ"
-      },
-      "statusActive": "Ակտիվ",
-      "noUsersFound": "Օգտատերեր չեն գտնվել",
-      "loadingUsers": "Բեռնվում է..."
-    },
     "settingsView": {
       "shippingTab": "Առաքում և քաղաքներ",
       "usersTab": "Օգտատերերի գործակիցներ",
       "changePassword": "Փոխել գաղտնաբառը",
       "shippingPricesTitle": "Առաքման գներ",
-      "shippingPricesSubtitle": "Կառավարեք առաքումը ըստ քաղաքների և կիրառեք անվտանգ գլոբալ ճշգրտում։",
       "globalAdjustmentTitle": "Գլոբալ ճշգրտում",
       "applyToAll": "Կիրառել բոլորի համար",
       "citiesTitle": "Քաղաքներ",
-      "citiesSubtitle": "Թարմացրեք կամ ջնջեք առաքման գները ըստ քաղաքի։",
       "addCity": "Ավելացնել քաղաք",
       "loadingCities": "Առաքման քաղաքներ բեռնվում են...",
       "noCitiesFound": "Քաղաքներ չգտնվեցին {auction}-ի համար",
@@ -829,27 +672,20 @@
       "columns": {
         "city": "Քաղաք",
         "shipping": "Առաքում",
-        "taxes": "Հսկիչ գին",
-        "actions": "Գործողություններ"
+        "taxes": "Հսկիչ գին"
       },
-      "update": "Թարմացնել",
-      "delete": "Ջնջել",
       "deleteTitle": "Ջնջե՞լ {city}-ը",
       "deleteBody": "Քաղաքը կհեռացվի առաքման գների կառավարումից։ Գործողությունը չի կարելի հետարկել։",
       "cancel": "Չեղարկել",
       "confirmDelete": "Հաստատել ջնջումը",
       "userCoefficientsTitle": "Օգտատերերի գործակիցներ",
       "userCoefficientsDescription": "Սահմանեք հաշվարկման գործակիցներ և աճուրդի նախապատվությունները յուրաքանչյուր օգտատիրոջ համար: Աջակցում է դրական և բացասական արժեքներին:",
-      "coefficientLabel": "Գործակից",
       "currentCoefficient": "Ընթացիկ գործակից",
       "coefficientPlaceholder": "+/- 100",
-      "adjustmentAmountPlaceholder": "+/-",
-      "auctionLabel": "Աճուրդ",
       "auctionPlaceholder": "Ընտրեք աճուրդը",
       "auctionNone": "Չընտրված",
       "cancelButton": "Չեղարկել",
       "applyButton": "Թարմացնել գործակիցը",
-      "applyingButton": "Թարմացվում է...",
       "coefficientDialog": {
         "title": "Թարմացնել օգտատիրոջ կարգավորումները",
         "description": "Համոզվա՞ծ եք, որ ցանկանում եք թարմացնել կարգավորումները համար",
@@ -874,7 +710,10 @@
         "bracketCount": "{count, plural, one {# սանդղակ} other {# սանդղակներ}} կպահպանվեն",
         "cancel": "Չեղարկել",
         "confirm": "Հաստատել թարմացումը"
-      }
+      },
+      "loadingUsers": "Բեռնվում են օգտատերերը…",
+      "noUsersFound": "Օգտատերեր չեն գտնվել",
+      "noUsersMatchSearch": "Որոնմանը համապատասխան օգտատերեր չկան"
     },
     "toasts": {
       "validationError": "Վավերացման սխալ",
@@ -939,34 +778,6 @@
         },
         "model": "Մոդել",
         "modelPlaceholder": "օրինակ՝ BMW X5",
-        "vehicleModels": {
-          "bmw": "BMW",
-          "mercedes": "Mercedes-Benz",
-          "audi": "Audi",
-          "toyota": "Toyota",
-          "honda": "Honda",
-          "ford": "Ford",
-          "chevrolet": "Chevrolet",
-          "nissan": "Nissan",
-          "lexus": "Lexus",
-          "porsche": "Porsche",
-          "tesla": "Tesla",
-          "volkswagen": "Volkswagen",
-          "hyundai": "Hyundai",
-          "kia": "Kia",
-          "mazda": "Mazda",
-          "subaru": "Subaru",
-          "jeep": "Jeep",
-          "ram": "Ram",
-          "gmc": "GMC",
-          "cadillac": "Cadillac",
-          "infiniti": "Infiniti",
-          "acura": "Acura",
-          "volvo": "Volvo",
-          "landRover": "Land Rover",
-          "jaguar": "Jaguar",
-          "other": "Այլ"
-        },
         "year": "Տարի",
         "yearPlaceholder": "2024",
         "auction": "Աուկցիոն",
@@ -978,19 +789,12 @@
           "other": "Այլ"
         },
         "city": "Քաղաք",
-        "cityPlaceholder": "օրինակ՝ Նյու Յորք",
         "lot": "LOT",
         "lotPlaceholder": "օրինակ՝ 12345678",
-        "paymentToAuction": "Վճարում աուկցիոնին (USD)",
-        "paymentToAuctionPlaceholder": "օրինակ՝ 2500",
         "vin": "VIN",
         "vinPlaceholder": "օրինակ՝ 1HGCM82633A004352",
         "price": "Գին (USD)",
         "pricePlaceholder": "189500",
-        "status": "Կարգավիճակ",
-        "statusPending": "Ստուգման փուլում",
-        "statusActive": "Ակտիվ",
-        "statusDraft": "Սևագիր",
         "customerNotes": "Հաճախորդի նշումներ",
         "customerNotesPlaceholder": "Լրացուցիչ նշումներ հաճախորդի կամ թիմի համար…",
         "paymentsAndDocuments": "Վճարումներ և փաստաթղթեր",
@@ -1001,8 +805,6 @@
         "notPaid": "Չվճարված",
         "exists": "Առկա է",
         "notExists": "Առկա չէ",
-        "invoiceLabel": "Ինվոյս (PDF)",
-        "dragDropInvoice": "Քաշեք և գցեք ձեր ինվոյսը",
         "vehiclePdfLabel": "Մեքենայի փաստաթուղթ (PDF)",
         "dragDropVehiclePdf": "Քաշեք և գցեք մեքենայի փաստաթուղթը",
         "insurancePdfLabel": "Ապահովագրության փաստաթուղթ (PDF)",
@@ -1014,10 +816,6 @@
         "pdfOnlyMaxSize": "Միայն PDF, մաքս. 10ՄԲ",
         "onlyPdfAllowed": "Թույլատրվում են միայն PDF ֆայլեր",
         "fileSizeLimit": "Ֆայլի չափը պետք է լինի 10ՄԲ-ից պակաս",
-        "uploadInvoice": "Վերբեռնել հաշիվ-ապրանքագիր",
-        "format": "Համակարգ՝ PDF",
-        "dropToUpload": "Թողեք վերբեռնելու համար",
-        "invalidFormat": "Սխալ ֆայլի ձևաչափ։ Խնդրում ենք վերբեռնել միայն PDF ֆայլ։",
         "cancel": "Չեղարկել",
         "submit": "Ուղարկել",
         "submitting": "Ուղարկվում է..."
@@ -1025,7 +823,6 @@
       "createUser": {
         "title": "Ստեղծել օգտատեր",
         "subtitle": "Մինիմալ ձև՝ խիստ դաշտային հիերարխիայով։",
-        "photosLabel": "Օգտատիրոջ լուսանկարներ",
         "country": "Երկիր",
         "selectCountry": "Ընտրեք երկիրը",
         "countries": {
@@ -1053,8 +850,7 @@
         "passwordPlaceholder": "Մուտքագրեք գաղտնաբառը (նվազագույնը 6 նիշ)",
         "cancel": "Չեղարկել",
         "submit": "Պահպանել",
-        "submitting": "Պահպանվում է...",
-        "invalidEmail": "Խնդրում ենք մուտքագրել վավեր էլ. հասցե"
+        "submitting": "Պահպանվում է..."
       },
       "updateShipping": {
         "title": "Թարմացնել առաքման գինը",
@@ -1109,11 +905,6 @@
         "cancel": "Չեղարկել",
         "submit": "Թարմացնել օգտատիրոջը",
         "submitting": "Թարմացվում է...",
-        "required": "պարտադիր է",
-        "firstNameRequired": "Անունը պարտադիր է",
-        "lastNameRequired": "Ազգանունը պարտադիր է",
-        "usernameRequired": "Օգտանունը պարտադիր է",
-        "emailRequired": "Էլ. հասցեն պարտադիր է",
         "successMessage": "Օգտատերը հաջողությամբ թարմացվեց",
         "errorMessage": "Չհաջողվեց թարմացնել օգտատիրոջը"
       },
@@ -1126,8 +917,6 @@
         "loadingCities": "Քաղաքներ բեռնվում են...",
         "selectCity": "Ընտրեք քաղաքը",
         "selectAuctionFirst": "Նախ ընտրեք աճուրդը",
-        "invoiceLabel": "Ինվոյս (PDF)",
-        "dragDropInvoice": "Քաշեք և գցեք ձեր ինվոյսը",
         "vehiclePdfLabel": "Մեքենայի փաստաթուղթ (PDF)",
         "dragDropVehiclePdf": "Քաշեք և գցեք մեքենայի փաստաթուղթը",
         "insurancePdfLabel": "Ապահովագրության փաստաթուղթ (PDF)",
@@ -1151,7 +940,6 @@
         "auctionPlaceholder": "Ընտրեք աուկցիոնը",
         "purchaseDate": "Գնման ամսաթիվ",
         "city": "Քաղաք",
-        "cityPlaceholder": "օր.՝ Նյու Յորք",
         "lotNumber": "Լոտի համար",
         "lotPlaceholder": "օր.՝ 12345678",
         "vin": "VIN",
@@ -1185,7 +973,8 @@
         "updateInvoice": "Թարմացնել",
         "newFile": "Նոր ֆայլ",
         "willReplaceCurrent": "Կփոխարինի ընթացիկը",
-        "cancelUpdate": "Չեղարկել թարմացումը"
+        "cancelUpdate": "Չեղարկել թարմացումը",
+        "currentInvoice": "Ընթացիկ ինվոյս"
       },
       "deleteUser": {
         "title": "Ջնջել օգտատիրոջը",
@@ -1204,7 +993,6 @@
         "message": "Վերնագիր",
         "messagePlaceholder": "Համակարգի թարմացում",
         "description": "Հաղորդագրություն",
-        "descriptionPlaceholder": "Համակարգը կվերանորոգվի շաբաթ օրը...",
         "reason": "Պատճառ (ընտրովի)",
         "reasonPlaceholder": "Պլանային սպասարկում արտադրողականության բարելավման համար",
         "cancel": "Չեղարկել",
@@ -1213,8 +1001,7 @@
         "success": "Ծանուցումը ուղարկված է",
         "successDescription": "Բոլոր օգտատերերը կստանան այս ծանուցումը։",
         "error": "Չհաջողվեց ուղարկել",
-        "errorDescription": "Չհաջողվեց ուղարկել ծանուցումը։",
-        "fillRequired": "Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը։"
+        "errorDescription": "Չհաջողվեց ուղարկել ծանուցումը։"
       },
       "deleteNotification": {
         "title": "Ջնջել ծանուցումը",
@@ -1326,7 +1113,8 @@
         "successTitle": "Մեքենան թարմացվեց",
         "successDescription": "Մեքենան հաջողությամբ թարմացվեց։",
         "errorTitle": "Թարմացումը ձախողվեց",
-        "photoFormatNotSupported": "Ֆայլի ձևաչափը չի աջակցվում: Թույլատրված են միայն JPG, PNG և WEBP:"
+        "photoFormatNotSupported": "Ֆայլի ձևաչափը չի աջակցվում: Թույլատրված են միայն JPG, PNG և WEBP:",
+        "descriptionPlaceholder": "Մուտքագրեք մեքենայի մանրամասն նկարագրությունը..."
       },
       "deleteAvailableCar": {
         "title": "Ջնջել մեքենան",
@@ -1341,7 +1129,6 @@
         "description": "Սահմանեք նոր գաղտնաբառ ձեր ադմինիստրատորի հաշվի համար։",
         "username": "Օգտանուն",
         "usernamePlaceholder": "Մուտքագրեք ձեր օգտանունը",
-        "usernameNotFound": "Օգտանունը չի գտնվել։ Խնդրում ենք ստուգել և կրկին փորձել։",
         "newPassword": "Նոր գաղտնաբառ",
         "newPasswordPlaceholder": "Մուտքագրեք նոր գաղտնաբառը (նվազագույնը 8 նիշ)",
         "confirmPassword": "Հաստատել նոր գաղտնաբառը",
@@ -1351,7 +1138,6 @@
         "changing": "Փոխվում է...",
         "successTitle": "Գաղտնաբառը փոխվեց",
         "successDescription": "Ձեր գաղտնաբառը հաջողությամբ թարմացվել է։",
-        "errorTitle": "Փոփոխությունը ձախողվեց",
         "errorDescription": "Չհաջողվեց փոխել ձեր գաղտնաբառը։ Փորձեք կրկին։"
       },
       "readUsers": {
@@ -1359,19 +1145,12 @@
         "loading": "Բեռնվում է...",
         "noReads": "Ոչ ոք դեռ չի կարդացել այս ծանուցումը",
         "read": "Կարդացած է",
-        "totalReads": "{count} {count, plural, one {օգտատեր} other {օգտատեր}} կարդացել է այս ծանուցումը",
-        "justNow": "Հենց նոր",
-        "minutesAgo": "{minutes}ր առաջ",
-        "hoursAgo": "{hours}ժ առաջ",
-        "daysAgo": "{days}օ առաջ"
+        "totalReads": "{count} {count, plural, one {օգտատեր} other {օգտատեր}} կարդացել է այս ծանուցումը"
       }
     },
     "actions": {
       "update": "Թարմացնել",
       "delete": "Ջնջել",
-      "cancel": "Չեղարկել",
-      "save": "Պահպանել",
-      "submit": "Ուղարկել",
       "close": "Փակել",
       "view": "Դիտել"
     }
@@ -1383,32 +1162,15 @@
     "car": "Մեքենա",
     "client": "Հաճախորդ",
     "price": "Գին",
-    "type": "Տեսակ",
     "auction": "Աճուրդ",
     "city": "Քաղաք",
-    "lot": "Լոտ",
-    "vin": "VIN",
-    "purchaseDate": "Գնման ամսաթիվ",
-    "containerNumberBooking": "Կոնտեյների համարի ամրագրում",
-    "containerNumberBookingPlaceholder": "օրինակ՝ MAEU1234567",
-    "promisedPickUpDate": "Խոստացված վերցման ամսաթիվ",
-    "deliveredWarehouse": "Առաքված է պահեստ",
     "notes": "Նշումներ",
-    "status": "Կարգավիճակ",
-    "carPaid": "Մեքենայի վճարում",
-    "vehiclePdf": "Մեքենայի PDF",
-    "shippingPaid": "Առաքման վճարում",
-    "shippingPdf": "Առաքման PDF",
     "insurance": "Ապահովագրություն",
-    "insurancePdf": "Ապահովագրության PDF",
-    "created": "Ստեղծված",
-    "invoice": "Հաշիվ",
     "download": "Ներբեռնել",
     "actions": "Գործողություններ",
     "saleDate": "Վաճառքի ամսաթիվ",
     "destinationPort": "Նպատակային նավահանգիստ",
     "container": "Կոնտեյներ",
-    "carInvoice": "Մեքենայի հաշիվ",
     "shippingInvoice": "Առաքման հաշիվ",
     "receiverName": "Ստացողի անուն",
     "showing": "Ցուցադրվում է",
@@ -1428,7 +1190,6 @@
     "actions": "Գործողություններ",
     "loadingUsers": "Բեռնվում են օգտատերերը...",
     "noUsersFound": "Օգտատերեր չեն գտնվել",
-    "noUsersMatchSearch": "Օգտատերեր չեն գտնվել ձեր որոնմամբ",
     "showing": "Ցուցադրվում է",
     "user": "օգտատեր",
     "users": "օգտատերեր"
@@ -1449,7 +1210,6 @@
     "successTitle": "Դիմումն ուղարկվեց",
     "successDescription": "Ձեր հայտը ստացել ենք։ Մեր թիմը շուտով կկապվի Ձեզ հետ։",
     "errorTitle": "Չհաջողվեց ուղարկել",
-    "errorDescription": "Խնդրում ենք կրկին փորձել կամ կապվել մեզ հետ ուղղակիորեն։",
-    "required": "Պարտադիր"
+    "errorDescription": "Խնդրում ենք կրկին փորձել կամ կապվել մեզ հետ ուղղակիորեն։"
   }
 }
