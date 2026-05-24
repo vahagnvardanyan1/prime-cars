@@ -10,7 +10,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Container } from "@/components/layouts";
 import { useTheme } from "@/components/ThemeContext";
 import { Link, usePathname, useRouter } from "@/i18n/routing";
-import { siteNavItems } from "@/lib/site-nav";
+import { siteNavItems } from "@/lib/navigation/site-nav";
 
 const HEADER_HEIGHT = 80;
 
