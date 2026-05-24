@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
+import { SearchInput } from "@/components/admin/primitives/SearchInput";
 
 export type UserFiltersState = {
   search: string;
@@ -50,17 +50,12 @@ export const UserFilters = ({ filters, onFiltersChange, onClearFilters }: UserFi
     <div className="px-6 py-4 border-b border-gray-200 dark:border-white/10">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row gap-3">
-          {/* Search Input */}
-          <div className="relative flex-1">
-            <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              type="text"
-              placeholder={t("searchUsers")}
-              value={filters.search}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-10 h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10 focus-visible:ring-[#429de6]"
-            />
-          </div>
+          <SearchInput
+            containerClassName="flex-1"
+            placeholder={t("searchUsers")}
+            value={filters.search}
+            onChange={handleSearchChange}
+          />
 
           {/* Country Filter */}
           <FormSelect

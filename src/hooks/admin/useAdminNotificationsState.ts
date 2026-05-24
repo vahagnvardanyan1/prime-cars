@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import type { Notification, NotificationFilters } from "@/lib/admin/notifications/types";
 import { fetchNotifications } from "@/lib/admin/notifications/fetchNotifications";
 import { fetchAllNotifications } from "@/lib/admin/notifications/fetchAllNotifications";
+import { getAccessToken } from "@/lib/auth/token";
 import { createKeyedTTLCache } from "@/lib/utils/cache";
 
 type CacheKey = {
@@ -69,8 +70,7 @@ export const useAdminNotificationsState = () => {
     isAdmin?: boolean;
   } = {}) => {
     // Check if user is authenticated
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-    if (!token) {
+    if (!getAccessToken()) {
       return; // Don't show error if not authenticated
     }
 

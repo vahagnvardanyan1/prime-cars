@@ -8,7 +8,8 @@ import type { AdminUser } from "@/lib/admin/types";
 
 import { fetchUsers } from "@/lib/admin/fetchUsers";
 import { isCacheValid, createCacheEntry } from "@/lib/utils/cache";
-import { isAuthenticated, isAuthError } from "@/lib/utils/error-handling";
+import { isAuthenticated } from "@/lib/auth/token";
+import { isAuthError } from "@/lib/utils/error-handling";
 import { buildUrlParams, updateUrlWithParams } from "@/lib/utils/url-params";
 import { filterUsers, defaultUserFilters } from "@/lib/utils/user-filters";
 import type { UserFiltersState } from "@/lib/utils/user-filters";

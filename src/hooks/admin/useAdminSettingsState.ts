@@ -11,6 +11,7 @@ import { fetchUsers } from "@/lib/admin/fetchUsers";
 import { updateUserCoefficient } from "@/lib/admin/updateUserCoefficient";
 import { fetchGlobalAdjustment } from "@/lib/admin/fetchGlobalAdjustment";
 import { adjustUserShippingPrice } from "@/lib/admin/adjustUserShippingPrice";
+import { getAccessToken } from "@/lib/auth/token";
 import { toast } from "sonner";
 
 type UpdateCityPriceModalState =
@@ -131,8 +132,7 @@ export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) =
   };
 
   const loadCities = async ({ forceRefresh = false, auction }: { forceRefresh?: boolean; auction?: Auction } = {}) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-    if (!token) {
+    if (!getAccessToken()) {
       return;
     }
 
@@ -219,8 +219,7 @@ export const useAdminSettingsState = ({ isAdmin }: { isAdmin?: boolean } = {}) =
       return;
     }
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-    if (!token) {
+    if (!getAccessToken()) {
       return;
     }
 

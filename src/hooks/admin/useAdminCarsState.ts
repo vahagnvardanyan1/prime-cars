@@ -8,7 +8,8 @@ import type { AdminCar } from "@/lib/admin/types";
 
 import { fetchCars } from "@/lib/admin/fetchCars";
 import { isCacheValid, createCacheEntry } from "@/lib/utils/cache";
-import { isAuthenticated, isAuthError } from "@/lib/utils/error-handling";
+import { isAuthenticated } from "@/lib/auth/token";
+import { isAuthError } from "@/lib/utils/error-handling";
 import { buildUrlParams, updateUrlWithParams } from "@/lib/utils/url-params";
 import { filterCars, defaultCarFilters } from "@/lib/utils/car-filters";
 import type { CarFiltersState } from "@/lib/utils/car-filters";

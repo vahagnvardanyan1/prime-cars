@@ -5,6 +5,8 @@ import { useState, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { CheckCircle2, XCircle } from "lucide-react";
 
+import { getAccessToken } from "@/lib/auth/token";
+
 // Helper to sanitize numeric input (removes leading zeros, non-numeric chars)
 const sanitizeNumericInput = (value: string): string => {
   // Remove non-numeric characters except for empty string
@@ -132,8 +134,7 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
     if (open) {
       const loadUsers = async () => {
         // Check if user is authenticated
-        const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-        if (!token) {
+        if (!getAccessToken()) {
           return; // Don't fetch or show error if not authenticated
         }
 

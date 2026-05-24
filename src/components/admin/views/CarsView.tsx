@@ -1,20 +1,20 @@
 "use client";
 
 import { memo, useCallback, useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import type { AdminCar } from "@/lib/admin/types";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
 import { Pagination } from "@/components/admin/primitives/Pagination";
+import { SearchInput } from "@/components/admin/primitives/SearchInput";
 import { CarFilters, type CarFiltersState } from "@/components/admin/filters/CarFilters";
 import { CarFiltersSheet } from "@/components/admin/filters/CarFiltersSheet";
 import { CarsTable } from "@/components/admin/views/CarsTable";
 import { CarsMobileList } from "@/components/admin/views/CarsMobileList";
 import { CarsLightbox } from "@/components/admin/views/CarsLightbox";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 type CarsViewProps = {
   cars: AdminCar[];
@@ -131,16 +131,12 @@ export const CarsView = memo(function CarsView({
               />
             </div>
             <div className="lg:hidden px-4 py-3 border-b border-gray-200 dark:border-white/10 flex items-center gap-2">
-              <div className="relative flex-1">
-                <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder={tFilters("searchCars")}
-                  value={filters.search}
-                  onChange={(e) => handleSearchChange(e.target.value)}
-                  className="pl-10 h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10 focus-visible:ring-[#429de6]"
-                />
-              </div>
+              <SearchInput
+                containerClassName="flex-1"
+                placeholder={tFilters("searchCars")}
+                value={filters.search}
+                onChange={handleSearchChange}
+              />
               <CarFiltersSheet
                 filters={filters}
                 onFiltersChange={onFiltersChange}

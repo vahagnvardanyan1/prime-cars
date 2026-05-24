@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@/i18n/config";
 import type { Car, CarCategory, FetchCarsResponse, BackendAvailableCar } from "./types";
+import { safeFetchJson } from "./safeFetchJson";
 
 // Map backend available car to frontend Car type
 const mapBackendCarToFrontend = (backendCar: BackendAvailableCar): Car => {
@@ -30,38 +31,25 @@ const mapBackendCarToFrontend = (backendCar: BackendAvailableCar): Car => {
   };
 };
 
+// Pull cars out of either a bare array or a `{ cars: [...] }` wrapper.
+const unwrapCarsArray = <T>(value: unknown): T[] => {
+  if (Array.isArray(value)) return value as T[];
+  const wrapped = (value as { cars?: T[] } | null)?.cars;
+  return Array.isArray(wrapped) ? wrapped : [];
+};
+
 // Fetch all cars from the old /api/cars endpoint (legacy)
 export const fetchAllCarsLegacy = async (): Promise<FetchCarsResponse> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/cars`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store", // Don't cache to always get fresh data
-    });
+  const result = await safeFetchJson<unknown>({
+    url: `${API_BASE_URL}/api/cars`,
+    logPrefix: "Error fetching cars from legacy endpoint",
+  });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    // Ensure data is in the expected format
-    const cars = Array.isArray(data) ? data : data.cars || [];
-
-    return {
-      success: true,
-      cars,
-    };
-  } catch (error) {
-    console.error("Error fetching cars from legacy endpoint:", error);
-    return {
-      success: false,
-      cars: [],
-      error: error instanceof Error ? error.message : "Unknown error occurred",
-    };
+  if (!result.success) {
+    return { success: false, cars: [], error: result.error };
   }
+
+  return { success: true, cars: unwrapCarsArray<Car>(result.data) };
 };
 
 // Fetch paginated available cars from the /available-cars/paginated endpoint
@@ -76,97 +64,79 @@ export const fetchAvailableCarsPaginated = async ({
   search?: string;
   carCategory?: CarCategory;
 } = {}): Promise<FetchCarsResponse & { total?: number; totalPages?: number; page?: number; limit?: number }> => {
-  try {
-    const params = new URLSearchParams();
-    params.append("page", page.toString());
-    params.append("limit", limit.toString());
-    if (search) {
-      params.append("search", search);
-    }
-    if (carCategory) {
-      params.append("carCategory", carCategory);
-    }
+  const params = new URLSearchParams();
+  params.append("page", page.toString());
+  params.append("limit", limit.toString());
+  if (search) {
+    params.append("search", search);
+  }
+  if (carCategory) {
+    params.append("carCategory", carCategory);
+  }
 
-    const response = await fetch(`${API_BASE_URL}/available-cars/paginated?${params.toString()}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const responseData = await response.json();
-    
-    // Response structure similar to vehicles: { status, data: { data: [...], meta: {...} } }
-    const dataWrapper = responseData?.data;
-    const carsArray: BackendAvailableCar[] = dataWrapper?.data || [];
-    const meta = dataWrapper?.meta || {};
-
-
-    // Map backend cars to frontend Car type
-    const cars = carsArray.map(mapBackendCarToFrontend);
-    return {
-      success: true,
-      cars,
-      total: meta.totalItems || 0,
-      page: meta.currentPage || page,
-      limit: meta.itemsPerPage || limit,
-      totalPages: meta.totalPages || 0,
+  type PaginatedRaw = {
+    data?: {
+      data?: BackendAvailableCar[];
+      meta?: {
+        totalItems?: number;
+        currentPage?: number;
+        itemsPerPage?: number;
+        totalPages?: number;
+      };
     };
-  } catch (error) {
-    console.error("Error fetching paginated available cars:", error);
+  };
+
+  const result = await safeFetchJson<PaginatedRaw>({
+    url: `${API_BASE_URL}/available-cars/paginated?${params.toString()}`,
+    logPrefix: "Error fetching paginated available cars",
+  });
+
+  if (!result.success) {
     return {
       success: false,
       cars: [],
-      error: error instanceof Error ? error.message : "Unknown error occurred",
+      error: result.error,
       total: 0,
       page: 1,
       limit: 25,
       totalPages: 0,
     };
   }
+
+  // Response structure: { data: { data: [...], meta: {...} } }
+  const dataWrapper = result.data?.data;
+  const carsArray: BackendAvailableCar[] = dataWrapper?.data || [];
+  const meta = dataWrapper?.meta || {};
+
+  const cars = carsArray.map(mapBackendCarToFrontend);
+  return {
+    success: true,
+    cars,
+    total: meta.totalItems || 0,
+    page: meta.currentPage || page,
+    limit: meta.itemsPerPage || limit,
+    totalPages: meta.totalPages || 0,
+  };
 };
 
 // Fetch all available cars from the /available-cars endpoint
 export const fetchAllAvailableCars = async (): Promise<FetchCarsResponse> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/available-cars`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store", // Don't cache to always get fresh data
-    });
+  const result = await safeFetchJson<unknown>({
+    url: `${API_BASE_URL}/available-cars`,
+    logPrefix: "Error fetching available cars",
+  });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    
-    // Handle wrapped response: { status: "success", data: [...] }
-    const data = result.data || result;
-    const backendCars: BackendAvailableCar[] = Array.isArray(data) ? data : data.cars || [];
-    
-    // Map backend available-cars structure to frontend Car type
-    const cars = backendCars.map(mapBackendCarToFrontend);
-
-    return {
-      success: true,
-      cars,
-    };
-  } catch (error) {
-    console.error("Error fetching available cars:", error);
-    return {
-      success: false,
-      cars: [],
-      error: error instanceof Error ? error.message : "Unknown error occurred",
-    };
+  if (!result.success) {
+    return { success: false, cars: [], error: result.error };
   }
+
+  // Handle wrapped response: { status: "success", data: [...] }
+  const raw = result.data as { data?: unknown } | null;
+  const inner = raw?.data ?? result.data;
+  const backendCars = unwrapCarsArray<BackendAvailableCar>(inner);
+  const cars = backendCars.map(mapBackendCarToFrontend);
+
+  return { success: true, cars };
 };
 
 // Fetch cars by category from available-cars endpoint (AVAILABLE, ONROAD, TRANSIT)
@@ -175,43 +145,21 @@ export const fetchCarsByCategory = async ({
 }: {
   category: CarCategory;
 }): Promise<FetchCarsResponse> => {
-  try {
-    
-    const response = await fetch(
-      `${API_BASE_URL}/available-cars/by-category?carCategory=${category}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-      }
-    );
+  const result = await safeFetchJson<unknown>({
+    url: `${API_BASE_URL}/available-cars/by-category?carCategory=${category}`,
+    // Original swallowed the error silently — match that behavior.
+  });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    
-    // Handle wrapped response: { status: "success", data: [...] }
-    const data = result.data || result;
-    const backendCars: BackendAvailableCar[] = Array.isArray(data) ? data : data.cars || [];
-    
-    // Map backend available-cars structure to frontend Car type
-    const cars = backendCars.map(mapBackendCarToFrontend);
-
-    return {
-      success: true,
-      cars,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      cars: [],
-      error: error instanceof Error ? error.message : "Unknown error occurred",
-    };
+  if (!result.success) {
+    return { success: false, cars: [], error: result.error };
   }
+
+  const raw = result.data as { data?: unknown } | null;
+  const inner = raw?.data ?? result.data;
+  const backendCars = unwrapCarsArray<BackendAvailableCar>(inner);
+  const cars = backendCars.map(mapBackendCarToFrontend);
+
+  return { success: true, cars };
 };
 
 // Fetch all cars grouped by category
@@ -223,7 +171,7 @@ export const fetchAllCars = async (): Promise<{
 }> => {
   // Use single endpoint to get all cars at once
   const singleEndpointResult = await fetchAllAvailableCars();
-  
+
   if (singleEndpointResult.success && singleEndpointResult.cars.length > 0) {
     // Group cars by category from the single response
     const carsByCategory = singleEndpointResult.cars.reduce(
@@ -274,82 +222,46 @@ export const fetchAllCars = async (): Promise<{
 export const fetchCarById = async (
   carId: string
 ): Promise<{ success: boolean; car?: Car; error?: string }> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/cars/${carId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-    });
+  const result = await safeFetchJson<Car | null>({
+    url: `${API_BASE_URL}/api/cars/${carId}`,
+    notFoundMessage: "Car not found",
+    logPrefix: `Error fetching car ${carId}`,
+  });
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        return { success: false, error: "Car not found" };
-      }
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const car = await response.json();
-
-    if (!car) {
-      return { success: false, error: "Car not found" };
-    }
-
-    return {
-      success: true,
-      car,
-    };
-  } catch (error) {
-    console.error(`Error fetching car ${carId}:`, error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error occurred",
-    };
+  if (!result.success) {
+    return { success: false, error: result.error };
   }
+
+  if (!result.data) {
+    return { success: false, error: "Car not found" };
+  }
+
+  return { success: true, car: result.data };
 };
 
 // Fetch a single available car by ID from available-cars endpoint
 export const fetchAvailableCarById = async (
   carId: string
 ): Promise<{ success: boolean; car?: Car; error?: string }> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/available-cars/${carId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-    });
+  const result = await safeFetchJson<{ data?: BackendAvailableCar } | BackendAvailableCar | null>({
+    url: `${API_BASE_URL}/available-cars/${carId}`,
+    notFoundMessage: "Available car not found",
+    logPrefix: `Error fetching available car ${carId}`,
+  });
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        return { success: false, error: "Available car not found" };
-      }
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    
-    // Handle wrapped response: { status: "success", data: {...} }
-    const backendCar: BackendAvailableCar = result.data || result;
-
-    if (!backendCar) {
-      return { success: false, error: "Available car not found" };
-    }
-
-    // Map backend available-car structure to frontend Car type
-    const car = mapBackendCarToFrontend(backendCar);
-
-    return {
-      success: true,
-      car,
-    };
-  } catch (error) {
-    console.error(`Error fetching available car ${carId}:`, error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error occurred",
-    };
+  if (!result.success) {
+    return { success: false, error: result.error };
   }
+
+  // Handle wrapped response: { status: "success", data: {...} }
+  const raw = result.data;
+  const backendCar = (raw && typeof raw === "object" && "data" in raw && raw.data
+    ? raw.data
+    : raw) as BackendAvailableCar | null;
+
+  if (!backendCar) {
+    return { success: false, error: "Available car not found" };
+  }
+
+  return { success: true, car: mapBackendCarToFrontend(backendCar) };
 };

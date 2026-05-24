@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/i18n/config";
-import { authenticatedFetch } from "../auth/token";
+import { authenticatedFetch, getAccessToken } from "../auth/token";
 import { appendIf } from "@/lib/admin/formData";
 
 type UpdateAvailableCarArgs = {
@@ -37,9 +37,7 @@ export const updateAvailableCar = async ({
   photosToDelete = [],
 }: UpdateAvailableCarArgs): Promise<UpdateAvailableCarResponse> => {
   try {
-    const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
-
-    if (!token) {
+    if (!getAccessToken()) {
       return {
         success: false,
         error: "Authentication required",

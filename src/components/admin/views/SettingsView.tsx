@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-import { Plus, Search, Eye, EyeOff, KeyRound } from "lucide-react";
+import { Plus, Eye, EyeOff, KeyRound } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { FormSelect, type FormSelectOption } from "@/components/ui/form-select";
 import { AddShippingModal } from "@/components/admin/modals/AddShippingModal";
 import { ChangePasswordModal } from "@/components/admin/modals/ChangePasswordModal";
+import { SearchInput } from "@/components/admin/primitives/SearchInput";
 import { Surface } from "@/components/admin/primitives/Surface";
 import { UserCoefficientRow } from "@/components/admin/primitives/UserCoefficientRow";
 import { UserIncomeTaxRow } from "@/components/admin/primitives/UserIncomeTaxRow";
@@ -444,17 +445,11 @@ export const SettingsView = ({
 
           {/* Search and Filter Section */}
           <div className="px-4 sm:px-6 py-4 space-y-4 border-b border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02]">
-            {/* Search Input */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
-              <Input
-                type="text"
-                placeholder={tSettings("searchCityPlaceholder")}
-                value={citySearch}
-                onChange={(e) => handleCitySearchChange(e.target.value)}
-                className="pl-10 h-11 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10 focus-visible:ring-[#429de6] rounded-xl text-sm placeholder:text-gray-400 dark:placeholder:text-gray-500 shadow-sm"
-              />
-            </div>
+            <SearchInput
+              placeholder={tSettings("searchCityPlaceholder")}
+              value={citySearch}
+              onChange={handleCitySearchChange}
+            />
 
             {/* Auction Filter Tabs - Horizontal Scroll on Mobile */}
             <div className="relative -mx-4 sm:mx-0">
@@ -662,16 +657,11 @@ export const SettingsView = ({
 
           {/* Search Input */}
           <div className="px-6 pb-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder={tSettings("searchUserPlaceholder")}
-                value={userSearch}
-                onChange={(e) => setUserSearch(e.target.value)}
-                className="pl-10 h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10 focus-visible:ring-[#429de6]"
-              />
-            </div>
+            <SearchInput
+              placeholder={tSettings("searchUserPlaceholder")}
+              value={userSearch}
+              onChange={setUserSearch}
+            />
           </div>
 
           <div className="px-6 pb-6">
@@ -719,16 +709,11 @@ export const SettingsView = ({
 
           {/* Search Input */}
           <div className="px-6 pb-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder={tSettings("searchUserPlaceholder")}
-                value={userSearch}
-                onChange={(e) => setUserSearch(e.target.value)}
-                className="pl-10 h-10 bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10 focus-visible:ring-[#429de6]"
-              />
-            </div>
+            <SearchInput
+              placeholder={tSettings("searchUserPlaceholder")}
+              value={userSearch}
+              onChange={setUserSearch}
+            />
           </div>
 
           <div className="px-6 pb-6">
