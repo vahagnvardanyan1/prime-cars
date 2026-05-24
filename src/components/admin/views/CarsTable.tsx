@@ -10,7 +10,7 @@ import type { AdminCar } from "@/lib/admin/types";
 import { formatUsd } from "@/lib/admin/format";
 import { TextCell } from "@/components/admin/primitives/TextCell";
 import { Button } from "@/components/ui/button";
-import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
+import { DownloadImagesButton } from "@/components/admin/primitives/DownloadImagesButton";
 
 type CarsTableProps = {
   cars: AdminCar[];
@@ -71,14 +71,14 @@ const CarTableRow = memo(function CarTableRow({
                   className="object-cover"
                   sizes="56px"
                 />
-                {car.photos && car.photos.length > 1 && (
+                {car?.photos?.length && (
                   <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded">
                     +{car.photos.length - 1}
                   </div>
                 )}
               </button>
             )}
-            {car.photos && car.photos.length > 0 && (
+            {car?.photos?.length && (
               <DownloadImagesButton
                 images={car.photos}
                 carName={`${car.model} ${car.year}`}

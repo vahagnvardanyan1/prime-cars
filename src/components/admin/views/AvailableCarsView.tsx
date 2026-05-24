@@ -11,7 +11,7 @@ import { RefreshButton } from "@/components/admin/primitives/RefreshButton";
 import { Pagination } from "@/components/admin/primitives/Pagination";
 import { TextCell } from "@/components/admin/primitives/TextCell";
 import { Button } from "@/components/ui/button";
-import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
+import { DownloadImagesButton } from "@/components/admin/primitives/DownloadImagesButton";
 import { Table } from "@radix-ui/themes";
 
 // ============================================================================

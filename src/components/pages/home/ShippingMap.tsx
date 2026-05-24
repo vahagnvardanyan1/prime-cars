@@ -11,7 +11,7 @@ import {
   ZoomableGroup,
 } from "react-simple-maps";
 import { FiPlus, FiMinus } from "react-icons/fi";
-import { useIsMobile } from "@/components/ui/use-mobile";
+import { useIsMobile } from "@/hooks/useMobile";
 
 // Land fill colors per theme. Used for default + hover + pressed
 // so react-simple-maps' built-in hover lighten doesn't fire.

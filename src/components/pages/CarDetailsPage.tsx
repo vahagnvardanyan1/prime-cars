@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { ChevronLeft, MapPin, Gauge, Settings, Calendar, TrendingUp, X, ChevronRight, Route, Car } from "lucide-react";
 import { useCarDetails } from "@/hooks/useCarDetails";
-import { DownloadImagesButton } from "@/components/ui/DownloadImagesButton";
+import { DownloadImagesButton } from "@/components/admin/primitives/DownloadImagesButton";
 import { Spec } from "@/components/pages/cars/Spec";
 import { translateEngineType, translateTransmission } from "@/lib/utils/translateVehicleSpecs";
 
