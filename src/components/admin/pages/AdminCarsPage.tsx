@@ -6,22 +6,14 @@ import { toast } from "sonner";
 
 import type { AdminCar } from "@/lib/admin/types";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { ConfirmDialog } from "@/components/admin/primitives/ConfirmDialog";
 
 import { useTranslations } from "next-intl";
 
 import { useUser } from "@/contexts/UserContext";
 
 import { useAdminCarsState } from "@/hooks/admin/useAdminCarsState";
+import { useConfirmDialog } from "@/hooks/admin/useConfirmDialog";
 import { deleteCar } from "@/lib/admin/deleteCar";
 import { AddCarModal } from "@/components/admin/modals/AddCarModal";
 import { UpdateCarModal } from "@/components/admin/modals/UpdateCarModal";
@@ -36,8 +28,7 @@ export const AdminCarsPage = () => {
   const [isUpdateCarModalOpen, setIsUpdateCarModalOpen] = useState(false);
   const [selectedCarForView, setSelectedCarForView] = useState<AdminCar | null>(null);
   const [isViewCarModalOpen, setIsViewCarModalOpen] = useState(false);
-  const [carToDelete, setCarToDelete] = useState<AdminCar | null>(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const deleteConfirm = useConfirmDialog<AdminCar>();
   const [isDeletingCar, setIsDeletingCar] = useState(false);
 
   // Load cars data when user is available
@@ -48,12 +39,8 @@ export const AdminCarsPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  const handleDeleteCarClick = useCallback((car: AdminCar) => {
-    setCarToDelete(car);
-    setIsDeleteDialogOpen(true);
-  }, []);
-
   const handleConfirmDelete = useCallback(async () => {
+    const carToDelete = deleteConfirm.target;
     if (!carToDelete) return;
 
     setIsDeletingCar(true);
@@ -65,8 +52,7 @@ export const AdminCarsPage = () => {
           description: t("admin.toasts.carDeletedDescription", { model: carToDelete.model }),
         });
         await state.loadCars({ forceRefresh: true });
-        setIsDeleteDialogOpen(false);
-        setCarToDelete(null);
+        deleteConfirm.close();
       } else {
         toast.error(t("admin.toasts.carDeleteFailedTitle"), {
           description: result.error || t("admin.toasts.couldNotDeleteCar"),
@@ -79,7 +65,7 @@ export const AdminCarsPage = () => {
     } finally {
       setIsDeletingCar(false);
     }
-  }, [carToDelete, state, t]);
+  }, [deleteConfirm, state, t]);
 
   // Stable callback references to avoid re-renders
   const handleRefresh = useCallback(() => state.loadCars({ forceRefresh: true }), [state]);
@@ -120,7 +106,7 @@ export const AdminCarsPage = () => {
         onRefresh={handleRefresh}
         onAddCar={state.openAddCar}
         onUpdateCar={handleUpdateCar}
-        onDeleteCar={handleDeleteCarClick}
+        onDeleteCar={deleteConfirm.open}
         onViewCar={handleViewCar}
         isAdmin={isAdmin}
         filters={state.filters}
@@ -156,36 +142,21 @@ export const AdminCarsPage = () => {
             onCarUpdated={handleCarCreated}
           />
 
-          <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-            <AlertDialogContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-              <AlertDialogHeader>
-                <AlertDialogTitle className="text-gray-900 dark:text-white">
-                  {t("admin.carsView.deleteCar.title")}
-                </AlertDialogTitle>
-                <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
-                  {t("admin.carsView.deleteCar.description", { 
-                    model: carToDelete?.model || "", 
-                    year: carToDelete?.year || "" 
-                  })}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel 
-                  disabled={isDeletingCar}
-                  className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
-                >
-                  {t("admin.carsView.deleteCar.cancel")}
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleConfirmDelete}
-                  disabled={isDeletingCar}
-                  className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
-                >
-                  {isDeletingCar ? t("admin.carsView.deleteCar.deleting") : t("admin.carsView.deleteCar.delete")}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <ConfirmDialog
+            open={deleteConfirm.isOpen}
+            onOpenChange={(next) => !next && deleteConfirm.close()}
+            title={t("admin.carsView.deleteCar.title")}
+            description={t("admin.carsView.deleteCar.description", {
+              model: deleteConfirm.target?.model || "",
+              year: deleteConfirm.target?.year || "",
+            })}
+            confirmLabel={t("admin.carsView.deleteCar.delete")}
+            loadingLabel={t("admin.carsView.deleteCar.deleting")}
+            cancelLabel={t("admin.carsView.deleteCar.cancel")}
+            variant="destructive"
+            isLoading={isDeletingCar}
+            onConfirm={handleConfirmDelete}
+          />
         </>
       )}
     </>

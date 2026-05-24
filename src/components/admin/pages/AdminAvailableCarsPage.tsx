@@ -10,24 +10,16 @@ import { toast } from "sonner";
 import { AvailableCarsView } from "@/components/admin/views/AvailableCarsView";
 import { UpdateAvailableCarModal } from "@/components/admin/modals/UpdateAvailableCarModal";
 import { CreateAvailableCarModal } from "@/components/admin/modals/CreateAvailableCarModal";
+import { ConfirmDialog } from "@/components/admin/primitives/ConfirmDialog";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { useUser } from "@/contexts/UserContext";
 import type { Car, CarCategory } from "@/lib/cars/types";
-import { 
-  useAvailableCars, 
-  useDeleteAvailableCar 
+import {
+  useAvailableCars,
+  useDeleteAvailableCar
 } from "@/hooks/admin/useAvailableCars";
+import { useConfirmDialog } from "@/hooks/admin/useConfirmDialog";
 
 export const AdminAvailableCarsPage = () => {
   const t = useTranslations("carsPage");
@@ -65,8 +57,7 @@ export const AdminAvailableCarsPage = () => {
   const [selectedCarForUpdate, setSelectedCarForUpdate] = useState<Car | null>(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [carToDelete, setCarToDelete] = useState<Car | null>(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const deleteConfirm = useConfirmDialog<Car>();
 
   // Pagination state for each tab - initialize from URL
   const [availablePage, setAvailablePage] = useState(() => getInitialPageForTab("AVAILABLE"));
@@ -195,19 +186,14 @@ export const AdminAvailableCarsPage = () => {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
-  const handleDeleteCar = (car: Car) => {
-    setCarToDelete(car);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const confirmDelete = async () => {
+  const handleConfirmDelete = async () => {
+    const carToDelete = deleteConfirm.target;
     if (!carToDelete) return;
 
     try {
       await deleteMutation.mutateAsync({ id: carToDelete.id });
       toast.success(tAdmin("deleteAvailableCar.success"));
-      setIsDeleteDialogOpen(false);
-      setCarToDelete(null);
+      deleteConfirm.close();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to delete car");
     }
@@ -460,7 +446,7 @@ export const AdminAvailableCarsPage = () => {
                 isLoading={isLoadingAvailable} 
                 onRefresh={handleRefresh}
                 onUpdateCar={handleUpdateCar}
-                onDeleteCar={handleDeleteCar}
+                onDeleteCar={deleteConfirm.open}
                 isAdmin={isAdmin}
                 currentPage={availableData?.currentPage || 1}
                 totalPages={availableData?.totalPages || 0}
@@ -477,7 +463,7 @@ export const AdminAvailableCarsPage = () => {
                 isLoading={isLoadingOnroad} 
                 onRefresh={handleRefresh}
                 onUpdateCar={handleUpdateCar}
-                onDeleteCar={handleDeleteCar}
+                onDeleteCar={deleteConfirm.open}
                 isAdmin={isAdmin}
                 currentPage={onroadData?.currentPage || 1}
                 totalPages={onroadData?.totalPages || 0}
@@ -494,7 +480,7 @@ export const AdminAvailableCarsPage = () => {
                 isLoading={isLoadingTransit} 
                 onRefresh={handleRefresh}
                 onUpdateCar={handleUpdateCar}
-                onDeleteCar={handleDeleteCar}
+                onDeleteCar={deleteConfirm.open}
                 isAdmin={isAdmin}
                 currentPage={transitData?.currentPage || 1}
                 totalPages={transitData?.totalPages || 0}
@@ -528,38 +514,22 @@ export const AdminAvailableCarsPage = () => {
         />
       )}
 
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-gray-900 dark:text-white">
-              {tAdmin("deleteAvailableCar.title")}
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
-              {tAdmin("deleteAvailableCar.description", { 
-                brand: carToDelete?.brand || "", 
-                model: carToDelete?.model || "", 
-                year: carToDelete?.year || "" 
-              })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel 
-              disabled={deleteMutation.isPending}
-              className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
-            >
-              {tAdmin("deleteAvailableCar.cancel")}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              disabled={deleteMutation.isPending}
-              className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
-            >
-              {deleteMutation.isPending ? tAdmin("deleteAvailableCar.deleting") : tAdmin("deleteAvailableCar.confirm")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDialog
+        open={deleteConfirm.isOpen}
+        onOpenChange={(next) => !next && deleteConfirm.close()}
+        title={tAdmin("deleteAvailableCar.title")}
+        description={tAdmin("deleteAvailableCar.description", {
+          brand: deleteConfirm.target?.brand || "",
+          model: deleteConfirm.target?.model || "",
+          year: deleteConfirm.target?.year || "",
+        })}
+        confirmLabel={tAdmin("deleteAvailableCar.confirm")}
+        loadingLabel={tAdmin("deleteAvailableCar.deleting")}
+        cancelLabel={tAdmin("deleteAvailableCar.cancel")}
+        variant="destructive"
+        isLoading={deleteMutation.isPending}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 };
