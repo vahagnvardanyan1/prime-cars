@@ -1,7 +1,7 @@
 import type { Car, CarCategory, CarStatus } from "@/lib/cars/types";
 import type { Locale } from "@/i18n/config";
 
-import { SITE_URL, SITE_NAME, buildCanonicalUrl } from "@/lib/seo";
+import { SITE_URL, SITE_NAME, buildCanonicalUrl } from "./metadata";
 
 // ---------- Shared business data ----------
 
