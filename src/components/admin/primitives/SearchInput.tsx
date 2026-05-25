@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/components/ui/utils";
 
-export type SearchInputProps = {
+type SearchInputProps = {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;

@@ -197,7 +197,7 @@ export const AddCarModal = ({ open, onOpenChange, onCreateCar, onCarCreated }: A
       const result = await createCar({
         data: {
           userId: selectedUserId,
-          model: form.fields.model, // VehicleModel enum value
+          model: form.fields.model,
           year: parsed.year,
                   priceUsd: parsed.priceUsd,
                   carPaid: form.fields.carPaid,

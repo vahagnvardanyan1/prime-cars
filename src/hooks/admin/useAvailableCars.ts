@@ -2,14 +2,14 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { CACHE_STALE_TIME, CACHE_GC_TIME } from "@/lib/react-query/client";
 import type { Car, CarCategory } from "@/lib/cars/types";
-import { fetchCarsByCategory, fetchAllAvailableCars, fetchAvailableCarsPaginated } from "@/lib/cars/fetchCars";
+import { fetchAvailableCarsPaginated } from "@/lib/cars/fetchCars";
 import { createAvailableCar } from "@/lib/admin/createAvailableCar";
 import { updateAvailableCar } from "@/lib/admin/updateAvailableCar";
 import { deleteAvailableCar } from "@/lib/admin/deleteAvailableCar";
 import type { AvailableCarFormData, UpdateAvailableCarFormData } from "@/lib/admin/schemas/availableCar.schema";
 
 // Query keys
-export const availableCarsKeys = {
+const availableCarsKeys = {
   all: ["availableCars"] as const,
   lists: () => [...availableCarsKeys.all, "list"] as const,
   list: (category?: CarCategory, page?: number, limit?: number, search?: string) => {
@@ -52,38 +52,6 @@ export const useAvailableCars = ({
         currentPage: response.page || page,
         pageSize: response.limit || limit,
       };
-    },
-    staleTime: CACHE_STALE_TIME,
-    gcTime: CACHE_GC_TIME,
-  });
-};
-
-// Fetch all available cars (non-paginated, for backward compatibility)
-export const useAllAvailableCars = () => {
-  return useQuery({
-    queryKey: ["availableCars", "all"],
-    queryFn: async () => {
-      const response = await fetchAllAvailableCars();
-      if (!response.success) {
-        throw new Error(response.error || "Failed to fetch available cars");
-      }
-      return response.cars;
-    },
-    staleTime: CACHE_STALE_TIME,
-    gcTime: CACHE_GC_TIME,
-  });
-};
-
-// Fetch cars by category
-export const useAvailableCarsByCategory = (category: CarCategory) => {
-  return useQuery({
-    queryKey: availableCarsKeys.list(category),
-    queryFn: async () => {
-      const response = await fetchCarsByCategory({ category });
-      if (!response.success) {
-        throw new Error(response.error || `Failed to fetch ${category} cars`);
-      }
-      return response.cars;
     },
     staleTime: CACHE_STALE_TIME,
     gcTime: CACHE_GC_TIME,

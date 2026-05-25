@@ -1,11 +1,11 @@
 import type { Car, CarCategory, CarStatus } from "@/lib/cars/types";
 import type { Locale } from "@/i18n/config";
 
-import { SITE_URL, SITE_NAME, buildCanonicalUrl } from "./metadata";
+import { SITE_URL, SITE_NAME } from "./metadata";
 
 // ---------- Shared business data ----------
 
-export const BUSINESS = {
+const BUSINESS = {
   legalName: "Prime Cars LLC",
   name: SITE_NAME,
   url: SITE_URL,
@@ -192,38 +192,3 @@ export const vehicleJsonLd = (car: Car, canonicalUrl: string) => {
   };
 };
 
-// ---------- FAQPage ----------
-// Scaffolding — not currently mounted on any page (the home-page FAQ was
-// reverted). Kept here so a future FAQ page / guide post can just import it.
-
-type FaqItem = { question: string; answer: string };
-
-export const faqJsonLd = (items: FaqItem[]) => ({
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: items.map((item) => ({
-    "@type": "Question",
-    name: item.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.answer,
-    },
-  })),
-});
-
-// ---------- ItemList for the /cars listing ----------
-// Wire this into src/app/[locale]/cars/page.tsx once that page becomes a
-// server component rendering its own car list. Currently /cars is a client
-// component fetching via react-query, so JSON-LD is better expressed via a
-// server-rendered prelude.
-
-export const carListJsonLd = (cars: Car[], locale: Locale, carPath: (c: Car) => string) => ({
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  itemListElement: cars.slice(0, 20).map((car, index) => ({
-    "@type": "ListItem",
-    position: index + 1,
-    url: buildCanonicalUrl(carPath(car), locale),
-    name: `${car.year} ${car.model}`,
-  })),
-});

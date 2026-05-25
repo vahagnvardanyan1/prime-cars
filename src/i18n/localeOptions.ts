@@ -7,7 +7,7 @@ export type LocaleOption = {
   flag: string;
 };
 
-export const getFlag = ({ locale }: { locale: Locale }) => {
+const getFlag = ({ locale }: { locale: Locale }) => {
   switch (locale) {
     case "en":
       return "🇺🇸";

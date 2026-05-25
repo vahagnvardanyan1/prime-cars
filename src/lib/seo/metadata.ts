@@ -6,12 +6,12 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://primecars.a
 
 export const SITE_NAME = "Prime Cars";
 
-export const DEFAULT_OG_IMAGE = "/og/default.png";
+const DEFAULT_OG_IMAGE = "/og/default.png";
 
-export const OG_IMAGE_DIMENSIONS = { width: 1200, height: 630 } as const;
+const OG_IMAGE_DIMENSIONS = { width: 1200, height: 630 } as const;
 
 // Map our locale codes to BCP47 locale strings Google uses in OG/hreflang.
-export const OG_LOCALE: Record<Locale, string> = {
+const OG_LOCALE: Record<Locale, string> = {
   hy: "hy_AM",
   en: "en_US",
   ru: "ru_RU",
@@ -28,7 +28,7 @@ export const buildCanonicalUrl = (path: string = "", locale: Locale = defaultLoc
 
 // Build hreflang alternates for a given path. x-default points at the
 // Armenian (default) locale's prefixed URL.
-export const buildLanguageAlternates = (path: string = "") => {
+const buildLanguageAlternates = (path: string = "") => {
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
   const trimmed = cleanPath === "/" ? "" : cleanPath;
   const alternates: Record<string, string> = {};

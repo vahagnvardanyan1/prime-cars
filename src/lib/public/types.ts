@@ -1,6 +1,6 @@
 export type CarCategory = "current" | "coming" | "order";
 
-export type HomeCarStatus =
+type HomeCarStatus =
   | "available"
   | "sold"
   | "reserved"

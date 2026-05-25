@@ -20,7 +20,7 @@ export type NotificationFilters = {
 };
 
 // Backend API response types
-export type BackendNotificationData = {
+type BackendNotificationData = {
   _id?: string;
   id?: string;
   message?: string;

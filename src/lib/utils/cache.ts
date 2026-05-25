@@ -2,9 +2,8 @@
  * Cache utility functions for managing client-side data caching.
  *
  * Two layers:
- *  - Primitive helpers (CacheEntry / isCacheValid / createCacheEntry /
- *    getCachedData) — operate on a single entry. Use when you already
- *    manage your own storage.
+ *  - Primitive helpers (CacheEntry / isCacheValid / createCacheEntry) —
+ *    operate on a single entry. Use when you already manage your own storage.
  *  - createKeyedTTLCache<K, V>() — the typical "Map of key → fresh value"
  *    case. Owns the Map, applies a TTL on read, exposes a 3-method API.
  *    Prefer this for new keyed caches so call sites stay short.
@@ -34,10 +33,7 @@ export const createCacheEntry = <T>({ data }: { data: T }): CacheEntry<T> => ({
   timestamp: Date.now(),
 });
 
-/**
- * Gets data from cache if valid, otherwise returns null
- */
-export const getCachedData = <T>({ cache, duration = CACHE_DURATION }: { cache: CacheEntry<T> | null; duration?: number }): T | null => {
+const getCachedData = <T>({ cache, duration = CACHE_DURATION }: { cache: CacheEntry<T> | null; duration?: number }): T | null => {
   if (!cache || !isCacheValid({ cache, duration })) {
     return null;
   }

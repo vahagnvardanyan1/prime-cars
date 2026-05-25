@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // MIME types of the formats the admin photo flow accepts. Pinned to the four
 // the backend image pipeline supports — anything else is silently rejected at
 // the hook boundary and surfaced via `invalidFiles` for the consumer to render.
-export const ALLOWED_PHOTO_TYPES = [
+const ALLOWED_PHOTO_TYPES = [
   "image/jpeg", // covers .jpg and .jpeg
   "image/png",
   "image/webp",

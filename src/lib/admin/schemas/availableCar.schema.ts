@@ -182,18 +182,6 @@ export const updateAvailableCarSchema = z.object({
     .default(0),
 });
 
-// Photo validation schema
-export const photoValidationSchema = z.object({
-  photos: z
-    .array(z.instanceof(File))
-    .max(25, "Maximum 25 photos allowed")
-    .optional(),
-  photosToDelete: z
-    .array(z.string().url("Invalid photo URL"))
-    .optional(),
-});
-
 // Type exports
 export type AvailableCarFormData = z.infer<typeof availableCarSchema>;
 export type UpdateAvailableCarFormData = z.infer<typeof updateAvailableCarSchema>;
-export type PhotoValidationData = z.infer<typeof photoValidationSchema>;

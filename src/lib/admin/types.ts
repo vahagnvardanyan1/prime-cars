@@ -37,7 +37,7 @@ export type AdminCar = {
   updatedAt?: string;
 };
 
-export type AdminUserRole = "Admin" | "Manager" | "Support" | "Viewer";
+type AdminUserRole = "Admin" | "Manager" | "Support" | "Viewer";
 
 export enum VehicleType {
   AUTO = 'auto',
@@ -52,11 +52,6 @@ export enum VehicleType {
   MOPED = 'moped',
   SCOOTER = 'scooter',
   OTHER = 'other',
-}
-
-export enum VehicleModel {
-  BMW = 'bmw',
- 
 }
 
 export enum Auction {

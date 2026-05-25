@@ -32,7 +32,7 @@ const transliterate = (input: string): string => {
     .join("");
 };
 
-export const slugify = (input: string): string =>
+const slugify = (input: string): string =>
   transliterate(input)
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -40,7 +40,7 @@ export const slugify = (input: string): string =>
     .replace(/^-+|-+$/g, "")
     .toLowerCase();
 
-export const slugifyCar = (
+const slugifyCar = (
   year: number | string | undefined,
   brand: string | undefined,
   model: string | undefined,

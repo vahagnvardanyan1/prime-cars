@@ -1,12 +1,10 @@
 import { adminApiRequest, type AdminApiResult } from "@/lib/admin/adminApiRequest";
 
-export type MarkNotificationAsReadResponse = AdminApiResult<unknown>;
-
 export const markNotificationAsRead = ({
   notificationId,
 }: {
   notificationId: string;
-}): Promise<MarkNotificationAsReadResponse> =>
+}): Promise<AdminApiResult<unknown>> =>
   adminApiRequest({
     path: "/notifications/mark-read",
     method: "PATCH",

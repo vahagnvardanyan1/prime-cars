@@ -12,7 +12,7 @@ type PublicFetchOptions = {
   logPrefix?: string;
 };
 
-export type PublicFetchResult<T> =
+type PublicFetchResult<T> =
   | { success: true; data: T }
   | { success: false; error: string };
 

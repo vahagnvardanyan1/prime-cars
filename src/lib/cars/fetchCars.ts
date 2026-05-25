@@ -38,20 +38,6 @@ const unwrapCarsArray = <T>(value: unknown): T[] => {
   return Array.isArray(wrapped) ? wrapped : [];
 };
 
-// Fetch all cars from the old /api/cars endpoint (legacy)
-export const fetchAllCarsLegacy = async (): Promise<FetchCarsResponse> => {
-  const result = await publicFetchJson<unknown>({
-    url: `${API_BASE_URL}/api/cars`,
-    logPrefix: "Error fetching cars from legacy endpoint",
-  });
-
-  if (!result.success) {
-    return { success: false, cars: [], error: result.error };
-  }
-
-  return { success: true, cars: unwrapCarsArray<Car>(result.data) };
-};
-
 // Fetch paginated available cars from the /available-cars/paginated endpoint
 export const fetchAvailableCarsPaginated = async ({
   page = 1,
@@ -137,106 +123,6 @@ export const fetchAllAvailableCars = async (): Promise<FetchCarsResponse> => {
   const cars = backendCars.map(mapBackendCarToFrontend);
 
   return { success: true, cars };
-};
-
-// Fetch cars by category from available-cars endpoint (AVAILABLE, ONROAD, TRANSIT)
-export const fetchCarsByCategory = async ({
-  category,
-}: {
-  category: CarCategory;
-}): Promise<FetchCarsResponse> => {
-  const result = await publicFetchJson<unknown>({
-    url: `${API_BASE_URL}/available-cars/by-category?carCategory=${category}`,
-    // Original swallowed the error silently — match that behavior.
-  });
-
-  if (!result.success) {
-    return { success: false, cars: [], error: result.error };
-  }
-
-  const raw = result.data as { data?: unknown } | null;
-  const inner = raw?.data ?? result.data;
-  const backendCars = unwrapCarsArray<BackendAvailableCar>(inner);
-  const cars = backendCars.map(mapBackendCarToFrontend);
-
-  return { success: true, cars };
-};
-
-// Fetch all cars grouped by category
-export const fetchAllCars = async (): Promise<{
-  AVAILABLE: Car[];
-  ONROAD: Car[];
-  TRANSIT: Car[];
-  errors: string[];
-}> => {
-  // Use single endpoint to get all cars at once
-  const singleEndpointResult = await fetchAllAvailableCars();
-
-  if (singleEndpointResult.success && singleEndpointResult.cars.length > 0) {
-    // Group cars by category from the single response
-    const carsByCategory = singleEndpointResult.cars.reduce(
-      (acc, car) => {
-        if (car.category === "AVAILABLE") acc.AVAILABLE.push(car);
-        else if (car.category === "ONROAD") acc.ONROAD.push(car);
-        else if (car.category === "TRANSIT") acc.TRANSIT.push(car);
-        return acc;
-      },
-      { AVAILABLE: [], ONROAD: [], TRANSIT: [] } as Record<CarCategory, Car[]>
-    );
-
-    return {
-      ...carsByCategory,
-      errors: [],
-    };
-  }
-
-  // Fallback to fetching by category if single endpoint fails
-  const categories: CarCategory[] = ["AVAILABLE", "ONROAD", "TRANSIT"];
-  const errors: string[] = [];
-
-  const results = await Promise.all(
-    categories.map(async (category) => {
-      const result = await fetchCarsByCategory({ category });
-      if (!result.success && result.error) {
-        errors.push(`${category}: ${result.error}`);
-      }
-      return { category, cars: result.cars };
-    })
-  );
-
-  const carsByCategory = results.reduce(
-    (acc, { category, cars }) => {
-      acc[category] = cars;
-      return acc;
-    },
-    { AVAILABLE: [], ONROAD: [], TRANSIT: [] } as Record<CarCategory, Car[]>
-  );
-
-  return {
-    ...carsByCategory,
-    errors,
-  };
-};
-
-// Fetch a single car by ID from legacy endpoint
-export const fetchCarById = async (
-  carId: string
-): Promise<{ success: boolean; car?: Car; error?: string }> => {
-  const result = await publicFetchJson<Car | null>({
-    url: `${API_BASE_URL}/api/cars/${carId}`,
-    notFoundMessage: "Car not found",
-    logPrefix: `Error fetching car ${carId}`,
-  });
-
-  if (!result.success) {
-    return { success: false, error: result.error };
-  }
-
-  if (!result.data) {
-    return { success: false, error: "Car not found" };
-  }
-
-  return { success: true, car: result.data };
 };
 
 // Fetch a single available car by ID from available-cars endpoint

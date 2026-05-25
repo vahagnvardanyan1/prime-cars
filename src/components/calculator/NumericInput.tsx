@@ -16,7 +16,7 @@ import { cn } from "@/components/ui/utils";
  * iOS Safari's auto-zoom-on-focus behavior. Consumers can still override
  * the font-size via className — tailwind-merge wins the later utility.
  */
-export type NumericInputProps = Omit<
+type NumericInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "onChange" | "type" | "inputMode"
 > & {

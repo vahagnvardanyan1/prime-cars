@@ -50,7 +50,7 @@ const VEHICLE_TYPES = [
 
 const AUCTIONS = ["copart", "iaai", "manheim", "other"];
 
-export const hasActiveFilters = (filters: CarFiltersState): boolean =>
+const hasActiveFilters = (filters: CarFiltersState): boolean =>
   filters.search !== "" ||
   filters.type !== "all" ||
   filters.auction !== "all" ||

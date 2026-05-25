@@ -70,16 +70,3 @@ export const fetchShippingCitiesPublic = async (
   }
 };
 
-// Keep old exports for backwards compatibility but deprecated
-export type ShippingPrice = {
-  id: number;
-  category: string;
-  city: string;
-  price: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export const getUniqueCities = (cities: string[]): string[] => {
-  return Array.from(new Set(cities)).sort();
-};
