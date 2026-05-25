@@ -6,16 +6,7 @@ import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { ConfirmDialog } from "@/components/admin/primitives/ConfirmDialog";
 import type { AdminUser, IncomeTaxBracket } from "@/lib/admin/types";
 import { fetchUserIncomeTax } from "@/lib/admin/fetchUserIncomeTax";
 import { updateUserIncomeTax } from "@/lib/admin/updateUserIncomeTax";
@@ -220,39 +211,28 @@ export const UserIncomeTaxRow = ({ user }: UserIncomeTaxRowProps) => {
         </div>
       )}
 
-      {/* Confirmation Dialog */}
-      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md rounded-2xl bg-white dark:bg-[#0b0f14] border border-gray-200 dark:border-white/10 p-6">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
-              {t("incomeTaxConfirmDialog.title")}
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-2 space-y-2">
-              <p>
-                {t("incomeTaxConfirmDialog.description")}{" "}
-                <strong className="text-gray-900 dark:text-white">
-                  {user.firstName} {user.lastName}
-                </strong>
-                ?
-              </p>
-              <p>
-                {t("incomeTaxConfirmDialog.bracketCount", { count: brackets.length })}
-              </p>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex-col sm:flex-row gap-2 sm:gap-3 mt-6">
-            <AlertDialogCancel className="rounded-xl w-full sm:w-auto border-gray-300 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5">
-              {t("incomeTaxConfirmDialog.cancel")}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="rounded-xl w-full sm:w-auto bg-[#429de6] text-white hover:bg-[#3a8acc] dark:bg-[#429de6] dark:hover:bg-[#3a8acc]"
-              onClick={handleConfirmSave}
-            >
-              {t("incomeTaxConfirmDialog.confirm")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDialog
+        open={showConfirmDialog}
+        onOpenChange={setShowConfirmDialog}
+        title={t("incomeTaxConfirmDialog.title")}
+        description={
+          <span className="space-y-2 block">
+            <span className="block">
+              {t("incomeTaxConfirmDialog.description")}{" "}
+              <strong className="text-gray-900 dark:text-white">
+                {user.firstName} {user.lastName}
+              </strong>
+              ?
+            </span>
+            <span className="block">
+              {t("incomeTaxConfirmDialog.bracketCount", { count: brackets.length })}
+            </span>
+          </span>
+        }
+        confirmLabel={t("incomeTaxConfirmDialog.confirm")}
+        cancelLabel={t("incomeTaxConfirmDialog.cancel")}
+        onConfirm={handleConfirmSave}
+      />
     </>
   );
 };

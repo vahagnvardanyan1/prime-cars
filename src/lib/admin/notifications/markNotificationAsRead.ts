@@ -1,46 +1,16 @@
-import { API_BASE_URL } from "@/i18n/config";
+import { adminApiRequest, type AdminApiResult } from "@/lib/admin/adminApiRequest";
 
-import { authenticatedFetch } from "@/lib/auth/token";
+export type MarkNotificationAsReadResponse = AdminApiResult<unknown>;
 
-export type MarkNotificationAsReadResponse = {
-  success: boolean;
-  error?: string;
-};
-
-export const markNotificationAsRead = async ({ 
-  notificationId 
-}: { 
-  notificationId: string 
-}): Promise<MarkNotificationAsReadResponse> => {
-  try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/notifications/mark-read`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        notificationId,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ 
-        error: "Failed to mark notification as read" 
-      }));
-      return {
-        success: false,
-        error: errorData.error || `Server error: ${response.status}`,
-      };
-    }
-
-    return {
-      success: true,
-    };
-  } catch (error) {
-    console.error("Error marking notification as read:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Network error occurred",
-    };
-  }
-};
+export const markNotificationAsRead = ({
+  notificationId,
+}: {
+  notificationId: string;
+}): Promise<MarkNotificationAsReadResponse> =>
+  adminApiRequest({
+    path: "/notifications/mark-read",
+    method: "PATCH",
+    json: { notificationId },
+    errorFallback: "Failed to mark notification as read",
+    errorContext: "marking notification as read",
+  });

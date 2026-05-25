@@ -11,16 +11,7 @@ import { useUser } from "@/contexts/UserContext";
 
 import { cn } from "@/components/ui/utils";
 import { Link } from "@/i18n/routing";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { ConfirmDialog } from "@/components/admin/primitives/ConfirmDialog";
 
 type AdminNavKey = "cars" | "availableCars" | "users" | "settings" | "calculator" | "notifications";
 
@@ -182,34 +173,18 @@ export const AdminSidebarContent = ({
         </button>
       </div>
 
-      {/* Logout confirmation dialog */}
-      <AlertDialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
-        <AlertDialogContent className="bg-white dark:bg-[#0b0f14] border-gray-200 dark:border-white/10">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-gray-900 dark:text-white">
-              {t("admin.logout.title")}
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
-              {t("admin.logout.description")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              disabled={isLoggingOut}
-              className="border-gray-200 bg-white text-gray-900 hover:bg-gray-50 dark:border-white/10 dark:bg-[#161b22] dark:text-white dark:hover:bg-white/5"
-            >
-              {t("admin.logout.cancel")}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
-            >
-              {isLoggingOut ? "..." : t("admin.logout.confirm")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDialog
+        open={isLogoutDialogOpen}
+        onOpenChange={setIsLogoutDialogOpen}
+        title={t("admin.logout.title")}
+        description={t("admin.logout.description")}
+        confirmLabel={t("admin.logout.confirm")}
+        loadingLabel="..."
+        cancelLabel={t("admin.logout.cancel")}
+        variant="destructive"
+        isLoading={isLoggingOut}
+        onConfirm={handleLogout}
+      />
     </div>
   );
 };

@@ -1,8 +1,6 @@
 import type { CreateNotificationData, Notification } from "./types";
 
-import { API_BASE_URL } from "@/i18n/config";
-
-import { authenticatedFetch } from "@/lib/auth/token";
+import { adminApiRequest } from "@/lib/admin/adminApiRequest";
 
 type CreateNotificationResponse = {
   success: boolean;
@@ -15,40 +13,18 @@ export const createNotification = async ({
 }: {
   data: CreateNotificationData;
 }): Promise<CreateNotificationResponse> => {
-  try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/notifications`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message: data.message,
-        description: data.description,
-        reason: data.reason,
-      }),
-    });
+  const result = await adminApiRequest<Notification>({
+    path: "/notifications",
+    method: "POST",
+    json: {
+      message: data.message,
+      description: data.description,
+      reason: data.reason,
+    },
+    errorFallback: "Failed to create notification",
+    errorContext: "creating notification",
+  });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ 
-        error: "Failed to create notification" 
-      }));
-      return {
-        success: false,
-        error: errorData.error || `Server error: ${response.status}`,
-      };
-    }
-
-    const result = await response.json();
-
-    return {
-      success: true,
-      notification: result,
-    };
-  } catch (error) {
-    console.error("Error creating notification:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Network error occurred",
-    };
-  }
+  if (!result.success) return { success: false, error: result.error };
+  return { success: true, notification: result.data ?? undefined };
 };

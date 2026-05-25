@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +17,7 @@ export type ConfirmDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  description: string;
+  description: ReactNode;
   confirmLabel: string;
   loadingLabel?: string;
   cancelLabel: string;
@@ -26,7 +28,7 @@ export type ConfirmDialogProps = {
 
 const ACTION_CLASS_BY_VARIANT: Record<NonNullable<ConfirmDialogProps["variant"]>, string> = {
   default:
-    "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700",
+    "bg-[#429de6] text-white hover:bg-[#3a8acc] dark:bg-[#429de6] dark:hover:bg-[#3a8acc]",
   destructive:
     "bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700",
 };
