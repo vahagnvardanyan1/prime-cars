@@ -8,16 +8,8 @@
 export const isAuthError = ({ errorMessage }: { errorMessage?: string }): boolean => {
   if (!errorMessage) return false;
   const message = errorMessage.toLowerCase();
-  return message.includes('401') || 
-         message.includes('403') || 
-         message.includes('unauthorized') || 
+  return message.includes('401') ||
+         message.includes('403') ||
+         message.includes('unauthorized') ||
          message.includes('forbidden');
-};
-
-/**
- * Checks if a user is authenticated by looking for an access token
- */
-export const isAuthenticated = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  return !!localStorage.getItem('access_token');
 };

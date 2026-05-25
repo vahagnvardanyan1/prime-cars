@@ -1,4 +1,8 @@
-type SafeFetchOptions = {
+// Public, unauthenticated GET helper. The /available-cars and /api/cars endpoints
+// serve anonymous visitors (homepage, /cars, /cars/[id]); authenticatedFetch would
+// throw without a token. Per-user data lives in src/lib/admin/* (authenticated).
+
+type PublicFetchOptions = {
   url: string;
   init?: RequestInit;
   // If set, a 404 returns { success: false, error: notFoundMessage }
@@ -8,13 +12,13 @@ type SafeFetchOptions = {
   logPrefix?: string;
 };
 
-export type SafeFetchResult<T> =
+export type PublicFetchResult<T> =
   | { success: true; data: T }
   | { success: false; error: string };
 
-export const safeFetchJson = async <T = unknown>(
-  opts: SafeFetchOptions,
-): Promise<SafeFetchResult<T>> => {
+export const publicFetchJson = async <T = unknown>(
+  opts: PublicFetchOptions,
+): Promise<PublicFetchResult<T>> => {
   try {
     const response = await fetch(opts.url, {
       method: "GET",

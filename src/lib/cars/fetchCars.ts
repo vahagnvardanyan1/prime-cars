@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "@/i18n/config";
 import type { Car, CarCategory, FetchCarsResponse, BackendAvailableCar } from "./types";
-import { safeFetchJson } from "./safeFetchJson";
+import { publicFetchJson } from "./publicFetchJson";
 
 // Map backend available car to frontend Car type
 const mapBackendCarToFrontend = (backendCar: BackendAvailableCar): Car => {
@@ -40,7 +40,7 @@ const unwrapCarsArray = <T>(value: unknown): T[] => {
 
 // Fetch all cars from the old /api/cars endpoint (legacy)
 export const fetchAllCarsLegacy = async (): Promise<FetchCarsResponse> => {
-  const result = await safeFetchJson<unknown>({
+  const result = await publicFetchJson<unknown>({
     url: `${API_BASE_URL}/api/cars`,
     logPrefix: "Error fetching cars from legacy endpoint",
   });
@@ -86,7 +86,7 @@ export const fetchAvailableCarsPaginated = async ({
     };
   };
 
-  const result = await safeFetchJson<PaginatedRaw>({
+  const result = await publicFetchJson<PaginatedRaw>({
     url: `${API_BASE_URL}/available-cars/paginated?${params.toString()}`,
     logPrefix: "Error fetching paginated available cars",
   });
@@ -121,7 +121,7 @@ export const fetchAvailableCarsPaginated = async ({
 
 // Fetch all available cars from the /available-cars endpoint
 export const fetchAllAvailableCars = async (): Promise<FetchCarsResponse> => {
-  const result = await safeFetchJson<unknown>({
+  const result = await publicFetchJson<unknown>({
     url: `${API_BASE_URL}/available-cars`,
     logPrefix: "Error fetching available cars",
   });
@@ -145,7 +145,7 @@ export const fetchCarsByCategory = async ({
 }: {
   category: CarCategory;
 }): Promise<FetchCarsResponse> => {
-  const result = await safeFetchJson<unknown>({
+  const result = await publicFetchJson<unknown>({
     url: `${API_BASE_URL}/available-cars/by-category?carCategory=${category}`,
     // Original swallowed the error silently — match that behavior.
   });
@@ -222,7 +222,7 @@ export const fetchAllCars = async (): Promise<{
 export const fetchCarById = async (
   carId: string
 ): Promise<{ success: boolean; car?: Car; error?: string }> => {
-  const result = await safeFetchJson<Car | null>({
+  const result = await publicFetchJson<Car | null>({
     url: `${API_BASE_URL}/api/cars/${carId}`,
     notFoundMessage: "Car not found",
     logPrefix: `Error fetching car ${carId}`,
@@ -243,7 +243,7 @@ export const fetchCarById = async (
 export const fetchAvailableCarById = async (
   carId: string
 ): Promise<{ success: boolean; car?: Car; error?: string }> => {
-  const result = await safeFetchJson<{ data?: BackendAvailableCar } | BackendAvailableCar | null>({
+  const result = await publicFetchJson<{ data?: BackendAvailableCar } | BackendAvailableCar | null>({
     url: `${API_BASE_URL}/available-cars/${carId}`,
     notFoundMessage: "Available car not found",
     logPrefix: `Error fetching available car ${carId}`,
