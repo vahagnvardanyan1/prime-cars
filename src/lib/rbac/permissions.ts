@@ -9,7 +9,3 @@ export enum UserRole {
 export const isAdmin = ({ role }: { role: string }): boolean => {
   return role.toLowerCase() === UserRole.ADMIN;
 };
-
-export const isManager = ({ role }: { role: string }): boolean => {
-  return role.toLowerCase() === UserRole.MANAGER;
-};
