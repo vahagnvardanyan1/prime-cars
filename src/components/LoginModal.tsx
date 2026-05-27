@@ -14,17 +14,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useLogin } from "@/lib/react-query/hooks/useAuth";
+import { useUser } from "@/contexts/UserContext";
 import { loginSchema, type LoginFormValues } from "@/lib/validation/schemas";
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess?: () => void;
+  onSuccess?: () => void | Promise<void>;
 }
 
 export const LoginModal = ({ isOpen, onClose, onSuccess }: LoginModalProps) => {
   const t = useTranslations();
   const login = useLogin();
+  const { refreshUser } = useUser();
   const {
     register,
     handleSubmit,
@@ -42,12 +44,9 @@ export const LoginModal = ({ isOpen, onClose, onSuccess }: LoginModalProps) => {
   const onSubmit = async (values: LoginFormValues) => {
     try {
       await login.mutateAsync(values);
-      // Parent's onSuccess closes the modal; calling onClose here would also
-      // trigger admin/layout's handleLoginClose with a stale `user` closure
-      // and redirect a just-logged-in user to "/".
-      onSuccess?.();
+      await refreshUser();
+      await onSuccess?.();
     } catch {
-      // toast surfaced by useLogin.onError
     }
   };
 

@@ -47,6 +47,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     setShowLoginModal(false);
   };
 
+  const handleLoginSuccess = () => {
+    setShowLoginModal(false);
+  };
+
   // Show loading on server-side and initial client render to prevent hydration mismatch
   if (!hasMounted || isLoadingUser) {
     return (
@@ -67,7 +71,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <LoginModal
           isOpen={showLoginModal}
           onClose={handleLoginClose}
-          onSuccess={() => setShowLoginModal(false)}
+          onSuccess={handleLoginSuccess}
         />
       </div>
     );

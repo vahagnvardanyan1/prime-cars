@@ -24,7 +24,7 @@ type UserContextType = {
   user: User | null;
   isLoading: boolean;
   isAdmin: boolean;
-  refreshUser: () => void;
+  refreshUser: () => Promise<unknown>;
   clearUser: () => void;
 };
 
@@ -34,9 +34,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const { data: user, isLoading, refetch } = useMe();
   const { mutate: logout } = useLogout();
 
-  const refreshUser = () => {
-    refetch();
-  };
+  const refreshUser = () => refetch();
 
   const clearUser = () => {
     removeTokens();

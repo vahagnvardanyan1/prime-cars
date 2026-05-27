@@ -108,9 +108,7 @@ export const useMe = () => {
   });
 };
 
-// Hook for login mutation
 export const useLogin = () => {
-  const queryClient = useQueryClient();
   const t = useTranslations("auth.toasts");
 
   return useMutation({
@@ -120,8 +118,6 @@ export const useLogin = () => {
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
       });
-
-      queryClient.setQueryData(queryKeys.auth.me, data.user);
 
       toast.success(t("loginSuccessTitle"), {
         description: t("loginSuccessDescription", { username: variables.username }),
