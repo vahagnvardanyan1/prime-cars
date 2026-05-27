@@ -517,6 +517,7 @@
     }
   },
   "admin": {
+    "loading": "Loading...",
     "loadingUser": "Loading user data...",
     "refresh": "Refresh",
     "pagination": {
