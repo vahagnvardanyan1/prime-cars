@@ -6,6 +6,7 @@ Built with **Next.js 14 (App Router)**, **TypeScript**, **Tailwind CSS**, and **
 
 ## Features
 
+
 - **Public site** — homepage, car catalog (`/cars`, `/cars/[id]`), import-cost calculator, partners, and an application/registration form.
 - **Internationalization** — three locales (`hy` Armenian (default), `en`, `ru`) via `next-intl` with `localePrefix: "always"`. Every route is prefixed (e.g. `/hy/cars`).
 - **Admin panel** (`/[locale]/admin`) — manage cars, available cars, users, calculator settings, and notifications. Protected by token-based auth and role-based access control (RBAC).
